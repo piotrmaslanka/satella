@@ -4,8 +4,9 @@ from Queue import Queue, Empty
 
 from satella.network.socket import BaseSocket
 from satella.network.exceptions import ConnectionFailedException
+from satella.threads import BaseThread
 
-class SelectLoop(Thread):
+class SelectLoop(BaseThread):
     """
     Thread that does a select loop.
     In general, you are expected to subclass it and write methods corresponding to tasks. The loop works like this:
@@ -113,7 +114,7 @@ class SelectLoop(Thread):
 
     def run(self):
         self.on_startup()
-        while True: 
+        while not self._terminating: 
             self.loop()
         self.on_cleanup()
         for sock in self.client_sockets:    # Close surviving client sockets
