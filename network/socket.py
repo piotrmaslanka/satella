@@ -35,6 +35,11 @@ class BaseSocket(object):
         return self.socket.fileno()
 
 
+    def peek(self, ln):
+        if len(self.rx) < ln:
+            raise DataUnavailableException, 'Not enough data in buffer'
+        return self.rx[:ln]
+
     def read(self, ln):
         if len(self.rx) < ln:
             raise DataUnavailableException, 'Not enough data in buffer'
