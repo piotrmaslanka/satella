@@ -13,7 +13,7 @@ class SSLBaseSocket(BaseSocket):
 
     def on_write(self):
         try:
-            BaseSocket.on_write(self):
+            BaseSocket.on_write(self)
         except SSLError:
             raise ConnectionFailedException, 'SSLError raised'
 
