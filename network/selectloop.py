@@ -2,7 +2,7 @@ from select import select, error as SelectError
 from threading import Thread
 from Queue import Queue, Empty
 
-from satella.network.socket import BaseSocket
+from satella.network.sockets import BaseSocket
 from satella.network.exceptions import ConnectionFailedException
 from satella.threads import BaseThread
 

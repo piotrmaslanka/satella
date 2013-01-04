@@ -1,7 +1,7 @@
 from ssl import SSLError
 
 from satella.network.exceptions import ConnectionFailedException
-from satella.network.socket import BaseSocket
+from satella.network.sockets import BaseSocket
 
 class SSLBaseSocket(BaseSocket):
     """Basic wrapper around a SSL-wrapped socket"""
