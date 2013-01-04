@@ -31,9 +31,8 @@ class BaseSocket(object):
     def wants_to_write(self):
         """Returns whether this socket wants to send data"""
         return len(self.rx) > 0
-    def fileno(self):
-        return self.socket.fileno()
 
+    def fileno(self): return self.socket.fileno()
 
     def peek(self, ln):
         if len(self.rx) < ln:
