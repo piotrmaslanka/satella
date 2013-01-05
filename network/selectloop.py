@@ -21,6 +21,14 @@ class SelectLoop(BaseThread):
           if those calls throw ConnectionFailedException, they will be closed
     - when terminated, invokes on_cleanup()
     - remaining client sockets are closed. Server socket is NOT CLOSED.
+
+    When a socket is closed, or fails, it is first closed, when it's on_close() method is invoked, and 
+    in the end self.on_sock_closed() is called with the offending socket as argument.
+
+    This class runs out of the box, if you don't overload anything, but it won't do anything of interest,
+    just accept connections and receive data from sockets.
+
+    This class doesn't do out-of-band data.
     """
     def __init__(self, server_socket):
         self.select_timeout = 5     #: timeout for select
@@ -38,7 +46,7 @@ class SelectLoop(BaseThread):
 
     def on_accept(self, socket, addr):
         """
-        VIRTUAL
+        Override this.
         @param socket: raw socket object
         @param addr: raw address tuple.
 
@@ -48,15 +56,19 @@ class SelectLoop(BaseThread):
         return BaseSocket(socket)
 
     def on_startup(self):
-        """VIRTUAL. Called before the loop starts iterating, in new thread-context"""
+        """Override this. Called before the loop starts iterating, in new thread-context"""
         pass
 
     def on_tick(self):
-        """VIRTUAL. Called at each iteration"""
+        """Override this. Called at each iteration"""
         pass
 
     def on_cleanup(self):
-        """VIRTUAL. Called when the loop finishes."""
+        """Override this. Called when the loop finishes."""
+        pass
+
+    def on_sock_closed(self, sock):
+        """VIRTUAL. Given socket is removed from the select layer, it has already been on_close()'d"""
         pass
 
     # Private variables
@@ -68,6 +80,8 @@ class SelectLoop(BaseThread):
             if sock.has_expired()
                 self.client_socket.remove(sock)
                 sock.close()
+                sock.on_close()
+                self.on_sock_closed(sock)
 
         while True:         # Accept foreign sockets
             try:
@@ -88,18 +102,22 @@ class SelectLoop(BaseThread):
                 except SelectError: # is was this socket
                     cs.close()
                     self.client_sockets.remove(cs)
+                    cs.on_close()
+                    self.on_sock_closed(cs)
                     return  # repeat the loop
 
         # dispatch on_read and on_write
-        for sock in ws:
+        for sock in ws:     # analyze sockets ready to be written
             try:
                 sock.on_write()
             except ConnectionFailedException:
                 sock.close()
                 self.client_sockets.remove(sock)
+                sock.on_close()
+                self.on_sock_closed(sock)
                 return
 
-        for sock in rs:
+        for sock in rs:     # analyze sockets ready to be read
             if sock == self.server_socket:  # accepting
                 n_sock = self.on_accept(*sock.accept())
                 if n_sock != None: # socket returned
@@ -110,6 +128,8 @@ class SelectLoop(BaseThread):
                 except ConnectionFailedException:
                     sock.close()
                     self.client_sockets.remove(sock)
+                    sock.on_close()
+                    self.on_sock_closed(sock)
                     return
 
     def run(self):
@@ -119,5 +139,7 @@ class SelectLoop(BaseThread):
         self.on_cleanup()
         for sock in self.client_sockets:    # Close surviving client sockets
             sock.close()
+            sock.on_close()
+            self.on_sock_closed(sock)
 
 
