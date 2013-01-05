@@ -55,7 +55,7 @@ class BaseSocket(object):
         return k
 
     def has_data(self, ln):
-        """Returns whether a read request of ln bytes can be satisfied right away"""
+        """Extend/override this. Returns whether a read request of ln bytes can be satisfied right away"""
         return len(self.rx) >= ln
 
     def on_close(self):
