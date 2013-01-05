@@ -37,6 +37,7 @@ class SelectLoop(BaseThread):
 
         self.external_accepts = Queue()     #: synchronization element used to accept
                                             #: sockets forcibly into the loop
+        BaseThread.__init__(self)
 
     def send_socket(self, sock):
         """Forces this loop to accept a socket as it's own client socket.
@@ -77,7 +78,7 @@ class SelectLoop(BaseThread):
 
         # Close timeouted sockets
         for sock in self.client_sockets[:]:
-            if sock.has_expired()
+            if sock.has_expired():
                 self.client_socket.remove(sock)
                 sock.close()
                 sock.on_close()

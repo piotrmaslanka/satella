@@ -68,7 +68,7 @@ class BaseSocket(object):
         Returns whether this socket wants to send data. Used by select to determine whether it should go
         into the select loop
         """
-        return len(self.rx) > 0
+        return len(self.tx) > 0
 
     def fileno(self): return self.socket.fileno()
 

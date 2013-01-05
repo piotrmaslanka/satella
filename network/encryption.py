@@ -1,4 +1,5 @@
 from ssl import SSLError
+from time import time
 
 from satella.network.exceptions import ConnectionFailedException
 from satella.network.sockets import BaseSocket

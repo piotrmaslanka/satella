@@ -1,3 +1,5 @@
+from threading import Thread
+
 class BaseThread(Thread):
     """Thread with internal termination flag"""
     def __init__(self, *args, **kwargs):
