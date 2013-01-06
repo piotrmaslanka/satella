@@ -70,7 +70,11 @@ class BaseSocket(object):
         """
         return len(self.tx) > 0
 
-    def fileno(self): return self.socket.fileno()
+    def fileno(self):
+        try:
+            return self.socket.fileno()
+        except SocketError:
+            raise ConnectionFailedException, 'fileno failed'
 
     def on_write(self):
         """Internal signal from slect that this socket can be written. THROWS L{socket.error}"""

@@ -79,7 +79,7 @@ class SelectLoop(BaseThread):
         # Close timeouted sockets
         for sock in self.client_sockets[:]:
             if sock.has_expired():
-                self.client_socket.remove(sock)
+                self.client_sockets.remove(sock)
                 sock.close()
                 sock.on_close()
                 self.on_sock_closed(sock)
@@ -96,16 +96,18 @@ class SelectLoop(BaseThread):
                                 [sock for sock in self.client_sockets if sock.wants_to_write()],
                                 (),
                                 self.select_timeout)
-        except SelectError: # some socket has died a horrible death
+        except (SelectError, ConnectionFailedException): # some socket has died a horrible death
             for cs in self.client_sockets[:]:
                 try:
-                    select(cs, (), (), 0)
-                except SelectError: # is was this socket
+                    select((cs, ), (), (), 0)
+                except (SelectError, ConnectionFailedException): # is was this socket
                     cs.close()
                     self.client_sockets.remove(cs)
                     cs.on_close()
                     self.on_sock_closed(cs)
                     return  # repeat the loop
+        except Exception as exc:
+            print repr(exc)
 
         # dispatch on_read and on_write
         for sock in ws:     # analyze sockets ready to be written
