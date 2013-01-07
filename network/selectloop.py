@@ -19,6 +19,8 @@ class SelectLoop(BaseThread):
         * select's on the sockets, closing and removing failed ones as necessary
         * dispatches on_read and on_write, accepts connections.
           if those calls throw ConnectionFailedException, they will be closed
+          if you are doing something THAT fancy that server socket accept() may fail (eg. SSL), you have
+          to throw ConnectionFailedException in your on_accept() if that happens
     - when terminated, invokes on_cleanup()
     - remaining client sockets are closed. Server socket is NOT CLOSED.
 
@@ -45,7 +47,7 @@ class SelectLoop(BaseThread):
         @type sock: L{satella.network.socket.BaseSocket} descendants"""
         self.external_accepts.put(sock)
 
-    def on_accept(self, socket, addr):
+    def on_accept(self, server_socket):
         """
         Override this.
         @param socket: raw socket object
@@ -54,7 +56,7 @@ class SelectLoop(BaseThread):
         @return: new L{satella.network.socket.BaseSocket} or None, if socket is to be forgotten
                  (it can be returned later by send_socket)
         """ 
-        return BaseSocket(socket)
+        return BaseSocket(server_socket.accept()[0])
 
     def on_startup(self):
         """Override this. Called before the loop starts iterating, in new thread-context"""
@@ -122,9 +124,13 @@ class SelectLoop(BaseThread):
 
         for sock in rs:     # analyze sockets ready to be read
             if sock == self.server_socket:  # accepting
-                n_sock = self.on_accept(*sock.accept())
-                if n_sock != None: # socket returned
-                    self.client_sockets.append(n_sock)
+                try:
+                    n_sock = self.on_accept(sock)
+                except ConnectionFailedException:
+                    pass
+                else:
+                    if n_sock != None: # socket returned
+                        self.client_sockets.append(n_sock)
             else:       # just a civilian socket
                 try:
                     sock.on_read()
