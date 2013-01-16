@@ -24,8 +24,8 @@ class SelectLoop(BaseThread):
     - when terminated, invokes on_cleanup()
     - remaining client sockets are closed. Server socket is NOT CLOSED.
 
-    When a socket is closed, or fails, it is first closed, when it's on_close() method is invoked, and 
-    in the end self.on_sock_closed() is called with the offending socket as argument.
+    When a socket is closed, or fails, it is first called as an argument o 
+    self.on_sock_closed(), and closed then via close()
 
     This class runs out of the box, if you don't overload anything, but it won't do anything of interest,
     just accept connections and receive data from sockets.
@@ -82,9 +82,8 @@ class SelectLoop(BaseThread):
         for sock in self.client_sockets[:]:
             if sock.has_expired():
                 self.client_sockets.remove(sock)
-                sock.close()
-                sock.on_close()
                 self.on_sock_closed(sock)
+                sock.close()
 
         while True:         # Accept foreign sockets
             try:
@@ -103,10 +102,9 @@ class SelectLoop(BaseThread):
                 try:
                     select((cs, ), (), (), 0)
                 except (SelectError, ConnectionFailedException): # is was this socket
-                    cs.close()
                     self.client_sockets.remove(cs)
-                    cs.on_close()
                     self.on_sock_closed(cs)
+                    cs.close()
                     return  # repeat the loop
         except Exception as exc:
             print repr(exc)
@@ -116,10 +114,9 @@ class SelectLoop(BaseThread):
             try:
                 sock.on_write()
             except ConnectionFailedException:
-                sock.close()
                 self.client_sockets.remove(sock)
-                sock.on_close()
                 self.on_sock_closed(sock)
+                sock.close()
                 return
 
         for sock in rs:     # analyze sockets ready to be read
@@ -135,10 +132,9 @@ class SelectLoop(BaseThread):
                 try:
                     sock.on_read()
                 except ConnectionFailedException:
-                    sock.close()
                     self.client_sockets.remove(sock)
-                    sock.on_close()
                     self.on_sock_closed(sock)
+                    sock.close()
                     return
 
     def run(self):
@@ -147,8 +143,7 @@ class SelectLoop(BaseThread):
             self.loop()
         self.on_cleanup()
         for sock in self.client_sockets:    # Close surviving client sockets
-            sock.close()
-            sock.on_close()
             self.on_sock_closed(sock)
+            sock.close()
 
 
