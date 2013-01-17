@@ -41,7 +41,7 @@ class Socket(FileDescriptorChannel):
             self.tx_buffer.extend(data)
             self.on_writable()  # throws UnderlyingFailure, we'll let it propagate
 
-    def read(self, count):
+    def read(self, count, less=False):
         if not self.active: raise ChannelClosed, 'cannot read - socket closed'
 
         if self.blocking:
@@ -59,11 +59,13 @@ class Socket(FileDescriptorChannel):
                     self.close()
                     raise ChannelClosed, 'gracefully closed'
 
-                k.extend(s)
+                if less:    # a single recv passed, we can return with less data
+                    return s
 
+                k.extend(s)
             return k
         else:
-            return FileDescriptorChannel.read(self, count)
+            return FileDescriptorChannel.read(self, count, less)
 
     def close(self):
         if self.blocking:
@@ -109,6 +111,7 @@ class Socket(FileDescriptorChannel):
             raise ChannelClosed, 'gracefully closed'
 
         self.rx_buffer.extend(s)
+        self.rxlen += len(s)
 
     def on_closed(self):
         """Called by the handling layer upon discarding the socket"""
@@ -116,7 +119,7 @@ class Socket(FileDescriptorChannel):
 
     def is_write_pending(self):
         """Returns whether this socket wants to send data. Useful only in non-blocking"""
-        return len(self.rx_buffer) > 0
+        return len(self.tx_buffer) > 0
 
     def fileno(self):
         return self.socket.fileno()

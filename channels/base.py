@@ -23,6 +23,7 @@ class Channel(object):
     def __init__(self):
         self.tx_buffer = bytearray()
         self.rx_buffer = bytearray()
+        self.rxlen = 0      #: amount of data waiting in Rx buffer
         self.active = True
         self.timeout = None    #: blocking by default
         self.blocking = True
@@ -50,23 +51,33 @@ class Channel(object):
         """
         self.tx_buffer.extend(data)
 
-    def read(self, count):
+    def read(self, count, less=False):
         """
         Reads given amount of data from the socket
 
         Will block if channel is blocking and data is not yet available
 
         Throws L{ChannelClosed} or L{UnderlyingFailure} on error
-        Throws L{DataNotAvailable} if channel is non-blocking and there's no data
-        yet
+        Throws L{DataNotAvailable} if channel is non-blocking and there's no data yet
 
         @param count: Amount of bytes to read
         @type count: int
+
+        @param less: Can return with less than count if such is the situation,
+            zero-length strings included
+        @type less: bool
         """
         if len(self.rx_buffer) < count:
-            raise DataNotAvailable, 'Not enough data in buffer'
+            if less:
+                k = self.rx_buffer
+                self.rx_buffer = bytearray()
+                self.rxlen = 0
+                return k
+            else:
+                raise DataNotAvailable, 'Not enough data in buffer'
         k = self.rx_buffer[:count]
         del self.rx_buffer[:count]
+        self.rxlen -= count
         return k
 
 

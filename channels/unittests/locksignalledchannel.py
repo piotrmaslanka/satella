@@ -17,6 +17,11 @@ class LockSignalledChannelTest(unittest.TestCase):
         lsc._on_foreign_data('test')
         self.assertEquals(lsc.read(4), 'test')
 
+    def test_nonblocking_localdata_lessread(self):
+        lsc = LockSignalledChannel()
+        lsc._on_data('test')
+        self.assertEquals(lsc.read(100, less=True), 'test')
+
     def test_nonblocking_localdata_read(self):
         lsc = LockSignalledChannel()
         lsc._on_data('test')
@@ -39,6 +44,22 @@ class LockSignalledChannelTest(unittest.TestCase):
         TBI(lsc).start()
         self.assertEquals(lsc.read(4), 'test')
 
+    def test_blocking_infinite_foreigndata_lessread(self):
+        class TBI(Thread):
+            def __init__(self, lsc):
+                Thread.__init__(self)
+                self.lsc = lsc
+
+            def run(self):
+                sleep(0.5)
+                self.lsc._on_foreign_data('test')
+
+        lsc = LockSignalledChannel()
+        lsc.blocking = True
+        lsc.timeout = None
+        TBI(lsc).start()
+        self.assertEquals(lsc.read(100, less=True), 'test')
+
     def test_blocking_finite_foreigndata(self):
         class TBI(Thread):
             def __init__(self, lsc):
@@ -54,6 +75,22 @@ class LockSignalledChannelTest(unittest.TestCase):
         lsc.timeout = 1
         TBI(lsc).start()
         self.assertEquals(lsc.read(4), 'test')
+
+    def test_blocking_finite_foreigndata_lessread(self):
+        class TBI(Thread):
+            def __init__(self, lsc):
+                Thread.__init__(self)
+                self.lsc = lsc
+
+            def run(self):
+                sleep(0.5)
+                self.lsc._on_foreign_data('test')
+
+        lsc = LockSignalledChannel()
+        lsc.blocking = True
+        lsc.timeout = 1
+        TBI(lsc).start()
+        self.assertEquals(lsc.read(100, less=True), 'test')        
 
     def test_blocking_finite_null_read(self):
         lsc = LockSignalledChannel()

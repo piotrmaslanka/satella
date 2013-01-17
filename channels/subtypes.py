@@ -43,7 +43,7 @@ class LockSignalledChannel(Channel):
         self.lock = Lock()
 
 
-    def read(self, count):
+    def read(self, count, less=False):
         """
         Attempts to recover count bytes from the channel.
 
@@ -67,11 +67,14 @@ class LockSignalledChannel(Channel):
                         try:
                             msg = self.events.get(True, self.timeout)
                         except Queue.Empty:
-                            raise DataNotAvailable, 'no activity on channel for timeout'
+                            if less:
+                                return Channel.read(self, count, less)
+                            else:
+                                raise DataNotAvailable, 'no activity on channel for timeout'
 
                         if isinstance(msg, self.LSMReadable):
                             self.rx_buffer.extend(msg.data)
-                            return Channel.read(self, count)    # throws DataNotAvailable, we'll let it propagate
+                            return Channel.read(self, count, less)  # throws DataNotAvailable, we'll let it propagate
                         elif isinstance(msg, self.LSMFailed):
                             self.active = False
                             raise ChannelFailure, 'channel failed'
@@ -87,7 +90,7 @@ class LockSignalledChannel(Channel):
                             if isinstance(msg, self.LSMReadable):
                                 self.rx_buffer.extend(msg.data)
                                 try:
-                                    return Channel.read(self, count)
+                                    return Channel.read(self, count, less)
                                 except DataNotAvailable:
                                     continue    # no data? no problem, wait for more
                             elif isinstance(msg, self.LSMFailed):
@@ -110,7 +113,7 @@ class LockSignalledChannel(Channel):
                     elif isinstance(msg, self.LSMNothing):
                         pass    # do nothing
 
-                return Channel.read(self, count)    # throws DataNotAvailable, let it propagate
+                return Channel.read(self, count, less)    # throws DataNotAvailable, let it propagate
 
 
     def is_write_pending(self):
