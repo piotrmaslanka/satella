@@ -28,14 +28,14 @@ class Channel(object):
         self.timeout = None    #: blocking by default
         self.blocking = True
 
-    def settimeout(self, blocking):
+    def settimeout(self, timeout):
         """
         Sets channel's timeout.
         This may not always succeed, L{InvalidOperation} will
         be thrown if it can't
 
-        @param blocking: Seconds of blocking, 0 for nonblocking, None for infinity blocking
-        @type blocking: int or None
+        @param timeout: Seconds of blocking, 0 for nonblocking, None for infinity blocking
+        @type timeout: int or None
         """
         self.timeout = timeout
         self.blocking = (timeout > 0) or (timeout == None)

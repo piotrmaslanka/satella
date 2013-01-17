@@ -1,11 +1,52 @@
 from satella.channels import LockSignalledChannel, DataNotAvailable, ChannelFailure, ChannelClosed
-from satella.channels.sockets import Socket, ServerSocket
+from satella.channels.sockets import Socket, ServerSocket, SelectHandlingLayer
 
 from socket import AF_INET, SOCK_STREAM, socket
 from threading import Thread
 from time import sleep
 
 import unittest
+
+class SelectHandlingLayerTest(unittest.TestCase):
+    def test_3_clients(self):
+        class ConnectorThread(Thread):
+            def run(self):
+                sleep(0.2)
+                sck = socket(AF_INET, SOCK_STREAM)
+                sck.connect(('127.0.0.1', 50000))
+                sck = Socket(sck)
+                sck.write('Hello World')
+                k = sck.read(1)
+                sck.close()
+
+        class MySelectHandlingLayer(SelectHandlingLayer):
+            def __init__(self, utc):
+                SelectHandlingLayer.__init__(self)
+                self.packets_to_go = 3
+                self.utc = utc
+
+            def on_readable(self, channel):
+                if isinstance(channel, ServerSocket):
+                    self.register_channel(channel.read())
+                else:
+                    if channel.rxlen < 11: return
+                    self.utc.assertEquals(channel.read(11), 'Hello World')
+                    self.packets_to_go -= 1
+                    channel.write('1')
+        
+        shl = MySelectHandlingLayer(self)
+
+        sck = socket(AF_INET, SOCK_STREAM)
+        sck.bind(('127.0.0.1', 50000))
+        sck.listen(10)
+
+        shl.register_channel(ServerSocket(sck))
+
+        for x in xrange(0, 3): ConnectorThread().start()
+
+        while shl.packets_to_go != 0:
+            shl.select()
+
 
 class SocketsTest(unittest.TestCase):
     """Tests for socket class"""

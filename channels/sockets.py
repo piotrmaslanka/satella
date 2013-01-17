@@ -242,7 +242,7 @@ class SelectHandlingLayer(HandlingLayer):
             try:
                 writable.on_writable()
             except ChannelFailure:
-                self.__close_channel(channel)
+                self.__close_channel(writable)
                 return
             self.on_writable(writable)
 
@@ -250,8 +250,8 @@ class SelectHandlingLayer(HandlingLayer):
         for readable in rs:
             try:
                 readable.on_readable()
-            except ChannelFailure:
-                self.__close_channel(channel)
+            except (ChannelFailure, ChannelClosed):
+                self.__close_channel(readable)
                 return
-            self.on_readable(channel)
+            self.on_readable(readable)
 
