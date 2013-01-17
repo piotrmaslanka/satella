@@ -23,12 +23,16 @@ class SelectHandlingLayerTest(unittest.TestCase):
             def __init__(self, utc):
                 SelectHandlingLayer.__init__(self)
                 self.packets_to_go = 3
+                self.sockets_to_close = 3
                 self.utc = utc
                 self.can_iterate = False
 
             def on_iteration(self):
                 # so that on_iteration also gets tested
                 self.can_iterate = True
+
+            def on_closed(self, channel):
+                self.sockets_to_close -= 1
 
             def on_readable(self, channel):
                 self.utc.assertEquals(self.can_iterate, True)
@@ -41,6 +45,8 @@ class SelectHandlingLayerTest(unittest.TestCase):
                     self.utc.assertEquals(channel.read(11), 'Hello World')
                     self.packets_to_go -= 1
                     channel.write('1')
+
+
         
         shl = MySelectHandlingLayer(self)
 
@@ -52,7 +58,7 @@ class SelectHandlingLayerTest(unittest.TestCase):
 
         for x in xrange(0, 3): ConnectorThread().start()
 
-        while shl.packets_to_go != 0:
+        while (shl.packets_to_go != 0) or (shl.sockets_to_close != 0):
             shl.select()
 
 
