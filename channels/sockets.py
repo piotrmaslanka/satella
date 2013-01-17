@@ -221,6 +221,8 @@ class SelectHandlingLayer(HandlingLayer):
         self.on_closed(channel)
 
     def select(self, timeout=5):
+        self.on_iteration()
+
         writables = [x for x in self.channels if x.is_write_pending()]
         try:
             rs, ws, xs = select.select(self.channels, writables, (), timeout)

@@ -24,8 +24,16 @@ class SelectHandlingLayerTest(unittest.TestCase):
                 SelectHandlingLayer.__init__(self)
                 self.packets_to_go = 3
                 self.utc = utc
+                self.can_iterate = False
+
+            def on_iteration(self):
+                # so that on_iteration also gets tested
+                self.can_iterate = True
 
             def on_readable(self, channel):
+                self.utc.assertEquals(self.can_iterate, True)
+                self.can_iterate = False
+
                 if isinstance(channel, ServerSocket):
                     self.register_channel(channel.read())
                 else:

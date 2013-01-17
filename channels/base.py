@@ -98,6 +98,10 @@ class HandlingLayer(object):
 
 
     # ---------- overload these methods for your own handling layer
+
+    def on_iteration(self):
+        """Called just before performing the select() call"""
+
     def on_readable(self, channel):
         """Invoked during select() if it has been determined that channel
         is readable
