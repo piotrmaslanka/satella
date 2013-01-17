@@ -23,7 +23,7 @@ class Channel(object):
     def __init__(self):
         self.tx_buffer = bytearray()
         self.rx_buffer = bytearray()
-        self.opened = True
+        self.active = True
         self.timeout = None    #: blocking by default
         self.blocking = True
 
