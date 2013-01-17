@@ -1,7 +1,7 @@
 from threading import Thread
 from time import sleep
 
-from satella.channels import LockSignalledChannel, DataNotAvailable
+from satella.channels import LockSignalledChannel, DataNotAvailable, ChannelFailure
 
 import unittest
 
@@ -60,3 +60,34 @@ class LockSignalledChannelTest(unittest.TestCase):
         lsc.timeout = 1
         self.assertRaises(DataNotAvailable, lsc.read, 10)
 
+    def test_blocking_infinite_fail(self):
+        class TBI(Thread):
+            def __init__(self, lsc):
+                Thread.__init__(self)
+                self.lsc = lsc
+
+            def run(self):
+                sleep(0.1)
+                self.lsc.events.put(self.lsc.LSMFailed(self.lsc))
+
+        lsc = LockSignalledChannel()
+        lsc.blocking = True
+        lsc.timeout = None
+        TBI(lsc).start()
+        self.assertRaises(ChannelFailure, lsc.read, 4)
+
+    def test_blocking_finite_fail(self):
+        class TBI(Thread):
+            def __init__(self, lsc):
+                Thread.__init__(self)
+                self.lsc = lsc
+
+            def run(self):
+                sleep(0.1)
+                self.lsc.events.put(self.lsc.LSMFailed(self.lsc))
+
+        lsc = LockSignalledChannel()
+        lsc.blocking = True
+        lsc.timeout = 1
+        TBI(lsc).start()
+        self.assertRaises(ChannelFailure, lsc.read, 4)        
