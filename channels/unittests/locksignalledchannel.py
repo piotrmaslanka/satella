@@ -6,6 +6,7 @@ from satella.channels import LockSignalledChannel, DataNotAvailable, ChannelFail
 import unittest
 
 class LockSignalledChannelTest(unittest.TestCase):
+    """Tests for lock-signalled channels without the use of a handling layer"""
 
     def test_nonblocking_null_read(self):
         lsc = LockSignalledChannel()

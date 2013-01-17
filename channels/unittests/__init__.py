@@ -1,0 +1,2 @@
+from satella.channels.unittests.locksignalledchannel import LockSignalledChannelTest
+from satella.channels.unittests.sockets import SocketsTest

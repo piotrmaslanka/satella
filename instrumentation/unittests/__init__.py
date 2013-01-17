@@ -1,1 +1,1 @@
-import integervaluecounter
+from integervaluecounter import IntegerValueCounterTest

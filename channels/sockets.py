@@ -1,7 +1,7 @@
 from satella.channels.subtypes import FileDescriptorChannel
-from satella.channels.exception import UnderlyingFailure, ChannelClosed, InvalidOperation, \
-                                       TransientFailure, ChannelFailure
-from satella.channels.base import HandlingLayer                                    
+from satella.channels.exceptions import UnderlyingFailure, ChannelClosed, InvalidOperation, \
+                                        TransientFailure, ChannelFailure
+from satella.channels.base import HandlingLayer
 import socket
 import select
 
@@ -11,11 +11,12 @@ class Socket(FileDescriptorChannel):
     """
 
     def __init__(self, socket):
-        Channel.__init__(self)
+        FileDescriptorChannel.__init__(self)
         self.socket = socket
-        self.blocking = True
         self.active = True
-        self.socket.settimeout(0)
+        self.blocking = True
+        self.timeout = None
+        self.socket.settimeout(None)
 
     def write(self, data):
         if not self.active: raise ChannelClosed, 'cannot write - socket closed'
@@ -26,6 +27,7 @@ class Socket(FileDescriptorChannel):
             except socket.timeout:
                 raise TransientFailure, 'timeout on send'
             except socket.error:
+                self.active = False
                 raise UnderlyingFailure, 'send failed'
         else:
             self.tx_buffer.extend(data)
@@ -38,14 +40,22 @@ class Socket(FileDescriptorChannel):
             k = bytearray()
             while len(k) < count:
                 try:
-                    k.extend(self.socket.recv(count-len(k)))
+                    s = self.socket.recv(count-len(k))
                 except socket.error:
+                    self.active = False
                     raise UnderlyingFailure, 'socket recv failed'
                 except socket.timeout:
                     raise DataNotAvailable, 'timeout on recv'
+
+                if len(s) == 0:
+                    self.active = False
+                    raise ChannelClosed, 'gracefully closed'
+
+                self.rx_buffer.extend(s)
+
             return k
         else:
-            return Channel.read(self, count)
+            return FileDescriptorChannel.read(self, count)
 
     def close(self):
         if not self.active: raise ChannelClosed, 'cannot close - socket closed'
@@ -71,6 +81,7 @@ class Socket(FileDescriptorChannel):
         try:
             ki = self.socket.send(self.tx_buffer)
         except socket.error:
+            self.active = False
             raise UnderlyingFailure, 'send() failed'
 
         del self.tx_buffer[ki:]
@@ -79,9 +90,16 @@ class Socket(FileDescriptorChannel):
         """Called by the handling layer upon detecting that this socket is readable.
         Cannot be called if socket is blocking"""
         try:
-            self.rx_buffer.extend(self.socket.recv(1024))
+            s = self.socket.recv(1024)
         except socket.error:
+            self.active = False
             raise UnderlyingFailure, 'recv() failed'
+
+        if len(s) == 0:
+            self.active = False
+            raise ChannelClosed, 'gracefully closed'
+
+        self.rx_buffer.extend(s)
 
     def on_closed(self):
         """Called by the handling layer upon discarding the socket"""
@@ -100,7 +118,7 @@ class ServerSocket(FileDescriptorChannel):
     """
 
     def __init__(self, socket):
-        Channel.__init__(self)
+        FileDescriptorChannel.__init__(self)
         self.socket = socket
         self.blocking = True
         self.active = True
@@ -118,15 +136,18 @@ class ServerSocket(FileDescriptorChannel):
         except socket.timeout:
             raise DataNotAvailable, 'no socket to accept'
         except socket.error:
+            self.active = False
             raise UnderlyingFailure, 'accept() failed'
 
     def close(self):
         if not self.active: raise ChannelClosed, 'cannot close - socket closed'
 
+        self.active = False
+
         if self.blocking:
             self.socket.close()
         else:
-            self.active = False
+            pass
             # socket will be physically closed upon discard from handling layer
             
     def settimeout(self, timeout):
