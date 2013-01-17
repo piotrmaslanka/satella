@@ -63,10 +63,10 @@ class Channel(object):
         @param count: Amount of bytes to read
         @type count: int
         """
-        if len(self.tx_buffer) < count:
+        if len(self.rx_buffer) < count:
             raise DataNotAvailable, 'Not enough data in buffer'
-        k = self.tx_buffer[:count]
-        del self.tx_buffer[:count]
+        k = self.rx_buffer[:count]
+        del self.rx_buffer[:count]
         return k
 
 

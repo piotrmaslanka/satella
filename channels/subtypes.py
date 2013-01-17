@@ -1,5 +1,7 @@
 from satella.channels.base import Channel
-from satella.channels.exceptions import InvalidOperation, ChannelFailure, TransientFailure, ChannelClosed
+from satella.channels.exceptions import InvalidOperation, ChannelFailure, \
+                                        TransientFailure, ChannelClosed, \
+                                        DataNotAvailable
 import Queue
 from threading import Lock
 
@@ -36,7 +38,7 @@ class LockSignalledChannel(Channel):
 
         self.blocking = False
         self.timeout = 0
-        self.events = Queue()
+        self.events = Queue.Queue()
 
         self.lock = Lock()
 
@@ -67,13 +69,13 @@ class LockSignalledChannel(Channel):
                         except Queue.Empty:
                             raise DataNotAvailable, 'no activity on channel for timeout'
 
-                        if isinstance(msg, LSMReadable):
+                        if isinstance(msg, self.LSMReadable):
                             self.rx_buffer.extend(msg.data)
                             return Channel.read(self, count)    # throws DataNotAvailable, we'll let it propagate
-                        elif isinstance(msg, LSMFailed):
+                        elif isinstance(msg, self.LSMFailed):
                             self.active = False
                             raise ChannelFailure, 'channel failed'
-                        elif isinstance(msg, LSMNothing):
+                        elif isinstance(msg, self.LSMNothing):
                             return DataNotAvailable, 'data not yet available'
                     else:       # we may hang for eternity
                         while True:
@@ -82,18 +84,32 @@ class LockSignalledChannel(Channel):
                             except Queue.Empty:
                                 continue    # we may hang as long as we like
 
-                            if isinstance(msg, LSMReadable):
+                            if isinstance(msg, self.LSMReadable):
                                 self.rx_buffer.extend(msg.data)
                                 try:
                                     return Channel.read(self, count)
                                 except DataNotAvailable:
                                     continue    # no data? no problem, wait for more
-                            elif isinstance(msg, LSMFailed):
+                            elif isinstance(msg, self.LSMFailed):
                                 self.active = False
                                 raise ChannelFailure, 'channel failed'
-                            elif isinstance(msg, LSMNothing):
+                            elif isinstance(msg, self.LSMNothing):
                                 pass    # do nothing
             else:
+                while True:
+                    try:
+                        msg = self.events.get(False)
+                    except Queue.Empty:
+                        break
+
+                    if isinstance(msg, self.LSMReadable):
+                        self.rx_buffer.extend(msg.data)
+                    elif isinstance(msg, self.LSMFailed):
+                        self.active = False
+                        raise ChannelFailure, 'channel failed'
+                    elif isinstance(msg, self.LSMNothing):
+                        pass    # do nothing
+
                 return Channel.read(self, count)    # throws DataNotAvailable, let it propagate
 
 
@@ -112,14 +128,21 @@ class LockSignalledChannel(Channel):
             raise InvalidOperation, 'its nonblocking and you cant directly change that'
 
     # ----------------------------------------- called by handling layer
-    def on_data(self, data):
-        """data has arrived and should be put on this channel"""
+    def _on_foreign_data(self, data):
+        """data has arrived from a thread that is not the handling layer.
+        data and should be put on this channel"""
         if self.handlinglayer == None:
             # this is an unregistered channel
             self.events.put(self.LSMReadable(self, data))
         else:
             # registered channel, handling layer must be informed 
             self.handlinglayer.events.put(self.LSMReadable(self, data))
+
+    def _on_data(self, data):
+        """data has arrived - this is called by handling layer, the same thread that 
+        works this channel"""
+        with self.lock:
+            self.rx_buffer.extend(data)
 
     def _on_register(self, handlinglayer):
         """Channel is registered in a handling layer"""

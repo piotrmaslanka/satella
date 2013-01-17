@@ -15,7 +15,7 @@ class ChannelFailure(ChannelException, FatalException):
     """The channel has failed, operation cannot be completed.
     Channel should be subject to teardown now"""
 
-class UnderlyingFailure(UnderlyingFailure, FatalException):
+class UnderlyingFailure(ChannelFailure, FatalException):
     """Cannot perform this op - underlying implementation call failed"""
 
 class DataNotAvailable(ChannelException, NonfatalException):
