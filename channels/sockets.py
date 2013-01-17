@@ -7,7 +7,15 @@ import select
 
 class Socket(FileDescriptorChannel):
     """
-    A channel implementation of a network socket
+    A channel implementation of a network socket.
+
+    If the socket is blocking, it is assumed that it is processed in a threading manner. Therefore
+    fails during reads or writes will result in closing the socket.
+
+    If the socket is nonblocking, it is assumed that it is handled via a handling layer. Therefore
+    fails during reads or writes will result in marking the socket as not active (self.active=False)
+    but it will be handling layer who will call on_closed(), which ultimately results in closing
+    the socket.
     """
 
     def __init__(self, socket):
@@ -27,7 +35,7 @@ class Socket(FileDescriptorChannel):
             except socket.timeout:
                 raise TransientFailure, 'timeout on send'
             except socket.error:
-                self.active = False
+                self.close()
                 raise UnderlyingFailure, 'send failed'
         else:
             self.tx_buffer.extend(data)
@@ -42,13 +50,13 @@ class Socket(FileDescriptorChannel):
                 try:
                     s = self.socket.recv(count-len(k))
                 except socket.error:
-                    self.active = False
+                    self.close()
                     raise UnderlyingFailure, 'socket recv failed'
                 except socket.timeout:
                     raise DataNotAvailable, 'timeout on recv'
 
                 if len(s) == 0:
-                    self.active = False
+                    self.close()
                     raise ChannelClosed, 'gracefully closed'
 
                 k.extend(s)
@@ -58,14 +66,15 @@ class Socket(FileDescriptorChannel):
             return FileDescriptorChannel.read(self, count)
 
     def close(self):
-        if not self.active: raise ChannelClosed, 'cannot close - socket closed'
-
         if self.blocking:
-            self.socket.close()
+            if self.active != False:
+                self.socket.close()
         else:
-            self.active = False
+            pass
             # socket will be physically closed upon discard from handling layer,
             # and on_closed() will be called
+
+        self.active = False
 
     def settimeout(self, timeout):
         self.socket.settimeout(timeout)
@@ -81,7 +90,7 @@ class Socket(FileDescriptorChannel):
         try:
             ki = self.socket.send(self.tx_buffer)
         except socket.error:
-            self.active = False
+            self.close()
             raise UnderlyingFailure, 'send() failed'
 
         del self.tx_buffer[ki:]
@@ -92,11 +101,11 @@ class Socket(FileDescriptorChannel):
         try:
             s = self.socket.recv(1024)
         except socket.error:
-            self.active = False
+            self.close()
             raise UnderlyingFailure, 'recv() failed'
 
         if len(s) == 0:
-            self.active = False
+            self.close()
             raise ChannelClosed, 'gracefully closed'
 
         self.rx_buffer.extend(s)
@@ -122,33 +131,37 @@ class ServerSocket(FileDescriptorChannel):
         self.socket = socket
         self.blocking = True
         self.active = True
-        self.socket.settimeout(0)
+        self.socket.settimeout(None)
 
     def write(self, data):
         raise InvalidOperation, 'server socket does not support that'
 
-    def read(self, count):
+    def read(self):
         """@return: usually tuple (socket, remote peer address)"""
         if not self.active: raise ChannelClosed, 'cannot read - socket closed'
 
         try:
             return self.socket.accept()
-        except socket.timeout:
+        except socket.timeout:            
             raise DataNotAvailable, 'no socket to accept'
         except socket.error:
-            self.active = False
+            self.close()
             raise UnderlyingFailure, 'accept() failed'
 
     def close(self):
-        if not self.active: raise ChannelClosed, 'cannot close - socket closed'
-
-        self.active = False
-
+        """close itself can be called multiple times. calling this on a closed channel is
+        a no-op"""
+        # it could raise an exception, but we would usually process this in a try.. finally
+        # therefore close() shouldn't really throw anything
+        #if not self.active: raise ChannelClosed, 'cannot close - socket closed'
         if self.blocking:
-            self.socket.close()
+            if self.active != False:
+                self.socket.close()
         else:
             pass
-            # socket will be physically closed upon discard from handling layer
+            # socket will be physically closed upon discard from handling layer.
+
+        self.active = False
             
     def settimeout(self, timeout):
         self.socket.settimeout(timeout)
