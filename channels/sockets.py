@@ -51,7 +51,7 @@ class Socket(FileDescriptorChannel):
                     self.active = False
                     raise ChannelClosed, 'gracefully closed'
 
-                self.rx_buffer.extend(s)
+                k.extend(s)
 
             return k
         else:

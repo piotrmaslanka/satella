@@ -14,5 +14,6 @@ class SocketsTest(unittest.TestCase):
 
         sck.write('GET / HTTP/1.0\r\n\r\n')
 
+        self.assertEquals(sck.read(4), 'HTTP')
         self.assertRaises(ChannelClosed, sck.read, 10000)    # I expect HTTP 302: Moved Temporarily
         self.assertRaises(ChannelClosed, sck.close)     # previous call closed the channel
