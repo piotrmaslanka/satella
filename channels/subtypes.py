@@ -138,6 +138,14 @@ class LockSignalledChannel(Channel):
             # registered channel, handling layer must be informed 
             self.handlinglayer.events.put(self.LSMReadable(self, data))
 
+    def _on_foreign_fail(self):
+        if self.handlinglayer == None:
+            # this is an unregistered channel
+            self.events.put(self.LSMFailed(self))
+        else:
+            # registered channel, handling layer must be informed 
+            self.handlinglayer.events.put(self.LSMFailed(self))
+
     def _on_data(self, data):
         """data has arrived - this is called by handling layer, the same thread that 
         works this channel"""

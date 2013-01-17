@@ -68,7 +68,7 @@ class LockSignalledChannelTest(unittest.TestCase):
 
             def run(self):
                 sleep(0.1)
-                self.lsc.events.put(self.lsc.LSMFailed(self.lsc))
+                self.lsc._on_foreign_fail()
 
         lsc = LockSignalledChannel()
         lsc.blocking = True
@@ -84,7 +84,7 @@ class LockSignalledChannelTest(unittest.TestCase):
 
             def run(self):
                 sleep(0.1)
-                self.lsc.events.put(self.lsc.LSMFailed(self.lsc))
+                self.lsc._on_foreign_fail()
 
         lsc = LockSignalledChannel()
         lsc.blocking = True
