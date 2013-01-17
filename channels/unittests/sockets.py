@@ -41,7 +41,7 @@ class SocketsTest(unittest.TestCase):
         cs = ClientSocketThread()
         cs.start()
 
-        csk = Socket(sck.read()[0])
+        csk = sck.read()
         self.assertEquals(csk.read(11), 'Hello World')
         csk.write('Yes')
         csk.close()

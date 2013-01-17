@@ -137,11 +137,11 @@ class ServerSocket(FileDescriptorChannel):
         raise InvalidOperation, 'server socket does not support that'
 
     def read(self):
-        """@return: usually tuple (socket, remote peer address)"""
+        """@return: a new client L{Socket}"""
         if not self.active: raise ChannelClosed, 'cannot read - socket closed'
 
         try:
-            return self.socket.accept()
+            return Socket(self.socket.accept()[0])
         except socket.timeout:            
             raise DataNotAvailable, 'no socket to accept'
         except socket.error:
