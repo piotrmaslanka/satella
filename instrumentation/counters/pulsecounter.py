@@ -14,7 +14,7 @@ class PulseCounter(InstrumentationCounter):
         @type resolution: int or float
         """
         InstrumentationCounter.__init__(self, name)
-        self.resolution = 1
+        self.resolution = resolution
         self.pulses = []
 
     def update(self):
@@ -27,7 +27,7 @@ class PulseCounter(InstrumentationCounter):
         stime = time()
 
         for t in reversed(self.pulses):
-            if (stime - t) < resolution:
+            if (stime - t) < self.resolution:
                 pulses += 1
             else:
                 break

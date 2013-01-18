@@ -13,3 +13,5 @@ class IntegerValueCounterTest(unittest.TestCase):
     def test_current_value(self):
         self.ivc.update(10)
         self.assertEqual(self.ivc.get_current(), 10)
+        self.ivc.update(20)
+        self.assertEqual(self.ivc.get_current(), 20)

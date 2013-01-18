@@ -214,7 +214,6 @@ class SelectHandlingLayer(HandlingLayer):
         except ValueError:
             raise ValueError, 'channel not found'
 
-
     def __close_channel(self, channel):
         self.channels.remove(channel)
         channel.on_closed()
