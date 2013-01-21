@@ -1,7 +1,6 @@
 class ChannelException(Exception):
     """Base class for channel exceptions"""
 
-
 class FatalException(Exception):
     """Error is non-recoverable"""
 

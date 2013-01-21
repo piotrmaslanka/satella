@@ -1,4 +1,4 @@
-from threading import Thread
+from threading import Thread, Lock
 
 class BaseThread(Thread):
     """Thread with internal termination flag"""
@@ -9,3 +9,14 @@ class BaseThread(Thread):
     def terminate(self):
         """Sets internal termination flag"""
         self._terminating = True
+
+
+class Monitor(object):
+    def __init__(self):
+        self.lock = Lock()
+
+def monitor(fun):
+    def monitored(*args, **kwargs):
+        with args[0].lock:
+            return fun(*args, **kwargs)
+    return monitored

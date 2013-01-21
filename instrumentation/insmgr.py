@@ -1,5 +1,9 @@
+from time import time
+from threading import Lock
+
 from satella.instrumentation.basecounter import InstrumentationCounter
-from satella.instrumentation.exceptions import CounterExists
+from satella.instrumentation.exceptions import CounterExists, NoData
+from satella.instrumentation.snapshots import CountersSnapshot
 
 class InstrumentationManager(object):
     """
@@ -26,4 +30,20 @@ class InstrumentationManager(object):
             raise CounterExists, 'Counter already exists'
 
         self.counters[counter.name] = counter
-        counter._on_added()
+        counter._on_added(self)
+
+    def get_snapshot(self):
+        """Snapshots current counter state.
+
+        @return: L{satella.instrumentation.snapshots.CountersSnapshot}
+        """
+        cdata = {}
+
+        for name, counter in self.counters.iteritems():
+            try:
+                cdata[name] = counter.get_current()
+            except NoData:
+                cdata[name] = NoData
+
+
+        return CountersSnapshot(cdata, time(), self)
