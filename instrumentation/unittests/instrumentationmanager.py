@@ -6,12 +6,14 @@ import unittest
 
 class InstrumentationManagerTest(unittest.TestCase):
 
-    def test_counter_exists(self):
+    def test_add_remove_counter(self):
         insmgr = InstrumentationManager('test_namespace')
         ctr = IntegerValueCounter('a_counter')
 
         insmgr.add_counter(ctr)
         self.assertRaises(CounterExists, insmgr.add_counter, ctr)
+        insmgr.remove_counter(ctr)
+        self.assertRaises(CounterNotExists, insmgr.remove_counter, ctr)
 
     def test_snapshot(self):
         insmgr = InstrumentationManager('test_namespace')

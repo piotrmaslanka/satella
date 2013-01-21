@@ -31,7 +31,7 @@ class InstrumentationCounter(object):
         """
         pass
 
-    def _on_remove(self):
+    def _on_removed(self):
         """Called when this counter is removed from an InstrumentationManager"""
         pass
 

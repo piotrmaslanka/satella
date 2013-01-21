@@ -2,7 +2,8 @@ from time import time
 from threading import Lock
 
 from satella.instrumentation.basecounter import InstrumentationCounter
-from satella.instrumentation.exceptions import CounterExists, NoData
+from satella.instrumentation.exceptions import CounterExists, NoData, \
+                                               CounterNotExists
 from satella.instrumentation.snapshots import CountersSnapshot
 from satella.threads import Monitor
 
@@ -35,6 +36,18 @@ class InstrumentationManager(Monitor):
 
         self.counters[counter.name] = counter
         counter._on_added(self)
+
+    @Monitor.protect
+    def remove_counter(self, counter):
+        """
+        @param counter: Counter to be removed from this manager. Must exist
+            in this manager
+        @type counter: descendant of L{InstrumentationCounter}
+        """
+        if counter.name not in self.counters:
+            raise CounterNotExists
+        del self.counters[counter.name]
+        counter._on_removed()
 
     @Monitor.protect
     def get_snapshot(self):
