@@ -1,3 +1,4 @@
 from integervaluecounter import IntegerValueCounterTest
 from pulsecounter import PulseCounterTest
 from instrumentationmanager import InstrumentationManagerTest
+from deltacounter import DeltaCounterTest
