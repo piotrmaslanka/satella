@@ -28,9 +28,10 @@ class LockSignalledChannel(Channel):
         def __init__(self, lsc):
             self.lsc = lsc
 
-    class LSMNothing(object):
-        """Nothing has happened.
-        REFACTOR THIS"""
+    class LSMClosed(object):
+        """This channel has been closed"""
+        def __init__(self, lsc):
+            self.lsc = lsc
 
     def __init__(self):
         Channel.__init__(self)
@@ -78,14 +79,12 @@ class LockSignalledChannel(Channel):
                         elif isinstance(msg, self.LSMFailed):
                             self.active = False
                             raise ChannelFailure, 'channel failed'
-                        elif isinstance(msg, self.LSMNothing):
-                            return DataNotAvailable, 'data not yet available'
+                        elif isinstance(msg, self.LSMClosed):
+                            self.active = False
+                            raise ChannelClosed, 'channel closed'
                     else:       # we may hang for eternity
                         while True:
-                            try:
-                                msg = self.events.get(True)
-                            except Queue.Empty:
-                                continue    # we may hang as long as we like
+                            msg = self.events.get(True) # block until data is available
 
                             if isinstance(msg, self.LSMReadable):
                                 self.rx_buffer.extend(msg.data)
@@ -96,8 +95,9 @@ class LockSignalledChannel(Channel):
                             elif isinstance(msg, self.LSMFailed):
                                 self.active = False
                                 raise ChannelFailure, 'channel failed'
-                            elif isinstance(msg, self.LSMNothing):
-                                pass    # do nothing
+                            elif isinstance(msg, self.LSMClosed):
+                                self.active = False
+                                raise ChannelClosed, 'channel closed'
             else:
                 while True:
                     try:
@@ -110,8 +110,9 @@ class LockSignalledChannel(Channel):
                     elif isinstance(msg, self.LSMFailed):
                         self.active = False
                         raise ChannelFailure, 'channel failed'
-                    elif isinstance(msg, self.LSMNothing):
-                        pass    # do nothing
+                    elif isinstance(msg, self.LSMClosed):
+                        self.active = False
+                        raise ChannelClosed, 'channel closed'
 
                 return Channel.read(self, count, less)    # throws DataNotAvailable, let it propagate
 
@@ -131,7 +132,7 @@ class LockSignalledChannel(Channel):
             raise InvalidOperation, 'its nonblocking and you cant directly change that'
 
     # ----------------------------------------- called by handling layer
-    def _on_foreign_data(self, data):
+    def _on_async_data(self, data):
         """data has arrived from a thread that is not the handling layer.
         data and should be put on this channel"""
         if self.handlinglayer == None:
@@ -141,7 +142,14 @@ class LockSignalledChannel(Channel):
             # registered channel, handling layer must be informed 
             self.handlinglayer.events.put(self.LSMReadable(self, data))
 
-    def _on_foreign_fail(self):
+    def _on_async_close(self):
+        if self.handlinglayer == None:
+            # this is an unregistered channel
+            self.events.put(self.LSMClosed(self))
+        else:
+            self.handlinglayer.events.put(self.LSMClosed(self))
+
+    def _on_async_fail(self):
         if self.handlinglayer == None:
             # this is an unregistered channel
             self.events.put(self.LSMFailed(self))
