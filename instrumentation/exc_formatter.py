@@ -18,17 +18,26 @@ def format_exception():
         f = f.f_back
 
     sbuilder.append(traceback.format_exc())
-    sbuilder.append("Locals by frame, innermost first")
 
     for frame in stack:
-        sbuilder.append('\nFrame %s at %s:%s' % (frame.f_code.co_name,
+        sbuilder.append('** Frame %s at %s:%s' % (frame.f_code.co_name,
                                                  frame.f_code.co_filename,
                                                  frame.f_lineno))
+        sbuilder.append('*** Locals: ')
         for key, value in frame.f_locals.items():
             try:
-                f = "%s: %s" % (key, repr(value))
+                f = "**** %s: %s" % (key, repr(value))
             except:
-                f = "%s: *repr failed*" % key
+                f = "**** %s: *repr failed*" % key
+
+            sbuilder.append(f)
+
+        sbuilder.append('*** Globals: ')
+        for key, value in frame.f_globals.items():
+            try:
+                f = "**** %s: %s" % (key, repr(value))
+            except:
+                f = "**** %s: *repr failed*" % key
 
             sbuilder.append(f)
 
