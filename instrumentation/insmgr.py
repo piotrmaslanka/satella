@@ -10,13 +10,14 @@ class InstrumentationManager(Monitor):
     """
     Class used to manage instrumentation counters.
 
-    There can exist many L{RootInstrumentation} classes, each with own set of instrumentation
-    counters. You could use it if you have multiple output targets, or incredibly large 
-    set of counters that are specific to a given task. Still, you could prefix instrumentation
-    counters with a string to differ them, but that task could be tedious and make your
-    app's instrumentation buggy. 
+    There can exist many L{InstrumentationManager} classes, each with own set 
+    of instrumentation counters - with different namespace names. You could use
+    it if you have multiple output targets, or incredibly large set of counters
+    that are specific to a given task. Still, you could prefix instrumentation
+    counters with a string to differ them, but that task could be tedious and
+    make your app's instrumentation buggy. 
 
-    Not threadsafe.
+    This class is threadsafe.
     """
     def __init__(self, namespace):
         Monitor.__init__(self)
