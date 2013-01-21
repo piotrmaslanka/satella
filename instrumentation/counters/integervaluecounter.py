@@ -1,7 +1,7 @@
 from time import time
 
 from satella.instrumentation.basecounter import InstrumentationCounter
-from satella.instrumentation.exceptions import NoDataException
+from satella.instrumentation.exceptions import NoData
 
 class IntegerValueCounter(InstrumentationCounter):
     """A counter that tracks a particular integer value"""
@@ -21,6 +21,6 @@ class IntegerValueCounter(InstrumentationCounter):
 
     def get_current(self):
         if self.current_value == None:
-            raise NoDataException, 'No data in the counter'
+            raise NoData, 'No data in the counter'
 
         return self.current_value

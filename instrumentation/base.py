@@ -1,5 +1,5 @@
 from satella.instrumentation.basecounter import InstrumentationCounter
-from satella.instrumentation.exceptions import CounterExistsException
+from satella.instrumentation.exceptions import CounterExists
 
 class InstrumentationManager(object):
     """
@@ -23,7 +23,7 @@ class InstrumentationManager(object):
         @type counter: descendant of L{InstrumentationCounter}
         """
         if counter.name in self.counters:
-            raise CounterExistsException, 'Counter already exists'
+            raise CounterExists, 'Counter already exists'
 
         self.counters[counter.name] = counter
         counter._on_added()

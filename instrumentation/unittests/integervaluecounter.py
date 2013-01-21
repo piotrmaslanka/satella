@@ -1,5 +1,5 @@
 from satella.instrumentation.counters import IntegerValueCounter
-from satella.instrumentation.exceptions import NoDataException
+from satella.instrumentation.exceptions import NoData
 
 import unittest
 
@@ -13,7 +13,7 @@ class IntegerValueCounterTest(unittest.TestCase):
         ivc = IntegerValueCounter('test_counter')
         ivc.disable()
         ivc.update(10)
-        self.assertRaises(NoDataException, ivc.get_current)
+        self.assertRaises(NoData, ivc.get_current)
 
     def test_current_value(self):
         ivc = IntegerValueCounter('test_counter')
