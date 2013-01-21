@@ -15,8 +15,9 @@ class Monitor(object):
     def __init__(self):
         self.lock = Lock()
 
-def monitor(fun):
-    def monitored(*args, **kwargs):
-        with args[0].lock:
-            return fun(*args, **kwargs)
-    return monitored
+    @staticmethod    
+    def protect(fun):
+        def monitored(*args, **kwargs):
+            with args[0].lock:
+                return fun(*args, **kwargs)
+        return monitored

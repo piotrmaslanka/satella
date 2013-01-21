@@ -1,5 +1,5 @@
 from threading import Thread
-from satella.threads import Monitor, monitor
+from satella.threads import Monitor
 from time import sleep
 from Queue import Queue
 
@@ -13,7 +13,7 @@ class MonitorTest(unittest.TestCase):
                 self.cqueue = cqueue
                 Monitor.__init__(self)
 
-            @monitor
+            @Monitor.protect
             def execute(self):
                 self.cqueue.put(1)
                 sleep(1)
