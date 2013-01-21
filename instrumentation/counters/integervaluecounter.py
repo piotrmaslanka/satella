@@ -15,6 +15,7 @@ class IntegerValueCounter(InstrumentationCounter):
 
     def update(self, value):
         """Updates the counter with given value"""
+        if not self.enabled: return
         self.history.append((time(), value))
         self.current_value = value
 

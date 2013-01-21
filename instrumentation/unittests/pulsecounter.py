@@ -1,4 +1,5 @@
 from satella.instrumentation.counters import PulseCounter
+from satella.instrumentation.exceptions import NoDataException
 
 from time import sleep
 
@@ -9,6 +10,12 @@ class PulseCounterTest(unittest.TestCase):
     def test_name(self):
         ivc = PulseCounter('pulse_counter', resolution=1)
         self.assertEqual(ivc.name, 'pulse_counter')
+
+    def test_enabled(self):
+        ivc = PulseCounter('test_counter')
+        ivc.disable()
+        ivc.update()
+        self.assertEquals(ivc.get_current(), 0)    
 
     def test_inline_update(self):
         ivc = PulseCounter('pulse_counter', resolution=1)

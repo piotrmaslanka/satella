@@ -1,17 +1,23 @@
 from satella.instrumentation.counters import IntegerValueCounter
+from satella.instrumentation.exceptions import NoDataException
 
 import unittest
 
 class IntegerValueCounterTest(unittest.TestCase):
 
-    def setUp(self):
-        self.ivc = IntegerValueCounter('test_counter')
-
     def test_name(self):
-        self.assertEqual(self.ivc.name, 'test_counter')
+        ivc = IntegerValueCounter('test_counter')
+        self.assertEqual(ivc.name, 'test_counter')
+
+    def test_enabled(self):
+        ivc = IntegerValueCounter('test_counter')
+        ivc.disable()
+        ivc.update(10)
+        self.assertRaises(NoDataException, ivc.get_current)
 
     def test_current_value(self):
-        self.ivc.update(10)
-        self.assertEqual(self.ivc.get_current(), 10)
-        self.ivc.update(20)
-        self.assertEqual(self.ivc.get_current(), 20)
+        ivc = IntegerValueCounter('test_counter')
+        ivc.update(10)
+        self.assertEqual(ivc.get_current(), 10)
+        ivc.update(20)
+        self.assertEqual(ivc.get_current(), 20)

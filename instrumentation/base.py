@@ -13,9 +13,9 @@ class InstrumentationManager(object):
 
     Not threadsafe.
     """
-    def __init__(self):
+    def __init__(self, namespace):
         self.counters = {}  #: dict(name => InstrumentationCounter)
-
+        self.namespace = namespace
 
     def add_counter(self, counter):
         """
@@ -26,3 +26,4 @@ class InstrumentationManager(object):
             raise CounterExistsException, 'Counter already exists'
 
         self.counters[counter.name] = counter
+        counter._on_added()

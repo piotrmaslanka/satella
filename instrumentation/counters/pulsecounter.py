@@ -19,6 +19,7 @@ class PulseCounter(InstrumentationCounter):
 
     def update(self):
         """A single pulse that will be tracked"""
+        if not self.enabled: return
         self.pulses.append(time())
 
     def get_current(self):
