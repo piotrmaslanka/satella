@@ -92,6 +92,12 @@ class LockSignalledChannelTest(unittest.TestCase):
         TBI(lsc).start()
         self.assertEquals(lsc.read(100, less=True), 'test')        
 
+    def test_nonblocking_finite_null_read(self):
+        lsc = LockSignalledChannel()
+        lsc.blocking = False
+        lsc.timeout = 0
+        self.assertRaises(DataNotAvailable, lsc.read, 10)
+
     def test_blocking_finite_null_read(self):
         lsc = LockSignalledChannel()
         lsc.blocking = True
