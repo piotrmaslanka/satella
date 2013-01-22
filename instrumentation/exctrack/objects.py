@@ -59,11 +59,11 @@ class Trackback(object):
         tb = sys.exc_info()[2]
         while tb.tb_next:
             tb = tb.tb_next
-        stack = []
+
+        self.frames = []
         f = tb.tb_frame
         while f:
-            stack.append(f)
+            self.frames.append(StackFrame(f))
             f = f.f_back
 
         self.formatted_traceback = traceback.format_exc()
-        self.frames = [StackFrame(frame) for frame in stack]
