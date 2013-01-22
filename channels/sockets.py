@@ -41,31 +41,48 @@ class Socket(FileDescriptorChannel):
             self.tx_buffer.extend(data)
             self.on_writable()  # throws UnderlyingFailure, we'll let it propagate
 
-    def read(self, count, less=False):
-        if not self.active: raise ChannelClosed, 'cannot read - socket closed'
+    def read(self, count, less=False, peek=False):
+        if not self.active: 
+            # If we cannot satisfy the request, we need to raise an exception
+            # because we will never be able to do so
+            if len(self.rx_buffer) == 0:  # this would always fail
+                raise ChannelClosed, 'channel closed'
+
+            if len(self.rx_buffer) >= count:
+                # if we can safely satisfy the request right away, do it
+                return FileDescriptorChannel.read(self, count, less, peek)
+            else:
+                # we cannot satisfy all of the request, only less might save us now
+                # from raising an exception
+                if less:
+                    return FileDescriptorChannel.read(self, count, less, peek)   
+                else:
+                    raise ChannelClosed, 'channel closed`'            
 
         if self.blocking:
-            k = bytearray()
-            while len(k) < count:
+            while len(self.rx_buffer) < count:  # We might spend some time here
                 try:
-                    s = self.socket.recv(count-len(k))
+                    s = self.socket.recv(count-len(self.rx_buffer))
                 except socket.error:
                     self.close()
                     raise UnderlyingFailure, 'socket recv failed'
                 except socket.timeout:
                     raise DataNotAvailable, 'timeout on recv'
 
+                self.rx_buffer.extend(s)
+
                 if len(s) == 0:
                     self.close()
-                    raise ChannelClosed, 'gracefully closed'
+                    # The channel has been closed right now. Invoke a recursive
+                    # call to this function, it will do the necessary checking, 
+                    # because now it will be true that self.active == False
+                    return self.read(count, less, peek)
 
                 if less:    # a single recv passed, we can return with less data
-                    return s
+                    return FileDescriptorChannel.read(self, count, less, peek)
 
-                k.extend(s)
-            return k
-        else:
-            return FileDescriptorChannel.read(self, count, less)
+
+        return FileDescriptorChannel.read(self, count, less, peek)
 
     def close(self):
         if self.blocking:

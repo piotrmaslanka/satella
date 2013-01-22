@@ -51,11 +51,15 @@ class Channel(object):
         """
         self.tx_buffer.extend(data)
 
-    def read(self, count, less=False):
+    def read(self, count, less=False, peek=False):
         """
         Reads given amount of data from the socket
 
-        Will block if channel is blocking and data is not yet available
+        Will block if channel is blocking and data is not yet available.
+
+        If channel is closed, this call will provide the caller with data if this
+        is possible. Else, it will throw L{ChannelClosed}, because if the caller
+        cannot get the data, then the request will never be satisfied.
 
         Throws L{ChannelClosed} or L{UnderlyingFailure} on error
         Throws L{DataNotAvailable} if channel is non-blocking and there's no data yet
@@ -66,20 +70,25 @@ class Channel(object):
         @param less: Can return with less than count if such is the situation,
             zero-length strings included
         @type less: bool
+
+        @param peek: whether to remove readed data
+        @type peek: bool
         """
         if len(self.rx_buffer) < count:
             if less:
                 k = self.rx_buffer
-                self.rx_buffer = bytearray()
-                self.rxlen = 0
+                if not peek:
+                    self.rx_buffer = bytearray()
+                    self.rxlen = 0
                 return k
             else:
                 raise DataNotAvailable, 'Not enough data in buffer'
         k = self.rx_buffer[:count]
-        del self.rx_buffer[:count]
-        self.rxlen -= count
-        return k
 
+        if not peek:
+            del self.rx_buffer[:count]
+            self.rxlen -= count
+        return k
 
 class HandlingLayer(object):
     """A collection of channels for easy multiplexing"""
