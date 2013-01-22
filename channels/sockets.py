@@ -153,6 +153,17 @@ class ServerSocket(FileDescriptorChannel):
         self.active = True
         self.socket.settimeout(None)
 
+    def listen(self, backlog=10):
+        """
+        A facade to server socket's listen() call, because apps
+        may prefer to first wrap the socket in this class, and
+        invoke listen() when everything is already set up
+        """
+        try:
+            self.socket.listen(backlog)
+        except socket.error:
+            raise ChannelFailure, 'listen failed'
+
     def write(self, data):
         raise InvalidOperation, 'server socket does not support that'
 
