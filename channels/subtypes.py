@@ -44,7 +44,7 @@ class LockSignalledChannel(Channel):
         self.lock = Lock()
 
 
-    def read(self, count, less=False):
+    def read(self, count, less=False, peek=False):
         """
         Attempts to recover count bytes from the channel.
 
@@ -56,26 +56,41 @@ class LockSignalledChannel(Channel):
 
         If the channel is nonblocking, it will return L{DataNotAvailable} or the data
         """
-        if not self.active: raise ChannelClosed
+        if not self.active:
+            # If we cannot satisfy the request, we need to raise an exception
+            # because we will never be able to do so
+            if len(self.rx_buffer) == 0:  # this would always fail
+                raise ChannelClosed, 'channel closed'
+
+            if len(self.rx_buffer) >= count:
+                # if we can safely satisfy the request right away, do it
+                return Channel.read(self, count, less, peek)
+            else:
+                # we cannot satisfy all of the request, only less might save us now
+                # from raising an exception
+                if less:
+                    return Channel.read(self, count, less, peek)   
+                else:
+                    raise ChannelClosed, 'channel closed`'       
 
         with self.lock:
             if self.blocking:
                 # uh, oh
                 try:
-                    return Channel.read(self, count)
+                    return Channel.read(self, count, False, peek)
                 except DataNotAvailable:
                     if self.timeout != None:    # we need to hang for timeout at max
                         try:
                             msg = self.events.get(True, self.timeout)
                         except Queue.Empty:
                             if less:
-                                return Channel.read(self, count, less)
+                                return Channel.read(self, count, less, peek)
                             else:
                                 raise DataNotAvailable, 'no activity on channel for timeout'
 
                         if isinstance(msg, self.LSMReadable):
                             self.rx_buffer.extend(msg.data)
-                            return Channel.read(self, count, less)  # throws DataNotAvailable, we'll let it propagate
+                            return Channel.read(self, count, less, peek)  # throws DataNotAvailable, we'll let it propagate
                         elif isinstance(msg, self.LSMFailed):
                             self.active = False
                             raise ChannelFailure, 'channel failed'
@@ -83,13 +98,17 @@ class LockSignalledChannel(Channel):
                             self.active = False
                             raise ChannelClosed, 'channel closed'
                     else:       # we may hang for eternity
+                        # there may be less in effect
+                        if less and (len(self.rx_buffer) > 0):
+                            return Channel.read(self, count, True, peek)
+                            
                         while True:
                             msg = self.events.get(True) # block until data is available
 
                             if isinstance(msg, self.LSMReadable):
                                 self.rx_buffer.extend(msg.data)
                                 try:
-                                    return Channel.read(self, count, less)
+                                    return Channel.read(self, count, less, peek)
                                 except DataNotAvailable:
                                     continue    # no data? no problem, wait for more
                             elif isinstance(msg, self.LSMFailed):
@@ -114,7 +133,7 @@ class LockSignalledChannel(Channel):
                         self.active = False
                         raise ChannelClosed, 'channel closed'
 
-                return Channel.read(self, count, less)    # throws DataNotAvailable, let it propagate
+                return Channel.read(self, count, less, peek)    # throws DataNotAvailable, let it propagate
 
 
     def is_write_pending(self):
