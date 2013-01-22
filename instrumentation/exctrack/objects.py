@@ -3,6 +3,7 @@ import sys
 import traceback
 
 class StoredVariable(object):
+    __slots__ = ('can_repr', 'pickled', 'value')
     def __init__(self, value):
         self.can_repr = True
         try:
@@ -35,6 +36,7 @@ class StackFrame(object):
     """
     Class used to verily preserve stack frames
     """
+    __slots__ = ('locals', 'globals', 'name', 'filename')
     def __init__(self, frame):
         self.name = frame.f_code.co_name
         self.filename = frame.f_code.co_filename
@@ -53,6 +55,7 @@ class Trackback(object):
     Class used to verily preserve exceptions.
     Picklable.
     """
+    __slots__ = ('formatted_traceback', 'frames')
     def __init__(self):
         """To be invoked while processing an exception is in progress"""
 
