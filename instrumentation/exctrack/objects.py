@@ -6,8 +6,8 @@ class StoredVariable(object):
     def __init__(self, value):
         self.can_repr = True
         try:
+            self.pickled = True
             self.value = pickle.dumps(value, pickle.HIGHEST_PROTOCOL)
-            self.picked = True
         except: # Object cannot be pickled for some reason
             self.pickled = False            
             try:
@@ -29,7 +29,7 @@ class StoredVariable(object):
             raise ValueError, 'object not picklable'
             # __repr__-representation is available though
         else:
-            return pickle.loads(value)
+            return pickle.loads(self.value)
 
 class StackFrame(object):
     """
