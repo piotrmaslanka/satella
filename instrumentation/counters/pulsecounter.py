@@ -5,7 +5,7 @@ from satella.instrumentation.basecounter import InstrumentationCounter
 class PulseCounter(InstrumentationCounter):
     """Counter that tracks frequency of calls to update()"""
 
-    def __init__(self, name, resolution=1):
+    def __init__(self, name, resolution=1, severity=0):
         """
         Creates a new pulse-counting object
 
@@ -13,7 +13,7 @@ class PulseCounter(InstrumentationCounter):
             pulses in these periods
         @type resolution: int or float
         """
-        InstrumentationCounter.__init__(self, name)
+        InstrumentationCounter.__init__(self, name, severity=severity)
         self.resolution = resolution
         self.pulses = []
 

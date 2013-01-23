@@ -6,8 +6,8 @@ from satella.instrumentation.exceptions import NoData
 class IntegerValueCounter(InstrumentationCounter):
     """A counter that tracks a particular integer value"""
 
-    def __init__(self, name):
-        InstrumentationCounter.__init__(self, name)
+    def __init__(self, name, severity=0):
+        InstrumentationCounter.__init__(self, name, severity=severity)
 
         self.current_value = None   #: current value
 

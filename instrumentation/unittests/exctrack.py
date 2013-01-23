@@ -29,3 +29,4 @@ class TrackbackTest(unittest.TestCase):
         self.assertEquals(tb.frames[0].locals['hello'].get_value(), None)
         self.assertEquals(tb.frames[1].locals['fun'].get_value(), 'hello')
         self.assertEquals(tb.frames[2].locals['test'].get_value(), 5)
+        self.assertEquals(tb.frames[2].locals['test'].get_repr(), repr(5))        

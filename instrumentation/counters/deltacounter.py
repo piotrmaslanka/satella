@@ -3,8 +3,8 @@ from satella.instrumentation.basecounter import InstrumentationCounter
 class DeltaCounter(InstrumentationCounter):
     """A counter that modifications to particular value"""
 
-    def __init__(self, name):
-        InstrumentationCounter.__init__(self, name)
+    def __init__(self, name, severity=0):
+        InstrumentationCounter.__init__(self, name, severity=severity)
 
         self.current_value = 0   #: current value
 

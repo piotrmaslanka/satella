@@ -4,15 +4,21 @@ class InstrumentationCounter(object):
     You may want to extend all of those. 
     """
 
-    def __init__(self, name):
+    def __init__(self, name, severity=0):
         """
         Initializes the counter. Counter starts enabled.
 
         @param name: Name of the instrumentation counter
         @type name: str
+
+        @param severity: Threshold level for usage in limiting information amount.
+            This can be used to disable many counters at once - those that are 
+            below given threshold
+        @type severity: int        
         """
         self.name = name
         self.enabled = True
+        self.severity = severity
 
     def enable(self):
         """Called when this counter should accept data inputted"""

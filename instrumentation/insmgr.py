@@ -22,14 +22,31 @@ class InstrumentationManager(Monitor):
     """
     def __init__(self, namespace):
         Monitor.__init__(self)
-        self.counters = {}  #: dict(name => InstrumentationCounter)
+        self.counters = {}  #: dict(name => (InstrumentationCounter, severity))
         self.namespace = namespace
+        self.severity = float('-inf')   #: current severity level
+
+    @Monitor.protect
+    def set_severity(self, severity):
+        if severity > self.severity:
+            # Raising required severity level
+            for counter in self.counters.itervalues():
+                if counter.severity < severity:
+                    counter.disable()
+        else:
+            # Lowering required severity level
+            for counter in self.counters.itervalues():
+                if counter.severity >= severity:
+                    counter.enable()
+
+        self.severity = severity
 
     @Monitor.protect
     def add_counter(self, counter):
         """
         @param counter: A counter to register for this instrumentation manager
         @type counter: descendant of L{InstrumentationCounter}
+
         """
         if counter.name in self.counters:
             raise CounterExists, 'Counter already exists'
@@ -62,6 +79,5 @@ class InstrumentationManager(Monitor):
                 cdata[name] = counter.get_current()
             except NoData:
                 cdata[name] = NoData
-
 
         return CountersSnapshot(cdata, time(), self)

@@ -3,34 +3,29 @@ import sys
 import traceback
 
 class StoredVariable(object):
-    __slots__ = ('can_repr', 'pickled', 'value')
+    __slots__ = ('repr', 'pickle')
     def __init__(self, value):
-        self.can_repr = True
         try:
-            self.pickled = True
-            self.value = pickle.dumps(value, pickle.HIGHEST_PROTOCOL)
-        except: # Object cannot be pickled for some reason
-            self.pickled = False            
-            try:
-                self.value = repr(value)
-            except: # __repr__ not available
-                self.can_repr = False
-                self.value = '*** repr not available ***'
+            self.repr = repr(value)
+        except:
+            self.repr = None
 
-    def get_repr_value(self):
-        if not self.can_repr:
+        try:
+            self.pickle = pickle.dumps(value, pickle.HIGHEST_PROTOCOL)
+        except:
+            self.pickle = None 
+
+    def get_repr(self):
+        if self.repr == None:
             raise ValueError, 'repr not available'
-        if self.pickled:
-            return __repr__(pickle.loads(self.value))
         else:
-            return self.value
+            return self.repr
 
     def get_value(self):
-        if not self.pickled:
+        if self.pickle == None:
             raise ValueError, 'object not picklable'
-            # __repr__-representation is available though
         else:
-            return pickle.loads(self.value)
+            return pickle.loads(self.pickle)
 
 class StackFrame(object):
     """
