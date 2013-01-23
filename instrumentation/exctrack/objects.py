@@ -65,3 +65,7 @@ class Trackback(object):
             f = f.f_back
 
         self.formatted_traceback = traceback.format_exc()
+
+    def pickle(self):
+        """Returns this instance, pickled"""
+        return pickle.dumps(self, pickle.HIGHEST_PROTOCOL)
