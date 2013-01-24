@@ -31,10 +31,11 @@ class StackFrame(object):
     """
     Class used to verily preserve stack frames
     """
-    __slots__ = ('locals', 'globals', 'name', 'filename')
+    __slots__ = ('locals', 'globals', 'name', 'filename', 'lineno')
     def __init__(self, frame):
         self.name = frame.f_code.co_name
         self.filename = frame.f_code.co_filename
+        self.lineno = frame.f_lineno
 
         self.locals = {}
         for key, value in frame.f_locals.iteritems():
@@ -69,3 +70,18 @@ class Trackback(object):
     def pickle(self):
         """Returns this instance, pickled"""
         return pickle.dumps(self, pickle.HIGHEST_PROTOCOL)
+
+
+    def pretty_print(self):
+        k = []
+        k.append(self.formatted_traceback)
+        k.append('* Stack trace, innermost first')
+        for frame in self.frames:
+            k.append('** %s at %s:%s' % (frame.name, frame.filename, frame.lineno))
+            k.append('*** LOCALS: ')
+            for name, value in frame.locals.iteritems():
+                try:
+                    k.append('**** %s: %s' % (name, value.get_repr()))
+                except:
+                    k.append('**** %s: repr unavailable' % name)
+        return '\n'.join(k)
