@@ -78,10 +78,9 @@ class Trackback(object):
         k.append('* Stack trace, innermost first')
         for frame in self.frames:
             k.append('** %s at %s:%s' % (frame.name, frame.filename, frame.lineno))
-            k.append('*** LOCALS: ')
             for name, value in frame.locals.iteritems():
                 try:
-                    k.append('**** %s: %s' % (name, value.get_repr()))
+                    k.append('*** %s: %s' % (name, value.get_repr()))
                 except:
-                    k.append('**** %s: repr unavailable' % name)
+                    k.append('*** %s: repr unavailable' % name)
         return '\n'.join(k)
