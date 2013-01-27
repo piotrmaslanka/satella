@@ -38,19 +38,3 @@ class InstrumentationManagerTest(unittest.TestCase):
         insmgr.set_severity(0)
         self.assertEquals(ctr.enabled, True)
         self.assertEquals(xtr.enabled, True)
-
-    def test_snapshot(self):
-        insmgr = InstrumentationManager('test_namespace')
-        ctr = IntegerValueCounter('a_counter')
-        ctr.update(10)
-
-        xtr = IntegerValueCounter('c_counter')
-
-        insmgr.add_counter(ctr)
-        insmgr.add_counter(xtr)
-
-        snapshot = insmgr.get_snapshot()
-
-        self.assertEquals(snapshot['a_counter'], 10)
-        self.assertRaises(CounterNotExists, lambda: snapshot['b_counter'])
-        self.assertRaises(NoData, lambda: snapshot['c_counter'])

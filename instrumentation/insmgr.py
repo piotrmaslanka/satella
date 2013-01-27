@@ -65,19 +65,3 @@ class InstrumentationManager(Monitor):
             raise CounterNotExists
         del self.counters[counter.name]
         counter._on_removed()
-
-    @Monitor.protect
-    def get_snapshot(self):
-        """Snapshots current counter state.
-
-        @return: L{satella.instrumentation.snapshots.CountersSnapshot}
-        """
-        cdata = {}
-
-        for name, counter in self.counters.iteritems():
-            try:
-                cdata[name] = counter.get_current()
-            except NoData:
-                cdata[name] = NoData
-
-        return CountersSnapshot(cdata, time(), self)
