@@ -1,2 +1,3 @@
 from satella.instrumentation.counters.integervaluecounter import IntegerValueCounter
 from satella.instrumentation.counters.pulsecounter import PulseCounter
+from satella.instrumentation.counters.deltacounter import DeltaCounter
