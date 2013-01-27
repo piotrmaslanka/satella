@@ -141,10 +141,18 @@ class Socket(FileDescriptorChannel):
     def fileno(self):
         return self.socket.fileno()
 
+    def get_underlying_object(self):
+        """Returns socket object this channel is based upon"""
+        return self.socket
+
 class ServerSocket(FileDescriptorChannel):
     """
     A channel with server sockets
     """
+
+    def get_underlying_object(self):
+        """Returns socket object this channel is based upon"""
+        return self.socket
 
     def __init__(self, socket):
         FileDescriptorChannel.__init__(self)
