@@ -1,11 +1,13 @@
 from satella.channels import LockSignalledChannel, DataNotAvailable, ChannelFailure, ChannelClosed
 from satella.channels.sockets import Socket, ServerSocket, SelectHandlingLayer
 
-from socket import AF_INET, SOCK_STREAM, socket
+from socket import AF_INET, SOCK_STREAM, socket, SOL_SOCKET, SO_REUSEADDR
 from threading import Thread
 from time import sleep
 
 import unittest
+
+TESTING_PORT = 49999
 
 class SelectHandlingLayerTest(unittest.TestCase):
     def test_3_clients(self):
@@ -13,7 +15,7 @@ class SelectHandlingLayerTest(unittest.TestCase):
             def run(self):
                 sleep(0.2)
                 sck = socket(AF_INET, SOCK_STREAM)
-                sck.connect(('127.0.0.1', 50000))
+                sck.connect(('127.0.0.1', TESTING_PORT))
                 sck = Socket(sck)
                 sck.write('Hello World')
                 k = sck.read(1)
@@ -25,19 +27,11 @@ class SelectHandlingLayerTest(unittest.TestCase):
                 self.packets_to_go = 3
                 self.sockets_to_close = 3
                 self.utc = utc
-                self.can_iterate = False
-
-            def on_iteration(self):
-                # so that on_iteration also gets tested
-                self.can_iterate = True
 
             def on_closed(self, channel):
                 self.sockets_to_close -= 1
 
             def on_readable(self, channel):
-                self.utc.assertEquals(self.can_iterate, True)
-                self.can_iterate = False
-
                 if isinstance(channel, ServerSocket):
                     self.register_channel(channel.read())
                 else:
@@ -51,7 +45,8 @@ class SelectHandlingLayerTest(unittest.TestCase):
         shl = MySelectHandlingLayer(self)
 
         sck = socket(AF_INET, SOCK_STREAM)
-        sck.bind(('127.0.0.1', 50000))
+        sck.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
+        sck.bind(('127.0.0.1', TESTING_PORT))
         sck.listen(10)
 
         shl.register_channel(ServerSocket(sck))
@@ -68,7 +63,8 @@ class SocketsTest(unittest.TestCase):
     def test_blocking_server_client_with_less(self):
         """tests less=True mechanism for channels in sockets"""
         sck = socket(AF_INET, SOCK_STREAM)
-        sck.bind(('127.0.0.1', 50000))
+        sck.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
+        sck.bind(('127.0.0.1', TESTING_PORT))
         sck.listen(10)
         sck = ServerSocket(sck)
 
@@ -81,7 +77,7 @@ class SocketsTest(unittest.TestCase):
                 """@param utc: unit test class"""
                 sleep(0.1)
                 sck = socket(AF_INET, SOCK_STREAM)
-                sck.connect(('127.0.0.1', 50000))
+                sck.connect(('127.0.0.1', TESTING_PORT))
                 sck = Socket(sck)
                 pkdata = sck.read(100, less=True, peek=True)
                 data = sck.read(100, less=True)
@@ -103,7 +99,8 @@ class SocketsTest(unittest.TestCase):
     def test_blocking_server(self):
         """tests L{ServerSocket} and a client L{Socket} in a multithreaded model"""
         sck = socket(AF_INET, SOCK_STREAM)
-        sck.bind(('127.0.0.1', 50000))
+        sck.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
+        sck.bind(('127.0.0.1', TESTING_PORT))
         sck.listen(10)
         sck = ServerSocket(sck)
 
@@ -116,7 +113,7 @@ class SocketsTest(unittest.TestCase):
                 """@param utc: unit test class"""
                 sleep(0.1)
                 sck = socket(AF_INET, SOCK_STREAM)
-                sck.connect(('127.0.0.1', 50000))
+                sck.connect(('127.0.0.1', TESTING_PORT))
                 sck = Socket(sck)
                 sck.write('Hello World')
                 self.pkdata = sck.read(3, less=False, peek=True)
