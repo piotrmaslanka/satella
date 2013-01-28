@@ -73,6 +73,42 @@ class SSLSelectHandlingLayerTest(unittest.TestCase):
 
         sck.close()
 
+class SSLTimeoutTest(unittest.TestCase):
+    """Checks whether SSL raises it's timeouts all right"""
+
+    def test_blocking_ssl_timeout_raise(self):
+        """tests less=True mechanism for channels in sockets"""
+        sck = socket(AF_INET, SOCK_STREAM)
+        sck.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
+        with get_dummy_cert() as dncert:
+            sck.bind(('127.0.0.1', TESTING_PORT))
+            sck.listen(10)
+            sck = ssl.wrap_socket(sck, certfile=dncert)
+            sck = SSLServerSocket(sck)
+
+            class ClientSocketThread(Thread):
+                def __init__(self, utc):
+                    Thread.__init__(self)
+                    self.utc = utc
+
+                def run(self):
+                    """@param utc: unit test class"""
+                    sleep(0.1)
+                    sck = socket(AF_INET, SOCK_STREAM)
+                    sck = ssl.wrap_socket(sck)
+                    sck.connect(('127.0.0.1', TESTING_PORT))
+                    sck = SSLSocket(sck)
+                    sck.settimeout(3)
+                    self.utc.assertRaises(DataNotAvailable, sck.read, 1)                    
+                    sck.close()
+
+            cs = ClientSocketThread(self)
+            cs.start()
+
+            csk = sck.read()        
+            cs.join()
+            csk.close()
+            sck.close()
 
 class SSLSocketsTest(unittest.TestCase):
     """Tests for socket class"""
