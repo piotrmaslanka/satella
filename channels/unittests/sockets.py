@@ -33,6 +33,8 @@ class SelectHandlingLayerTest(unittest.TestCase):
                 self.utc = utc
 
             def on_closed(self, channel):
+                # at this point data should have been flushed
+                self.utc.assertEquals(len(channel.tx_buffer), 0)                
                 self.sockets_to_close -= 1
 
             def on_readable(self, channel):

@@ -111,7 +111,7 @@ class Socket(FileDescriptorChannel):
             self.close()
             raise UnderlyingFailure, 'send() failed'
 
-        del self.tx_buffer[ki:]
+        del self.tx_buffer[:ki]
 
     def on_readable(self):
         """Called by the handling layer upon detecting that this socket is readable.
