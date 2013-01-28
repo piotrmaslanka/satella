@@ -23,7 +23,6 @@ class Channel(object):
     def __init__(self):
         self.tx_buffer = bytearray()
         self.rx_buffer = bytearray()
-        self.rxlen = 0      #: amount of data waiting in Rx buffer
         self.active = True
         self.timeout = None    #: blocking by default
         self.blocking = True
@@ -79,7 +78,6 @@ class Channel(object):
                 k = self.rx_buffer
                 if not peek:
                     self.rx_buffer = bytearray()
-                    self.rxlen = 0
                 return k
             else:
                 raise DataNotAvailable, 'Not enough data in buffer'
@@ -87,7 +85,6 @@ class Channel(object):
 
         if not peek:
             del self.rx_buffer[:count]
-            self.rxlen -= count
         return k
 
 class HandlingLayer(object):

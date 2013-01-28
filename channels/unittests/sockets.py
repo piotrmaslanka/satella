@@ -12,13 +12,17 @@ TESTING_PORT = 49999
 class SelectHandlingLayerTest(unittest.TestCase):
     def test_3_clients(self):
         class ConnectorThread(Thread):
+            def __init__(self, utc):
+                self.utc = utc
+                Thread.__init__(self)
             def run(self):
                 sleep(0.2)
                 sck = socket(AF_INET, SOCK_STREAM)
                 sck.connect(('127.0.0.1', TESTING_PORT))
                 sck = Socket(sck)
                 sck.write('Hello World')
-                k = sck.read(1)
+                self.utc.assertEquals(sck.read(1), '1')
+                self.utc.assertEquals(sck.read(1), '2')
                 sck.close()
 
         class MySelectHandlingLayer(SelectHandlingLayer):
@@ -35,11 +39,11 @@ class SelectHandlingLayerTest(unittest.TestCase):
                 if isinstance(channel, ServerSocket):
                     self.register_channel(channel.read())
                 else:
-                    if channel.rxlen < 11: return
-                    self.utc.assertEquals(channel.read(11), 'Hello World')
+                    if len(channel.rx_buffer) < 11: return
+                    self.utc.assertEquals(channel.read(6), 'Hello ')
+                    self.utc.assertEquals(channel.read(5), 'World')
                     self.packets_to_go -= 1
-                    channel.write('1')
-
+                    channel.write('12')
 
         
         shl = MySelectHandlingLayer(self)
@@ -51,7 +55,7 @@ class SelectHandlingLayerTest(unittest.TestCase):
 
         shl.register_channel(ServerSocket(sck))
 
-        for x in xrange(0, 3): ConnectorThread().start()
+        for x in xrange(0, 3): ConnectorThread(self).start()
 
         while (shl.packets_to_go != 0) or (shl.sockets_to_close != 0):
             shl.select()
@@ -79,10 +83,11 @@ class SocketsTest(unittest.TestCase):
                 sck = socket(AF_INET, SOCK_STREAM)
                 sck.connect(('127.0.0.1', TESTING_PORT))
                 sck = Socket(sck)
+                self.utc.assertEquals(sck.read(1), 'L')
                 pkdata = sck.read(100, less=True, peek=True)
                 data = sck.read(100, less=True)
-                self.utc.assertEquals(pkdata, 'Long string? Not enough.')
-                self.utc.assertEquals(data, 'Long string? Not enough.')
+                self.utc.assertEquals(pkdata, 'ong string? Not enough.')
+                self.utc.assertEquals(data, 'ong string? Not enough.')
                 self.utc.assertRaises(ChannelClosed, sck.read, 1)
                 sck.close()
 
@@ -95,6 +100,40 @@ class SocketsTest(unittest.TestCase):
         cs.join()
         sck.close()
 
+
+    def test_blocking_server_finite_client_timeout(self):
+        sck = socket(AF_INET, SOCK_STREAM)
+        sck.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
+        sck.bind(('127.0.0.1', TESTING_PORT))
+        sck.listen(10)
+        sck = ServerSocket(sck)
+
+        class ClientSocketThread(Thread):
+            def __init__(self, utc):
+                """@param utc: unit test class"""
+                Thread.__init__(self)
+                self.utc = utc
+
+            def run(self):
+                sck = socket(AF_INET, SOCK_STREAM)
+                sck.connect(('127.0.0.1', TESTING_PORT))
+                sck = Socket(sck)
+                sck.settimeout(5)
+                self.utc.assertEquals(sck.read(2), 'Ye')
+                self.utc.assertEquals(sck.read(1), 's')
+                sck.write('Hello World')
+                sck.close()
+
+        cs = ClientSocketThread(self)
+        cs.start()
+
+        csk = sck.read()
+        sleep(3)
+        csk.write('Yes')
+        self.assertEquals(csk.read(5), 'Hello')
+        self.assertEquals(csk.read(6), ' World')
+        csk.close()
+        cs.join()
 
     def test_blocking_server(self):
         """tests L{ServerSocket} and a client L{Socket} in a multithreaded model"""
@@ -125,7 +164,8 @@ class SocketsTest(unittest.TestCase):
         cs.start()
 
         csk = sck.read()
-        self.assertEquals(csk.read(11), 'Hello World')
+        self.assertEquals(csk.read(6), 'Hello ')
+        self.assertEquals(csk.read(5), 'World')
         csk.write('Yes')
         csk.close()
         cs.join()

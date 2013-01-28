@@ -16,6 +16,9 @@ TESTING_PORT = 49998
 class SSLSelectHandlingLayerTest(unittest.TestCase):
     def test_3_clients(self):
         class ConnectorThread(Thread):
+            def __init__(self, utc):
+                Thread.__init__(self)
+                self.utc = utc
             def run(self):
                 sleep(0.2)
                 sck = socket(AF_INET, SOCK_STREAM)
@@ -23,7 +26,8 @@ class SSLSelectHandlingLayerTest(unittest.TestCase):
                 sck.connect(('127.0.0.1', TESTING_PORT))
                 sck = SSLSocket(sck)
                 sck.write('Hello World')
-                k = sck.read(1)
+                self.utc.assertEquals(sck.read(1), '1')
+                self.utc.assertEquals(sck.read(1), '2')
                 sck.close()
 
         class MySelectHandlingLayer(SelectHandlingLayer):
@@ -41,10 +45,11 @@ class SSLSelectHandlingLayerTest(unittest.TestCase):
                 if isinstance(channel, ServerSocket):
                     self.register_channel(channel.read())
                 else:
-                    if channel.rxlen < 11: return
-                    self.utc.assertEquals(channel.read(11), 'Hello World')
+                    if len(channel.rx_buffer) < 11: return
+                    self.utc.assertEquals(channel.read(6), 'Hello ')
+                    self.utc.assertEquals(channel.read(5), 'World')
                     self.packets_to_go -= 1
-                    channel.write('1')
+                    channel.write('12')
 
         
         shl = MySelectHandlingLayer(self)
@@ -58,7 +63,7 @@ class SSLSelectHandlingLayerTest(unittest.TestCase):
 
             shl.register_channel(SSLServerSocket(sck))
 
-            for x in xrange(0, 3): ConnectorThread().start()
+            for x in xrange(0, 3): ConnectorThread(self).start()
 
             while (shl.packets_to_go != 0) or (shl.sockets_to_close != 0):
                 shl.select()

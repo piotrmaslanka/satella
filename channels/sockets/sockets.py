@@ -81,7 +81,6 @@ class Socket(FileDescriptorChannel):
                 if less:    # a single recv passed, we can return with less data
                     return FileDescriptorChannel.read(self, count, less, peek)
 
-
         return FileDescriptorChannel.read(self, count, less, peek)
 
     def close(self):
@@ -128,7 +127,6 @@ class Socket(FileDescriptorChannel):
             raise ChannelClosed, 'gracefully closed'
 
         self.rx_buffer.extend(s)
-        self.rxlen += len(s)
 
     def on_closed(self):
         """Called by the handling layer upon discarding the socket"""
