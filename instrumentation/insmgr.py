@@ -1,10 +1,48 @@
 from time import time
 from threading import Lock
+from collections import defaultdict
 
 from satella.instrumentation.basecounter import InstrumentationCounter
 from satella.instrumentation.exceptions import CounterExists, NoData, \
-                                               CounterNotExists
+                                               CounterNotExists, NamespaceExists, \
+                                               NamespaceNotExists
 from satella.threads import Monitor
+
+
+class NamespaceManager(Monitor):
+    """
+    Class used to manage instrumentation managers.
+    """
+    def __init__(self):
+        Monitor.__init__(self)
+        self.managers = defaultdict(lambda: [])    #: dict(namespace => InstrumentationManager)
+
+    @Monitor.protect
+    def set_severity(self, severity):
+        for manager_list in self.managers.itervalues():
+            for manager in manager_list:
+                manager.set_severity(severity)
+
+    @Monitor.protect
+    def add_namespace(self, insmgr):
+        """
+        Adds a namespace to the manager.
+
+        @param insmgr: InstrumentationManager to add
+        @type insmgr: L{InstrumentationManager}
+        """
+        if insmgr in self.managers[insmgr.namespace]:
+            raise NamespaceExists, 'already registered'
+
+        self.managers[insmgr.namespace].append(insmgr)
+
+
+    @Monitor.protect
+    def remove_namespace(self, insmgr):
+        if insmgr not in self.managers[insmgr.namespace]:
+            raise NamespaceNotExists, 'not found'
+
+        self.managers[insmgr.namespace].remove(insmgr)
 
 class InstrumentationManager(Monitor):
     """
