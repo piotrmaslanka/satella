@@ -17,7 +17,7 @@ class Monitor(object):
     """
     def __init__(self):
         """You need to invoke this at your constructor"""
-        self.lock = Lock()
+        self._monitor_lock = Lock()
 
     @staticmethod    
     def protect(fun):
@@ -28,6 +28,28 @@ class Monitor(object):
         may vary
         """
         def monitored(*args, **kwargs):
-            with args[0].lock:
+            with args[0]._monitor_lock:
                 return fun(*args, **kwargs)
         return monitored
+
+
+    class acquire(object):
+        """
+        Returns a context manager object that can lock another object,
+        as long as that object is a monitor.
+
+        Consider foo, which is a monitor. If you needed to lock it from
+        outside, you would do:
+
+            with Monitor.acquire(foo):
+                .. do operations on foo that need mutual exclusion ..
+        """
+        def __init__(self, foo):
+            self.foo = foo
+
+        def __enter__(self):
+            self.foo._monitor_lock.acquire()
+
+        def __exit__(self, e1, e2, e3):
+            self.foo._monitor_lock.release()
+            return False
