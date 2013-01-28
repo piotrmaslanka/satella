@@ -1,4 +1,4 @@
-from satella.instrumentation.insmgr import InstrumentationManager, NamespaceManager
+from satella.instrumentation import InstrumentationManager, NamespaceManager
 from satella.instrumentation.exceptions import NamespaceExists, NamespaceNotExists
 
 import unittest
