@@ -243,15 +243,24 @@ class SelectHandlingLayer(HandlingLayer):
         self.channels.append(channel)
 
     def unregister_channel(self, channel):
+        """
+        Unregisters the channel from select layer.
+
+        Channel remains in non-blocking mode, you must switch it back
+        to blocking if you wish so.
+        """
         try:
             self.channels.remove(channel)
         except ValueError:
             raise ValueError, 'channel not found'
 
-    def __close_channel(self, channel):
-        self.channels.remove(channel)
-        channel.on_closed()
+    def close_channel(self, channel):
+        """
+        Channel unregister + channel close
+        """
+        channel.on_closed() # this should close the channel
         self.on_closed(channel)
+        self.unregister_channel(channel)
 
     def select(self, timeout=5):
         self.on_iteration()
@@ -277,7 +286,7 @@ class SelectHandlingLayer(HandlingLayer):
             try:
                 writable.on_writable()
             except ChannelFailure:
-                self.__close_channel(writable)
+                self.close_channel(writable)
                 return
             self.on_writable(writable)
 
@@ -286,7 +295,7 @@ class SelectHandlingLayer(HandlingLayer):
             try:
                 readable.on_readable()
             except (ChannelFailure, ChannelClosed):
-                self.__close_channel(readable)
+                self.close_channel(readable)
                 return
             self.on_readable(readable)
 
