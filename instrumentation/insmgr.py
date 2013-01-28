@@ -4,7 +4,6 @@ from threading import Lock
 from satella.instrumentation.basecounter import InstrumentationCounter
 from satella.instrumentation.exceptions import CounterExists, NoData, \
                                                CounterNotExists
-from satella.instrumentation.snapshots import CountersSnapshot
 from satella.threads import Monitor
 
 class InstrumentationManager(Monitor):

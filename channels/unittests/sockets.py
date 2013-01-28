@@ -3,7 +3,7 @@ from satella.channels.sockets import Socket, ServerSocket, SelectHandlingLayer
 
 from socket import AF_INET, SOCK_STREAM, socket, SOL_SOCKET, SO_REUSEADDR
 from threading import Thread
-from time import sleep
+from time import sleep, time
 
 import unittest
 
@@ -59,9 +59,14 @@ class SelectHandlingLayerTest(unittest.TestCase):
 
         for x in xrange(0, 3): ConnectorThread(self).start()
 
+        test_started_on = time()
         while (shl.packets_to_go != 0) or (shl.sockets_to_close != 0):
             shl.select()
 
+            if (time() - test_started_on) > 20:
+                raise Exception, 'This test is taking too long'
+
+        sck.close()
 
 class SocketsTest(unittest.TestCase):
     """Tests for socket class"""
@@ -137,6 +142,8 @@ class SocketsTest(unittest.TestCase):
         csk.close()
         cs.join()
 
+        sck.close()
+
     def test_blocking_server(self):
         """tests L{ServerSocket} and a client L{Socket} in a multithreaded model"""
         sck = socket(AF_INET, SOCK_STREAM)
@@ -155,6 +162,7 @@ class SocketsTest(unittest.TestCase):
                 sleep(0.1)
                 sck = socket(AF_INET, SOCK_STREAM)
                 sck.connect(('127.0.0.1', TESTING_PORT))
+
                 sck = Socket(sck)
                 sck.write('Hello World')
                 self.pkdata = sck.read(3, less=False, peek=True)
@@ -164,6 +172,7 @@ class SocketsTest(unittest.TestCase):
 
         cs = ClientSocketThread(self)
         cs.start()
+
 
         csk = sck.read()
         self.assertEquals(csk.read(6), 'Hello ')
