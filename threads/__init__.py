@@ -10,6 +10,9 @@ class BaseThread(Thread):
         """Sets internal termination flag"""
         self._terminating = True
 
+    def start(self):
+        Thread.start(self)
+        return self
 
 class Monitor(object):
     """

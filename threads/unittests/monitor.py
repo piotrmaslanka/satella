@@ -38,7 +38,6 @@ class MonitorTest(unittest.TestCase):
             sleep(0.4)
             self.assertEqual(cq.qsize(), 1)
 
-
     def test_monitoring(self):
 
         class TestedClass(Monitor):
