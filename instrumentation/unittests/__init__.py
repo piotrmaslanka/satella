@@ -1,6 +1,5 @@
 from integervaluecounter import IntegerValueCounterTest
 from pulsecounter import PulseCounterTest
-from instrumentationmanager import InstrumentationManagerTest
+from countercollection import CounterCollectionTest
 from deltacounter import DeltaCounterTest
 from exctrack import TrackbackTest
-from namespacemanager import NamespaceManagerTest

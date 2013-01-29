@@ -2,103 +2,68 @@ from time import time
 from threading import Lock
 from collections import defaultdict
 
-from satella.instrumentation.basecounter import InstrumentationCounter
-from satella.instrumentation.exceptions import CounterExists, NoData, \
-                                               CounterNotExists, NamespaceExists, \
-                                               NamespaceNotExists
+from satella.instrumentation.basecounter import CounterObject
+from satella.instrumentation.exceptions import ObjectExists, NoData, \
+                                               ObjectNotExists
+
 from satella.threads import Monitor
 
-
-class NamespaceManager(Monitor):
+class CounterCollection(Monitor, CounterObject):
     """
-    Class used to manage instrumentation managers.
-    """
-    def __init__(self):
-        Monitor.__init__(self)
-        self.managers = defaultdict(lambda: [])    #: dict(namespace => InstrumentationManager)
+    Class used to manage instrumentation counters or their collections
 
-    @Monitor.protect
-    def set_severity(self, severity):
-        for manager_list in self.managers.itervalues():
-            for manager in manager_list:
-                manager.set_severity(severity)
-
-    @Monitor.protect
-    def add_namespace(self, insmgr):
-        """
-        Adds a namespace to the manager.
-
-        @param insmgr: InstrumentationManager to add
-        @type insmgr: L{InstrumentationManager}
-        """
-        if insmgr in self.managers[insmgr.namespace]:
-            raise NamespaceExists, 'already registered'
-
-        self.managers[insmgr.namespace].append(insmgr)
-
-
-    @Monitor.protect
-    def remove_namespace(self, insmgr):
-        if insmgr not in self.managers[insmgr.namespace]:
-            raise NamespaceNotExists, 'not found'
-
-        self.managers[insmgr.namespace].remove(insmgr)
-
-class InstrumentationManager(Monitor):
-    """
-    Class used to manage instrumentation counters.
-
-    There can exist many L{InstrumentationManager} classes, each with own set 
-    of instrumentation counters - with different namespace names. You could use
-    it if you have multiple output targets, or incredibly large set of counters
-    that are specific to a given task. Still, you could prefix instrumentation
-    counters with a string to differ them, but that task could be tedious and
-    make your app's instrumentation buggy. 
+    You can nest counters within collections, and collections within collections.
+    There should be a root collection on the stop, that can be fed to presentation
+    layer.
 
     This class is threadsafe.
     """
     def __init__(self, namespace):
         Monitor.__init__(self)
-        self.counters = {}  #: dict(name => (InstrumentationCounter, severity))
-        self.namespace = namespace
-        self.severity = float('-inf')   #: current severity level
+        CounterObject.__init__(self, namespace)
+        self.items = defaultdict(list)  #: dict(name => [.. counter objects ..]])
+
 
     @Monitor.protect
-    def set_severity(self, severity):
-        if severity > self.severity:
-            # Raising required severity level
-            for counter in self.counters.itervalues():
-                if counter.severity < severity:
-                    counter.disable()
+    def enable(self):
+        CounterObject.enable(self)
+        for counterlists in self.items.itervalues():
+            for co in counterlists:
+                co.enable()
+
+    @Monitor.protect
+    def disable(self):
+        CounterObject.disable(self)
+        for counterlists in self.items.itervalues():
+            for co in counterlists:
+                co.disable()
+
+    @Monitor.protect
+    def add(self, counterobject):
+        """
+        @param counter: A counterobject to add
+        @type counter: descendant of L{CounterObject}
+
+        """
+        if counterobject in self.items[counterobject.name]:
+            raise ObjectExists, 'already added'
+
+        self.items[counterobject.name].append(counterobject)
+        counterobject._on_added(self)
+
+    @Monitor.protect
+    def remove(self, counterobject):
+        """
+        @param counter: Counterobject to remove. Must exist in this collection.
+        @type counter: descendant of L{CounterObject}
+        """
+        if counterobject not in self.items[counterobject.name]:
+            raise ObjectNotExists, 'not in this collection'
+
+        if len(self.items[counterobject.name]) == 1:
+            # so that defaultdict is not oversized beyond need
+            del self.items[counterobject.name]
         else:
-            # Lowering required severity level
-            for counter in self.counters.itervalues():
-                if counter.severity >= severity:
-                    counter.enable()
+            self.items[counterobject.name].remove(counterobject)
 
-        self.severity = severity
-
-    @Monitor.protect
-    def add_counter(self, counter):
-        """
-        @param counter: A counter to register for this instrumentation manager
-        @type counter: descendant of L{InstrumentationCounter}
-
-        """
-        if counter.name in self.counters:
-            raise CounterExists, 'Counter already exists'
-
-        self.counters[counter.name] = counter
-        counter._on_added(self)
-
-    @Monitor.protect
-    def remove_counter(self, counter):
-        """
-        @param counter: Counter to be removed from this manager. Must exist
-            in this manager
-        @type counter: descendant of L{InstrumentationCounter}
-        """
-        if counter.name not in self.counters:
-            raise CounterNotExists
-        del self.counters[counter.name]
-        counter._on_removed()
+        counterobject._on_removed()

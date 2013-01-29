@@ -1,45 +1,57 @@
-class InstrumentationCounter(object):
-    """
-    Base class for all instrumentation counters.
-    You may want to extend all of those. 
-    """
 
-    def __init__(self, name, severity=0):
+class CounterObject(object):
+    """
+    Base counter object. Namespaces and counters subclass it.
+
+    You need this if you are making custom extensions to instrumentation
+    infrastructure. If you just want to make a new counter, inherit 
+    from L{Counter} instead.
+    """
+    def __init__(self, name):
         """
-        Initializes the counter. Counter starts enabled.
-
-        @param name: Name of the instrumentation counter
+        Initializes the object
+        @param name: Name of the object
         @type name: str
-
-        @param severity: Threshold level for usage in limiting information amount.
-            This can be used to disable many counters at once - those that are 
-            below given threshold
-        @type severity: int        
         """
         self.name = name
         self.enabled = True
-        self.severity = severity
 
     def enable(self):
-        """Called when this counter should accept data inputted"""
+        """Enable the object"""
         self.enabled = True
 
     def disable(self):
-        """Called when this counter should stop accepting data inputted"""
+        """Disable the object"""
         self.enabled = False
 
     def _on_added(self, insmgr):
         """
-        Called when this counter is added to an InstrumentationManager
+        Called when this counter is added to a namespace as a child. Called
+        by the adding namespace.
 
         @param insmgr: Manager this counter is added to
-        @type insmgr: descendant of L{satella.instrumentation.base.InstrumentationManager}
+        @type insmgr: descendant of L{satella.instrumentation.CounterCollection}
         """
         pass
 
     def _on_removed(self):
-        """Called when this counter is removed from an InstrumentationManager"""
+        """Called when this counter is removed from a namespace"""
         pass
+
+class Counter(CounterObject):
+    """
+    Base class for all instrumentation counters.
+    You may want to OVERRIDE all of following methods
+    """
+
+    def __init__(self, name):
+        """
+        Initializes the counter. Counter starts enabled.
+
+        @param name: Name of the instrumentation counter
+        @type name: str        
+        """
+        CounterObject.__init__(self, name)
 
     def update(self):
         """

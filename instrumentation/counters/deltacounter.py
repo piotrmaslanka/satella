@@ -1,10 +1,10 @@
-from satella.instrumentation.basecounter import InstrumentationCounter
+from satella.instrumentation.basecounter import Counter
 
-class DeltaCounter(InstrumentationCounter):
+class DeltaCounter(Counter):
     """A counter that modifications to particular value"""
 
-    def __init__(self, name, severity=0):
-        InstrumentationCounter.__init__(self, name, severity=severity)
+    def __init__(self, name):
+        Counter.__init__(self, name)
 
         self.current_value = 0   #: current value
 
