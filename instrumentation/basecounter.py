@@ -7,7 +7,7 @@ class CounterObject(object):
     infrastructure. If you just want to make a new counter, inherit 
     from L{Counter} instead.
     """
-    def __init__(self, name):
+    def __init__(self, name, description=None):
         """
         Initializes the object
         @param name: Name of the object
@@ -15,6 +15,7 @@ class CounterObject(object):
         """
         self.name = name
         self.enabled = True
+        self.description = description  #: human-readable description of the value        
 
     def enable(self):
         """Enable the object"""
@@ -44,14 +45,15 @@ class Counter(CounterObject):
     You may want to OVERRIDE all of following methods
     """
 
-    def __init__(self, name):
+    def __init__(self, name, units=None, description=None):
         """
         Initializes the counter. Counter starts enabled.
 
         @param name: Name of the instrumentation counter
         @type name: str        
         """
-        CounterObject.__init__(self, name)
+        CounterObject.__init__(self, name, description=description)
+        self.units = units   #: in what units is the value expressed
 
     def update(self):
         """

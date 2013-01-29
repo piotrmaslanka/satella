@@ -8,13 +8,14 @@ class CounterCollectionTest(unittest.TestCase):
 
     def test_add_remove_counter(self):
         """Tests adding and removing a counter from a collection"""
-        insmgr = CounterCollection('test_namespace')
+        insmgr = CounterCollection('test_namespace', description=u'test')
         ctr = IntegerValueCounter('a_counter')
         atr = IntegerValueCounter('a_counter')
 
         insmgr.add(ctr)
         insmgr.add(atr)
         self.assertRaises(ObjectExists, insmgr.add, ctr)
+        self.assertEquals(insmgr.description, u'test')
         insmgr.remove(ctr)
         self.assertRaises(ObjectNotExists, insmgr.remove, ctr)
 
@@ -31,8 +32,11 @@ class CounterCollectionTest(unittest.TestCase):
     def test_mass_disable_enable(self):
         """Tests enabling and disabling children from a namespace"""
         insmgr = CounterCollection('test_namespace')
-        ctr = IntegerValueCounter('a_counter')
-        atr = IntegerValueCounter('b_counter')
+        ctr = IntegerValueCounter('a_counter', units=u'dogs')
+        atr = IntegerValueCounter('b_counter', description=u'hello')
+
+        self.assertEquals(ctr.units, u'dogs')
+        self.assertEquals(atr.description, u'hello')
 
         insmgr.add(ctr)
         insmgr.add(atr)

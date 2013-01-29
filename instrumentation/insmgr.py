@@ -18,9 +18,9 @@ class CounterCollection(Monitor, CounterObject):
 
     This class is threadsafe.
     """
-    def __init__(self, namespace):
+    def __init__(self, namespace, description=None):
         Monitor.__init__(self)
-        CounterObject.__init__(self, namespace)
+        CounterObject.__init__(self, namespace, description=description)
         self.items = []
 
     @Monitor.protect
