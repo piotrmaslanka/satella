@@ -97,8 +97,16 @@ class SSLServerSocket(ServerSocket):
         ServerSocket.__init__(self, socket)
 
     def read(self):
+        """@return: a new client L{Socket}"""
+        if not self.active: raise ChannelClosed, 'cannot read - socket closed'
+
         try:
-            # try to accept it and repack it into a SSLSocket channel
-            return SSLSocket(ServerSocket.read(self).get_underlying_object())
-        except SSLError:
-            raise DataNotAvailable, 'SSL failure'
+            return SSLSocket(self.socket.accept()[0])
+        except socket.timeout:            
+            raise DataNotAvailable, 'no socket to accept'
+        except socket.error as e:
+            msg = e.strerror or e.message
+            if 'reset by peer' in msg:
+                raise DataNotAvailable, 'SSL raised connection reset by peer'
+            self.close()
+            raise UnderlyingFailure, 'accept() failed'
