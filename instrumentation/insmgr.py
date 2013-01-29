@@ -21,22 +21,19 @@ class CounterCollection(Monitor, CounterObject):
     def __init__(self, namespace):
         Monitor.__init__(self)
         CounterObject.__init__(self, namespace)
-        self.items = defaultdict(list)  #: dict(name => [.. counter objects ..]])
-
+        self.items = []
 
     @Monitor.protect
     def enable(self):
         CounterObject.enable(self)
-        for counterlists in self.items.itervalues():
-            for co in counterlists:
-                co.enable()
+        for co in self.items:
+            co.enable()
 
     @Monitor.protect
     def disable(self):
         CounterObject.disable(self)
-        for counterlists in self.items.itervalues():
-            for co in counterlists:
-                co.disable()
+        for co in self.items:
+            co.disable()
 
     @Monitor.protect
     def add(self, counterobject):
@@ -45,10 +42,10 @@ class CounterCollection(Monitor, CounterObject):
         @type counter: descendant of L{CounterObject}
 
         """
-        if counterobject in self.items[counterobject.name]:
+        if counterobject in self.items:
             raise ObjectExists, 'already added'
 
-        self.items[counterobject.name].append(counterobject)
+        self.items.append(counterobject)
         counterobject._on_added(self)
 
     @Monitor.protect
@@ -57,13 +54,9 @@ class CounterCollection(Monitor, CounterObject):
         @param counter: Counterobject to remove. Must exist in this collection.
         @type counter: descendant of L{CounterObject}
         """
-        if counterobject not in self.items[counterobject.name]:
+        if counterobject not in self.items:
             raise ObjectNotExists, 'not in this collection'
 
-        if len(self.items[counterobject.name]) == 1:
-            # so that defaultdict is not oversized beyond need
-            del self.items[counterobject.name]
-        else:
-            self.items[counterobject.name].remove(counterobject)
+        self.items.remove(counterobject)
 
         counterobject._on_removed()
