@@ -14,6 +14,22 @@ class BaseThread(Thread):
 class Monitor(object):
     """
     Base utility class for creating monitors (the synchronization thingies!)
+
+    Use it like that:
+
+        class MyProtectedObject(Monitor):
+            def __init__(self, *args, **kwargs):
+                Monitor.__init__(self)
+                ... do your job ..
+
+            @Monitor.protect
+            def function_that_needs_mutual_exclusion(self):
+                .. do your threadsafe jobs ..
+
+            def function_that_partially_needs_protection(self):
+                .. do your jobs ..
+                with Monitor.acquire(self):
+                    .. do your threadsafe jobs ..
     """
     def __init__(self):
         """You need to invoke this at your constructor"""
