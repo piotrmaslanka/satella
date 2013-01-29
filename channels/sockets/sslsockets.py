@@ -83,7 +83,17 @@ class SSLSocket(Socket):
 
 class SSLServerSocket(ServerSocket):
     def __init__(self, socket):
-        """@type socket: SSL-wrapped server socket"""
+        """
+        Creates the socket from a socket object.
+
+        Note that it doesn't have to be a SSL socket, it can
+        be a normal server socket - useful for debug SSL disabling.
+        Still, you'd probably want to use L{ServerSocket} if you 
+        don't want SSL to avoid extra wrapping penalty.
+
+        @type socket: SSL-wrapped server socket.
+
+        """
         ServerSocket.__init__(self, socket)
 
     def read(self):
