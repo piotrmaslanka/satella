@@ -28,7 +28,7 @@ def render_counter(cc, nestlevel):
     except NoData:
         val = '<span class="nodata">no data</span>'
 
-    return """<div class="counter"><div class="counter_label">%s</div><div class"counter_value">%s</div></div>""" \
+    return """<div class="counter"><div class="counter_label">%s</div><div class="counter_value">%s</div></div>""" \
             % (cc.name, val)
 
 def render_collection(cc, nestlevel):
@@ -81,7 +81,8 @@ class BHTIPIRequestHandler(BaseHTTPRequestHandler):
     </style>
 </head>
 <body>%s
-</body><div class="footer">powered by <a href="https://github.com/henrietta/satella/">Satella</div>
+<div class="footer">powered by <a href="https://github.com/henrietta/satella/">Satella</a></div>
+</body>
 </html>""" % (self.server.rootcc.name, render(self.server.rootcc, 1))
 
         self.wfile.write(u)
