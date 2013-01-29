@@ -2,7 +2,15 @@
 Basic HTtp Instrumentation Presentation Interface.
 
 Presenting an instrumentation hierarchy by server process' HTTP server.
-The module contains one
+Sample usage (let rootcc be the root CounterCollection)
+
+    from satella.contrib.bhtipi import BHTIPI
+    bt = BHTIPI('localhost', 8080, rootcc).start()
+
+    .. wait until teardown ..
+
+    bt.terminate()      # it will close and terminate
+
 """
 
 from satella.instrumentation import CounterCollection, Counter, NoData
@@ -68,10 +76,12 @@ class BHTIPIRequestHandler(BaseHTTPRequestHandler):
         }
         .nodata { color: gray; }
         .indent { margin-left: 10px; }
+        .footer { text-align: center; font-size: 0.8em; }
+        .footer a { color: black; }
     </style>
 </head>
 <body>%s
-</body>
+</body><div class="footer">powered by <a href="https://github.com/henrietta/satella/">Satella</div>
 </html>""" % (self.server.rootcc.name, render(self.server.rootcc, 1))
 
         self.wfile.write(u)
