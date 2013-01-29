@@ -33,6 +33,6 @@ class PulseCounter(Counter):
             else:
                 break
 
-        del self.pulses[len(self.pulses)-pulses:]    # delete pulses before, they are not relevant
+        del self.pulses[:len(self.pulses)-pulses]    # delete pulses before, they are not relevant
 
         return pulses

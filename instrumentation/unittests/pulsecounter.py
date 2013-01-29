@@ -29,3 +29,13 @@ class PulseCounterTest(unittest.TestCase):
         sleep(0.3)
         ivc.update()
         self.assertEqual(ivc.get_current(), 1)
+
+    def test_bug_1(self):
+        ivc = PulseCounter('c', resolution=60)
+        ivc.update()
+        ivc.update()
+        self.assertEqual(ivc.get_current(), 2)
+        sleep(3)        
+        ivc.update()
+        ivc.update()
+        self.assertEqual(ivc.get_current(), 4)
