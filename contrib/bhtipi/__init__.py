@@ -8,6 +8,7 @@ The module contains one
 from satella.instrumentation import CounterCollection, Counter, NoData
 from satella.threads import BaseThread, Monitor
 
+from SocketServer import ThreadingMixIn
 from BaseHTTPServer import HTTPServer, BaseHTTPRequestHandler
 
 # -------------------------------------------------- Nested rendering of the counter infrastructure
@@ -41,6 +42,10 @@ def render(cc, nestlevel):
 
 class BHTIPIRequestHandler(BaseHTTPRequestHandler):
     def do_GET(self):
+        if self.path != '/':
+            self.send_response(404)
+            return
+
         self.send_response(200)
         self.send_header('Content-Type', 'text/html')        
         self.end_headers()
@@ -72,7 +77,7 @@ class BHTIPIRequestHandler(BaseHTTPRequestHandler):
         self.wfile.write(u)
 
 
-class BHTIPIServer(HTTPServer):
+class BHTIPIServer(ThreadingMixIn, HTTPServer):
     def __init__(self, interface, port, rootcc):
         HTTPServer.__init__(self, (interface, port), BHTIPIRequestHandler)
         self.rootcc = rootcc
@@ -86,3 +91,7 @@ class BHTIPI(BaseThread):
     def run(self):
         while not self._terminating:
             self.server.handle_request()
+
+    def terminate(self):
+        BaseThread.terminate(self)
+        self.server.server_close()
