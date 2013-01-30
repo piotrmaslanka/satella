@@ -17,7 +17,6 @@ class ThreadingTest(unittest.TestCase):
         k = TTT().start()
         self.assertEquals(type(k), TTT)
         sleep(0.2)
-        k.terminate()
-        k.join()
-
+        k.terminate().join()
+        
         self.assertEquals(k._terminating, True)

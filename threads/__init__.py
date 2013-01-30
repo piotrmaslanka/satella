@@ -9,6 +9,7 @@ class BaseThread(Thread):
     def terminate(self):
         """Sets internal termination flag"""
         self._terminating = True
+        return self
 
     def start(self):
         Thread.start(self)
