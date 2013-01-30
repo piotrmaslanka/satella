@@ -21,7 +21,27 @@ from BaseHTTPServer import HTTPServer, BaseHTTPRequestHandler
 
 # -------------------------------------------------- Nested rendering of the counter infrastructure
 
-def render_counter(cc, nestlevel):
+
+def render_counter_tables(cc, nestlevel):
+    try:
+        val = cc.get_current()
+    except NoData:
+        val = '<span class="nodata">no data</span>'
+
+    if cc.description != None:
+        desc = cc.description if type(cc.description) == str else cc.description.encode('utf8')
+    else:
+        desc = ''
+
+    if cc.units != None:
+        units = cc.units if type(cc.units) == str else cc.units.encode('utf8')
+    else:
+        units = ''
+
+    return '<table><tr><td class="counter_label">%s</td><td class="counter_value">%s</td><td class="counter_units">%s</td></tr></table>' % (desc, val, units)
+
+
+def render_counter_div(cc, nestlevel):
     try:
         val = cc.get_current()
     except NoData:
@@ -43,18 +63,21 @@ def render_counter(cc, nestlevel):
 
     return ''.join(s)
 
-def render_collection(cc, nestlevel):
+def render_collection(cc, nestlevel, use_tables):
     u = """<h%s>%s</h%s><hr><div class="indent">""" % (nestlevel, cc.name, nestlevel)
     with Monitor.acquire(cc):
-        s = [render(x, nestlevel+1) for x in cc.items]
+        s = [render(x, nestlevel+1, use_tables) for x in cc.items]
     y = "</div>"
     return ''.join([u]+s+[y])
 
-def render(cc, nestlevel):
+def render(cc, nestlevel, use_tables):
     if isinstance(cc, CounterCollection):
-        return render_collection(cc, nestlevel)
+        return render_collection(cc, nestlevel, use_tables)
     elif isinstance(cc, Counter):
-        return render_counter(cc, nestlevel)
+        if use_tables:
+            return render_counter_tables(cc, nestlevel)
+        else:
+            return render_counter_div(cc, nestlevel)
     else:
         raise ValueError, 'cc of unknown type'
 
@@ -100,21 +123,22 @@ class BHTIPIRequestHandler(BaseHTTPRequestHandler):
 <body>%s
 <div class="footer">powered by <a href="https://github.com/henrietta/satella/">Satella</a></div>
 </body>
-</html>""" % (self.server.rootcc.name, render(self.server.rootcc, 1))
+</html>""" % (self.server.rootcc.name, render(self.server.rootcc, 1, self.server.use_tables))
 
         self.wfile.write(u)
 
 
 class BHTIPIServer(ThreadingMixIn, HTTPServer):
-    def __init__(self, interface, port, rootcc):
+    def __init__(self, interface, port, rootcc, use_tabled_layout):
         HTTPServer.__init__(self, (interface, port), BHTIPIRequestHandler)
         self.rootcc = rootcc
+        self.use_tables = use_tabled_layout
 
 
 class BHTIPI(BaseThread):
-    def __init__(self, interface, port, rootcc):
+    def __init__(self, interface, port, rootcc, use_tabled_layout=False):
         BaseThread.__init__(self)
-        self.server = BHTIPIServer(interface, port, rootcc)
+        self.server = BHTIPIServer(interface, port, rootcc, use_tabled_layout)
 
     def run(self):
         while not self._terminating:
