@@ -41,6 +41,8 @@ class SelectHandlingLayerTest(unittest.TestCase):
                 if isinstance(channel, ServerSocket):
                     self.register_channel(channel.read())
                 else:
+                    self.utc.assertEquals(channel.blocking, False)
+
                     if len(channel.rx_buffer) < 11: return
                     self.utc.assertEquals(channel.read(6), 'Hello ')
                     self.utc.assertEquals(channel.read(5), 'World')
@@ -90,6 +92,7 @@ class SocketsTest(unittest.TestCase):
                 sck = socket(AF_INET, SOCK_STREAM)
                 sck.connect(('127.0.0.1', TESTING_PORT))
                 sck = Socket(sck)
+                self.utc.assertEquals(sck.blocking, True)
                 self.utc.assertEquals(sck.read(1), 'L')
                 pkdata = sck.read(100, less=True, peek=True)
                 data = sck.read(100, less=True)
