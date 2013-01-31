@@ -53,6 +53,35 @@ class Monitor(object):
         return monitored
 
 
+    class release(object):
+        """
+        Returns a context manager object that can release another object
+        as long as that object is a monitor.
+
+        Consider foo, which is a monitor. You have a protected function,
+        but you feel that you can release it for a while as it would
+        improve parallelism. You can use it as such:
+
+
+        @Monitor.protect
+        def protected_function(self):
+            .. do some stuff that needs mutual exclusion ..
+            with Monitor.release(self):
+                .. do some I/O that doesn't need mutual exclusion ..
+            .. back to protected stuff ..
+
+        """
+        def __init__(self, foo):
+            self.foo = foo
+
+        def __enter__(self):
+            self.foo._monitor_lock.release()
+
+        def __exit__(self, e1, e2, e3):
+            self.foo._monitor_lock.acquire()
+            return False
+
+
     class acquire(object):
         """
         Returns a context manager object that can lock another object,
