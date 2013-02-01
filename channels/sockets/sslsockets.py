@@ -76,9 +76,14 @@ class SSLSocket(Socket):
     def write(self, *args, **kwargs):
         try:
             return Socket.write(self, *args, **kwargs)
-        except SSLError:
-            self.close()
-            raise ChannelFailure, 'SSL failure'
+        except SSLError as e:
+          # strerror is available under PyPy, and message under CPython
+            serr = e.strerror or e.message
+            if 'timed out' in serr:    # timeout
+                raise DataNotAvailable, 'ssl timeout'
+            else:       # something else
+                raise UnderlyingFailure, 'socket send failed'
+                self.close()
 
 
 class SSLServerSocket(ServerSocket):
