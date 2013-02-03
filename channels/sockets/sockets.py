@@ -76,7 +76,7 @@ class Socket(FileDescriptorChannel):
                     # The channel has been closed right now. Invoke a recursive
                     # call to this function, it will do the necessary checking, 
                     # because now it will be true that self.active == False
-                    return self.read(count, less, peek)
+                    return Socket.read(self, count, less, peek)
 
                 if less:    # a single recv passed, we can return with less data
                     return FileDescriptorChannel.read(self, count, less, peek)
