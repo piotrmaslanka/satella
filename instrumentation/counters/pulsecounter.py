@@ -3,7 +3,13 @@ from time import time
 from satella.instrumentation.basecounter import Counter
 
 class PulseCounter(Counter):
-    """Counter that tracks frequency of calls to update()"""
+    """
+    Counter that tracks frequency of calls to update()
+
+    Each call to update() signifies a tick that will be tracked
+    in time. The value of the counter is the amount of calls to update()
+    - ie. ticks - that have been made during the last 'resolution' seconds.
+    """
 
     def __init__(self, name, resolution=1, units=None, description=None):
         """

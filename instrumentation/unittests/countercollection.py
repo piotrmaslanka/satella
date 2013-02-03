@@ -1,4 +1,4 @@
-from satella.instrumentation.counters import IntegerValueCounter
+from satella.instrumentation.counters import NumericValueCounter
 from satella.instrumentation import CounterCollection
 from satella.instrumentation.exceptions import NoData, ObjectExists, ObjectNotExists
 
@@ -9,8 +9,8 @@ class CounterCollectionTest(unittest.TestCase):
     def test_add_remove_counter(self):
         """Tests adding and removing a counter from a collection"""
         insmgr = CounterCollection('test_namespace', description=u'test')
-        ctr = IntegerValueCounter('a_counter')
-        atr = IntegerValueCounter('a_counter')
+        ctr = NumericValueCounter('a_counter')
+        atr = NumericValueCounter('a_counter')
 
         insmgr.add(ctr)
         insmgr.add(atr)
@@ -32,8 +32,8 @@ class CounterCollectionTest(unittest.TestCase):
     def test_mass_disable_enable(self):
         """Tests enabling and disabling children from a namespace"""
         insmgr = CounterCollection('test_namespace')
-        ctr = IntegerValueCounter('a_counter', units=u'dogs')
-        atr = IntegerValueCounter('b_counter', description=u'hello')
+        ctr = NumericValueCounter('a_counter', units=u'dogs')
+        atr = NumericValueCounter('b_counter', description=u'hello')
 
         self.assertEquals(ctr.units, u'dogs')
         self.assertEquals(atr.description, u'hello')

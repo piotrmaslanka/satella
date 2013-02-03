@@ -3,8 +3,17 @@ from time import time
 from satella.instrumentation.basecounter import Counter
 from satella.instrumentation.exceptions import NoData
 
-class IntegerValueCounter(Counter):
-    """A counter that tracks a particular integer value"""
+class NumericValueCounter(Counter):
+    """
+    A counter that tracks a particular numeric value, directly specified by update.
+
+    Use like:
+
+        cc = NumericValueCounter('test')    # value after the call: 0
+        cc.update(5)      # value after the call: 5
+        cc.update(-3)     # value after the call: 3
+
+    """
 
     def __init__(self, name, units=None, description=None):
         Counter.__init__(self, name, units=units, description=description)
