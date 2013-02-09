@@ -38,6 +38,17 @@ class PoolTest(unittest.TestCase):
 
         cp.close()
 
+    def test_cursorwrapper_destructor(self):
+        cp = ConnectionPool(self.dd)
+        c1 = cp.cursor()
+        del c1  # at this point c1 should die
+
+        import gc
+        gc.collect() # PyPy could keep c1 alive, we need
+                     # to ensure it's dead.
+
+        self.assertEquals(cp.connections.qsize(), 1)
+
     def test_threads(self):
         """Pool, two threads, basic queries"""
         class TT(BaseThread):
