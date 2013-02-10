@@ -38,6 +38,14 @@ class PoolTest(unittest.TestCase):
 
         cp.close()
 
+    def test_pool_simple_query_executemany(self):
+        """Creates a pool with a single connection and does SELECT 2+2 with that with executemany"""
+        cp = ConnectionPool(self.dd)
+        with cp.cursor() as cur:
+            cur.executemany('SELECT 2+2', ())
+
+        cp.close()
+
     def test_cursorwrapper_destructor(self):
         cp = ConnectionPool(self.dd)
         c1 = cp.cursor()

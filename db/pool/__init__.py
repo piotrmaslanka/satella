@@ -162,6 +162,16 @@ class ConnectionPool(object):
                         continue
                     break
 
+            def executemany(self, *args, **kwargs):
+                while True:
+                    try:
+                        self.cursor.executemany(*args, **kwargs)
+                    except self.cp.dd.cb_excepts as exc:
+                        if not self.cp.dd.xwcb(exc): raise
+                        self.__reconnect()
+                        continue
+                    break
+
             def __getattr__(self, name):
                 return getattr(self.cursor, name)
 
