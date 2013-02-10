@@ -16,23 +16,31 @@ class CounterCollection(Monitor, CounterObject):
     There should be a root collection on the stop, that can be fed to presentation
     layer.
 
+    Names inserted should be unique
+
     This class is threadsafe.
     """
     def __init__(self, namespace, description=None):
         Monitor.__init__(self)
         CounterObject.__init__(self, namespace, description=description)
-        self.items = []
+        self.items = {}
+
+    @Monitor.protect
+    def get(self, name):
+        if name not in self.items:
+            raise ObjectNotExists, 'object not found'
+        return self.items[name]
 
     @Monitor.protect
     def enable(self):
         CounterObject.enable(self)
-        for co in self.items:
+        for co in self.items.itervalues():
             co.enable()
 
     @Monitor.protect
     def disable(self):
         CounterObject.disable(self)
-        for co in self.items:
+        for co in self.items.itervalues():
             co.disable()
 
     @Monitor.protect
@@ -42,10 +50,10 @@ class CounterCollection(Monitor, CounterObject):
         @type counter: descendant of L{CounterObject}
 
         """
-        if counterobject in self.items:
+        if counterobject.name in self.items:
             raise ObjectExists, 'already added'
 
-        self.items.append(counterobject)
+        self.items[counterobject.name] = counterobject
         counterobject._on_added(self)
 
     @Monitor.protect
@@ -54,9 +62,9 @@ class CounterCollection(Monitor, CounterObject):
         @param counter: Counterobject to remove. Must exist in this collection.
         @type counter: descendant of L{CounterObject}
         """
-        if counterobject not in self.items:
+        if counterobject.name not in self.items:
             raise ObjectNotExists, 'not in this collection'
 
-        self.items.remove(counterobject)
+        del self.items[counterobject.name]
 
         counterobject._on_removed()

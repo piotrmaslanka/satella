@@ -10,7 +10,7 @@ class CounterCollectionTest(unittest.TestCase):
         """Tests adding and removing a counter from a collection"""
         insmgr = CounterCollection('test_namespace', description=u'test')
         ctr = NumericValueCounter('a_counter')
-        atr = NumericValueCounter('a_counter')
+        atr = NumericValueCounter('b_counter')
 
         insmgr.add(ctr)
         insmgr.add(atr)
@@ -18,6 +18,19 @@ class CounterCollectionTest(unittest.TestCase):
         self.assertEquals(insmgr.description, u'test')
         insmgr.remove(ctr)
         self.assertRaises(ObjectNotExists, insmgr.remove, ctr)
+
+        c_atr = insmgr.get('b_counter')
+        self.assertEquals(c_atr, atr)
+
+        self.assertRaises(ObjectNotExists, insmgr.get, 'c_counter')
+
+    def test_add_different_objects_same_names(self):
+        insmgr = CounterCollection('test_namespace', description=u'test')
+        ctr = NumericValueCounter('a_counter')
+        atr = NumericValueCounter('a_counter')        
+
+        insmgr.add(ctr)
+        self.assertRaises(ObjectExists, insmgr.add, atr)
 
     def test_add_remove_collection(self):
         """Tests adding and removing a collection from a collection"""
