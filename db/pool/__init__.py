@@ -247,7 +247,9 @@ class ConnectionPool(object):
 
         If you need to have transactions span multiple .execute() calls, consider .transaction()
         instead. .cursor() is best-served if your .execute() and .executemany() are autocommitting,
-        if you need them that way then L{DatabaseDefinition} occ and acs are your friends.
+        if you need them that way then L{DatabaseDefinition} occ and acs are your friends. If it's not
+        autocommitting, you may expect rare-case weird behaviour (eg. queries not being committed despite
+        .execute() succeeding).
 
         General difference between .cursor() and .transaction() is that in .cursor() EVERY execute()
         or executemany() will be retried if it disconnects, whereas in .transaction() only the first
