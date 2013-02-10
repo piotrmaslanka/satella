@@ -1,8 +1,15 @@
 import Queue
 
 class DatabaseDefinition(object):
-    def __init__(self, cccall, cbexcepts, cccall_args=(), cccall_kwargs={}, xwcb=lambda e: True, acs=lambda x: None):
+    def __init__(self, cccall, cbexcepts, cccall_args=(), cccall_kwargs={}, 
+                 xwcb=lambda e: True, acs=lambda x: None, occ=lambda x: None,
+                 oct=lambda x: None):
         """
+
+        This initializes a database definition. Because different databases work
+        differently, you may want to read this in it's entirety in order to better
+        understand what to type.
+
         @param cccall: A callable that can produce Connection objects
         @param cbexcepts: Array of exception types that signify that connection was broken
         @type cbexcepts: tuple or list of exceptions, or else a single exception type.
@@ -22,6 +29,22 @@ class DatabaseDefinition(object):
                 dd = DatabaseDefinition(psycopg2.connect, ..., ..., ..., ..., acs)
 
         @type acs: callable/1
+        @param occ: callable that accepts a freshly created cursor via .cursor() to execute some 
+            operations on it. What it returns doesn't matter.
+        @type occ: callable/1
+        @param oct: callable that accepts a freshly created cursor via .transaction() to execute some
+            operations on it. What it returns doesn't matter.
+
+            For example, you may want to begin a transaction, because MySQL does not implicitly start them
+            unless set with autocommit:
+
+            def oct(c): c.execute('START TRANSACTION')
+            dd = DatabaseDefinition(psycopg2.connect, ..., ..., ..., ..., ..., ...., oct)
+
+            Some better-behaved databases do, and in that case you may wish to leave this parameter
+            at it's default.
+
+        @type oct: callable/1
         """
         if type(cbexcepts) in (tuple, list):
             self.cb_excepts = tuple(cbexcepts)
@@ -30,6 +53,8 @@ class DatabaseDefinition(object):
 
         self.xwcb = xwcb
         self.acs = acs
+        self.occ = occ
+        self.oct = oct
         self.conn_lambda = lambda: cccall(*cccall_args, **cccall_kwargs) #: closure that returns a connection
 
     def get_connection(self):
@@ -39,28 +64,46 @@ class DatabaseDefinition(object):
         return c
 
 class ConnectionPool(object):
+    """
+    Provides .cursor() and .transaction() calls, which returns cursors that can be used as normal
+    DB API cursors. Most importantly, they support the context manager ("with") protocol, and using
+    them with that is EXPECTED.
 
+    They both .commit() when context is left without an exception, and .rollback() if it's left
+    with an exception. Context managers never swallow exceptions.
+
+    Use .cursor() if you have an autocommit connection and don't care about transactionism.
+    Use .transaction() if in a single context you do a single transaction and you need all
+    the proper behaviour you can get.
+    """
 
     class CursorWrapper(object):
         """
         A class to inherit from when making custom cursor wrappers.
         This is utilized by .cursor() and .transaction()
         """
-        def __init__(self, cp):
+        def __init__(self, cp, is_transaction):
             """
             @param cp: master L{ConnectionPool} object
             @type: L{ConnectionPool}
+            @param is_transaction: Whether this is a transaction or not - to deploy
+                appropriate occ or oct
+            @type is_transaction: bool
             """
             self.cp = cp
             self.conn = self.cp.get_connection()
             self.cursor = self.conn.cursor()
             self.cleaned_up = False
+            self.is_transaction = is_transaction
+
+            (self.cp.dd.oct if self.is_transaction else self.cp.dd.occ)(self.cursor)
 
         def _reconnect(self):
             """Regenerates internal connection and cursor"""
             self.cp.invalidate_connection(self.conn)
             self.conn = cp.get_connection()
             self.cursor = self.conn.cursor()
+            (self.cp.dd.oct if self.is_transaction else self.cp.dd.occ)(self.cursor)
 
         def __enter__(self):
             return self
@@ -137,17 +180,14 @@ class ConnectionPool(object):
     def transaction(self):
         """
         Returns a new cursor. This differs from .cursor() in that disconnect-hardiness
-        is tailored specially towards transactions.
+        is tailored specially towards transactions. This assumes that your database opens
+        a transaction as soon as a cursor is created. This is false for some borderline
+        cases (eg. MySQL), you should use DatabaseDefinition's acs parametr to counter
+        that by issuing appropriate behaviour settings.
 
-        This behaves exactly as .cursor(), but with differences:
-            - Only first query will be replayed if cursor fails, in other cases
-              exceptions will propagate
-            - Context manager will .commit() if there is no exception exiting the context
-            - Context manager will .rollback() if there is an exception exiting the context
-
-        The context manager will never swallow an exception.
-
-        Use it exactly as you would use .cursor(), keeping in mind transactional properties.
+        General difference between .cursor() and .transaction() is that in .cursor() EVERY execute()
+        or executemany() will be retried if it disconnects, whereas in .transaction() only the 
+        first call will.        
         """
 
         class TransactionCursor(self.CursorWrapper):
@@ -167,7 +207,7 @@ class ConnectionPool(object):
                 @param cp: master L{ConnectionPool} object
                 @type: L{ConnectionPool}
                 """                
-                super(TransactionCursor, self).__init__(cp)
+                super(TransactionCursor, self).__init__(cp, True)
                 self.first_query = True
 
             def execute(self, *args, **kwargs):
@@ -206,16 +246,21 @@ class ConnectionPool(object):
         For how disconnection is determined, refer to L{DatabaseDefinition} documentation.
 
         If you need to have transactions span multiple .execute() calls, consider .transaction()
-        instead. This cursor should be very much used with "autocommit" connections, because every
-        single .execute() or .executemany() will be retried.
+        instead. .cursor() is best-served if your .execute() and .executemany() are autocommitting,
+        if you need them that way then L{DatabaseDefinition} occ and acs are your friends.
+
+        General difference between .cursor() and .transaction() is that in .cursor() EVERY execute()
+        or executemany() will be retried if it disconnects, whereas in .transaction() only the first
+        call will.
 
         Use it like that:
 
             cp = ConnectionPool(some_db_definition, some_connection_amount)
             with cp.cursor() as cur:
                 cur.execute('DO SQL')
+                cur.execute('YES PLZ')
             # at this point cursor gets closed and underlying connection is 
-            # returned to the pool.
+            # returned to the pool. 
         """
 
         class Cursor(self.CursorWrapper):
@@ -225,6 +270,9 @@ class ConnectionPool(object):
 
             Supports the context manager protocol.
             """
+
+            def __init__(self, cp):
+                super(Cursor, self).__init__(cp, False)
 
             def execute(self, *args, **kwargs):
                 while True:
