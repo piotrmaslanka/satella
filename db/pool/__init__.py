@@ -1,18 +1,27 @@
 import Queue
 
 class DatabaseDefinition(object):
-    def __init__(self, cccall, cbexcepts, cccall_args=(), cccall_kwargs={}, xwcb=lambda e: True):
+    def __init__(self, cccall, cbexcepts, cccall_args=(), cccall_kwargs={}, xwcb=lambda e: True, acs=lambda x: None):
         """
         @param cccall: A callable that can produce Connection objects
         @param cbexcepts: Array of exception types that signify that connection was broken
         @type cbexcepts: tuple or list of exceptions, or else a single exception type.
         @param cccall_args: Array of arguments to pass to cccall as *args
         @param cccall_kwargs: Dictionary of arguments to pass to cccall as **kwargs
-        @param xwcb: If the database layer throws an exception, and it belongs to
-            cbexcepts, this callable/1 will be called with exception objects as parameter.
+        @param xwcb: If the database layer throws an exception, and it's type belongs to
+            cbexcepts, this callable/1 will be called with exception instance as parameter.
             It is to return True if this indeed was the case that connection was broken. This
             can be used to discern if disconnection signalling is more complex that an exception
             of given type. If xwcb return False, the exception will be reraised.
+        @param acs: callable that accepts connection as a parameter and performs extra operations on it.
+            What it returns doesn't matter.
+
+            For example if you needed an autocommit psycopg2 connection you could do:
+
+                def acs(c): c.autocommit = True
+                dd = DatabaseDefinition(psycopg2.connect, ..., ..., ..., ..., acs)
+
+        @type acs: callable/1
         """
         if type(cbexcepts) in (tuple, list):
             self.cb_excepts = tuple(cbexcepts)
@@ -20,7 +29,14 @@ class DatabaseDefinition(object):
             self.cb_excepts = (cbexcepts, )
 
         self.xwcb = xwcb
-        self.get_connection = lambda: cccall(*cccall_args, **cccall_kwargs) #: closure that returns a connection
+        self.acs = acs
+        self.conn_lambda = lambda: cccall(*cccall_args, **cccall_kwargs) #: closure that returns a connection
+
+    def get_connection(self):
+        """Returns a new connection object"""
+        c = self.conn_lambda()
+        self.acs(c)
+        return c
 
 class ConnectionPool(object):
     def __init__(self, dd, connections=1):
@@ -71,16 +87,16 @@ class ConnectionPool(object):
 
     def cursor(self):
         """
-        Returns a new cursor, constructed from a connection 
-        picked from the pool. Cursor has the "regenerative" abilities
-        that this pool supports, ie. it will be recreated if it is 
-        detected that on a query connection fails.
-        In order not to suffer from "connection dropped during the middle
-        of transaction", first invoke a dummy SQL statement (ie. SELECT 2+2).
+        Returns a new cursor, constructed from a connection picked from the pool. 
 
         If this cursor does a query and it fails (disconnect) it will repeat that again.
-        It is better to repeat SELECT 2+2 that some important transaction's command set.
-        Check your database transaction semantics on 'connection dropped'. You have been warned.
+
+        For how disconnection is determined, refer to L{DatabaseDefinition} documentation.
+
+        Do not use this cursor when multiple execute() will comprise a single transaction. If
+        a connection fails in the middle, it will be reestablished and you will end up splitting
+        your single transaction into two transactions. Mayhem will ensue.
+        Preferably use this cursor with "autocommit" connections.
 
         Use it like that:
 
