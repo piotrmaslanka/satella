@@ -26,19 +26,31 @@ class CounterCollection(Monitor, CounterObject):
         self.items = {}
 
     @Monitor.protect
-    def get(self, name):
-        if name not in self.items:
-            raise ObjectNotExists, 'object not found'
-        return self.items[name]
+    def get(self, name=None):
+        """
+        Fetches all available counter objects, or only given one
+        @param name: Name of object to get. None if get all
+        @type name: str
+
+        @return: L{CounterObject} or sequence of L{CounterObject}s
+        """
+        if name == None:
+            return self.items.values()
+        else:
+            if name not in self.items:
+                raise ObjectNotExists, 'object not found'
+            return self.items[name]
 
     @Monitor.protect
     def enable(self):
+        """Calls .enable() on all children"""
         CounterObject.enable(self)
         for co in self.items.itervalues():
             co.enable()
 
     @Monitor.protect
     def disable(self):
+        """Calls .disable() on all children"""
         CounterObject.disable(self)
         for co in self.items.itervalues():
             co.disable()
@@ -46,6 +58,8 @@ class CounterCollection(Monitor, CounterObject):
     @Monitor.protect
     def add(self, counterobject):
         """
+        Adds a counter object to this collection
+
         @param counter: A counterobject to add
         @type counter: descendant of L{CounterObject}
 
@@ -59,6 +73,8 @@ class CounterCollection(Monitor, CounterObject):
     @Monitor.protect
     def remove(self, counterobject):
         """
+        Removes a counter object from this collection.
+
         @param counter: Counterobject to remove. Must exist in this collection.
         @type counter: descendant of L{CounterObject}
         """

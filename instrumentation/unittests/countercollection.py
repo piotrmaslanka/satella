@@ -24,6 +24,9 @@ class CounterCollectionTest(unittest.TestCase):
 
         self.assertRaises(ObjectNotExists, insmgr.get, 'c_counter')
 
+        self.assertEquals(insmgr.get()[0], atr)
+        self.assertEquals(len(insmgr.get()), 1)
+
     def test_add_different_objects_same_names(self):
         insmgr = CounterCollection('test_namespace', description=u'test')
         ctr = NumericValueCounter('a_counter')
