@@ -39,6 +39,54 @@ class DatabaseDefinition(object):
         return c
 
 class ConnectionPool(object):
+
+
+    class CursorWrapper(object):
+        """
+        A class to inherit from when making custom cursor wrappers.
+        This is utilized by .cursor() and .transaction()
+        """
+        def __init__(self, cp):
+            """
+            @param cp: master L{ConnectionPool} object
+            @type: L{ConnectionPool}
+            """
+            self.cp = cp
+            self.conn = self.cp.get_connection()
+            self.cursor = self.conn.cursor()
+            self.cleaned_up = False
+
+        def _reconnect(self):
+            """Regenerates internal connection and cursor"""
+            self.cp.invalidate_connection(self.conn)
+            self.conn = cp.get_connection()
+            self.cursor = self.conn.cursor()
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, type, value, traceback):
+            if type == None: # no exception occurred, commit safely
+                self.conn.commit()
+            else:
+                self.conn.rollback()
+            self.close()
+            return False
+
+        def close(self):
+            """Closes the cursor, returns the connection.
+            to the pool"""
+            self.cursor.close()
+            self.cp.put_connection(self.conn)
+            self.cleaned_up = True
+
+        def __getattr__(self, name):
+            if name == 'cursor': raise AttributeError, 'wtf'
+            return getattr(self.cursor, name)            
+
+        def __del__(self):
+            if not self.cleaned_up: self.close()
+
     def __init__(self, dd, connections=1):
         """
         @param dd: database definition which will make the connections
@@ -85,29 +133,24 @@ class ConnectionPool(object):
         conn.close()
         self.connections.put(self.dd.get_connection())
 
-    def cursor(self):
+
+    def transaction(self):
         """
-        Returns a new cursor, constructed from a connection picked from the pool. 
+        Returns a new cursor. This differs from .cursor() in that disconnect-hardiness
+        is tailored specially towards transactions.
 
-        If this cursor does a query and it fails (disconnect) it will repeat that again.
+        This behaves exactly as .cursor(), but with differences:
+            - Only first query will be replayed if cursor fails, in other cases
+              exceptions will propagate
+            - Context manager will .commit() if there is no exception exiting the context
+            - Context manager will .rollback() if there is an exception exiting the context
 
-        For how disconnection is determined, refer to L{DatabaseDefinition} documentation.
+        The context manager will never swallow an exception.
 
-        Do not use this cursor when multiple execute() will comprise a single transaction. If
-        a connection fails in the middle, it will be reestablished and you will end up splitting
-        your single transaction into two transactions. Mayhem will ensue.
-        Preferably use this cursor with "autocommit" connections.
-
-        Use it like that:
-
-            cp = ConnectionPool(some_db_definition, some_connection_amount)
-            with cp.cursor() as cur:
-                cur.execute('DO SQL')
-            # at this point cursor gets closed and underlying connection is 
-            # returned to the pool.
+        Use it exactly as you would use .cursor(), keeping in mind transactional properties.
         """
 
-        class Cursor(object):
+        class TransactionCursor(self.CursorWrapper):
             """
             Cursor wrapper object. Provides automatic reconnect on failed
             execute().
@@ -123,34 +166,65 @@ class ConnectionPool(object):
 
                 @param cp: master L{ConnectionPool} object
                 @type: L{ConnectionPool}
-                """
-                self.cp = cp
-                self.conn = self.cp.get_connection()
-                self.cursor = self.conn.cursor()
-                self.cleaned_up = False
+                """                
+                super(TransactionCursor, self).__init__(cp)
+                self.first_query = True
 
-            def __reconnect(self):
-                """Regenerates internal connection and cursor"""
-                self.cp.invalidate_connection(self.conn)
-                self.conn = cp.get_connection()
-                self.cursor = self.conn.cursor()
+            def execute(self, *args, **kwargs):
+                while True:
+                    try:
+                        self.cursor.execute(*args, **kwargs)
+                    except self.cp.dd.cb_excepts as exc:
+                        if not self.first_query: raise
+                        if not self.cp.dd.xwcb(exc): raise
+                        self.__reconnect()
+                        continue
+                    self.first_query = False
+                    break
 
-            def close(self):
-                """Closes the cursor, returns the connection.
-                to the pool"""
-                self.cursor.close()
-                self.cp.put_connection(self.conn)
-                self.cleaned_up = True
+            def executemany(self, *args, **kwargs):
+                while True:
+                    try:
+                        self.cursor.executemany(*args, **kwargs)
+                    except self.cp.dd.cb_excepts as exc:
+                        if not self.first_query: raise
+                        if not self.cp.dd.xwcb(exc): raise
+                        self.__reconnect()
+                        continue
+                    self.first_query = False
+                    break
 
-            def __del__(self):
-                if not self.cleaned_up: self.close()
 
-            def __enter__(self):
-                return self
+        return TransactionCursor(self)
 
-            def __exit__(self, type, value, traceback):
-                self.close()
-                return False
+    def cursor(self):
+        """
+        Returns a new cursor, constructed from a connection picked from the pool. 
+
+        If this cursor does a query and it fails (disconnect) it will repeat that again.
+
+        For how disconnection is determined, refer to L{DatabaseDefinition} documentation.
+
+        If you need to have transactions span multiple .execute() calls, consider .transaction()
+        instead. This cursor should be very much used with "autocommit" connections, because every
+        single .execute() or .executemany() will be retried.
+
+        Use it like that:
+
+            cp = ConnectionPool(some_db_definition, some_connection_amount)
+            with cp.cursor() as cur:
+                cur.execute('DO SQL')
+            # at this point cursor gets closed and underlying connection is 
+            # returned to the pool.
+        """
+
+        class Cursor(self.CursorWrapper):
+            """
+            Cursor wrapper object. Provides automatic reconnect on failed
+            execute().
+
+            Supports the context manager protocol.
+            """
 
             def execute(self, *args, **kwargs):
                 while True:
@@ -171,8 +245,5 @@ class ConnectionPool(object):
                         self.__reconnect()
                         continue
                     break
-
-            def __getattr__(self, name):
-                return getattr(self.cursor, name)
 
         return Cursor(self)

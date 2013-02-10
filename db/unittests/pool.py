@@ -46,6 +46,16 @@ class PoolTest(unittest.TestCase):
 
         cp.close()
 
+    def test_transaction(self):
+        """Creates a pool with a single connection and does a simple transaction on it"""
+        cp = ConnectionPool(self.dd)
+        with cp.transaction() as cur:
+            cur.execute('SELECT 2+2')
+            cur.execute('SELECT 2+2')
+            cur.execute('SELECT 2+2')
+
+        cp.close()
+
     def test_cursorwrapper_destructor(self):
         cp = ConnectionPool(self.dd)
         c1 = cp.cursor()
