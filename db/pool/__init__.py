@@ -217,7 +217,7 @@ class ConnectionPool(object):
                     except self.cp.dd.cb_excepts as exc:
                         if not self.first_query: raise
                         if not self.cp.dd.xwcb(exc): raise
-                        self.__reconnect()
+                        self._reconnect()
                         continue
                     self.first_query = False
                     break
@@ -229,7 +229,7 @@ class ConnectionPool(object):
                     except self.cp.dd.cb_excepts as exc:
                         if not self.first_query: raise
                         if not self.cp.dd.xwcb(exc): raise
-                        self.__reconnect()
+                        self._reconnect()
                         continue
                     self.first_query = False
                     break
@@ -282,7 +282,7 @@ class ConnectionPool(object):
                         self.cursor.execute(*args, **kwargs)
                     except self.cp.dd.cb_excepts as exc:
                         if not self.cp.dd.xwcb(exc): raise
-                        self.__reconnect()
+                        self._reconnect()
                         continue
                     break
 
@@ -292,7 +292,7 @@ class ConnectionPool(object):
                         self.cursor.executemany(*args, **kwargs)
                     except self.cp.dd.cb_excepts as exc:
                         if not self.cp.dd.xwcb(exc): raise
-                        self.__reconnect()
+                        self._reconnect()
                         continue
                     break
 
