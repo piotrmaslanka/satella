@@ -101,7 +101,7 @@ class ConnectionPool(object):
         def _reconnect(self):
             """Regenerates internal connection and cursor"""
             self.cp.invalidate_connection(self.conn)
-            self.conn = cp.get_connection()
+            self.conn = self.cp.get_connection()
             self.cursor = self.conn.cursor()
             (self.cp.dd.oct if self.is_transaction else self.cp.dd.occ)(self.cursor)
 
