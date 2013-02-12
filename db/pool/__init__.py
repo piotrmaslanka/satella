@@ -114,10 +114,11 @@ class ConnectionPool(object):
             return self
 
         def __exit__(self, type, value, traceback):
-            if type == None: # no exception occurred, commit safely
-                self.conn.commit()
-            else:
-                self.conn.rollback()
+            if self.is_transaction:
+                if type == None: # no exception occurred, commit safely
+                    self.conn.commit()
+                else:
+                    self.conn.rollback()
             self.close()
             return False
 
@@ -253,7 +254,7 @@ class ConnectionPool(object):
         instead. .cursor() is best-served if your .execute() and .executemany() are autocommitting,
         if you need them that way then L{DatabaseDefinition} occ and acs are your friends. If it's not
         autocommitting, you may expect rare-case weird behaviour (eg. queries not being committed despite
-        .execute() succeeding).
+        .execute() succeeding). DON'T USE THIS IF THE CONNECTION IS NOT AUTOCOMMITTING.
 
         General difference between .cursor() and .transaction() is that in .cursor() EVERY execute()
         or executemany() will be retried if it disconnects, whereas in .transaction() only the first
