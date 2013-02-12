@@ -90,11 +90,16 @@ class ConnectionPool(object):
                 appropriate occ or oct
             @type is_transaction: bool
             """
-            self.cp = cp
-            self.conn = self.cp.get_connection()
-            self.cursor = self.conn.cursor()
             self.cleaned_up = False
             self.is_transaction = is_transaction
+
+            self.cp = cp
+            self.conn = self.cp.get_connection()
+            try:
+                self.cursor = self.conn.cursor()
+            except:
+                self._reconnect()
+                self.cursor = self.conn.cursor()
 
             (self.cp.dd.oct if self.is_transaction else self.cp.dd.occ)(self.cursor)
 
@@ -124,7 +129,6 @@ class ConnectionPool(object):
             self.cleaned_up = True
 
         def __getattr__(self, name):
-            if name == 'cursor': raise AttributeError, 'wtf'
             return getattr(self.cursor, name)            
 
         def __del__(self):

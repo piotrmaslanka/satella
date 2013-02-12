@@ -12,7 +12,7 @@ class PoolTest(unittest.TestCase):
     #   sample definition for PostgreSQL via psycopg2 follows
     dd = DatabaseDefinition(
             psycopg2.connect,
-            psycopg2.OperationalError,
+            (psycopg2.OperationalError, psycopg2.InterfaceError),
             (),
             {
                 'database': 'postgres',
@@ -30,6 +30,24 @@ class PoolTest(unittest.TestCase):
     def test_pool_simple_query(self):
         """Creates a pool with a single connection and does SELECT 2+2 with that"""
         cp = ConnectionPool(self.dd)
+        with cp.cursor() as cur:
+            cur.execute('SELECT 2+2')
+            a, = cur.fetchone()
+
+        self.assertEquals(a, 4)
+
+        cp.close()
+
+    def test_pool_onetime_reconnect(self):
+        """Creates a pool with a single connection, get the connection, close it
+        and return it, anticipating that it will be regenerated"""
+        cp = ConnectionPool(self.dd)
+        # get the connection, close it and put it back
+        c = cp.get_connection()
+        c.close()
+        cp.put_connection(c)
+
+        # do the query, anticipating cursor regen
         with cp.cursor() as cur:
             cur.execute('SELECT 2+2')
             a, = cur.fetchone()
