@@ -193,6 +193,8 @@ class ConnectionPool(object):
         General difference between .cursor() and .transaction() is that in .cursor() EVERY execute()
         or executemany() will be retried if it disconnects, whereas in .transaction() only the 
         first call will.        
+
+        DO NOT USE THIS IS THE CONNECTION IS AUTOCOMMITTING.
         """
 
         class TransactionCursor(self.CursorWrapper):
