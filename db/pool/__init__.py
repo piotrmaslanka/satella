@@ -58,7 +58,8 @@ class DatabaseDefinition(object):
         self.conn_lambda = lambda: cccall(*cccall_args, **cccall_kwargs) #: closure that returns a connection
 
     def get_connection(self):
-        """Returns a new connection object"""
+        """Returns a new connection object. This connects to the database with according
+        definitions from L{DatabaseDefinition} passed at constructor."""
         c = self.conn_lambda()
         self.acs(c)
         return c
@@ -114,6 +115,14 @@ class ConnectionPool(object):
             return self
 
         def __exit__(self, type, value, traceback):
+            """
+            Context manager exit. This does the following:
+                - If the wrapper represented a transaction:
+                    - If no exception has occurred, COMMIT
+                    - If exception has occurred, ROLLBACK
+                - Close the cursor
+                - Return the connection to the pool
+            """
             if self.is_transaction:
                 if type == None: # no exception occurred, commit safely
                     self.conn.commit()
@@ -130,9 +139,11 @@ class ConnectionPool(object):
             self.cleaned_up = True
 
         def __getattr__(self, name):
+            """Used so that wrapping can be done right"""
             return getattr(self.cursor, name)            
 
         def __del__(self):
+            """So that if somebody forgets .close() the connection will end up released"""
             if not self.cleaned_up: self.close()
 
     def __init__(self, dd, connections=1):
