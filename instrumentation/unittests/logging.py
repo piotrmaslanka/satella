@@ -30,6 +30,7 @@ class LogsetTest(unittest.TestCase):
         self.assertEquals(ls.filter_when_to(3).count(), 3)
         self.assertEquals(ls.filter_when_from(2).filter_when_to(4).count(), 3)
 
+        self.assertEquals(len(list(ls.events())), 5)
 
 class LoggingTest(unittest.TestCase):
     def test_base_attachments(self):
