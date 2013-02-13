@@ -5,11 +5,11 @@ import unittest
 class LogsetTest(unittest.TestCase):
     def test_logset_filtering(self):
         f = [
-                LogEntry('x.y.z.a', 'satella test'),
-                LogEntry('x.y.z', 'satella test'),
-                LogEntry('x.y.za', 'satella test'),
-                LogEntry('x.y.b', 'satella notest'),
-                LogEntry('x.f', 'satella notest'),
+                LogEntry('x.y.z.a', 'satella test', 1),
+                LogEntry('x.y.z', 'satella test', 2),
+                LogEntry('x.y.za', 'satella test', 3),
+                LogEntry('x.y.b', 'satella notest', 4),
+                LogEntry('x.f', 'satella notest', 5),
             ]
 
         ls = LogSet(f)
@@ -24,6 +24,13 @@ class LogsetTest(unittest.TestCase):
 
         self.assertEquals(ls.filter_hierarchy('x.y').filter_tag('notest').count(), 1)
 
+        self.assertEquals(ls.filter_tag(('satella', 'notest')).count(), 2)
+
+        self.assertEquals(ls.filter_when_from(2).count(), 4)
+        self.assertEquals(ls.filter_when_to(3).count(), 3)
+        self.assertEquals(ls.filter_when_from(2).filter_when_to(4).count(), 3)
+
+
 class LoggingTest(unittest.TestCase):
     def test_base_attachments(self):
         # test whether both variants of .attach() work
@@ -33,7 +40,7 @@ class LoggingTest(unittest.TestCase):
         le.attach('test string', 'hello world')
 
         self.assertEquals(len(le.attachments), 2)
-        self.assertEquals(tuple(le.tags), ('satella', 'test'))
+        self.assertEquals(set(le.tags), set(('satella', 'test')))
 
         # test fluid interface of .attach()
         le = LogEntry('satella.instrumentation.unit_tests', 'satella test')
@@ -41,4 +48,4 @@ class LoggingTest(unittest.TestCase):
         le = le.attach('hello world').attach('test string', 'hello world')
 
         self.assertEquals(len(le.attachments), 2)
-        self.assertEquals(tuple(le.tags), ('satella', 'test'))
+        self.assertEquals(set(le.tags), set(('satella', 'test')))

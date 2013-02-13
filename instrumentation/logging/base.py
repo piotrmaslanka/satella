@@ -18,9 +18,9 @@ class LogEntry(object):
         self.who = who      #: service that logged. Hierarchy separated by dotch
 
         if isinstance(tags, str):
-            self.tags = tags.split(' ')
+            self.tags = set(tags.split(' '))
         else:
-            self.tags = tags
+            self.tags = set(tags)
 
         self.attachments = []   #: list of pair (attachment name, picklable attachment object)
 
@@ -41,7 +41,9 @@ class LogEntry(object):
 
 class LogSet(object):
     """
-    A sequence of .when-ordered log events along with methods to process the stream
+    A sequence of .when-ordered log events along with methods to process the stream.
+
+    You may extend that to cater for your own peculiar logging stuff
     """
     def __init__(self, events=[]):
         self.events = events    #: list of LogEntry
@@ -50,18 +52,37 @@ class LogSet(object):
         """Return the number of log entries in this set"""
         return len(self.events)
 
+    def filter_when_from(self, dt):
+        """
+        Returns the subset of this event set where .when is more or equal to dt
+        @type dt: int or long
+        """
+        return LogSet([x for x in self.events if x.when >= dt])        
+
+    def filter_when_to(self, dt):
+        """
+        Returns the subset of this event set where .when is less or equal to dt
+        @type dt: int or long
+        """
+        return LogSet([x for x in self.events if x.when <= dt])        
+
     def filter_tag(self, tag):
         """
-        Returns the subset (as iterator) of this event set where tag occurs.
-        @param tag: Tag that is supposed to occur in each of the returned entries
-        @type tag: str
+        Returns the subset of this event set where tag occurs.
+        @param tag: Tag (or sequence of tags) that is supposed to occur in each of the returned entries
+        @type tag: str or sequence
         @return: L{LogSet} with entries
         """
-        return LogSet([x for x in self.events if tag in x.tags])
+        if isinstance(tag, str):
+            tag = set((tag, ))
+        else:
+            tag = set(tag)
+
+        return LogSet([x for x in self.events if tag.issubset(x.tags)])
 
     def filter_hierarchy(self, hstart):
         """
-        Returns the subset (as iterator) of this event set where hstart is the start of
+        Returns the subset of this event set where hstart is the start of
         logger hierarchy.
 
         Eg. if we have events:
