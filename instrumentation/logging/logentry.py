@@ -38,7 +38,7 @@ class LogEntry(object):
             self.tags = set(tags)
 
         self.attachments = {}  #: dict(attachment name::str => attachment)
-        self.main_attachment = None #: main attachment
+        self.data = None #: extra data
 
     def attach(self, *args):
         """
@@ -47,7 +47,7 @@ class LogEntry(object):
         (first of them will be a str, name of the entry, second one - the data to attach).
         """
         if len(args) == 1:  # Attach an attachment without a name
-            self.main_attachment = args[0]
+            self.data = args[0]
         elif len(args) == 2: # Attach a named attachment
             self.attachments[args[0]] = args[1]
         else:
@@ -59,15 +59,15 @@ class LogEntry(object):
     def to_compact(self):
         """Serializes this as Python-specific string"""
         return pickle.dumps(
-                (self.when, self.who, self.tags, self.main_attachment, self.attachments),
+                (self.when, self.who, self.tags, self.data, self.attachments),
                 pickle.HIGHEST_PROTOCOL
             )
 
     @staticmethod
     def from_compact(p):
         """@param p: str"""
-        when, who, tags, main_attachment, attachments = pickle.loads(p)
-        le = LogEntry(who, tags, when).attach(main_attachment)
+        when, who, tags, data, attachments = pickle.loads(p)
+        le = LogEntry(who, tags, when).attach(data)
         for k, v in attachments.iteritems():
             le.attach(k, v)
         return le
@@ -78,7 +78,7 @@ class LogEntry(object):
                 'when': self.when,
                 'who': self.who,
                 'tags': sorted(self.tags),
-                'main': self.main_attachment,
+                'data': self.data,
                 'attachments': dict((
                             (name, base64.b64encode(pickle.dumps(value, pickle.HIGHEST_PROTOCOL)))
                             for name, value in self.attachments.iteritems()
@@ -93,7 +93,7 @@ class LogEntry(object):
         Know that main_attachment's str's will get converted to Unicode, due to how JSON works.
         @type jsonstr: str"""
         jo = json.loads(jsonstr)
-        le = LogEntry(str(jo['who']), map(str, jo['tags']), jo['when']).attach(jo['main'])
+        le = LogEntry(str(jo['who']), map(str, jo['tags']), jo['when']).attach(jo['data'])
         for aname, avs in jo['attachments'].iteritems():
             le.attach(aname, pickle.loads(base64.b64decode(avs)))
         return le

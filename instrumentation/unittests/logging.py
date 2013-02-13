@@ -58,7 +58,7 @@ class LoggingTest(unittest.TestCase):
         le.attach('test string', 'hello world')
 
         self.assertEquals(len(le.attachments), 1)
-        self.assertEquals(le.main_attachment, 'hello world')
+        self.assertEquals(le.data, 'hello world')
         self.assertEquals(set(le.tags), set(('satella', 'test')))
 
         # test fluid interface of .attach()
