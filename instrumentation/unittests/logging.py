@@ -5,7 +5,15 @@ import unittest
 
 class LogsetTest(unittest.TestCase):
 
-    def test_serialization(self):
+    def test_compact_serialization(self):
+        k = LogEntry('a.b', 'a b').attach('stefan', 'nope')
+
+        k = LogEntry.from_compact(k.to_compact())
+
+        self.assertEquals(k.attachments['stefan'], 'nope')
+
+
+    def test_JSON_serialization(self):
         k = LogEntry('a.b', 'a b').attach('stefan', 'nope')
 
         k = LogEntry.from_JSON(k.to_JSON())

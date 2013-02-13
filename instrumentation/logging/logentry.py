@@ -55,6 +55,23 @@ class LogEntry(object):
 
         return self
 
+
+    def to_compact(self):
+        """Serializes this as Python-specific string"""
+        return pickle.dumps(
+                (self.when, self.who, self.tags, self.main_attachment, self.attachments),
+                pickle.HIGHEST_PROTOCOL
+            )
+
+    @staticmethod
+    def from_compact(p):
+        """@param p: str"""
+        when, who, tags, main_attachment, attachments = pickle.loads(p)
+        le = LogEntry(who, tags, when).attach(main_attachment)
+        for k, v in attachments.iteritems():
+            le.attach(k, v)
+        return le
+
     def to_JSON(self):
         """Serializes this object to JSON."""
         return json.dumps({
