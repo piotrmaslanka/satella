@@ -5,6 +5,9 @@ class LogSet(object):
     You may extend that to cater for your own peculiar logging stuff. You may even
     override it if you have a storage backend and it would be more efficient to do 
     so without loading the entire thing into memory.
+
+    You have to override all methods here save for __init__  and where specified
+    otherwise, in order to be compliant with LogSet interface.
     """
     def __init__(self, events=[]):
         self._events = events    #: list of LogEntry
