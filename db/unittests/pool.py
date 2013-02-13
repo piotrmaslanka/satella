@@ -3,8 +3,12 @@ from satella.threads import BaseThread
 from time import sleep
 
 import unittest
-
-import psycopg2         # only if you want to use PostgreSQL for this test
+try:
+    import psycopg2         # only if you want to use PostgreSQL for this test
+except ImportError:
+    from psycopg2ct import compat
+    compat.register()
+    import psycopg2
 
 class PoolTest(unittest.TestCase):
 
