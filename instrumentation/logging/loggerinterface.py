@@ -28,6 +28,11 @@ class LoggerInterface(object):
         """
         raise RuntimeError, 'abstract'
 
+
+    def _get_entry(self, *args, **kwargs):
+        """The helper to .log() that outputs a LogEntry
+        object from parameters"""
+
     def log(self, *args, **kwargs):
         """
         Invoke appropriate LogEntry constructor with 
