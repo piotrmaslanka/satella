@@ -31,7 +31,9 @@ class LoggerInterface(object):
     def log(self, *args, **kwargs):
         """
         Invoke appropriate LogEntry constructor with 
-        *args and **kwargs.
+        *args and **kwargs. How this is parsed is totally
+        dependent on the implementation - make it so that
+        actually _USING_ it with your program is simple.
 
         Relay the log onto suitable logging backend.
         """
