@@ -2,6 +2,8 @@
 ## Eclipse
 #################
 
+satella.sublime*
+
 *.pydevproject
 .project
 .metadata
