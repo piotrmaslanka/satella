@@ -8,13 +8,13 @@ class LogEntry(object):
     Class that represents a single log entry in the system.
 
     Basic log has at least a timestamp, information who logged the event, a set of 
-    tags that designate severity or classification. A log entry can also have a 'main
-    attachment', which can be a number, string, sequence of those objects or a dictionary
-    of those objects. Main attachment serves as additional source of information that
+    tags that designate severity or classification. A log entry can also have extra data,
+    essentially a dictionary accessable for read as if it were part of this object 
+    (via __getattr__). Main attachment serves as additional source of information that
     can be deployed for indexing the log entries.
 
     A log entry can additionally have one or more named attachments. There can be at 
-    most one attachment with given name. Those are serializes and are not expected to be
+    most one attachment with given name. Those are serialized and are not expected to be
     indexable during log retrieval. 
     """
     def __init__(self, who, tags, when=None):
@@ -38,26 +38,24 @@ class LogEntry(object):
             self.tags = set(tags)
 
         self.attachments = {}  #: dict(attachment name::str => attachment)
-        self.data = None #: extra data
+        self.data = {} #: extra data
+
+    def set_data(self, **kwargs):
+        self.data.update(kwargs)
+        return self
 
     def __getattr__(self, aname):
         return self.data[aname]
 
-    def attach(self, *args):
+    def attach(self, key, value):
         """
         Attaches a piece of data to the log entry.
-        Invoke with either one argument (will attach the data as main attachment) or two arguments
-        (first of them will be a str, name of the entry, second one - the data to attach).
+        @param key: name of the piece of data
+        @type key: str
+        @param value: picklable value to store
         """
-        if len(args) == 1:  # Attach an attachment without a name
-            self.data = args[0]
-        elif len(args) == 2: # Attach a named attachment
-            self.attachments[args[0]] = args[1]
-        else:
-            raise ValueError, 'more than 2 arguments'
-
+        self.attachments[key] = value
         return self
-
 
     def to_compact(self):
         """Serializes this as Python-specific string"""
@@ -70,7 +68,7 @@ class LogEntry(object):
     def from_compact(p):
         """@param p: str"""
         when, who, tags, data, attachments = pickle.loads(p)
-        le = LogEntry(who, tags, when).attach(data)
+        le = LogEntry(who, tags, when).set_data(**data)
         for k, v in attachments.iteritems():
             le.attach(k, v)
         return le
@@ -96,7 +94,7 @@ class LogEntry(object):
         Know that main_attachment's str's will get converted to Unicode, due to how JSON works.
         @type jsonstr: str"""
         jo = json.loads(jsonstr)
-        le = LogEntry(str(jo['who']), map(str, jo['tags']), jo['when']).attach(jo['data'])
+        le = LogEntry(str(jo['who']), map(str, jo['tags']), jo['when']).set_data(**jo['data'])
         for aname, avs in jo['attachments'].iteritems():
             le.attach(aname, pickle.loads(base64.b64decode(avs)))
         return le

@@ -4,27 +4,6 @@ from satella.instrumentation.logging import LogEntry, LogSet, LoggerInterface
 import unittest
 
 class LogsetTest(unittest.TestCase):
-
-    def test_getattr_behaviour(self):
-        k = LogEntry('a.b', 'a b').attach({'stefan': 'nope'})
-
-        self.assertEquals(k.stefan, 'nope')
-
-    def test_compact_serialization(self):
-        k = LogEntry('a.b', 'a b').attach('stefan', 'nope')
-
-        k = LogEntry.from_compact(k.to_compact())
-
-        self.assertEquals(k.attachments['stefan'], 'nope')
-
-
-    def test_JSON_serialization(self):
-        k = LogEntry('a.b', 'a b').attach('stefan', 'nope')
-
-        k = LogEntry.from_JSON(k.to_JSON())
-
-        self.assertEquals(k.attachments['stefan'], 'nope')
-
     def test_logset_filtering(self):
         f = [
                 LogEntry('x.y.z.a', 'satella test', 1),
@@ -55,21 +34,30 @@ class LogsetTest(unittest.TestCase):
         self.assertEquals(len(list(ls.events())), 5)
 
 class LoggingTest(unittest.TestCase):
-    def test_base_attachments(self):
-        # test whether both variants of .attach() work
+    def test_attach(self):
         le = LogEntry('satella.instrumentation.unit_tests', ('satella', 'test'))
 
-        le.attach('hello world')
         le.attach('test string', 'hello world')
 
         self.assertEquals(len(le.attachments), 1)
-        self.assertEquals(le.data, 'hello world')
-        self.assertEquals(set(le.tags), set(('satella', 'test')))
 
-        # test fluid interface of .attach()
-        le = LogEntry('satella.instrumentation.unit_tests', 'satella test')
+    def test_getattr_behaviour(self):
+        k = LogEntry('a.b', 'a b').set_data(stefan='nope')
+        self.assertEquals(k.stefan, 'nope')
 
-        le = le.attach('hello world').attach('test string', 'hello world').attach('x', 'y')
+    def test_compact_serialization(self):
+        k = LogEntry('a.b', 'a b')              \
+                .set_data(stefan='nope')        \
+                .attach('stefan', 'nope')
 
-        self.assertEquals(len(le.attachments), 2)
-        self.assertEquals(set(le.tags), set(('satella', 'test')))
+        k = LogEntry.from_compact(k.to_compact())
+        self.assertEquals(k.attachments['stefan'], 'nope')
+        self.assertEquals(k.data['stefan'], 'nope')
+
+    def test_JSON_serialization(self):
+        k = LogEntry('a.b', 'a b').attach('stefan', 'nope').set_data(stefan='nope')
+
+        k = LogEntry.from_JSON(k.to_JSON())
+
+        self.assertEquals(k.attachments['stefan'], 'nope')
+        self.assertEquals(k.data['stefan'], 'nope')        
