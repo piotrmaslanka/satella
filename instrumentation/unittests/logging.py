@@ -4,6 +4,14 @@ from satella.instrumentation.logging import LogEntry, LogSet, LoggerInterface
 import unittest
 
 class LogsetTest(unittest.TestCase):
+
+    def test_serialization(self):
+        k = LogEntry('a.b', 'a b').attach('stefan', 'nope')
+
+        k = LogEntry.from_JSON(k.to_JSON())
+
+        self.assertEquals(k.attachments['stefan'], 'nope')
+
     def test_logset_filtering(self):
         f = [
                 LogEntry('x.y.z.a', 'satella test', 1),

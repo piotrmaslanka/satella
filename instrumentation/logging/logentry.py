@@ -1,7 +1,22 @@
 import time
+import json
+import cPickle as pickle
+import base64
 
 class LogEntry(object):
-    """Class that represents a single log entry in the system"""
+    """
+    Class that represents a single log entry in the system.
+
+    Basic log has at least a timestamp, information who logged the event, a set of 
+    tags that designate severity or classification. A log entry can also have a 'main
+    attachment', which can be a number, string, sequence of those objects or a dictionary
+    of those objects. Main attachment serves as additional source of information that
+    can be deployed for indexing the log entries.
+
+    A log entry can additionally have one or more named attachments. There can be at 
+    most one attachment with given name. Those are serializes and are not expected to be
+    indexable during log retrieval. 
+    """
     def __init__(self, who, tags, when=None):
         """
         @param who: Name of the logging service. System components in granularity-descending
@@ -29,7 +44,7 @@ class LogEntry(object):
         """
         Attaches a piece of data to the log entry.
         Invoke with either one argument (will attach the data as main attachment) or two arguments
-        (first of them will be a str, name of the entry, second one - the data to attach)
+        (first of them will be a str, name of the entry, second one - the data to attach).
         """
         if len(args) == 1:  # Attach an attachment without a name
             self.main_attachment = args[0]
@@ -39,3 +54,29 @@ class LogEntry(object):
             raise ValueError, 'more than 2 arguments'
 
         return self
+
+    def to_JSON(self):
+        """Serializes this object to JSON."""
+        return json.dumps({
+                'when': self.when,
+                'who': self.who,
+                'tags': sorted(self.tags),
+                'main': self.main_attachment,
+                'attachments': dict((
+                            (name, base64.b64encode(pickle.dumps(value, pickle.HIGHEST_PROTOCOL)))
+                            for name, value in self.attachments.iteritems()
+                        ))
+            })
+
+    @staticmethod
+    def from_JSON(jsonstr):
+        """Unserializes this object from JSON. This may be potentially
+        unsafe, as we are unpickling Python objects.
+
+        Know that main_attachment's str's will get converted to Unicode, due to how JSON works.
+        @type jsonstr: str"""
+        jo = json.loads(jsonstr)
+        le = LogEntry(str(jo['who']), map(str, jo['tags']), jo['when']).attach(jo['main'])
+        for aname, avs in jo['attachments'].iteritems():
+            le.attach(aname, pickle.loads(base64.b64decode(avs)))
+        return le
