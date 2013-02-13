@@ -1,5 +1,33 @@
 import sys
 import os
+import signal
+import time
+
+end = False
+
+def __sighandler(a, b):
+    global end
+    end = True
+
+def hang_until_sig(extra_signals=[]):
+    """Will hang until this process receives SIGTERM or SIGINT.
+    If you pass extra signal IDs (signal.SIG*) with extra_signals,
+    then also on those signals this call will release."""
+    global end
+
+    signal.signal(signal.SIGTERM, __sighandler)
+    signal.signal(signal.SIGINT, __sighandler)
+    for s in extra_signals:
+        signal.signal(s, __sighandler)
+    
+    while not end:
+        try:
+            signal.pause()
+        except:         # pause() is undefined on Windows
+            try:        # we will sleep for small periods of time
+                time.sleep(0.5)
+            except IOError:  # "Interrupted system call"
+                pass
 
 def daemonize(uid=None, gid=None):
     """On POSIX-compatible systems, make the current process a daemon.
