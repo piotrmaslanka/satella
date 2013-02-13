@@ -5,6 +5,11 @@ import unittest
 
 class LogsetTest(unittest.TestCase):
 
+    def test_getattr_behaviour(self):
+        k = LogEntry('a.b', 'a b').attach({'stefan': 'nope'})
+
+        self.assertEquals(k.stefan, 'nope')
+
     def test_compact_serialization(self):
         k = LogEntry('a.b', 'a b').attach('stefan', 'nope')
 

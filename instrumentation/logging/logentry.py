@@ -40,6 +40,9 @@ class LogEntry(object):
         self.attachments = {}  #: dict(attachment name::str => attachment)
         self.data = None #: extra data
 
+    def __getattr__(self, aname):
+        return self.data[aname]
+
     def attach(self, *args):
         """
         Attaches a piece of data to the log entry.
