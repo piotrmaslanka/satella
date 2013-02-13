@@ -1,5 +1,5 @@
-from satella.instrumentation.counters.deltacounter import DeltaCounter
-from satella.instrumentation.exceptions import NoData
+from satella.instrumentation.counters import DeltaCounter
+from satella.instrumentation import NoData
 
 import unittest
 

@@ -1,6 +1,5 @@
 from satella.instrumentation.counters import NumericValueCounter
-from satella.instrumentation import CounterCollection
-from satella.instrumentation.exceptions import NoData, ObjectExists, ObjectNotExists
+from satella.instrumentation import CounterCollection, NoData, ObjectExists, ObjectNotExists
 
 import unittest
 

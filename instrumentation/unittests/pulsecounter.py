@@ -1,5 +1,5 @@
 from satella.instrumentation.counters import PulseCounter
-from satella.instrumentation.exceptions import NoData
+from satella.instrumentation import NoData
 
 from time import sleep
 

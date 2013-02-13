@@ -1,5 +1,5 @@
 from satella.instrumentation.counters import NumericValueCounter
-from satella.instrumentation.exceptions import NoData
+from satella.instrumentation import NoData
 
 import unittest
 

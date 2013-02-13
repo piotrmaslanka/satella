@@ -1,5 +1,5 @@
 from satella.instrumentation.counters import CallbackCounter
-from satella.instrumentation.exceptions import InstrumentationException, NoData
+from satella.instrumentation import InstrumentationException, NoData
 
 import unittest
 
