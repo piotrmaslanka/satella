@@ -1,4 +1,5 @@
-from satella.instrumentation.logging import LogEntry, LogSet
+from satella.instrumentation.logging import LogEntry, LogSet, LoggerInterface
+# LoggerInterface is implemented only as API check
 
 import unittest
 
