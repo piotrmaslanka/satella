@@ -1,5 +1,5 @@
-from satella.instrumentation.logging import LogEntry, LogEntrySetInterface, LoggerInterface
-# LoggerInterface and LogEntrySetInterface is implemented only as API check
+from satella.instrumentation.logging import LogEntry, LoggerInterface
+# LoggerInterface is implemented only as API check
 
 import unittest
 
