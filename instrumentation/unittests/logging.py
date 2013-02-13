@@ -41,13 +41,14 @@ class LoggingTest(unittest.TestCase):
         le.attach('hello world')
         le.attach('test string', 'hello world')
 
-        self.assertEquals(len(le.attachments), 2)
+        self.assertEquals(len(le.attachments), 1)
+        self.assertEquals(le.main_attachment, 'hello world')
         self.assertEquals(set(le.tags), set(('satella', 'test')))
 
         # test fluid interface of .attach()
         le = LogEntry('satella.instrumentation.unit_tests', 'satella test')
 
-        le = le.attach('hello world').attach('test string', 'hello world')
+        le = le.attach('hello world').attach('test string', 'hello world').attach('x', 'y')
 
         self.assertEquals(len(le.attachments), 2)
         self.assertEquals(set(le.tags), set(('satella', 'test')))

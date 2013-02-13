@@ -22,18 +22,19 @@ class LogEntry(object):
         else:
             self.tags = set(tags)
 
-        self.attachments = []   #: list of pair (attachment name, picklable attachment object)
+        self.attachments = {}  #: dict(attachment name::str => attachment)
+        self.main_attachment = None #: main attachment
 
     def attach(self, *args):
         """
         Attaches a piece of data to the log entry.
-        Invoke with either one argument (will attach the data without a name) or two arguments
+        Invoke with either one argument (will attach the data as main attachment) or two arguments
         (first of them will be a str, name of the entry, second one - the data to attach)
         """
         if len(args) == 1:  # Attach an attachment without a name
-            self.attachments.append((None, args[0]))
+            self.main_attachment = args[0]
         elif len(args) == 2: # Attach a named attachment
-            self.attachments.append(args)
+            self.attachments[args[0]] = args[1]
         else:
             raise ValueError, 'more than 2 arguments'
 
