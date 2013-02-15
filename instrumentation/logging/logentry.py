@@ -40,6 +40,9 @@ class LogEntry(object):
         self.attachments = {}  #: dict(attachment name::str => attachment)
         self.data = {} #: extra data
 
+    def __contains__(self, item):
+        return item in self.data
+
     def set_data(self, **kwargs):
         self.data.update(kwargs)
         return self

@@ -21,6 +21,7 @@ class LoggingTest(unittest.TestCase):
                 .attach('stefan', 'nope')
 
         k = LogEntry.from_compact(k.to_compact())
+        self.assertEquals('stefan' in k, True)
         self.assertEquals(k.attachments['stefan'], 'nope')
         self.assertEquals(k.data['stefan'], 'nope')
 
@@ -29,5 +30,6 @@ class LoggingTest(unittest.TestCase):
 
         k = LogEntry.from_JSON(k.to_JSON())
 
+        self.assertEquals('stefan' in k, True)
         self.assertEquals(k.attachments['stefan'], 'nope')
         self.assertEquals(k.data['stefan'], 'nope')        
