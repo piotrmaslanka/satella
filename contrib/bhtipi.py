@@ -65,8 +65,7 @@ def render_counter_div(cc, nestlevel):
 
 def render_collection(cc, nestlevel, use_tables):
     u = """<h%s>%s</h%s><hr><div class="indent">""" % (nestlevel, cc.name, nestlevel)
-    with Monitor.acquire(cc):
-        s = [render(x, nestlevel+1, use_tables) for x in cc.get()]
+    s = [render(x, nestlevel+1, use_tables) for x in cc.get()]
     y = "</div>"
     return ''.join([u]+s+[y])
 
