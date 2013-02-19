@@ -45,17 +45,20 @@ class SpecializedLoggerObject(LoggerInterface):
         self.parent = parent
         self.kwargs = kwargs
 
+    def log_entry(self, *args, **kwargs):
+        return self.parent.log_entry(*args, **kwargs)
+
     def produce_entry(self, *args, **kwargs):
         e = self.parent.produce_entry(*args, **kwargs)
         if 'tag' in self.kwargs:
             if isinstance(self.kwargs['tag'], str):
-                e.tags = e.tags + (self.kwargs['tag'], )
+                e.tags |= set((self.kwargs['tag'], ))
             else:
-                e.tags = e.tags + self.kwargs['tag']
+                e.tags |= set(self.kwargs['tag'])
         if 'who' in self.kwargs:
             if e.who == '':
                 e.who = self.kwargs['who']
             else:
-                e.who = '%s.%s' % (e.who, self.kwargs['who'])
+                e.who = '%s.%s' % (self.kwargs['who'], e.who)
 
         return e
