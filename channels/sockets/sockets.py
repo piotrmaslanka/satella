@@ -19,8 +19,12 @@ class Socket(FileDescriptorChannel):
     """
 
     def __init__(self, socket):
+        """@type socket: native network socket or L{Socket}"""
         FileDescriptorChannel.__init__(self)
-        self.socket = socket
+        if isinstance(socket, Socket):
+            self.socket = socket.socket
+        else:
+            self.socket = socket
         self.active = True
         self.blocking = True
         self.timeout = None

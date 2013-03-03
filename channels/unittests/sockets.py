@@ -186,3 +186,11 @@ class SocketsTest(unittest.TestCase):
         self.assertEquals(cs.pkdata, 'Yes')
         self.assertEquals(cs.data, 'Yes')
         sck.close()
+
+    def test_reassignment(self):
+        """Tests creating a satella socket from a satella socket
+        instead of a native socket"""
+        sck = socket(AF_INET, SOCK_STREAM)
+        sock = Socket(sck)
+        sock = Socket(sock)
+        self.assertEquals(sock.socket, sck)
