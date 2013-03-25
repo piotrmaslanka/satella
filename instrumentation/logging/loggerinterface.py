@@ -59,6 +59,6 @@ class SpecializedLoggerObject(LoggerInterface):
             if e.who == '':
                 e.who = self.kwargs['who']
             else:
-                e.who = '%s.%s' % (self.kwargs['who'], e.who)
+                e.who = '%s.%s' % (e.who, self.kwargs['who'])
 
         return e

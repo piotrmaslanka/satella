@@ -77,7 +77,7 @@ class LoggerTest(unittest.TestCase):
         li_who = li.specialize(who='masters')
         li_who.log()
         k = li.entries.pop()
-        self.assertEquals(k.who, 'masters.hello')
+        self.assertEquals(k.who, 'hello.masters')
 
         li_who.log('')
         k = li.entries.pop()
