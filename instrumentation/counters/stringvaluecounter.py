@@ -3,25 +3,26 @@ from time import time
 from satella.instrumentation.basecounter import Counter
 from satella.instrumentation.exceptions import NoData
 
-class NumericValueCounter(Counter):
+class StringValueCounter(Counter):
     """
-    A counter that tracks a particular numeric value, directly specified by update.
+    A counter that has a string as its value
 
     Use like:
 
-        cc = NumericValueCounter('test')    # value after the call: 0
-        cc.update(5)      # value after the call: 5
-        cc.update(-3)     # value after the call: 3
+        cc = StringValueCounter('test')    # value after the call: None (NoData)
+        cc.update('Hello')      # value after the call: 'Hello'
+        cc.update('olleH')     # value after the call: 'olleH'
 
     """
 
     def __init__(self, name, units=None, description=None, history=0):
-        """@param history: Maximum amount of history entries kept"""
+        """
+        @param history: Maximum amount of history entries cached
+        """
         Counter.__init__(self, name, units=units, description=description)
 
         self.current_value = None   #: current value
         self.history_len = history
-
         self.history = []   #: list of tuple(time, value)
 
     def update(self, value):

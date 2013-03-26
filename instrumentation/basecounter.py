@@ -72,3 +72,10 @@ class Counter(CounterObject):
         available
         """
         return None
+
+    def get_history(self):
+        """Returns a sequence of pairs - timestamp of acquisition, and
+        value of the counter at that moment. Raise ValueError if not available.
+
+        Values are returned sorted by timestamp, ascending"""
+        raise ValueError

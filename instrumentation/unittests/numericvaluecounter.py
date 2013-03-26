@@ -9,6 +9,14 @@ class NumericValueCounterTest(unittest.TestCase):
         ivc = NumericValueCounter('test_counter')
         self.assertEqual(ivc.name, 'test_counter')
 
+    def test_history(self):
+        ivc = NumericValueCounter('test_counter', history=2)
+        ivc.update(10)
+        ivc.update(11)
+        hp, hn = ivc.get_history()
+        self.assertEqual(hp[1], 10)
+        self.assertEqual(hn[1], 11)
+
     def test_enabled(self):
         ivc = NumericValueCounter('test_counter')
         ivc.disable()
