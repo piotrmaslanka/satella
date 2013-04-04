@@ -279,7 +279,7 @@ class SelectHandlingLayer(HandlingLayer):
                     select.select((channel, ), (), (), 0)
                 except select.error:
                     # we found the one
-                    self.__close_channel(channel)
+                    self.close_channel(channel)
                     return
 
         except socket.error:
