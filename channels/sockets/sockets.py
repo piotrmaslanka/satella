@@ -7,7 +7,7 @@ import select
 
 class Socket(FileDescriptorChannel):
     """
-    A channel implementation of a network socket.
+    A channel implementation of a TCP (or, in general, stream-oriented) network socket.
 
     If the socket is blocking, it is assumed that it is processed in a threading manner. Therefore
     fails during reads or writes will result in closing the socket.
