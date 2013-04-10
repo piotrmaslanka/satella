@@ -23,7 +23,7 @@ class SelectHandlingLayerTest(unittest.TestCase):
                 self.ok = True
 
         mshl = MySelectHandlingLayer(self)
-        sck = Socket(socket(AF_INET, SOCK_STREAM), connected=False)
+        sck = Socket(socket(AF_INET, SOCK_STREAM))
         mshl.register_channel(sck)
         sck.connect(('www.yahoo.com', 80))  # that was just nonblocking
 

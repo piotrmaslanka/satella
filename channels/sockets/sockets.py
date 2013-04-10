@@ -18,21 +18,31 @@ class Socket(FileDescriptorChannel):
     the socket.
     """
 
-    def __init__(self, socket, connected=True):
+    def __init__(self, _socket):
         """@type socket: native network socket or L{Socket}
-        @param connected: when socket is passed in, connected should express
-            whether it is already connected"""
+        Whether socket is connected will be detected automatically by means
+        of a zero-length write"""
         FileDescriptorChannel.__init__(self)
-        if isinstance(socket, Socket):
-            self.socket = socket.socket
+        if isinstance(_socket, Socket):
+            self.socket = _socket.socket
         else:
-            self.socket = socket
+            self.socket = _socket
         self.active = True
         self.blocking = True
         self.timeout = None
         self.socket.settimeout(None)
 
-        self.connected = connected
+        # Detect whether socket is connected
+        try:
+            self.socket.send('')
+        except socket.error as e:
+            if e.errno in (10057, 11, 32):  
+                # Resource temporarily unavailable or Broken pipe
+                self.connected = False
+            else:
+                self.connected = True
+        else:
+            self.connected = True
 
     def write(self, data):
         if not self.active: raise ChannelClosed, 'cannot write - socket closed'
