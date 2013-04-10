@@ -18,8 +18,10 @@ class Socket(FileDescriptorChannel):
     the socket.
     """
 
-    def __init__(self, socket):
-        """@type socket: native network socket or L{Socket}"""
+    def __init__(self, socket, connected=True):
+        """@type socket: native network socket or L{Socket}
+        @param connected: when socket is passed in, connected should express
+            whether it is already connected"""
         FileDescriptorChannel.__init__(self)
         if isinstance(socket, Socket):
             self.socket = socket.socket
@@ -29,6 +31,8 @@ class Socket(FileDescriptorChannel):
         self.blocking = True
         self.timeout = None
         self.socket.settimeout(None)
+
+        self.connected = connected
 
     def write(self, data):
         if not self.active: raise ChannelClosed, 'cannot write - socket closed'
@@ -102,13 +106,38 @@ class Socket(FileDescriptorChannel):
         self.socket.settimeout(timeout)
         FileDescriptorChannel.settimeout(self, timeout)
 
+    def connect(self, *args):
+        """A pass-thru for socket's .connect()"""
+        try:
+            self.socket.connect(*args)
+        except socket.error as e:
+            # "Operation now in progress" exception
+            if e.errno not in (115, 10035): raise
+        if self.blocking:
+            self.connected = True
+
     # -------------------------------------------- Handling non-blocking methods
+
+    def on_connected(self):
+        """Socket's .connect() has completed - successfully or not.
+        self.connected has been already set accordingly
+
+        Cannot be called if socket is blocking"""
 
     def on_writable(self):
         """Called by the handling layer upon detecting that this socket is writable
         and wants to send data. 
 
         Cannot be called if socket is blocking"""
+
+        # If socket was EINPROGRESS and it has become readable, then it's connected
+        # successfully or not. Mark it.
+        if not self.connected:
+            self.connected = True
+            if len(self.tx_buffer) == 0:
+                return
+            self.on_connected()
+
         try:
             ki = self.socket.send(self.tx_buffer)
         except socket.error:
@@ -137,8 +166,10 @@ class Socket(FileDescriptorChannel):
         self.socket.close()
 
     def is_write_pending(self):
-        """Returns whether this socket wants to send data. Useful only in non-blocking"""
-        return len(self.tx_buffer) > 0
+        """Returns whether this socket wants to send data. Useful only in non-blocking.
+        It will also return true if socket is EINPROGRESS, as it needs that to detect
+        connection"""
+        return (len(self.tx_buffer) > 0) or not self.connected
 
     def fileno(self):
         return self.socket.fileno()
@@ -288,7 +319,11 @@ class SelectHandlingLayer(HandlingLayer):
         # Now, for each writeable channel...
         for writable in ws:
             try:
-                writable.on_writable()
+                if not writable.connected:
+                    writable.on_writable()
+                    self.on_connected(writable)
+                else:
+                    writable.on_writable()
             except ChannelFailure:
                 self.close_channel(writable)
                 return

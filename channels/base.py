@@ -105,6 +105,10 @@ class HandlingLayer(object):
 
     # ---------- overload these methods for your own handling layer
 
+    def on_connected(self, channel):
+        """Called when a channel has become connected. May not
+        always be applicable"""
+
     def on_iteration(self):
         """Called just before performing the select() call"""
 

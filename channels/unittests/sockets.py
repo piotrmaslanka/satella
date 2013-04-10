@@ -10,6 +10,30 @@ import unittest
 TESTING_PORT = 49999
 
 class SelectHandlingLayerTest(unittest.TestCase):
+
+    def test_nonblocking_connect(self):
+        class MySelectHandlingLayer(SelectHandlingLayer):
+            def __init__(self, utc):
+                SelectHandlingLayer.__init__(self)
+                self.utc = utc
+                self.ok = False
+
+            def on_connected(self, channel):
+                # at this point data should have been flushed
+                self.ok = True
+
+        mshl = MySelectHandlingLayer(self)
+        sck = Socket(socket(AF_INET, SOCK_STREAM), connected=False)
+        mshl.register_channel(sck)
+        sck.connect(('www.yahoo.com', 80))  # that was just nonblocking
+
+        a = time()
+        while (time() - a < 30) and (not mshl.ok):
+            mshl.select()
+
+        self.assertEquals(mshl.ok, True)
+
+
     def test_3_clients(self):
         class ConnectorThread(Thread):
             def __init__(self, utc):
@@ -17,9 +41,8 @@ class SelectHandlingLayerTest(unittest.TestCase):
                 Thread.__init__(self)
             def run(self):
                 sleep(0.2)
-                sck = socket(AF_INET, SOCK_STREAM)
+                sck = Socket(socket(AF_INET, SOCK_STREAM))
                 sck.connect(('127.0.0.1', TESTING_PORT))
-                sck = Socket(sck)
                 sck.write('Hello World')
                 self.utc.assertEquals(sck.read(1), '1')
                 self.utc.assertEquals(sck.read(1), '2')
