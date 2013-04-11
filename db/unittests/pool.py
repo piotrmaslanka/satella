@@ -42,6 +42,19 @@ class PoolTest(unittest.TestCase):
 
         cp.close()
 
+    def test_pool_regenerate_query(self):
+        """Creates a pool with a single connection and does SELECT 2+2 with that.
+        Regenerates connections in the meantime"""
+        cp = ConnectionPool(self.dd)
+        cp.regenerate_all()
+        with cp.cursor() as cur:
+            cur.execute('SELECT 2+2')
+            a, = cur.fetchone()
+
+        self.assertEquals(a, 4)
+
+        cp.close()
+
     def test_pool_onetime_reconnect(self):
         """Creates a pool with a single connection, get the connection, close it
         and return it, anticipating that it will be regenerated"""

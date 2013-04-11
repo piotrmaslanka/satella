@@ -161,6 +161,15 @@ class ConnectionPool(object):
         for i in xrange(0, connections):
             self.connections.put(self.dd.get_connection())
 
+    def regenerate_all(self):
+        """Sanitize connections. Use it for occassions 
+        such as fork() and so on"""
+        for i in xrange(0, self.c_num):
+            con = self.connections.get()
+            con.close()
+        for i in xrange(0, self.c_num):
+            self.connections.put(self.dd.get_connection())            
+
     def close(self):
         """Closes all connections in this connection pool.
         Use only when you are sure that no-one is using the
