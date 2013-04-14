@@ -10,6 +10,28 @@ import unittest
 TESTING_PORT = 49999
 
 class SelectHandlingLayerTest(unittest.TestCase):
+    """This suite requires that www.yahoo.com is reachable and 
+    connectable via port 80"""
+
+    def test_async_socket_onconnected_called(self):
+        """Tests whether socket's on_connected() is called in async configuration"""
+        class CheckSocket(Socket):
+            def __init__(self, *args, **kwargs):
+                self.on_connected_called = False
+                Socket.__init__(self, *args, **kwargs)
+            def on_connected(self):
+                self.on_connected_called = True
+
+        mshl = SelectHandlingLayer()
+        sck = CheckSocket(socket(AF_INET, SOCK_STREAM))
+        mshl.register_channel(sck)
+        sck.connect(('www.yahoo.com', 80))  # that was just nonblocking
+
+        a = time()
+        while (time() - a < 30) and (not sck.on_connected_called):
+            mshl.select()
+
+        self.assertEquals(sck.on_connected_called, True)
 
     def test_nonblocking_connect(self):
         class MySelectHandlingLayer(SelectHandlingLayer):

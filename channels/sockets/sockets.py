@@ -144,9 +144,9 @@ class Socket(FileDescriptorChannel):
         # successfully or not. Mark it.
         if not self.connected:
             self.connected = True
+            self.on_connected()
             if len(self.tx_buffer) == 0:
                 return
-            self.on_connected()
 
         try:
             ki = self.socket.send(self.tx_buffer)
