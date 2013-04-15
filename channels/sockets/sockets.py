@@ -303,9 +303,9 @@ class SelectHandlingLayer(HandlingLayer):
         """
         Channel unregister + channel close
         """
+        self.unregister_channel(channel)
         channel.on_closed() # this should close the channel
         self.on_closed(channel)
-        self.unregister_channel(channel)
 
     def select(self, timeout=5):
         self.on_iteration()

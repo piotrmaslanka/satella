@@ -130,6 +130,9 @@ class HandlingLayer(object):
         """Handling layer is forcing the channel to be unregistered, as because
         it has become closed or failed. This is called on already closed channel.
 
+        By the time this is called channel has been already removed from the
+        select layer.
+
         @param channel: channel that has failed
         @type channel: L{Channel}
         """
