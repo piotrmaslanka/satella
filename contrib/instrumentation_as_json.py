@@ -25,5 +25,7 @@ def asval(cc):
             return f
 
 def export(insmgr):
-    """Constructs a JSON string based on data from given insmgr"""
-    return json.dumps(asval(insmgr))
+    """Constructs a JSON string based on data from given insmgr.
+    @type insmgr: satella.instrumentation.CounterCollection
+    @return: UTF-8 encoded JSON"""
+    return json.dumps(asval(insmgr), ensure_ascii=False).encode('utf8')
