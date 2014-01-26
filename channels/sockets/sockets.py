@@ -16,6 +16,8 @@ class Socket(FileDescriptorChannel):
     fails during reads or writes will result in marking the socket as not active (self.active=False)
     but it will be handling layer who will call on_closed(), which ultimately results in closing
     the socket.
+    
+    IMPORTANT!!! Take care to invoke parent methods if you are extending this class.
     """
 
     def __init__(self, _socket):
