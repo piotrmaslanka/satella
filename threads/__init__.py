@@ -1,4 +1,4 @@
-from threading import Thread, Lock
+from threading import Thread, Lock, RLock
 
 class BaseThread(Thread):
     """Thread with internal termination flag"""
@@ -18,6 +18,8 @@ class BaseThread(Thread):
 class Monitor(object):
     """
     Base utility class for creating monitors (the synchronization thingies!)
+    
+    These are NOT re-entrant!
 
     Use it like that:
 
@@ -102,3 +104,12 @@ class Monitor(object):
         def __exit__(self, e1, e2, e3):
             self.foo._monitor_lock.release()
             return False
+
+class RMonitor(Monitor):
+    """
+    Monitor with reentrancy
+    """
+    def __init__(self):
+        Monitor.__init__(self)
+        self._monitor_lock = RLock()
+    
