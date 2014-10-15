@@ -279,6 +279,9 @@ class SelectHandlingLayer(HandlingLayer):
         self.poll = select.poll()
         self.fdmap = {}
 
+    def close(self):
+        self.poll.close()
+    
     def register_channel(self, channel):
         """
         Registers a file descriptor based channel.

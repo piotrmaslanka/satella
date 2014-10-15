@@ -105,6 +105,9 @@ class HandlingLayer(object):
 
     # ---------- overload these methods for your own handling layer
 
+    def close(self):
+        """Internally tear down the handling layer"""
+
     def on_connected(self, channel):
         """Called when a channel has become connected. May not
         always be applicable"""
