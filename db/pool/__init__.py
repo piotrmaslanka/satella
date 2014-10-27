@@ -3,7 +3,7 @@ import Queue
 class DatabaseDefinition(object):
     def __init__(self, cccall, cbexcepts, cccall_args=(), cccall_kwargs={}, 
                  xwcb=lambda e: True, acs=lambda x: None, occ=lambda x: None,
-                 oct=lambda x: None, integ_err_cls=None):
+                 oct=lambda x: None, integ_err_cls=(None, None)):
         """
 
         This initializes a database definition. Because different databases work
@@ -45,10 +45,9 @@ class DatabaseDefinition(object):
             at it's default.
 
         @type oct: callable/1
-        @param integ_err_cls: class of IntegrityError exceptions. If .execute() throws an 
-            exception of this class, and it's an instance of integ_err_cls, it will be rethrown
-            as given cursor's IntegrityError exception
-        @type integ_err_cls: clas
+        @param integ_err_cls: tuple of A, B. If .execute() throws an 
+            exception of this class A, it will be rethrown as B (raise B)
+        @type integ_err_cls: tuple of (class, class)
         """
         if type(cbexcepts) in (tuple, list):
             self.cb_excepts = tuple(cbexcepts)
@@ -60,7 +59,7 @@ class DatabaseDefinition(object):
         self.occ = occ
         self.oct = oct
         self.conn_lambda = lambda: cccall(*cccall_args, **cccall_kwargs) #: closure that returns a connection
-        self.integ_err_cls = None
+        self.integ_err_cls = integ_err_cls
 
     def get_connection(self):
         """Returns a new connection object. This connects to the database with according
@@ -253,8 +252,8 @@ class ConnectionPool(object):
                     except self.cp.dd.cb_excepts as exc:
                         if not self.first_query: raise
                         if not self.cp.dd.xwcb(exc): raise
-                        if isinstance(exc, self.cp.dd.integ_err_cls):
-                            raise self.IntegrityError
+                        if isinstance(exc, self.cp.dd.integ_err_cls[0]):
+                            raise self.cp.dd.integ_err_cls[1]
                         self._reconnect()
                         continue
                     self.first_query = False
@@ -267,8 +266,8 @@ class ConnectionPool(object):
                     except self.cp.dd.cb_excepts as exc:
                         if not self.first_query: raise
                         if not self.cp.dd.xwcb(exc): raise
-                        if isinstance(exc, self.cp.dd.integ_err_cls):
-                            raise self.IntegrityError
+                        if isinstance(exc, self.cp.dd.integ_err_cls[0]):
+                            raise self.cp.dd.integ_err_cls[1]
                         self._reconnect()
                         continue
                     self.first_query = False
@@ -325,8 +324,8 @@ class ConnectionPool(object):
                         self.cursor.execute(*args, **kwargs)
                     except self.cp.dd.cb_excepts as exc:
                         if not self.cp.dd.xwcb(exc): raise
-                        if isinstance(exc, self.cp.dd.integ_err_cls):
-                            raise self.IntegrityError
+                        if isinstance(exc, self.cp.dd.integ_err_cls[0]):
+                            raise self.cp.dd.integ_err_cls[1]
                         self._reconnect()
                         continue
                     break
@@ -337,8 +336,8 @@ class ConnectionPool(object):
                         self.cursor.executemany(*args, **kwargs)
                     except self.cp.dd.cb_excepts as exc:
                         if not self.cp.dd.xwcb(exc): raise
-                        if isinstance(exc, self.cp.dd.integ_err_cls):
-                            raise self.IntegrityError
+                        if isinstance(exc, self.cp.dd.integ_err_cls[0]):
+                            raise self.cp.dd.integ_err_cls[1]
                         self._reconnect()
                         continue
                     break
