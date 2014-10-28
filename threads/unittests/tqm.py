@@ -51,6 +51,3 @@ class TQMTest(unittest.TestCase):
         self.assertEquals(reader.get(), 10)
         self.assertEquals(reader.get(), 12)
         
-        
-                
-        
