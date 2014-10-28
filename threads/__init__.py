@@ -1,5 +1,6 @@
 from threading import Thread, Lock, RLock
 from satella.threads.pipe import Pipe, create_pipes
+from satella.threads.tqm import TQM
 
 class BaseThread(Thread):
     """Thread with internal termination flag"""
