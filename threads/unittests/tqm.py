@@ -29,3 +29,28 @@ class TQMTest(unittest.TestCase):
         writer.put_nowait('wtf')
         self.assertEqual(reader1.get(), 'wtf')
         self.assertEqual(reader2.get(), 'wtf')
+
+    def test_interface(self):
+                
+        class AdditionInterface(TQM.Interface):
+            def add2(self, val):
+                self.queue.put(val+2)
+                
+            def add4(self, val):
+                self.queue.put(val+4)
+        
+        tqm = TQM()
+        tqm.register_interface('additor', AdditionInterface)
+        
+        reader = tqm.get_reader_for('additor')
+        addition = tqm.get_interface_for('additor')
+        
+        addition.add2(8)
+        addition.add4(8)
+        
+        self.assertEquals(reader.get(), 10)
+        self.assertEquals(reader.get(), 12)
+        
+        
+                
+        
