@@ -10,6 +10,10 @@ class Pipe(Queue.Queue):
     kinda persistent. 
     
     Call .close() to terminate that cyclic reference.
+    
+    Throws Queue.Empty where it makes sense. You can
+    use Pipe.Empty - contains a handy shortcut to the same
+    exception
     """
     
     Empty = Queue.Empty
@@ -21,13 +25,27 @@ class Pipe(Queue.Queue):
     def put(self, item, block=True, timeout=None):
         Queue.Queue.put(self.other_queue, item, block, timeout)
 
-def create_pipes():
-    """Returns a pair (tuple) of Pipes connecting to each
-    other"""    
+    def close(self):
+        self.other_queue = None
+        
+def create_pipes(queue_for_a=None, queue_for_b=None):
+    """Returns a pair (tuple - a, b) of Pipes connecting to each
+    other
+    
+    @param queue_for_a: if defined, should be a Queue that a's .put()
+    will send messages to
+    @param queue_for_b: same as queue_for_a, but for b
+    """    
     a = Pipe()
     b = Pipe()
-    a.other_queue = b
-    b.other_queue = a
+    if queue_for_a == None:
+        a.other_queue = b
+    else:
+        a.other_queue = queue_for_a
+    if queue_for_b == None:
+        b.other_queue = a
+    else:
+        b.other_queue = queue_for_a
     return a, b
     
     
