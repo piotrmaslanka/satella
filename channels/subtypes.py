@@ -14,7 +14,10 @@ class FileDescriptorChannel(Channel):
 class LockSignalledChannel(Channel):
     """
     This channel's states are signalled by queueing it a message.
-    This class is a monitor - it's threadsafe
+    This class is a monitor - it's threadsafe.
+    
+    
+    DUE TO NOT BEING USED THIS CLASS IS DEPRECATED.
     """
 
     class LSMReadable(object):
