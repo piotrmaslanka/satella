@@ -36,6 +36,34 @@ class TQM(object):
         def put_nowait(self, item):
             self.put(item, False)
     
+    class IterableReader(object):
+        """A wrapper around a Queue with additional property:
+        you can iterate over it. It will return messages received, and terminate
+        iteration when it has no more. You can use it like this:
+        
+            while not terminating: # main program loop
+                for msg in myIterableReader:
+                    process(msg)
+                .. do other stuff ..
+        """
+        def __init__(self, queue):
+            self.queue = queue
+            
+        def get(self, block=False, timeout=None):
+            return self.queue.get(block, timeout)
+        
+        def get_nowait(self):
+            return self.queue.get_nowait()
+        
+        def __iter__(self):
+            return self
+
+        def next(self):
+            try:
+                return self.queue.get_nowait()
+            except Queue.Empty:
+                raise StopIteration()
+    
     def __init__(self):
         self.db = {}        # name => queue
         self.interfaces = {} # name => sugarcoat object
@@ -56,7 +84,7 @@ class TQM(object):
         return self.interfaces[name]
         
     def get_reader_for(self, name):
-        return self._get_queue_for(name)
+        return TQM.IterableReader(self._get_queue_for(name))
     
     def get_writer_for(self, name):
         return self._get_queue_for(name)
