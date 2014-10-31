@@ -46,8 +46,11 @@ class TQM(object):
                     process(msg)
                 .. do other stuff ..
         """
-        def __init__(self, queue):
+        def __init__(self, queue, timeout):
             self.queue = queue
+            self.timeout = timeout  # -1:   Hang until 
+                                    # None: No wait
+                                    # Positive: wait that much seconds
             
         def get(self, block=False, timeout=None):
             return self.queue.get(block, timeout)
@@ -60,7 +63,12 @@ class TQM(object):
 
         def next(self):
             try:
-                return self.queue.get_nowait()
+                if self.timeout == 0:
+                    return self.queue.get_nowait()
+                elif self.timeout == None:
+                    return self.queue.get(True)
+                else:
+                    return self.queue.get(True, self.timeout)
             except Queue.Empty:
                 raise StopIteration()
     
@@ -83,8 +91,16 @@ class TQM(object):
     def get_interface_for(self, name):
         return self.interfaces[name]
         
-    def get_reader_for(self, name):
-        return TQM.IterableReader(self._get_queue_for(name))
+    def get_reader_for(self, name, timeout=0):
+        """
+        Returns a reader.
+        @param timeout: amount of seconds for the iterator to wait on a message.
+            If positive, it will wait at most this seconds before returning or
+            stopping.
+            If 0 (default), it will return immediately if there's nothing
+            If None, it will hang until something's present
+        """
+        return TQM.IterableReader(self._get_queue_for(name), timeout)
     
     def get_writer_for(self, name):
         return self._get_queue_for(name)

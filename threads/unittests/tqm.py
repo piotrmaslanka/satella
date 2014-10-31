@@ -72,4 +72,23 @@ class TQMTest(unittest.TestCase):
             self.assertEquals(msg, {0: 'C', 1: 'D'}[i])
             i += 1        
         
+    def test_tqm_blockiterablereader(self):
+        tqm = TQM()
         
+        reader = tqm.get_reader_for('dupa', 1)
+        writer = tqm.get_writer_for('dupa')
+        
+        writer.put('A')
+        writer.put('B')
+        
+        i = 0
+        for msg in reader:
+            self.assertEquals(msg, {0: 'A', 1: 'B'}[i])
+            i += 1
+            
+        writer.put('C')
+        writer.put('D')
+        i = 0
+        for msg in reader:
+            self.assertEquals(msg, {0: 'C', 1: 'D'}[i])
+            i += 1                        
