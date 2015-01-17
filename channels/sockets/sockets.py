@@ -273,8 +273,6 @@ try:
     IS_POLL_SUPPORTED = True
 except AttributeError:
     IS_POLL_SUPPORTED = False
-    pass
-
     
 class SelectHandlingLayer(HandlingLayer):
     """A select-based handling layer"""
