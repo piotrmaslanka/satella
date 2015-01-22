@@ -37,12 +37,12 @@ def hang_until_sig(extra_signals=[]):
     signal.signal(signal.SIGINT, __sighandler)
     for s in extra_signals:
         signal.signal(s, __sighandler)
-    
+
     while not end:
         try:
             if bugged_pypy:
                 time.sleep(1)   # see https://bugs.pypy.org/issue1255
-            else:            
+            else:
                 signal.pause()
         except:         # pause() is undefined on Windows
             try:        # we will sleep for small periods of time
@@ -50,7 +50,7 @@ def hang_until_sig(extra_signals=[]):
             except IOError:  # "Interrupted system call"
                 pass
 
-def daemonize(uid=None, gid=None):
+def daemonize(uid=None, gid=None, redirect_stdouterr=True):
     """On POSIX-compatible systems, make the current process a daemon.
     Additionally drops privileges, switching to user uid and group gid.
     No-op on Windows"""
@@ -75,3 +75,10 @@ def daemonize(uid=None, gid=None):
 
     if gid != None:
         os.setgid(gid)
+
+    if redirect_stdouterr:
+        sys.stdout.close()
+        sys.stderr.close()
+
+        sys.stdout = open(os.devnull, 'w')
+        sys.stderr = open(os.devnull, 'w')
