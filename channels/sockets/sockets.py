@@ -1,6 +1,6 @@
 from satella.channels.subtypes import FileDescriptorChannel
 from satella.channels.exceptions import UnderlyingFailure, ChannelClosed, InvalidOperation, \
-                                        TransientFailure, ChannelFailure
+                                        TransientFailure, ChannelFailure, DataNotAvailable
 from satella.channels.base import HandlingLayer
 import socket
 import select
