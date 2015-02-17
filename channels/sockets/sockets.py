@@ -387,6 +387,7 @@ class SelectHandlingLayer(HandlingLayer):
                         # we found the one            
                         self.close_channel(channel)
                         return
+                return  # we don't have rs, ws, xs, can't continue
             except socket.error:
                 raise RuntimeError, 'ABEND: socket error in select loop'
 
