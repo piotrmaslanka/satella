@@ -250,12 +250,14 @@ class ConnectionPool(object):
                     try:
                         self.cursor.execute(*args, **kwargs)
                     except self.cp.dd.cb_excepts as exc:
-                        if not self.first_query: raise
-                        if not self.cp.dd.xwcb(exc): raise
                         if isinstance(exc, self.cp.dd.integ_err_cls[0]):
                             raise self.cp.dd.integ_err_cls[1]
+                        if not self.first_query: raise
+                        if not self.cp.dd.xwcb(exc): raise
                         self._reconnect()
                         continue
+                    except self.cp.dd.integ_err_cls[0]:
+                        raise self.cp.dd.integ_err_cls[1]
                     self.first_query = False
                     break
 
@@ -264,12 +266,14 @@ class ConnectionPool(object):
                     try:
                         self.cursor.executemany(*args, **kwargs)
                     except self.cp.dd.cb_excepts as exc:
-                        if not self.first_query: raise
-                        if not self.cp.dd.xwcb(exc): raise
                         if isinstance(exc, self.cp.dd.integ_err_cls[0]):
                             raise self.cp.dd.integ_err_cls[1]
+                        if not self.first_query: raise
+                        if not self.cp.dd.xwcb(exc): raise
                         self._reconnect()
                         continue
+                    except self.cp.dd.integ_err_cls[0]:
+                        raise self.cp.dd.integ_err_cls[1]
                     self.first_query = False
                     break
 
@@ -323,11 +327,13 @@ class ConnectionPool(object):
                     try:
                         self.cursor.execute(*args, **kwargs)
                     except self.cp.dd.cb_excepts as exc:
-                        if not self.cp.dd.xwcb(exc): raise
                         if isinstance(exc, self.cp.dd.integ_err_cls[0]):
                             raise self.cp.dd.integ_err_cls[1]
+                        if not self.cp.dd.xwcb(exc): raise
                         self._reconnect()
                         continue
+                    except self.cp.dd.integ_err_cls[0]:
+                        raise self.cp.dd.integ_err_cls[1]
                     break
 
             def executemany(self, *args, **kwargs):
@@ -335,11 +341,13 @@ class ConnectionPool(object):
                     try:
                         self.cursor.executemany(*args, **kwargs)
                     except self.cp.dd.cb_excepts as exc:
-                        if not self.cp.dd.xwcb(exc): raise
                         if isinstance(exc, self.cp.dd.integ_err_cls[0]):
                             raise self.cp.dd.integ_err_cls[1]
+                        if not self.cp.dd.xwcb(exc): raise
                         self._reconnect()
                         continue
+                    except self.cp.dd.integ_err_cls[0]:
+                        raise self.cp.dd.integ_err_cls[1]
                     break
 
         return Cursor(self)
