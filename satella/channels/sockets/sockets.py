@@ -18,6 +18,9 @@ class Socket(FileDescriptorChannel):
     the socket.
     
     IMPORTANT!!! Take care to invoke parent methods if you are extending this class.
+    
+    Socket is internally not threadsafe. Please take care when calling it from other threads,
+    as you may run into stuff like 'BufferError: Existing exports of data: object cannot be re-sized'
     """
 
     def __init__(self, _socket):
