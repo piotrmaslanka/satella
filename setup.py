@@ -1,0 +1,20 @@
+from distutils.core import setup
+
+setup(name='satella',
+      version='1.0',
+      description='Network, concurrency, instrumentation for servers',
+      author='Piotr Maslanka',
+      author_email='piotr.maslanka@henrietta.com.pl',
+      url='https://www.github.com/piotrmaslanka/satella/',
+      packages=['satella',
+                'satella.unix',
+                'satella.channels',
+                'satella.channels.sockets',
+                'satella.contrib',
+                'satella.db',
+                'satella.db.pool',
+                'satella.instrumentation',
+                'satella.instrumentation.counters',
+                'satella.instrumentation.exctrack',
+                'satella.threads'],
+     )
