@@ -13,6 +13,7 @@ tmp/
 *.bak
 *.swp
 *~.nib
+.idea/
 local.properties
 .classpath
 .settings/

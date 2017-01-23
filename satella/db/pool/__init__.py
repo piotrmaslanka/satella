@@ -64,7 +64,14 @@ class DatabaseDefinition(object):
     def get_connection(self):
         """Returns a new connection object. This connects to the database with according
         definitions from L{DatabaseDefinition} passed at constructor."""
-        c = self.conn_lambda()
+        while True:
+            try:
+                c = self.conn_lambda()
+            except:
+                import time
+                time.sleep(5)
+            else:
+                break
         self.acs(c)
         return c
 
