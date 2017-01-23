@@ -15,7 +15,7 @@ Vagrant.configure("2") do |config|
      apt-get update
 
      # Python
-     apt-get install -y htop curl python python-setuptools python-pip python-dev build-essential rabbitmq-server python3 python3-pip python3-setuptools
+     apt-get install -y htop curl python python-setuptools python-pip python-dev build-essential python3 python3-pip python3-setuptools
      pip install --upgrade pip setuptools
      pip3 install --upgrade pip setuptools
 
