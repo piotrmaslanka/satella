@@ -1,3 +1,17 @@
+satella
+========
+[![Build Status](https://travis-ci.org/smok-serwis/satella.svg)](https://travis-ci.org/smok-serwis/satella)
+[![Code Climate](https://codeclimate.com/github/smok-serwis/satella/badges/gpa.svg)](https://codeclimate.com/github/smok-serwis/satella)
+[![Test Coverage](https://codeclimate.com/github/smok-serwis/satella/badges/coverage.svg)](https://codeclimate.com/github/smok-serwis/satella/coverage)
+[![license](https://img.shields.io/github/license/mashape/apistatus.svg)]()
+[![PyPI](https://img.shields.io/pypi/pyversions/satella.svg)]()
+[![PyPI](https://img.shields.io/pypi/implementation/satella.svg)]()
+
+**satella is currently undergoing a major rework. See branch satella2 for details.
+This WILL break compatibility.**
+
+**satella 1.0 remain in maintenance mode**
+
 Satella is a Python library for writing server applications, especially those dealing with
 small network-oriented tasks. Over time it will constitute a reasonably large library with useful things.
 

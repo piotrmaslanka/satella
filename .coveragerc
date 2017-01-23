@@ -1,0 +1,4 @@
+[run]
+branch=1
+include=satella/*
+omit=tests/*
