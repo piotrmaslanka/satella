@@ -1,1 +1,0 @@
-from satella.db.unittests.pool import PoolTest
