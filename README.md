@@ -1,8 +1,8 @@
 satella
 ========
-[![Build Status](https://travis-ci.org/smok-serwis/satella.svg)](https://travis-ci.org/smok-serwis/satella)
-[![Code Climate](https://codeclimate.com/github/smok-serwis/satella/badges/gpa.svg)](https://codeclimate.com/github/smok-serwis/satella)
-[![Test Coverage](https://codeclimate.com/github/smok-serwis/satella/badges/coverage.svg)](https://codeclimate.com/github/smok-serwis/satella/coverage)
+[![Build Status](https://travis-ci.org/piotrmaslanka/satella.svg)](https://travis-ci.org/piotrmaslanka/satella)
+[![Code Climate](https://codeclimate.com/github/piotrmaslanka/satella/badges/gpa.svg)](https://codeclimate.com/github/piotrmaslanka/satella)
+[![Test Coverage](https://codeclimate.com/github/piotrmaslanka/satella/badges/coverage.svg)](https://codeclimate.com/github/piotrmaslanka/satella/coverage)
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg)]()
 [![PyPI](https://img.shields.io/pypi/pyversions/satella.svg)]()
 [![PyPI](https://img.shields.io/pypi/implementation/satella.svg)]()
