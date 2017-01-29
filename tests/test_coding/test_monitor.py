@@ -1,5 +1,5 @@
 from threading import Thread
-from satella.threads import Monitor
+from satella.coding import Monitor
 from time import sleep
 from Queue import Queue
 

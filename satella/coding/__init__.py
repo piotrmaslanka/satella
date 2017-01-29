@@ -1,26 +1,84 @@
-from threading import Thread, Lock, RLock
-from satella.threads.pipe import Pipe, create_pipes
-from satella.threads.tqm import TQM
+# coding=UTF-8
+"""
+Just useful objects to make your coding nicer every day
+"""
+from __future__ import print_function, absolute_import, division
+import six
 
-class BaseThread(Thread):
-    """Thread with internal termination flag"""
-    def __init__(self, *args, **kwargs):
-        self._terminating = False
-        Thread.__init__(self, *args, **kwargs)
 
-    def terminate(self):
-        """Sets internal termination flag"""
-        self._terminating = True
-        return self
 
-    def start(self):
-        Thread.start(self)
-        return self
+class CallableGroup(object):
+    """
+    This behaves like a function, but allows to add other functions to call
+    when invoked, eg.
+
+        c1 = Callable()
+
+        c1.add(foo)
+        c1.add(bar)
+
+        c1(2, 3)
+
+    Now both foo and bar will be called with arguments (2, 3). Their exceptions
+    will be propagated.
+    """
+
+    def __init__(self, gather=False, swallow_exceptions=False):
+        """
+        :param gather: if True, results from all callables will be gathered
+                       into a list and returned from __call__
+        :param swallow_exceptions: if True, exceptions from callables will be
+                                   silently ignored. If gather is set,
+                                   result will be the exception instance
+        """
+        self.callables = [] # tuple of (callable, oneshot)
+        self.oneshots = oneshots
+        self.gather = gather
+        self.swallow_exceptions = swallow_exceptions
+
+    def add(self, callable, oneshot=False):
+        """
+        :param oneshot: if True, callable will be unregistered after single call
+        """
+        self.callables.append((callable, oneshot))
+
+    def __call__(self, *args, **kwargs):
+        """
+        Run the callable. All registered callables will be called with
+        passed arguments, so they should have the same arity.
+
+        If callables raise, it will be passed through.
+
+        :return: list of results if gather was set, else None
+        """
+        clbl = self.callables       # for moar thread safety
+        self.callables = []
+
+        if self.gather:
+            results = []
+
+        for callable, oneshot in clbl:
+            try:
+                q = callable(*args, **kwargs)
+            except Exception as e:
+                if not self.swallow_exceptions:
+                    raise   # re-raise
+                q = e
+
+            if self.gather:
+                results.append(q)
+
+            if not oneshot:
+                self.callables.append((callable, oneshot))
+
+        if self.gather:
+            return results
+
 
 class Monitor(object):
     """
     Base utility class for creating monitors (the synchronization thingies!)
-    
+
     These are NOT re-entrant!
 
     Use it like that:
@@ -39,23 +97,25 @@ class Monitor(object):
                 with Monitor.acquire(self):
                     .. do your threadsafe jobs ..
     """
+
     def __init__(self):
         """You need to invoke this at your constructor"""
         self._monitor_lock = Lock()
 
-    @staticmethod    
+    @staticmethod
     def protect(fun):
         """
-        This is a decorator. Class method decorated with that will lock the 
-        global lock of given instance, making it threadsafe. Depending on 
+        This is a decorator. Class method decorated with that will lock the
+        global lock of given instance, making it threadsafe. Depending on
         usage pattern of your class and it's data semantics, your performance
         may vary
         """
+
         def monitored(*args, **kwargs):
             with args[0]._monitor_lock:
                 return fun(*args, **kwargs)
-        return monitored
 
+        return monitored
 
     class release(object):
         """
@@ -75,6 +135,7 @@ class Monitor(object):
             .. back to protected stuff ..
 
         """
+
         def __init__(self, foo):
             self.foo = foo
 
@@ -84,7 +145,6 @@ class Monitor(object):
         def __exit__(self, e1, e2, e3):
             self.foo._monitor_lock.acquire()
             return False
-
 
     class acquire(object):
         """
@@ -97,6 +157,7 @@ class Monitor(object):
             with Monitor.acquire(foo):
                 .. do operations on foo that need mutual exclusion ..
         """
+
         def __init__(self, foo):
             self.foo = foo
 
@@ -107,11 +168,12 @@ class Monitor(object):
             self.foo._monitor_lock.release()
             return False
 
+
 class RMonitor(Monitor):
     """
-    Monitor with reentrancy
+    Monitor, but using an reentrant lock instead of a normal one
     """
+
     def __init__(self):
-        Monitor.__init__(self)
+        super(RMonitor, self).__init__()
         self._monitor_lock = RLock()
-    
