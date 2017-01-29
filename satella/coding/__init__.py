@@ -4,7 +4,7 @@ Just useful objects to make your coding nicer every day
 """
 from __future__ import print_function, absolute_import, division
 import six
-
+import threading
 
 
 class CallableGroup(object):
@@ -100,7 +100,7 @@ class Monitor(object):
 
     def __init__(self):
         """You need to invoke this at your constructor"""
-        self._monitor_lock = Lock()
+        self._monitor_lock = threading.Lock()
 
     @staticmethod
     def protect(fun):
@@ -175,5 +175,6 @@ class RMonitor(Monitor):
     """
 
     def __init__(self):
+        #todo refactor so that a Lock is not created uselessly
         super(RMonitor, self).__init__()
-        self._monitor_lock = RLock()
+        self._monitor_lock = threading.RLock()
