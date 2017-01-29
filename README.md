@@ -5,6 +5,7 @@ satella
 [![Test Coverage](https://codeclimate.com/github/piotrmaslanka/satella/badges/coverage.svg)](https://codeclimate.com/github/piotrmaslanka/satella/coverage)
 [![PyPI](https://img.shields.io/pypi/pyversions/satella.svg)]()
 [![PyPI](https://img.shields.io/pypi/implementation/satella.svg)]()
+[![Documentation Status](https://readthedocs.org/projects/satella/badge/?version=latest)](http://satella.readthedocs.io/en/latest/?badge=latest)
 
 **satella is currently undergoing a major rework. See branch satella2 for details.
 This WILL break compatibility.**

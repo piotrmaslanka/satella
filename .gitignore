@@ -24,7 +24,7 @@ local.properties
 
 # Locally stored "Eclipse launch configurations"
 *.launch
-
+.vagrant/
 # CDT-specific
 .cproject
 

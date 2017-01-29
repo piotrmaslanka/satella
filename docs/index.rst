@@ -6,6 +6,7 @@ Welcome to satella's documentation!
    :caption: Contents:
 
    coding/monitor
+   instrumentation/traceback
 
 
 Indices and tables
