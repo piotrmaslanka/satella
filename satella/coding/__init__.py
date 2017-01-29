@@ -3,6 +3,7 @@
 Just useful objects to make your coding nicer every day
 """
 from __future__ import print_function, absolute_import, division
+import functools
 import six
 import threading
 
@@ -103,14 +104,14 @@ class Monitor(object):
         self._monitor_lock = threading.Lock()
 
     @staticmethod
-    def protect(fun):
+    def synchronized(fun):
         """
         This is a decorator. Class method decorated with that will lock the
         global lock of given instance, making it threadsafe. Depending on
         usage pattern of your class and it's data semantics, your performance
         may vary
         """
-
+        @functools.wraps(fun)
         def monitored(*args, **kwargs):
             with args[0]._monitor_lock:
                 return fun(*args, **kwargs)
@@ -126,8 +127,7 @@ class Monitor(object):
         but you feel that you can release it for a while as it would
         improve parallelism. You can use it as such:
 
-
-        @Monitor.protect
+        @Monitor.synchronized
         def protected_function(self):
             .. do some stuff that needs mutual exclusion ..
             with Monitor.release(self):
