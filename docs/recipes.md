@@ -29,5 +29,6 @@ Entering _AcquirePIDLock_ context may throw:
  and is_alive (bool) - whether the holder is an alive process
 
 
+It is safe (and advisable!) to fork() inside this context manager. 
 
 Writing to _/var/run_ may require root permissions.
