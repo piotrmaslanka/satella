@@ -17,6 +17,7 @@ Use in such a way:
 """
 import sys
 import zlib
+import io
 import six
 import traceback
 import inspect
@@ -147,7 +148,7 @@ class StackFrame(object):
     """
     __slots__ = ('locals', 'globals', 'name', 'filename', 'lineno')
 
-    def __init__(self, frame):
+    def __init__(self, frame, value_pickling_policy):
         """
         :type frame: Python stack frame
         """
@@ -157,11 +158,11 @@ class StackFrame(object):
 
         self.locals = {}
         for key, value in frame.f_locals.iteritems():
-            self.locals[key] = StoredVariable(value)
+            self.locals[key] = StoredVariable(value, value_pickling_policy)
 
         self.globals = {}
         for key, value in frame.f_globals.iteritems():
-            self.globals[key] = StoredVariable(value)
+            self.globals[key] = StoredVariable(value, value_pickling_policy)
 
 
 class Traceback(object):
@@ -178,7 +179,6 @@ class Traceback(object):
 
         if inspect.isclass(value_pickling_policy):
             value_pickling_policy = value_pickling_policy()
-        self.value_pickling_policy = value_pickling_policy
 
         tb = sys.exc_info()[2]
         while tb.tb_next:
@@ -187,28 +187,37 @@ class Traceback(object):
         self.frames = []
         f = tb.tb_frame
         while f:
-            self.frames.append(StackFrame(f))
+            self.frames.append(StackFrame(f, value_pickling_policy))
             f = f.f_back
 
-        self.formatted_traceback = traceback.format_exc()
+        self.formatted_traceback = six.text_type(traceback.format_exc())
 
     def pickle(self):
         """Returns this instance, pickled"""
         return pickle.dumps(self, pickle.HIGHEST_PROTOCOL)
 
-    def pretty_print(self):
+    def pretty_format(self):
+        """
+        Return a multi-line, pretty-printed representation of all exception data.
+        :return: text
+        """
+        bio = io.StringIO()
+        self.pretty_print(bio)
+        return bio.getvalue()
+
+    def pretty_print(self, output):
         """
         Pretty-print the exception
+        :param output: a file-like object in text mode
         :return: unicode
         """
         k = []
-        k.append(self.formatted_traceback)
-        k.append(u'* Stack trace, innermost first')
+        output.write(self.formatted_traceback)
+        output.write(u'\n* Stack trace, innermost first\n')
         for frame in self.frames:
-            k.append(u'** %s at %s:%s' % (frame.name, frame.filename, frame.lineno))
+            output.write(u'** %s at %s:%s\n' % (frame.name, frame.filename, frame.lineno))
             for name, value in frame.locals.iteritems():
                 try:
-                    k.append(u'*** %s: %s' % (name, value.get_repr()))
+                    output.write(u'*** %s: %s\n' % (name, value.repr))
                 except:
-                    k.append(u'*** %s: repr unavailable' % name)
-        return u'\n'.join(k)
+                    output.write(u'*** %s: repr unavailable\n' % name)
