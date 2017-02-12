@@ -2,6 +2,16 @@
 
 How to do common things.
 
+## Check if running as root
+
+```python
+from satella import is_running_as_root
+if is_running_as_root():
+    print('Root!')
+else:
+    print('Not root')
+```
+
 
 ## Acquire a PID lock file
 
