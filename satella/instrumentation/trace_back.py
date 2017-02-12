@@ -2,6 +2,10 @@
 """
 Allows you to preserve entire stack frame along with all variables (even pickles them).
 
+After this, you can send this report somewhere. At target, it will be unpickled in a safe way
+(without importing anything extra from environment). You can unpickle particular variables stored,
+but that may involve an import.
+
 Use in such a way:
 
     try:
@@ -12,53 +16,129 @@ Use in such a way:
         # you can now pickle it if you wish to
 """
 import sys
+import zlib
 import six
 import traceback
+import inspect
 try:
     import cPickle as pickle
 except ImportError:
     import pickle
 
 
-class StoredVariable(object):
-    """Class used to store a variable value. Picklable."""
-    __slots__ = ('repr', 'pickle')
+class ValuePicklingPolicy(object):
+    """
+    Default value pickling policy.
 
-    def __init__(self, value):
+    For a "default" policy it's pretty customizable
+
+    Override if need be, and pass the class (or instance) to Traceback
+    """
+
+    def __init__(self, enable_pickling=True, compress_at=128*1024):
+        """
+        :param enable_pickling: bool, whether to enable pickling at all
+        :param compress_at: pickles longer than this (bytes) will be compressed
+        """
+        self.enable_pickling = enable_pickling
+        self.compress_at = compress_at
+
+    def should_pickle(self, value):
+        """
+        Should this value be pickled?
+
+        :param value: value candidate
+        :return: bool
+        """
+        return self.enable_pickling
+
+    def should_compress(self, pickledata):
+        """
+        Should this pickle undergo compression?
+        :param pickledata: bytes, pickle value
+        :return: bool
+        """
+        return len(pickledata) > self.compress_at
+
+    def get_compression_level(self, pickledata):
+        """
+        What compression level to use to pickle this?
+        :param pickledata: bytes, pickle value
+        :return: int, 1-9, where "1" is the fastest, and "9" is the slowest, but produces best compression
+        """
+        return 6
+
+
+class StoredVariable(object):
+    """
+    Class used to store a variable value. Picklable.
+
+    Attributes are:
+        .repr - a text representation obtained using repr
+        .typeinfo - a text representation of variable's type
+        .pickle - bytes with pickled (optionally processed) value, or None if not available
+        .pickle_type - what is stored in .pickle?
+            None - nothing
+            "pickle" - normal Python pickle
+            "pickle/gzip" - Python pickle treated with zlib.compress
+            "failed" - could not pickle, pickle contains a text with human-readable reason
+
+    """
+    __slots__ = ('repr', 'type_', 'pickle', 'pickle_type')
+
+    def __init__(self, value, policy):
         """
         If value cannot be pickled, it's repr will be at least preserved
 
         :param value: any Python value to preserve
+        :param policy: value pickling policy to use (instance)
         """
         self.repr = repr(value)
+        self.type_ = repr(type(value))
         if six.PY2:
             self.repr = six.text_type(self.repr)
+            self.type_ = six.text_type(self.type_)
 
-        try:
-            self.pickle = pickle.dumps(value, pickle.HIGHEST_PROTOCOL)
-        except pickle.PicklingError:
-            self.pickle = None 
+        self.pickle = None
+        self.pickle_type = None
 
-    def get_repr(self):
-        """
-        Return a representation of the value
-        :return:
-        """
-        return self.repr
+        if policy.should_pickle(value):
+            try:
+                self.pickle = pickle.dumps(value, pickle.HIGHEST_PROTOCOL)
+                self.pickle_type = 'pickle'
+            except pickle.PicklingError as e:
+                self.pickle = repr(e.args)
+                self.pickle_type = "failed"
+            else:
+                if policy.should_compress(self.pickle):
+                    try:
+                        self.pickle = zlib.compress(self.pickle, policy.get_compression_level(self.pickle))
+                        self.pickle_type = "pickle/gzip"
+                    except zlib.error:
+                        pass    # ok, keep normal
 
-    def get_value(self):
+    def load_value(self):
         """
         Return the value that this represents.
-        :return: stored value - if unpicklable
-        :raises ValueError: unable to unpickle
+
+        WARNING! This may result in importing things from environment, as pickle.loads will be called.
+
+        :return: stored value - if picklable and was pickled
+        :raises ValueError: value has failed to be pickled or was never pickled
         """
-        if self.pickle is None:
-            raise ValueError('object not picklable')
-        else:
-            try:
-                return pickle.loads(self.pickle)
-            except pickle.UnpicklingError:
-                raise ValueError('object picklable, but cannot load in this environment')
+        if self.pickle_type is None:
+            raise ValueError('value was never pickled')
+        elif self.pickle_type == 'failed':
+            raise ValueError('Value has failed to be pickled, reason is %s' % (self.pickle, ))
+        elif self.pickle_type == 'pickle/gzip':
+            pickle = zlib.decompress(self.pickle)
+        elif self.pickle_type == 'pickle':
+            pickle = self.pickle
+
+        try:
+            return pickle.loads(pickle)
+        except pickle.UnpicklingError:
+            raise ValueError('object picklable, but cannot load in this environment')
 
 
 class StackFrame(object):
@@ -88,8 +168,17 @@ class Traceback(object):
     """Class used to preserve exceptions. Picklable."""
     __slots__ = ('formatted_traceback', 'frames')
 
-    def __init__(self):
-        """To be invoked while processing an exception is in progress"""
+    def __init__(self, value_pickling_policy=ValuePicklingPolicy):
+        """
+        To be invoked while processing an exception is in progress
+
+        :param value_pickling_policy: pickling policy for variables in stack frames.
+                                      Can be a class (will be called with empty constructor), or instance
+        """
+
+        if inspect.isclass(value_pickling_policy):
+            value_pickling_policy = value_pickling_policy()
+        self.value_pickling_policy = value_pickling_policy
 
         tb = sys.exc_info()[2]
         while tb.tb_next:

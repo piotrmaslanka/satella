@@ -13,7 +13,7 @@ class MonitorTest(unittest.TestCase):
                 self.cqueue = cqueue
                 Monitor.__init__(self)
 
-            @Monitor.protect
+            @Monitor.synchronized
             def execute(self):
                 self.cqueue.put(1)
                 sleep(1)
@@ -44,7 +44,7 @@ class MonitorTest(unittest.TestCase):
                 self.cqueue = cqueue
                 Monitor.__init__(self)
 
-            @Monitor.protect
+            @Monitor.synchronized
             def execute(self):
                 self.cqueue.put(1)
                 sleep(1)
@@ -75,7 +75,7 @@ class MonitorTest(unittest.TestCase):
                 self.cqueue = cqueue
                 Monitor.__init__(self)
 
-            @Monitor.protect
+            @Monitor.synchronized
             def execute(self):
                 self.cqueue.put(1)
                 sleep(1)

@@ -89,7 +89,7 @@ class Monitor(object):
                 Monitor.__init__(self)
                 ... do your job ..
 
-            @Monitor.protect
+            @Monitor.synchronized
             def function_that_needs_mutual_exclusion(self):
                 .. do your threadsafe jobs ..
 
