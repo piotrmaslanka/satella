@@ -15,8 +15,8 @@ class TestTypecheck(unittest.TestCase):
         def testf(a_int, a_float, a_string):
             pass
 
-        self.assertRaises(TypeError, lambda: testf('lol', 15, 'test'))
-        self.assertRaises(TypeError, lambda: testf(12, 2.0, 'hey'))
+        self.assertRaises(TypeError, lambda: testf('lol', 15, b'test'))
+        self.assertRaises(TypeError, lambda: testf(12, 2.0, b'hey'))
         testf(12, 2.0, u'hey')
 
         @typed((None, int, float))
