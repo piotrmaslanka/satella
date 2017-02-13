@@ -4,7 +4,7 @@ _Traceback_ object is used to preserve all the information you can get
 in case of an exception. It preserves:
 * Information about all stack frames in this thread
 * Every local and global variable at every stack frame
-    * If the variable is pickable, it is pickled on the spot
+    * If the variable is pickable, and pickling is enabled, it is pickled on the spot
     * Variable's _repr_ is always preserved
     * Of course variable name is saved
     
@@ -27,3 +27,6 @@ except:
 
 _Traceback_ should be created in the exception it is supposed to capture,
 as it captures exception info from _sys.exc_info()_.
+
+Unpickling _Traceback_ objects in any environment is safe. However, obtaining
+variable values via _load_value_ might be not.

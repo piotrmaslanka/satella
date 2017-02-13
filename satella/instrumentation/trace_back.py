@@ -175,11 +175,11 @@ class StackFrame(object):
         self.lineno = frame.f_lineno
 
         self.locals = {}
-        for key, value in frame.f_locals.iteritems():
+        for key, value in six.iteritems(frame.f_locals):
             self.locals[key] = StoredVariable(value, policy)
 
         self.globals = {}
-        for key, value in frame.f_globals.iteritems():
+        for key, value in six.iteritems(frame.f_globals):
             self.globals[key] = StoredVariable(value, policy)
 
 
