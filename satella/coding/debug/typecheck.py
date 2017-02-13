@@ -32,7 +32,7 @@ def typed(*t_args, **t_kwargs):
 
     def typeinfo_to_tuple_of_types(typeinfo):
         if typeinfo is None:
-            return (types.NoneType, )
+            return (type(None), )
         elif typeinfo == int and six.PY2:
             return six.integer_types
         else:
