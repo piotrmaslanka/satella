@@ -42,3 +42,16 @@ class TestTypecheck(unittest.TestCase):
 
         self.assertRaises(TypeError, lambda: testc(2))
         testc(None)
+
+
+    def test_t2(self):
+
+        @typed((int, None))
+        def testa(a=5):
+            pass
+
+        self.assertRaises(TypeError, lambda: testa(2.0))
+        self.assertRaises(TypeError, lambda: testa(a=2.0))
+        self.assertRaises(TypeError, lambda: testa('yuyu'))
+        testa(a=None)
+        testa(a=6)

@@ -10,7 +10,7 @@ satella
 **satella is currently undergoing a major rework. See branch satella2 for details.
 This WILL break compatibility.**
 
-**satella 1.0 remain in maintenance mode**
+**satella 1.0 remains in maintenance mode**
 
 Satella is a Python library for writing server applications, especially those dealing with
 small network-oriented tasks. Over time it will constitute a reasonably large library with useful things.
