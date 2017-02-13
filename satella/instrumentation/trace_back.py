@@ -27,22 +27,24 @@ except ImportError:
     import pickle
 
 
-class ValuePicklingPolicy(object):
+class GenerationPolicy(object):
     """
-    Default value pickling policy.
+    A policy that manages generating a traceback
 
     For a "default" policy it's pretty customizable
 
     Override if need be, and pass the class (or instance) to Traceback
     """
 
-    def __init__(self, enable_pickling=True, compress_at=128*1024):
+    def __init__(self, enable_pickling=True, compress_at=128*1024, repr_length_limit=128*1024):
         """
         :param enable_pickling: bool, whether to enable pickling at all
         :param compress_at: pickles longer than this (bytes) will be compressed
+        :param repr_length_limit: maximum length of __repr__. None for no limit.
         """
         self.enable_pickling = enable_pickling
         self.compress_at = compress_at
+        self.repr_length_limit = repr_length_limit
 
     def should_pickle(self, value):
         """
@@ -69,6 +71,20 @@ class ValuePicklingPolicy(object):
         """
         return 6
 
+    def process_repr(self, r):
+        """
+        Process the string obtained from __repr__ing
+        :param r: result of a __repr__ on value
+        :return: processed result
+        """
+        if self.repr_length_limit is None:
+            return r
+        else:
+            if len(r) > self.repr_length_limit:
+                return r[:self.repr_length_limit] + u'...'
+            else:
+                return r
+
 
 class StoredVariable(object):
     """
@@ -92,13 +108,15 @@ class StoredVariable(object):
         If value cannot be pickled, it's repr will be at least preserved
 
         :param value: any Python value to preserve
-        :param policy: value pickling policy to use (instance)
+        :param policy: policy to use (instance)
         """
         self.repr = repr(value)
         self.type_ = repr(type(value))
         if six.PY2:
-            self.repr = six.text_type(self.repr)
-            self.type_ = six.text_type(self.type_)
+            self.repr = six.text_type(self.repr, 'utf8')
+            self.type_ = six.text_type(self.type_, 'utf8')
+
+        self.repr = policy.process_repr(self.repr)
 
         self.pickle = None
         self.pickle_type = None
@@ -148,7 +166,7 @@ class StackFrame(object):
     """
     __slots__ = ('locals', 'globals', 'name', 'filename', 'lineno')
 
-    def __init__(self, frame, value_pickling_policy):
+    def __init__(self, frame, policy):
         """
         :type frame: Python stack frame
         """
@@ -158,27 +176,26 @@ class StackFrame(object):
 
         self.locals = {}
         for key, value in frame.f_locals.iteritems():
-            self.locals[key] = StoredVariable(value, value_pickling_policy)
+            self.locals[key] = StoredVariable(value, policy)
 
         self.globals = {}
         for key, value in frame.f_globals.iteritems():
-            self.globals[key] = StoredVariable(value, value_pickling_policy)
+            self.globals[key] = StoredVariable(value, policy)
 
 
 class Traceback(object):
     """Class used to preserve exceptions. Picklable."""
     __slots__ = ('formatted_traceback', 'frames')
 
-    def __init__(self, value_pickling_policy=ValuePicklingPolicy):
+    def __init__(self, policy=GenerationPolicy):
         """
         To be invoked while processing an exception is in progress
 
-        :param value_pickling_policy: pickling policy for variables in stack frames.
-                                      Can be a class (will be called with empty constructor), or instance
+        :param policy: policy for traceback generation
         """
 
-        if inspect.isclass(value_pickling_policy):
-            value_pickling_policy = value_pickling_policy()
+        if inspect.isclass(policy):
+            value_pickling_policy = policy()
 
         tb = sys.exc_info()[2]
         while tb.tb_next:
