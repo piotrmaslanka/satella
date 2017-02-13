@@ -27,3 +27,18 @@ class TestTypecheck(unittest.TestCase):
         testa(2)
         testa(2)
         testa(2.0)
+
+        @typed(None, int)
+        def testb(a, num):
+            pass
+
+        testb(None, 100000000000000000000000000000000)
+        testb(u'hello', 1)
+        testb(object, 2)
+
+        @typed((None, ))
+        def testc(p):
+            pass
+
+        self.assertRaises(TypeError, lambda: testc(2))
+        testc(None)

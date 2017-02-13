@@ -20,4 +20,7 @@ If you want to check for None-ness, you can pass None as well. Types for particu
 arguments can also be tuples or lists, in that case if any of these types matches, 
 it's OK.
 
+If you don't want to check a particular argument for type, pass None as type. 
+Conversely, to check for being None, pass (None, ).
+
 If type check fails, TypeError will be raised.
