@@ -8,6 +8,7 @@ Welcome to satella's documentation!
    coding/monitor
    coding/debug
    instrumentation/traceback
+   source/modules
 
 
 Indices and tables
