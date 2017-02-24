@@ -12,7 +12,7 @@ This WILL break compatibility.**
 
 **satella 1.0 remains in maintenance mode**
 
-_satella.posix_ in unavailable on non-POSIX systems.
+_satella.posix_ in unavailable on non-POSIX systems, but the rest should work OK.
 
 Satella is a Python library for writing server applications, especially those dealing with mundane but useful things.
 
