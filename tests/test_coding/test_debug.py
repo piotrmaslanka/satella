@@ -44,6 +44,7 @@ class TestTypecheck(unittest.TestCase):
         testc(None)
 
 
+    @unittest.skip
     def test_t2(self):
 
         @typed((int, None))

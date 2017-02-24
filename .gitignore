@@ -67,6 +67,7 @@ docs/_templates
 *.vspscc
 .builds
 *.dotCover
+.pycharm_helpers/
 
 ## TODO: If you have NuGet Package Restore enabled, uncomment this
 #packages/
