@@ -5,7 +5,7 @@ How to do common things.
 ## Check if running as root
 
 ```python
-from satella.unix import is_running_as_root
+from satella.posix import is_running_as_root
 if is_running_as_root():
     print('Root!')
 else:
@@ -19,7 +19,7 @@ Use a context manager, _AcquirePIDLock_ from module _satella.pid_. Example:
 
 Example:
 ```python
-from satella.unix import AcquirePIDLock
+from satella.posix import AcquirePIDLock
 
 with AcquirePIDLock('satella.pid'):
     print('Lock is acquired!')

@@ -9,6 +9,9 @@ setup(name='satella',
       keywords=['ha', 'high availability', 'scalable', 'scalability', 'server'],
       packages=[
             'satella',
+            'satella.coding',
+            'satella.posix',
+            'satella.instrumentation'
       ],
       install_requires=[
             "six",
@@ -26,6 +29,7 @@ setup(name='satella',
             'Programming Language :: Python :: Implementation :: CPython',
             'Programming Language :: Python :: Implementation :: PyPy',
             'Operating System :: POSIX',
+            'Operating System :: OS Independent',
             'Development Status :: 1 - Planning',
             'License :: OSI Approved :: MIT License',
             'Topic :: Software Development :: Libraries'

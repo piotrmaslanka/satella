@@ -9,6 +9,7 @@ Welcome to satella's documentation!
    coding/debug
    instrumentation/traceback
    source/modules
+   examples/echoist
 
 
 Indices and tables
