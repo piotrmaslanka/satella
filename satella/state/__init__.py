@@ -30,4 +30,3 @@ except ImportError:
 
 def getMe():
     return _myself
-
