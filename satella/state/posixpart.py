@@ -4,6 +4,7 @@ import six
 import logging
 import functools
 from satella.coding import CallableGroup
+import os
 import posix
 """
 POSIX components of .state.
@@ -23,14 +24,12 @@ class CurrentPOSIXProcess(object):
 _myself = CurrentPOSIXProcess()
 
 
-import os
-
 @functools.wraps(os.fork)
-def _monkeyFork():
+def _os_path_monkey_patch():
     # os.fork() is replaced with that
     _myself.on_before_fork()
     pid = os.fork()
     _myself.on_after_fork(pid == 0)  # on_after_fork(is_child::bool)
     return pid
 
-os.fork = _monkeyFork
+os.fork = _os_path_monkey_patch

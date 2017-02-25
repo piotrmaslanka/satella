@@ -29,4 +29,9 @@ except ImportError:
 
 
 def getMe():
+    """
+    Return a Process object, representing current process.
+
+    :return: a
+    """
     return _myself
