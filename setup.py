@@ -16,6 +16,7 @@ setup(name='satella',
       install_requires=[
             "six",
             "monotonic",
+            "typing"
       ],
       tests_require=[
           "nose"
