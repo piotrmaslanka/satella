@@ -8,8 +8,6 @@ import six
 import threading
 
 
-#todo if subclass overrides synchronized or acquire or release, allow Monitor(other_object).acquire()
-
 class Monitor(object):
     """
     Base utility class for creating monitors (the synchronization thingies!)
