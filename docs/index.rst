@@ -7,6 +7,7 @@ Welcome to satella's documentation!
 
    coding/monitor
    coding/debug
+   coding/typechecking
    instrumentation/traceback
    source/modules
    examples/echoist
