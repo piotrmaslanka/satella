@@ -23,13 +23,17 @@ class CurrentPOSIXProcess(object):
 
 _myself = CurrentPOSIXProcess()
 
+try:
+    os.fork
+except AttributeError:
+    logger.warn('Running on Windows, skipping fork')
+else:
+    @functools.wraps(os.fork)
+    def _os_path_monkey_patch():
+        # os.fork() is replaced with that
+        _myself.on_before_fork()
+        pid = os.fork()
+        _myself.on_after_fork(pid == 0)  # on_after_fork(is_child::bool)
+        return pid
 
-@functools.wraps(os.fork)
-def _os_path_monkey_patch():
-    # os.fork() is replaced with that
-    _myself.on_before_fork()
-    pid = os.fork()
-    _myself.on_after_fork(pid == 0)  # on_after_fork(is_child::bool)
-    return pid
-
-os.fork = _os_path_monkey_patch
+    os.fork = _os_path_monkey_patch

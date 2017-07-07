@@ -14,18 +14,15 @@ from satella.coding import CallableGroup
 
 logger = logging.getLogger(__name__)
 
+from . import posixpart  # raises ImportError on non-POSIX systems
 
-try:
-    from . import posixpart  # raises ImportError on non-POSIX systems
+_myself = posixpart._myself
+# we are running on a non-POSIX system
 
-    _myself = posixpart._myself
-except ImportError:
-    # we are running on a non-POSIX system
+class CurrentNonPosixProcess(object):
+    pass
 
-    class CurrentNonPosixProcess(object):
-        pass
-
-    _myself = CurrentNonPosixProcess()
+_myself = CurrentNonPosixProcess()
 
 
 def getMe():
