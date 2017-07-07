@@ -6,6 +6,7 @@ from __future__ import print_function, absolute_import, division
 import functools
 import six
 import threading
+import sys
 
 
 class Monitor(object):
@@ -31,8 +32,9 @@ class Monitor(object):
                     .. do your threadsafe jobs ..
     """
 
-    def __init__(self):
-        """You need to invoke this at your constructor"""
+    def __init__(self, obj=None):
+        """You need to invoke this at your constructor
+        You can also use it to release locks of other objects."""
         self._monitor_lock = threading.Lock()
 
     @staticmethod

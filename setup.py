@@ -2,7 +2,7 @@
 from setuptools import setup
 
 setup(name='satella',
-      version='2.0a1',
+      version='2.0b1',
       description=u'Utilities for writing servers in Python',
       author=u'Piotr Maślanka',
       author_email='piotrm@smok.co',
