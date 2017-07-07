@@ -1,35 +1,29 @@
 # coding=UTF-8
 from __future__ import print_function, absolute_import, division
-import six
-import time
-import logging
-import unittest
-import threading
-import sys
-import mock
 
+import sys
+import unittest
+
+from mock import patch, Mock
 
 
 class TestDaemon(unittest.TestCase):
-
     @unittest.skipIf('win' in sys.platform, 'Running on Windows')
-    @mock.patch('sys.stdin')
-    @mock.patch('sys.stdout')
-    @mock.patch('sys.stderr')
-    @mock.patch('os.fork')
-    @mock.patch('os.umask')
-    @mock.patch('os.setsid')
-    @mock.patch('os.chdir')
-    @mock.patch('sys.exit')
-    def test_daemonize(self, stdin, stdout, stderr, fork, umask, setsid, chdir, exit):
-        from satella.posix import daemonize
+    def test_daemonize(self):
+        with patch('sys.stdin') as stdin, patch('sys.stdout') as stdout, patch('sys.stderr') as stderr, \
+             patch('os.fork', return_value=0) as fork, patch('os.umask') as umask, patch('os.setsid') as setsid, \
+             patch('os.chdir') as chdir, patch('sys.exit', new=lambda: 0) as exit:
 
-        daemonize()
+            from satella.posix import daemonize
 
-        stdin.assert_called()
-        stdout.assert_called()
-        stderr.assert_called()
-        fork.assert_called()
-        umask.assert_called()
-        chdir.assert_called_with('/')
-        self.assertTrue(len(exit.mock_calls), 2)
+            stdin.close, stdout.close, stderr.close = Mock(), Mock(), Mock()
+
+            daemonize()
+
+            stdin.close.assert_called()
+            stdout.close.assert_called()
+            stderr.close.assert_called()
+            fork.assert_called()
+            setsid.assert_called()
+            umask.assert_called_with(0)
+            chdir.assert_called_with('/')
