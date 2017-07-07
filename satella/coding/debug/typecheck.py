@@ -25,7 +25,6 @@ Callable = typing.Callable
 Sequence = typing.Sequence
 TypeVar = typing.TypeVar
 Generic = typing.Generic
-Pair = typing.Pair
 Mapping = typing.Mapping
 Iterable = typing.Iterable
 Union = typing.Union
@@ -52,11 +51,11 @@ class CSArgument(_CSArgument):
 
 class CSVarargsPlaceholder(CSArgument):
     def __init__(self, name):
-        super(CSVarargsPlaceholder, self).__init__('name', False, ())
+        super(CSVarargsPlaceholder, self).__init__('*args', False, ())
 
 class CSKwargsPlaceholder(CSArgument):
     def __init__(self, name):
-        super(CSKwargsPlaceholder, self).__init__('name', False, {})
+        super(CSKwargsPlaceholder, self).__init__('**kwargs', False, {})
 
 class TypeErrorReason(object):
     pass
