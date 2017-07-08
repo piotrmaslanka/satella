@@ -57,6 +57,7 @@ docs/_templates
 *.pch
 *.pdb
 *.pgc
+MANIFEST
 *.pgd
 *.rsp
 *.sbr
