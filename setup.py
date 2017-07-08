@@ -10,8 +10,11 @@ setup(name='satella',
       packages=[
             'satella',
             'satella.coding',
+            'satella.coding.debug',
+            'satella.coding.structures',
             'satella.posix',
-            'satella.instrumentation'
+            'satella.instrumentation',
+            'satella.state',
       ],
       install_requires=[
             "six",
