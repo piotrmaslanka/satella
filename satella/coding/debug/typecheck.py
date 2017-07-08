@@ -49,13 +49,19 @@ class CSArgument(_CSArgument):
             p.append('optional with default %s' % (self.default_value, ))
         return ' '.join(p)
 
+    def __eq__(self, other):
+        """
+        Is other argument same as this, in name/default value if present?
+        :param other: CSArgument
+        :return: bool
+        """
+        return self.name == other.name and self.required == other.required and self.default_value == other.default_value
+
 class CSVarargsPlaceholder(CSArgument):
-    def __init__(self, name):
-        super(CSVarargsPlaceholder, self).__init__('*args', False, ())
+    pass
 
 class CSKwargsPlaceholder(CSArgument):
-    def __init__(self, name):
-        super(CSKwargsPlaceholder, self).__init__('**kwargs', False, {})
+    pass
 
 class TypeErrorReason(object):
     pass
@@ -110,14 +116,25 @@ class CallSignature(object):
       - varargs_name (Union[str, None]) - name of varargs argument, or None if not present
       - kwargs_name (Union[str, None]) - name of kwargs argument, or None if not present
     """
-    __slots__ = ('has_varargs', 'has_kwargs', 'pos_args', 'locals')
-
     def count_required_positionals(self):
         return len((a for a in self.pos_args if a.required))
+
+    def __eq__(self, other):
+        """
+        Compare if two call signatures are IDENTICAL
+        :param other: CallSignature
+        :return: bool
+        """
+
+        if any(a != b for a, b in zip(self.pos_args, other.pos_args)):
+            return False
+
+        return (self.has_kwargs == other.has_kwargs) and (self.has_varargs == other.has_varargs)
 
     def __init__(self, callable):
         args, varargs, kwargs, defaults = inspect.getargspec(callable)
 
+        defaults = defaults or ()
         # pad them
         while len(defaults) < len(args):
             defaults = [_NoDefault] + list(defaults)
@@ -136,12 +153,16 @@ class CallSignature(object):
         self.varargs_name = varargs
         if varargs is not None:
             self.has_varargs = True
-            self.locals[self.varargs_name] = CSVarargsPlaceholder(self.varargs_name)
+            self.locals[self.varargs_name] = CSVarargsPlaceholder(self.varargs_name, False, [])
+        else:
+            self.has_varargs = False
 
         self.kwargs_name = kwargs
         if kwargs is not None:
             self.has_kwargs = True
-            self.locals[self.kwargs_name] = CSKwargsPlaceholder(self.kwargs_name)
+            self.locals[self.kwargs_name] = CSKwargsPlaceholder(self.kwargs_name, False, {})
+        else:
+            self.has_kwargs = False
 
     def result(self, *args, **kwargs):
         """
@@ -231,7 +252,9 @@ def typed(*t_args, **t_kwargs):
             else:
                 cargs = args
 
+
             for argument, typedescr in zip(cargs, t_args):
+                print(typedescr)
 
                 if typedescr is not None:
                     if not isinstance(argument, typedescr):
