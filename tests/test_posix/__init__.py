@@ -19,15 +19,13 @@ class TestHUS(unittest.TestCase):
         class Delayer(threading.Thread):
             def run(self):
                 time.sleep(2)
-                for signame, handler in signal.call_args_list:
-                    print(handler)
-                    handler(signame, None)
+                for call in signal.call_args_list:
+                    call.handler(call.signalnum, None)
 
         from satella.posix import hang_until_sig
 
-        #Delayer().start()
+        Delayer().start()
         hang_until_sig()
-        print(signal.call_args_list)
 
 
 class TestPidlock(unittest.TestCase):

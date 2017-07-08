@@ -34,7 +34,7 @@ def hang_until_sig(extra_signals=[]):
 
     while True:
         try:
-            me_lock.acquire()
+            #me_lock.acquire()
             return
         except InterruptedError:
             pass
