@@ -1,24 +1,20 @@
 # coding=UTF-8
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(name='satella',
-      version='2.0a1',
+      version='2.0.1',
       description=u'Utilities for writing servers in Python',
       author=u'Piotr Maślanka',
       author_email='piotrm@smok.co',
       keywords=['ha', 'high availability', 'scalable', 'scalability', 'server'],
-      packages=[
-            'satella',
-            'satella.coding',
-            'satella.posix',
-            'satella.instrumentation'
-      ],
+      packages=find_packages(exclude=['tests.*', 'tests', 'examples.*', 'examples']),
       install_requires=[
             "six",
             "monotonic",
+            "backports.typing"
       ],
       tests_require=[
-          "nose"
+          "nose", "mock", "coverage"
       ],
       test_suite='nose.collector',
       classifiers=[

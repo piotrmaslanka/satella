@@ -4,8 +4,6 @@ import six
 import logging
 import os
 import sys
-import pwd
-import grp
 
 logger = logging.getLogger(__name__)
 
@@ -58,12 +56,14 @@ def daemonize(exit_via=sys.exit,
 
 
     if uid is not None:
+        import pwd
         if isinstance(uid, six.string_types):
             uid = pwd.getpwnam(uid).pw_uid # raises KeyError
 
         os.seteuid(uid)
 
     if gid is not None:
+        import grp
         if isinstance(uid, six.string_types):
             gid = grp.getpwnam(uid).gr_gid # raises KeyError
 

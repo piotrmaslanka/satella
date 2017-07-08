@@ -5,10 +5,11 @@ It sounds like a melody
 from __future__ import print_function, absolute_import, division
 import six
 import unittest
-from satella.coding.debug import typed
+from satella.coding.debug import typed, CallSignature
 
 
 class TestTypecheck(unittest.TestCase):
+
     def test_t1(self):
 
         @typed(int, float, six.text_type)
@@ -43,8 +44,6 @@ class TestTypecheck(unittest.TestCase):
         self.assertRaises(TypeError, lambda: testc(2))
         testc(None)
 
-
-    @unittest.skip
     def test_t2(self):
 
         @typed((int, None))
@@ -52,7 +51,22 @@ class TestTypecheck(unittest.TestCase):
             pass
 
         self.assertRaises(TypeError, lambda: testa(2.0))
-        self.assertRaises(TypeError, lambda: testa(a=2.0))
+        testa(a=2.0)
         self.assertRaises(TypeError, lambda: testa('yuyu'))
         testa(a=None)
         testa(a=6)
+
+
+    def test_t3(self):
+        def a(b, c):
+            pass
+
+        def b(b, c):
+            pass
+
+        def c(b, c, **args):
+            pass
+
+        self.assertEquals(CallSignature(a), CallSignature(b))
+        self.assertNotEquals(CallSignature(a), CallSignature(c))
+

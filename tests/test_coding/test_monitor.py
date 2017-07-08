@@ -6,6 +6,7 @@ from six.moves.queue import Queue
 import unittest
 
 
+
 class MonitorTest(unittest.TestCase):
 
     def test_release_contextmanager(self):

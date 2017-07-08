@@ -4,6 +4,8 @@ How to do common things.
 
 ## Check if running as root
 
+**__This can run only on POSIX. This will raise ImportError on non-POSIX platforms, such as MS Windows__**
+
 ```python
 from satella.posix import is_running_as_root
 if is_running_as_root():
@@ -14,6 +16,8 @@ else:
 
 
 ## Acquire a PID lock file
+
+**__This can run only on POSIX. This will raise ImportError on non-POSIX platforms, such as MS Windows__**
 
 Use a context manager, _AcquirePIDLock_ from module _satella.pid_. Example:
 
