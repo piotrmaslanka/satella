@@ -1,5 +1,5 @@
 # coding=UTF-8
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(name='satella',
       version='2.0b1',
@@ -7,19 +7,11 @@ setup(name='satella',
       author=u'Piotr Maślanka',
       author_email='piotrm@smok.co',
       keywords=['ha', 'high availability', 'scalable', 'scalability', 'server'],
-      packages=[
-            'satella',
-            'satella.coding',
-            'satella.coding.debug',
-            'satella.coding.structures',
-            'satella.posix',
-            'satella.instrumentation',
-            'satella.state',
-      ],
+      packages=find_packages(exclude=['tests.*', 'tests', 'examples.*', 'examples']),
       install_requires=[
             "six",
             "monotonic",
-            "typing"
+            "backports.typing"
       ],
       tests_require=[
           "nose", "mock", "coverage"
