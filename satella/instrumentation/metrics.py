@@ -6,8 +6,49 @@ import time
 import monotonic
 logger = logging.getLogger(__name__)
 
-from .instrument import Metric
+
 from satella.coding import typed
+
+
+class Metric(object):
+    """
+    Base metric class.
+
+    All metrics have a minimum level. They will not log if their instrument is below this level.
+
+    If this should not log (ie. instrument has lesser level than metric), then self.log will be 
+    substituted with an empty function - so pretty fast
+    """
+
+    @typed(object, object, six.string_types, int, int, six.string_types)
+    def __init__(self, instrument, name, minimum_detail, current_detail, description=u''):
+        assert minimum_detail in (DISABLED, RUNTIME, DEBUG)
+
+        self.instrument = instrument
+        self.name = name
+        self.minimum_detail = minimum_detail
+        self.on_instrument_changed_detail(current_detail)
+
+    @typed(object, int)
+    def on_instrument_changed_detail(self, new_detail):
+        """Our instrument has just changed detail"""
+        if new_detail >= self.minimum_detail:
+            self.log = self._log
+        else:
+            self.log = lambda *args, **kwargs: None
+
+    def _log(self, *args, **kwargs):
+        """
+        This function does real logging. Override it.
+        """
+        raise NotImplementedError('Override me')
+
+    def view(self):
+        """
+        Return, quickly and non-blockingly, contents
+        :return: depends on metric
+        """
+        raise NotImplementedError('Override me')
 
 
 class StringMetric(Metric):
