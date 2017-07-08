@@ -7,4 +7,3 @@ All things related to:
 from __future__ import print_function, absolute_import, division
 
 from satella.instrumentation.trace_back import Traceback
-
