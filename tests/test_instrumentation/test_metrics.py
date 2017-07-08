@@ -9,7 +9,7 @@ from satella.instrumentation import instrument, DEBUG, RUNTIME, DISABLED, manage
 class TestInstrumentsAndMetrics(unittest.TestCase):
     def test_m1(self):
 
-        root = manager.getInstrument(u'root')
+        root = manager.getInstrument(u'zomg')
 
         txt = root.get_log(u'dupa', detail=DEBUG, buffer_size=30)
 
@@ -31,3 +31,13 @@ class TestInstrumentsAndMetrics(unittest.TestCase):
             self.assertGreaterEqual(m, st)
             self.assertEquals(u'Dupa'+unicode(70 + i), txt)
 
+    def test_avg(self):
+        root = manager.getInstrument(u'root')
+
+        cnt = root.get_counter(u'dupa', detail=RUNTIME)
+
+        cnt.log(1)
+        cnt.log(2)
+        cnt.log(3)
+
+        self.assertEquals(cnt.view(), (6, 3, 2.0))
