@@ -9,6 +9,10 @@ logger = logging.getLogger(__name__)
 
 from satella.coding import typed
 
+# Detail levels
+DISABLED = 0
+RUNTIME = 1
+DEBUG = 2
 
 class Metric(object):
     """

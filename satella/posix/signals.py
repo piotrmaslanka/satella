@@ -27,6 +27,7 @@ def hang_until_sig(extra_signals=[]):
             else:
                 logger.warning('Received signal %s', sigq)
                 me_lock.release()
+        return o
 
     for s in extra_signals + [signal.SIGTERM, signal.SIGINT]:
         signal.signal(s, insignum(s))
@@ -34,5 +35,6 @@ def hang_until_sig(extra_signals=[]):
     while True:
         try:
             me_lock.acquire()
+            return
         except InterruptedError:
             pass

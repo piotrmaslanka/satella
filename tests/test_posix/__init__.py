@@ -2,10 +2,32 @@
 from __future__ import print_function, absolute_import, division
 
 import sys
+import six
 import unittest
+import time
+import threading
 
 from mock import patch, Mock
 import os
+
+
+class TestHUS(unittest.TestCase):
+
+    @patch('signal.signal')
+    def test_signal(self, signal):
+
+        class Delayer(threading.Thread):
+            def run(self):
+                time.sleep(2)
+                for signame, handler in signal.call_args_list:
+                    print(handler)
+                    handler(signame, None)
+
+        from satella.posix import hang_until_sig
+
+        #Delayer().start()
+        hang_until_sig()
+        print(signal.call_args_list)
 
 
 class TestPidlock(unittest.TestCase):

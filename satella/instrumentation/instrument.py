@@ -4,13 +4,9 @@ import six
 import logging
 import warnings
 from satella.coding import Monitor, typed
-from .metrics import Metric
+from .metrics import Metric, DISABLED, RUNTIME, DEBUG
 logger = logging.getLogger(__name__)
 
-# Detail levels
-DISABLED = 0
-RUNTIME = 1
-DEBUG = 2
 
 
 

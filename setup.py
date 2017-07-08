@@ -2,7 +2,7 @@
 from setuptools import setup, find_packages
 
 setup(name='satella',
-      version='2.0.2a1',
+      version='2.0.3',
       description=u'Utilities for writing servers in Python',
       author=u'Piotr Maślanka',
       author_email='piotrm@smok.co',
