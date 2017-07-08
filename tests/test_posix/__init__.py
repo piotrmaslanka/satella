@@ -13,11 +13,11 @@ class TestPidlock(unittest.TestCase):
     def test_pidlock(self):
         from satella.posix.pidlock import AcquirePIDLock, FailedToAcquire
 
-        with AcquirePIDLock('lock', '/tmp', delete_on_dead=True) as lock:
-            self.assertTrue(os.path.exists('/tmp/lock'))
-            self.assertEquals(int(open('/tmp/lock', 'rb').read(), os.getpid())
+        with AcquirePIDLock('lock', '.', delete_on_dead=True) as lock:
+            self.assertTrue(os.path.exists('./lock'))
+            self.assertEquals(int(open('./lock', 'rb').read(), os.getpid())
 
-        self.assertFalse(os.path.exists('/tmp/lock'))
+        self.assertTrue(not os.path.exists('./lock'))
 
 
 class TestDaemon(unittest.TestCase):
