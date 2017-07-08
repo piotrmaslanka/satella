@@ -5,6 +5,7 @@ import sys
 import unittest
 
 from mock import patch, Mock
+import os
 
 
 class TestPidlock(unittest.TestCase):
@@ -12,15 +13,11 @@ class TestPidlock(unittest.TestCase):
     def test_pidlock(self):
         from satella.posix.pidlock import AcquirePIDLock, FailedToAcquire
 
-        with AcquirePIDLock('lock', '/tmp') as lock:
+        with AcquirePIDLock('lock', '/tmp', delete_on_dead=True) as lock:
+            self.assertTrue(os.path.exists('/tmp/lock'))
+            self.assertEquals(int(open('/tmp/lock', 'rb').read(), os.getpid())
 
-            try:
-                with AcquirePIDLock('lock', '/tmp') as lock2:
-                    self.fail('Reacquired lock!')
-            except AcquirePIDLock:
-                return
-
-            self.fail('Not failed')
+        self.assertFalse(os.path.exists('/tmp/lock'))
 
 
 class TestDaemon(unittest.TestCase):
