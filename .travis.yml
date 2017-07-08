@@ -7,8 +7,7 @@ cache: pip
 script:
  - nosetests --with-coverage
 install:
- - pip install coverage
- - pip install codeclimate-test-reporter
+ - pip install coverage codeclimate-test-reporter
  - pip install -r requirements.txt
 after_success:
  - CODECLIMATE_REPO_TOKEN=1ae9ad875b032584481e1c3fe274096ffe806e953ebc6f4b6a043357fa70829e codeclimate-test-reporter

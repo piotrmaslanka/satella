@@ -19,7 +19,7 @@ setup(name='satella',
             "typing"
       ],
       tests_require=[
-          "nose"
+          "nose", "mock", "coverage"
       ],
       test_suite='nose.collector',
       classifiers=[
