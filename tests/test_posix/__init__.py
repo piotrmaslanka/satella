@@ -7,6 +7,22 @@ import unittest
 from mock import patch, Mock
 
 
+class TestPidlock(unittest.TestCase):
+
+    def test_pidlock(self):
+        from satella.posix.pidlock import AcquirePIDLock, FailedToAcquire
+
+        with AcquirePIDLock('lock', '/tmp') as lock:
+
+            try:
+                with AcquirePIDLock('lock', '/tmp') as lock2:
+                    self.fail('Reacquired lock!')
+            except AcquirePIDLock:
+                return
+
+            self.fail('Not failed')
+
+
 class TestDaemon(unittest.TestCase):
     @unittest.skipIf('win' in sys.platform, 'Running on Windows')
     def test_daemonize(self):
