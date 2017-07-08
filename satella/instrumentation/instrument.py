@@ -53,6 +53,22 @@ class Metric(object):
         """
         raise NotImplementedError('Override me')
 
+
+class InstrumentList(list):
+    def __init__(self, children):
+        list.__init__(self)
+        self.extend(children)
+
+    @typed(object, int)
+    def set_detail(self, detail):
+        """
+        Set new detail level for all instruments in this list
+        :param detail: detail level
+        """
+        for instrument in self:
+            instrument.set_detail(detail)
+
+
 class Instrument(object):
     """Class that holds metrics"""
 
@@ -107,7 +123,7 @@ class Instrument(object):
 
         with Monitor.acquire(manager):
             children = [i_name for i_name in manager.instruments if i_name.startswith(basename) and i_name.count(u'.') == dots+1]
-            return [manager.instruments[name] for name in children]
+            return InstrumentList(manager.instruments[name] for name in children)
 
 
 class Manager(Monitor):

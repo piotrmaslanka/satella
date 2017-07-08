@@ -5,9 +5,12 @@ import logging
 import os
 import sys
 
+from satella.coding import typed, Callable
+
 logger = logging.getLogger(__name__)
 
 
+@typed(Callable, bool, (None, int), (None, int))
 def daemonize(exit_via=sys.exit,
               redirect_std_to_devnull=True,
               uid=None, gid=None):

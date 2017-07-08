@@ -44,6 +44,8 @@ class TestInstrumentsAndMetrics(unittest.TestCase):
         self.assertTrue(pira not in kids)
         self.assertTrue(kek in kids)
 
+        kids.set_detail(DISABLED)
+
     def test_avg(self):
         root = manager.getInstrument(u'root')
 
