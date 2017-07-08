@@ -66,7 +66,11 @@ class AcquirePIDLock(object):
         except (IOError, OSError):
             try:
                 with open(self.path, 'rb') as flock:
-                    pid = int(flock.read())
+                    try:
+                        pid = int(flock.read())
+                    except ValueError:
+                        logger.warning('PID file found but does not contain an int, pretending it did not exist')
+                        return
             except IOError as e:
                 raise FailedToAcquire()
 
