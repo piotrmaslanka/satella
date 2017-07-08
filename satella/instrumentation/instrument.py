@@ -57,7 +57,7 @@ class Metric(object):
 class Instrument(object):
     """Class that holds metrics"""
 
-    @typed(object, unicode, unicode, int)
+    @typed(object, six.string_types, six.string_types, int)
     def __init__(self, name, description=u'', detail=RUNTIME):
         """
         :param name: system identifier. Separate with dots.
@@ -67,7 +67,7 @@ class Instrument(object):
         self.detail = detail
         self.metrics = {}   # name => Metric
 
-    @typed(object, unicode, int, int, unicode)
+    @typed(object, six.string_types, int, int, six.string_types)
     def get_log(self, name, detail, buffer_size=20, description=u''):
         try:
             return self.metrics[name]
@@ -76,7 +76,7 @@ class Instrument(object):
             self.metrics[name] = StringMetric(self, name, buffer_size, detail, self.detail, description)
             return self.metrics[name]
 
-    @typed(object, unicode, int, unicode)
+    @typed(object, six.string_types, int, six.string_types)
     def get_counter(self, name, detail, description=u''):
         try:
             return self.metrics[name]
@@ -110,7 +110,7 @@ class Manager(Monitor):
     def __contains__(self, instrument):
         return instrument.name in self.instruments
 
-    @typed(object, unicode, unicode, int)
+    @typed(object, six.string_types, six.string_types, int)
     @Monitor.synchronized
     def getInstrument(self, name, description=u'', detail=RUNTIME):
         if name in self.instruments:
@@ -123,6 +123,6 @@ class Manager(Monitor):
 manager = Manager()
 
 
-@typed(unicode, unicode, int)
+@typed(six.string_types, six.string_types, int)
 def getInstrument(name, description=u'', detail=RUNTIME):
     return manager.getInstrument(name, description, detail)
