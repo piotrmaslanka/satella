@@ -256,7 +256,7 @@ def typed(*t_args, **t_kwargs):
             for argument, typedescr in zip(cargs, t_args):
                 if typedescr is not None:
                     if not isinstance(argument, typedescr):
-                        raise TypeError('Got %s, expected %s' % (argument, typedescr))
+                        raise TypeError('Got %s, expected %s' % (type(argument), typedescr))
 
             return fun(*args, **kwargs)
         return inner
