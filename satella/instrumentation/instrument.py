@@ -106,7 +106,7 @@ class Manager(Monitor):
         super(Manager, self).__init__(self)
         self.instruments = {}
 
-    @typed(None, Instrument)
+    @typed(None, object)
     def __contains__(self, instrument):
         return instrument.name in self.instruments
 
