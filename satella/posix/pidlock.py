@@ -63,7 +63,7 @@ class AcquirePIDLock(object):
         """The mechanical process of acquisition"""
         try:
             self.fileno = os.open(self.path, os.O_CREAT | os.O_EXCL)
-        except IOError:
+        except (IOError, OSError):
             try:
                 with open(self.path, 'rb') as flock:
                     pid = int(flock.read())
