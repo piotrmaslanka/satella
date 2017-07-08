@@ -15,7 +15,7 @@ class TestPidlock(unittest.TestCase):
 
         with AcquirePIDLock('lock', '.', delete_on_dead=True) as lock:
             self.assertTrue(os.path.exists('./lock'))
-            self.assertEquals(int(open('./lock', 'rb').read(), os.getpid())
+            self.assertEquals(int(open('./lock', 'rb').read(), os.getpid()))
 
         self.assertTrue(not os.path.exists('./lock'))
 
