@@ -3,8 +3,7 @@ from __future__ import print_function, absolute_import, division
 import six
 import logging
 import warnings
-from satella.coding import Monitor
-from satella.coding.debug import typed
+from satella.coding import Monitor, typed
 
 logger = logging.getLogger(__name__)
 
@@ -57,7 +56,7 @@ class Metric(object):
 class Instrument(object):
     """Class that holds metrics"""
 
-    @typed(object, six.string_types, six.string_types, int)
+    @typed(object, six.string_types, six.string_types, int, (None, object))
     def __init__(self, name, description=u'', detail=RUNTIME):
         """
         :param name: system identifier. Separate with dots.
@@ -96,6 +95,20 @@ class Instrument(object):
 
         self.detail = detail
 
+    def get_children(self):
+        """"
+        Get all DIRECT descendenta of this instrument.
+        
+        Ie if it's called root it will return root.wtf, root.zomg, but not root.wtf.a
+        """
+        children = []
+        basename = self.name + u'.'
+        dots = self.name.count(u'.')
+
+        with Monitor.acquire(manager):
+            children = [i_name for i_name in manager.instruments if i_name.startswith(basename) and i_name.count(u'.') == dots+1]
+            return [manager.instruments[name] for name in children]
+
 
 class Manager(Monitor):
     """
@@ -105,6 +118,7 @@ class Manager(Monitor):
     def __init__(self):
         super(Manager, self).__init__(self)
         self.instruments = {}
+
 
     @typed(None, object)
     def __contains__(self, instrument):

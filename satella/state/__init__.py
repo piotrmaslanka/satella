@@ -14,7 +14,7 @@ from satella.coding import CallableGroup
 
 logger = logging.getLogger(__name__)
 
-from . import posixpart  # raises ImportError on non-POSIX systems
+#from . import posixpart  # raises ImportError on non-POSIX systems
 
 _myself = posixpart._myself
 # we are running on a non-POSIX system

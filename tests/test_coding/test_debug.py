@@ -1,11 +1,8 @@
 # coding=UTF-8
-"""
-It sounds like a melody
-"""
 from __future__ import print_function, absolute_import, division
 import six
 import unittest
-from satella.coding.debug import typed, CallSignature
+from satella.coding import typed, CallSignature
 
 
 class TestTypecheck(unittest.TestCase):

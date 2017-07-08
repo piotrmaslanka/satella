@@ -31,6 +31,19 @@ class TestInstrumentsAndMetrics(unittest.TestCase):
             self.assertGreaterEqual(m, st)
             self.assertEquals(u'Dupa'+str(70 + i), txt)
 
+    def test_kids(self):
+        root = manager.getInstrument(u'root')
+        wtf = manager.getInstrument(u'root.wtf')
+        zomg = manager.getInstrument(u'root.zomg')
+        pira = manager.getInstrument(u'root.zomg.pira')
+        kek = manager.getInstrument(u'root.kek')
+
+        kids = root.get_children()
+        self.assertTrue(wtf in kids)
+        self.assertTrue(zomg in kids)
+        self.assertTrue(pira not in kids)
+        self.assertTrue(kek in kids)
+
     def test_avg(self):
         root = manager.getInstrument(u'root')
 

@@ -4,6 +4,7 @@ satella
 [![Code Climate](https://codeclimate.com/github/piotrmaslanka/satella/badges/gpa.svg)](https://codeclimate.com/github/piotrmaslanka/satella)
 [![Test Coverage](https://codeclimate.com/github/piotrmaslanka/satella/badges/coverage.svg)](https://codeclimate.com/github/piotrmaslanka/satella/coverage)
 [![PyPI](https://img.shields.io/pypi/pyversions/satella.svg)]()
+[![PyPI version](https://badge.fury.io/py/satella.svg)](https://badge.fury.io/py/satella)
 [![PyPI](https://img.shields.io/pypi/implementation/satella.svg)]()
 [![Documentation Status](https://readthedocs.org/projects/satella/badge/?version=latest)](http://satella.readthedocs.io/en/latest/?badge=latest)
 

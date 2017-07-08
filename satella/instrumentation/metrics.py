@@ -7,7 +7,7 @@ import monotonic
 logger = logging.getLogger(__name__)
 
 from .instrument import Metric
-from satella.coding.debug import typed
+from satella.coding import typed
 
 
 class StringMetric(Metric):
