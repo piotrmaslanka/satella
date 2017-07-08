@@ -7,8 +7,8 @@ from satella.instrumentation import instrument, DEBUG, RUNTIME, DISABLED, manage
 
 
 class TestInstrumentsAndMetrics(unittest.TestCase):
-    def test_m1(self):
 
+    def test_m1(self):
         root = manager.getInstrument(u'zomg')
 
         txt = root.get_log(u'dupa', detail=DEBUG, buffer_size=30)
@@ -22,14 +22,14 @@ class TestInstrumentsAndMetrics(unittest.TestCase):
         st = monotonic.monotonic()
 
         for x in six.moves.xrange(0, 100):
-            txt.log(u'Dupa'+unicode(x))
+            txt.log(u'Dupa'+str(x))
 
         self.assertEqual(len(txt.view()), 30)
 
         for i, q in enumerate(txt.view()):
             ts, m, txt = q
             self.assertGreaterEqual(m, st)
-            self.assertEquals(u'Dupa'+unicode(70 + i), txt)
+            self.assertEquals(u'Dupa'+str(70 + i), txt)
 
     def test_avg(self):
         root = manager.getInstrument(u'root')

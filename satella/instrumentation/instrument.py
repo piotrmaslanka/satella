@@ -91,7 +91,7 @@ class Instrument(object):
         Set new detail level for all metrics
         :param detail: detail level
         """
-        for metric in self.metrics.itervalues():
+        for metric in six.itervalues(self.metrics):
             metric.on_instrument_changed_detail(detail)
 
         self.detail = detail

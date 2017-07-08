@@ -13,7 +13,7 @@ from satella.coding.debug import typed
 class StringMetric(Metric):
     """Stores string and their date/time"""
 
-    @typed(object, object, unicode, int, int, int, unicode)
+    @typed(object, object, six.string_types, int, int, int, six.string_types)
     def __init__(self, instrument, name, buffer_size, minimum_detail, current_detail, description=u''):
         super(StringMetric, self).__init__(instrument, name, minimum_detail, current_detail, description)
 
