@@ -32,8 +32,7 @@ def hang_until_sig(extra_signals=[]):
     for s in extra_signals + [signal.SIGTERM, signal.SIGINT]:
         signal.signal(s, insignum(s))
 
-    while True:
-        try:
-            me_lock.acquire()
-        except KeyboardInterrupt:
-            pass
+    try:
+        me_lock.acquire()
+    except KeyboardInterrupt:
+        pass
