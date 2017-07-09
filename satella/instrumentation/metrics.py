@@ -95,13 +95,14 @@ class CounterMetric(Metric):
         self.items = 0
         self.sum = 0
 
+    @typed(returns=tuple)
     def view(self):
         """:return: a tuple of (current values, times counted, arithmetic mean)
         Mean is NaN if nothing counted"""
         try:
             return self.value, self.items, self.value / self.items
         except ZeroDivisionError:
-            self.value, self.items, float('nan')
+            return 0, 0, float('nan')
 
     def _log(self, delta):
         """Add a value to counter"""

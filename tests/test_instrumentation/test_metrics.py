@@ -56,3 +56,10 @@ class TestInstrumentsAndMetrics(unittest.TestCase):
         cnt.log(3)
 
         self.assertEquals(cnt.view(), (6, 3, 2.0))
+
+        cnt = root.get_counter(u'dupa2', detail=RUNTIME)
+
+        self.assertEquals(cnt.view()[:2], (0, 0))
+
+        import math
+        self.assertTrue(math.isnan(cnt.view()[2]))
