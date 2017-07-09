@@ -267,7 +267,6 @@ def typed(*t_args, **t_kwargs):
             else:
                 cargs = args
 
-
             for argument, typedescr in zip(cargs, t_args):
                 if typedescr is not None:
                     if not isinstance(argument, typedescr):

@@ -93,7 +93,6 @@ class CounterMetric(Metric):
         super(CounterMetric, self).__init__(*args, **kwargs)
         self.value = 0
         self.items = 0
-        self.sum = 0
 
     @typed(returns=tuple)
     def view(self):

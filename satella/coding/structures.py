@@ -100,14 +100,16 @@ class TimeBasedHeap(object):
         """
         self.heap = []
 
+    @typed(None, (float, int), None)
     def put(self, timestamp, item):
         """
         Put an item of heap
-        :param timestamp: timestamp for this item - float
+        :param timestamp: timestamp for this item
         :param item: object
         """
         heapq.heappush(self.heap, (timestamp, item))
 
+    @typed(None, (float, int))
     def pop_less_than(self, timestamp):
         """
         Return a list of items with timestamps less than your value.

@@ -69,6 +69,7 @@ class Instrument(object):
 
         self.detail = detail
 
+    @typed(returns=InstrumentList)
     def get_children(self):
         """"
         Get all DIRECT descendenta of this instrument.
@@ -98,7 +99,7 @@ class Manager(Monitor):
     def __contains__(self, instrument):
         return instrument.name in self.instruments
 
-    @typed(object, six.string_types, six.string_types, int)
+    @typed(object, six.string_types, six.string_types, int, returns=Instrument)
     @Monitor.synchronized
     def getInstrument(self, name, description=u'', detail=RUNTIME):
         if name in self.instruments:
@@ -111,6 +112,6 @@ class Manager(Monitor):
 manager = Manager()
 
 
-@typed(six.string_types, six.string_types, int)
+@typed(six.string_types, six.string_types, int, returns=Instrument)
 def getInstrument(name, description=u'', detail=RUNTIME):
     return manager.getInstrument(name, description, detail)
