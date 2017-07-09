@@ -7,6 +7,19 @@ from satella.coding import typed, CallSignature
 
 class TestTypecheck(unittest.TestCase):
 
+    def test_ta(self):
+
+        @typed(int, int, returns=int)
+        def sum(a, b):
+            return a+b
+
+        @typed(int, int, returns=str)
+        def sum2(a, b):
+            return a+b
+
+        sum(1, 2)
+        self.assertRaises(TypeError, lambda: sum2(2, 3))
+
     def test_t1(self):
 
         @typed(int, float, six.text_type)

@@ -212,6 +212,15 @@ def typed(*t_args, **t_kwargs):
         @typed(int, six.text_type)
         def display(times, text):
             ...
+            
+    You can also check for return type with kw argument of "returns", ie.
+    
+    @typed(int, int, returns=int)
+    def sum(a, b):
+        return a+b
+        
+        
+    Same rules apply.
 
     int will automatically include long for checking (Python 3 compatibility)
     If you want to check for None, type (None, )
@@ -239,6 +248,12 @@ def typed(*t_args, **t_kwargs):
 
     t_args = [(typeinfo_to_tuple_of_types(x) if x is not None else None) for x in t_args]
 
+
+    t_retarg = t_kwargs.get('returns', None)
+
+    if t_retarg is not None:
+        t_retarg = typeinfo_to_tuple_of_types(t_retarg)
+
     def outer(fun):
 
         if not __debug__:
@@ -258,7 +273,14 @@ def typed(*t_args, **t_kwargs):
                     if not isinstance(argument, typedescr):
                         raise TypeError('Got %s, expected %s' % (type(argument), typedescr))
 
-            return fun(*args, **kwargs)
+            rt = fun(*args, **kwargs)
+
+            if t_retarg is not None:
+                if not isinstance(rt, t_retarg):
+                    raise TypeError('Returned %s, expected %s' % (type(rt), t_retarg))
+
+            return rt
+
         return inner
 
     return outer

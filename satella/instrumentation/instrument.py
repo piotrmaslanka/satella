@@ -40,7 +40,7 @@ class Instrument(object):
         self.detail = detail
         self.metrics = {}   # name => Metric
 
-    @typed(object, six.string_types, int, int, six.string_types)
+    @typed(object, six.string_types, int, int, six.string_types, returns=Metric)
     def get_log(self, name, detail, buffer_size=20, description=u''):
         try:
             return self.metrics[name]
@@ -49,7 +49,7 @@ class Instrument(object):
             self.metrics[name] = StringMetric(self, name, buffer_size, detail, self.detail, description)
             return self.metrics[name]
 
-    @typed(object, six.string_types, int, six.string_types)
+    @typed(object, six.string_types, int, six.string_types, returns=Metric)
     def get_counter(self, name, detail, description=u''):
         try:
             return self.metrics[name]
