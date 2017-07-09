@@ -117,7 +117,11 @@ class CallSignature(object):
       - kwargs_name (Union[str, None]) - name of kwargs argument, or None if not present
     """
     def count_required_positionals(self):
-        return len((a for a in self.pos_args if a.required))
+        c = 0
+        for a in self.pos_args:
+            if a.required:
+                c += 1
+        return c
 
     def __eq__(self, other):
         """
@@ -203,7 +207,35 @@ class CallSignature(object):
 
         return locals
 
+    def is_match_amount(self, *args, **kwargs):
+        """
+        Would a function call with these arguments succeed, based solely on number and "keywordnessity" or parameters?
+        """
+        if len(args) > len(self.pos_args):
+            if not self.has_varargs:
+                return False    # *args expected
 
+        if len(args) < self.count_required_positionals():
+            return False # Not enough posits
+
+        if len(kwargs) > 0 and not self.has_kwargs:
+            return False    # kwargs expected
+
+        return True
+
+def __typeinfo_to_tuple_of_types(typeinfo):
+    if typeinfo is None:
+        return (type(None),)
+    elif typeinfo == int and six.PY2:
+        return six.integer_types
+    else:
+        if isinstance(typeinfo, (tuple, list)):
+            new_tup = []
+            for elem in typeinfo:
+                new_tup.extend(__typeinfo_to_tuple_of_types(elem))
+            return tuple(new_tup)
+        else:
+            return (typeinfo,)
 
 def typed(*t_args, **t_kwargs):
     """
@@ -229,30 +261,14 @@ def typed(*t_args, **t_kwargs):
 
     :param t_args:
     :param t_kwargs:
-    :return:
     """
-
-    def typeinfo_to_tuple_of_types(typeinfo):
-        if typeinfo is None:
-            return (type(None), )
-        elif typeinfo == int and six.PY2:
-            return six.integer_types
-        else:
-            if isinstance(typeinfo, (tuple, list)):
-                new_tup = []
-                for elem in typeinfo:
-                    new_tup.extend(typeinfo_to_tuple_of_types(elem))
-                return tuple(new_tup)
-            else:
-                return (typeinfo, )
-
-    t_args = [(typeinfo_to_tuple_of_types(x) if x is not None else None) for x in t_args]
+    t_args = [(__typeinfo_to_tuple_of_types(x) if x is not None else None) for x in t_args]
 
 
     t_retarg = t_kwargs.get('returns', None)
 
     if t_retarg is not None:
-        t_retarg = typeinfo_to_tuple_of_types(t_retarg)
+        t_retarg = __typeinfo_to_tuple_of_types(t_retarg)
 
     def outer(fun):
 

@@ -20,6 +20,18 @@ class TestTypecheck(unittest.TestCase):
         sum(1, 2)
         self.assertRaises(TypeError, lambda: sum2(2, 3))
 
+    def test_tma(self):
+
+        def test(a, b, c, **d):
+            pass
+
+        cs = CallSignature(test)
+
+        self.assertTrue(cs.is_match_amount(1, 2, 3, wtf=4))
+        self.assertFalse(cs.is_match_amount(1, 2, wtf=4))
+        self.assertTrue(cs.is_match_amount(1, 2, 3))
+        self.assertFalse(cs.is_match_amount(1, 2, 3, 4))
+
     def test_t1(self):
 
         @typed(int, float, six.text_type)
