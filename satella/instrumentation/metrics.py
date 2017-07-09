@@ -1,18 +1,15 @@
 # coding=UTF-8
 from __future__ import print_function, absolute_import, division
 import six
-import logging
 import time
 import monotonic
-logger = logging.getLogger(__name__)
-
-
 from satella.coding import typed
 
 # Detail levels
 DISABLED = 0
 RUNTIME = 1
 DEBUG = 2
+
 
 class Metric(object):
     """
@@ -68,8 +65,6 @@ class StringMetric(Metric):
     def _log(self, text, *args):
         """Log - as if formatting string"""
         # Nothing to log
-
-
         p = time.time(), monotonic.monotonic(), text % args
 
         while len(self.buffer) >= self.buffer_size:
