@@ -8,6 +8,11 @@ from satella.instrumentation import Traceback
 
 
 class TestTraceback(unittest.TestCase):
+
+
+    def test_no_exc(self):
+        tb = Traceback()
+
     def test_tb(self):
 
         try:

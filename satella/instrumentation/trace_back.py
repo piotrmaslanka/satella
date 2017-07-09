@@ -198,16 +198,21 @@ class Traceback(object):
             value_pickling_policy = policy()
 
         tb = sys.exc_info()[2]
-        while tb.tb_next:
-            tb = tb.tb_next
-
+        
         self.frames = []
-        f = tb.tb_frame
-        while f:
-            self.frames.append(StackFrame(f, value_pickling_policy))
-            f = f.f_back
 
-        self.formatted_traceback = six.text_type(traceback.format_exc())
+        if tb is None:
+            self.formatted_traceback = u'No exception.'
+        else:
+            while tb.tb_next:
+                tb = tb.tb_next
+
+            f = tb.tb_frame
+            while f:
+                self.frames.append(StackFrame(f, value_pickling_policy))
+                f = f.f_back
+
+            self.formatted_traceback = six.text_type(traceback.format_exc())
 
     def pickle(self):
         """Returns this instance, pickled"""
