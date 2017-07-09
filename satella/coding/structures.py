@@ -3,6 +3,8 @@ from __future__ import print_function, absolute_import, division
 import six
 import logging
 import heapq
+from .typecheck import typed, Callable
+
 
 logger = logging.getLogger(__name__)
 
@@ -39,6 +41,7 @@ class CallableGroup(object):
         self.gather = gather
         self.swallow_exceptions = swallow_exceptions
 
+    @typed(None, Callable, bool)
     def add(self, callable, oneshot=False):
         """
         :param oneshot: if True, callable will be unregistered after single call

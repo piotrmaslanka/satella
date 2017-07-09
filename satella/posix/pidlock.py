@@ -82,7 +82,6 @@ class AcquirePIDLock(object):
             else:
                 raise LockIsHeld(pid, True)
 
-
     def __enter__(self):
         try:
             self._acquire()
