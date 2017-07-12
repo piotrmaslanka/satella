@@ -11,23 +11,6 @@ from mock import patch, Mock
 import os
 
 
-class TestHUS(unittest.TestCase):
-
-    @patch('signal.signal')
-    def test_signal(self, signal):
-
-        class Delayer(threading.Thread):
-            def run(self):
-                time.sleep(2)
-                for call in signal.call_args_list:
-                    call.handler(call.signalnum, None)
-
-        from satella.posix import hang_until_sig
-
-        Delayer().start()
-        hang_until_sig()
-
-
 class TestPidlock(unittest.TestCase):
 
     def test_pidlock(self):

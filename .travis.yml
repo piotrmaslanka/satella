@@ -9,6 +9,6 @@ install:
  - pip install -r requirements.txt
  - python setup.py install
 script:
- - nosetests --with-coverage
  - bash tests/test_posix/test_hang_until_sig.sh
+ - nosetests --with-coverage
 
