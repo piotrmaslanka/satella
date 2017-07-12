@@ -6,10 +6,19 @@ from __future__ import print_function, absolute_import, division
 import six
 import signal
 import logging
+import time
 from threading import Lock
 from satella.coding import typed
 
 logger = logging.getLogger(__name__)
+
+
+end = False
+
+
+def __sighandler(a, b):
+    global end
+    end = True
 
 
 @typed(list)
@@ -17,22 +26,39 @@ def hang_until_sig(extra_signals=[]):
     """Will hang until this process receives SIGTERM or SIGINT.
     If you pass extra signal IDs (signal.SIG*) with extra_signals,
     then also on those signals this call will release."""
-    me_lock = Lock()
-    me_lock.acquire()
+    global end
 
-    def insignum(sig):
-        def o(sigq, frame):
-            if sig != sigq:
-                logger.warning('Handler for signal %s responded for signal %s', sig, sigq)
-            else:
-                logger.warning('Received signal %s', sigq)
-                me_lock.release()
-        return o
+    # Ascertain what Python are we working on. 2012 PyPy and earlier
+    # may be affected by https://bugs.pypy.org/issue1255
 
-    for s in extra_signals + [signal.SIGTERM, signal.SIGINT]:
-        signal.signal(s, insignum(s))
-
+    bugged_pypy = False
     try:
-        me_lock.acquire()
-    except KeyboardInterrupt:
+        import platform
+    except:
         pass
+    else:
+        if platform.python_implementation() == 'PyPy':
+            try:
+                mon, day, year = platform.python_build()[1].split(' ')
+                year = int(year)
+            except:
+                pass
+            else:
+                bugged_pypy = year <= 2012
+
+    signal.signal(signal.SIGTERM, __sighandler)
+    signal.signal(signal.SIGINT, __sighandler)
+    for s in extra_signals:
+        signal.signal(s, __sighandler)
+
+    while not end:
+        try:
+            if bugged_pypy:
+                time.sleep(1)   # see https://bugs.pypy.org/issue1255
+            else:
+                signal.pause()
+        except:         # pause() is undefined on Windows
+            try:        # we will sleep for small periods of time
+                time.sleep(0.5)
+            except IOError:  # "Interrupted system call"
+                pass
