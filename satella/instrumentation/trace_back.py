@@ -227,7 +227,7 @@ class Traceback(object):
         self.pretty_print(bio)
         return bio.getvalue()
 
-    def pretty_print(self, output):
+    def pretty_print(self, output=sys.stderr):
         """
         Pretty-print the exception
         :param output: a file-like object in text mode
