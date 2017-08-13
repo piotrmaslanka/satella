@@ -9,3 +9,4 @@ from .typecheck import  typed, List, Tuple, Dict, NewType, Callable, Sequence, \
 
 from .structures import TimeBasedHeap, CallableGroup
 from .monitor import Monitor, RMonitor
+from .algos import merge_dicts
