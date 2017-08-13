@@ -10,8 +10,11 @@ from .typecheck import typed
 
 def _merge(v1, v2):
     if isinstance(v1, dict) and isinstance(v2, dict):
-        for k, v in v2.items():
-            v1[k] = _merge(v1, v2)
+        for k in v2.keys():
+            try:
+                v1[k] = _merge(v1[k], v2[k])
+            except KeyError:
+                v1[k] = v2[k]
         return v1
 
     if isinstance(v1, list) and isinstance(v2, list):
