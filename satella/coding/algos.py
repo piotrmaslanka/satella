@@ -8,7 +8,6 @@ import itertools
 from .typecheck import typed
 
 
-@typed((list, dict), (list, dict))
 def _merge(v1, v2):
     if isinstance(v1, dict) and isinstance(v2, dict):
         v1.update(v2)
