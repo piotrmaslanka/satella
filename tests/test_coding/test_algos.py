@@ -19,3 +19,16 @@ class TestMergeDicts(unittest.TestCase):
         tak = merge_dicts({'kupujemy': ['tak']}, {'kupujemy': ['nie']})
 
         self.assertEqual(set(tak['kupujemy']), set(['tak', 'nie']))
+
+
+    def test_adds(self):
+        tak = merge_dicts({'kupujemy': 'tak'}, {'xkupujemy': 'nie'})
+
+        self.assertEquals(tak['xupujemy'], 'nie')
+        self.assertEquals(tak['kupujemy'], 'tak')
+
+    def test_nest(self):
+        tak = merge_dicts({'kupujemy': {"y": ['tak']}}, {'kupujemy': {"y":{['nie']}}})
+
+        self.assertEqual(set(tak['kupujemy']['y']), set(['tak', 'nie']))
+
