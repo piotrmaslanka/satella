@@ -23,11 +23,4 @@ def _merge(v1, v2):
 
 @typed(dict, dict, returns=dict)
 def merge_dicts(first, second):
-
-    for key in second.keys():
-        try:
-            first[key] = _merge(first[key], second[key])
-        except KeyError:       #  no key in first
-            first[key] = second[key]
-
-    return first
+    return _merge(first, second)
