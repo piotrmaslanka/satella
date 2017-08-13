@@ -17,7 +17,7 @@ def _merge(v1, v2):
         v1.extend(v2)
         return v1
 
-    raise TypeError
+    return v2
 
 
 @typed(dict, dict, returns=dict)
