@@ -8,6 +8,7 @@ import itertools
 from .typecheck import typed
 
 
+@typed((list, dict), (list, dict))
 def _merge(v1, v2):
     if isinstance(v1, dict) and isinstance(v2, dict):
         v1.update(v2)
@@ -26,8 +27,7 @@ def merge_dicts(first, second):
     for key in second.keys():
         try:
             first[key] = _merge(first[key], second[key])
-        except (TypeError, KeyError) as e:       # overwrite, not a list or dict, or no key in first
-            print(e)
+        except KeyError:       #  no key in first
             first[key] = second[key]
 
     return first
