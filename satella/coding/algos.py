@@ -10,7 +10,8 @@ from .typecheck import typed
 
 def _merge(v1, v2):
     if isinstance(v1, dict) and isinstance(v2, dict):
-        v1.update(v2)
+        for k, v in v2.items():
+            v1[k] = _merge(v1, v2)
         return v1
 
     if isinstance(v1, list) and isinstance(v2, list):
