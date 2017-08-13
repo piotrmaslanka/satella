@@ -15,7 +15,7 @@ def _merge(v1, v2):
 
     if isinstance(v1, list) and isinstance(v2, list):
         v1.extend(v2)
-        return v2
+        return v1
 
     raise TypeError
 
