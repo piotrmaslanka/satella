@@ -22,7 +22,7 @@ class TestMergeDicts(unittest.TestCase):
 
 
     def test_adds(self):
-        tak = merge_dicts({'kupujemy': 'tak'}, {'xkupujemy': 'nie'})
+        tak = merge_dicts({'kupujemy': 'tak'}, {'xupujemy': 'nie'})
 
         self.assertEquals(tak['xupujemy'], 'nie')
         self.assertEquals(tak['kupujemy'], 'tak')
