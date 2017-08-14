@@ -267,7 +267,6 @@ def typed(*t_args, **t_kwargs):
     """
     t_args = [(__typeinfo_to_tuple_of_types(x) if x is not None else None) for x in t_args]
 
-
     t_retarg = t_kwargs.get('returns', None)
     is_mandatory = t_kwargs.get('mandatory', False)
 
@@ -275,14 +274,13 @@ def typed(*t_args, **t_kwargs):
         t_retarg = __typeinfo_to_tuple_of_types(t_retarg)
 
     def outer(fun):
-
         if (not __debug__) and (not is_mandatory):
             return fun
 
         @functools.wraps(fun)
         def inner(*args, **kwargs):
 
-            if isinstance(fun, types.MethodType) or inspect.ismethod(fun) or hasattr(fun, 'im_class'):   # instancemethod or classmethod
+            if isinstance(fun, types.MethodType) or inspect.ismethod(fun):   # instancemethod or classmethod
                 cargs = args[1:]
             else:
                 cargs = args
