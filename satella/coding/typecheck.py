@@ -278,7 +278,7 @@ def typed(*t_args, **t_kwargs):
         @functools.wraps(fun)
         def inner(*args, **kwargs):
 
-            if isinstance(fun, types.MethodType) or inspect.ismethod(fun):   # instancemethod or classmethod
+            if inspect.ismethod(fun):   # instancemethod or classmethod
                 cargs = args[1:]
             else:
                 cargs = args
