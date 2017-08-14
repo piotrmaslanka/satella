@@ -251,7 +251,10 @@ def typed(*t_args, **t_kwargs):
     def sum(a, b):
         return a+b
         
-        
+
+    If you specify extra argument - mandatory=True - type will always be checked,
+    regardless if debug mode is enabled
+
     Same rules apply.
 
     int will automatically include long for checking (Python 3 compatibility)
@@ -266,20 +269,22 @@ def typed(*t_args, **t_kwargs):
 
 
     t_retarg = t_kwargs.get('returns', None)
+    is_mandatory = t_kwargs.get('mandatory', False)
 
     if t_retarg is not None:
         t_retarg = __typeinfo_to_tuple_of_types(t_retarg)
 
     def outer(fun):
 
-        if not __debug__:
+        if (not __debug__) and (not is_mandatory):
             return fun
 
         @functools.wraps(fun)
         def inner(*args, **kwargs):
 
             if inspect.ismethod(fun):
-                cargs = itertools.chain([None], cargs)
+                cargs = args[1:] if inspect.ismethod(fun) else args
+                print(args)
 
             for argument, typedescr in zip(cargs, t_args):
                 if typedescr is not None:
