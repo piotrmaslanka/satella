@@ -283,10 +283,9 @@ def typed(*t_args, **t_kwargs):
         def inner(*args, **kwargs):
 
             if inspect.ismethod(fun):
-                cargs = args[1:] if inspect.ismethod(fun) else args
-                print(args)
+                t_args = itertools.chain([None], t_args)
 
-            for argument, typedescr in zip(cargs, t_args):
+            for argument, typedescr in zip(args, t_args):
                 if typedescr is not None:
                     if not isinstance(argument, typedescr):
                         raise TypeError('Got %s, expected %s' % (type(argument), typedescr))
