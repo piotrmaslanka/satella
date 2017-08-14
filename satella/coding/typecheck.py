@@ -281,9 +281,9 @@ def typed(*t_args, **t_kwargs):
             try:
                 fun.im_class
             except AttributeError:
-                cargs = args
+                cargs = t_args
             else:
-                cargs = args[1:]
+                cargs = t_args[1:]
 
             for argument, typedescr in zip(cargs, t_args):
                 if typedescr is not None:
