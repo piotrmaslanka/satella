@@ -282,10 +282,12 @@ def typed(*t_args, **t_kwargs):
         @functools.wraps(fun)
         def inner(*args, **kwargs):
 
-            if inspect.ismethod(fun):
-                t_args = itertools.chain([None], t_args)
+            if isinstance(fun, types.MethodType) or inspect.ismethod(fun) or hasattr(fun, 'im_class'):   # instancemethod or classmethod
+                cargs = args[1:]
+            else:
+                cargs = args
 
-            for argument, typedescr in zip(args, t_args):
+            for argument, typedescr in zip(cargs, t_args):
                 if typedescr is not None:
                     if not isinstance(argument, typedescr):
                         raise TypeError('Got %s, expected %s' % (type(argument), typedescr))
