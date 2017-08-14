@@ -278,10 +278,12 @@ def typed(*t_args, **t_kwargs):
         @functools.wraps(fun)
         def inner(*args, **kwargs):
 
-            if inspect.ismethod(fun):   # instancemethod or classmethod
-                cargs = args[1:]
-            else:
+            try:
+                fun.im_class
+            except AttributeError:
                 cargs = args
+            else:
+                cargs = args[1:]
 
             for argument, typedescr in zip(cargs, t_args):
                 if typedescr is not None:
