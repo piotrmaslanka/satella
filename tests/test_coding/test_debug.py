@@ -7,18 +7,6 @@ from satella.coding import typed, CallSignature
 
 class TestTypecheck(unittest.TestCase):
 
-
-    def test_cls(self):
-
-        class Lol(object):
-
-            @typed(int)
-            def zomg(self, a):
-                return a
-
-        Lol().zomg(2)
-        self.assertRaises(TypeError, lambda: Lol().zomg('a'))
-
     def test_ta(self):
 
         @typed(int, int, returns=int)

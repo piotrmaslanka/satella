@@ -6,6 +6,14 @@ from satella.coding import merge_dicts
 
 
 class TestMergeDicts(unittest.TestCase):
+
+
+    def test_lolwut(self):
+        with open('lolwut', 'wb') as fout:
+            fout.write(b'{"a":2}')
+
+
+
     def test_merge_dicts(self):
 
         tak = merge_dicts({'kupujemy': 'tak'}, {'kupujemy': 'nie'})
@@ -31,7 +39,8 @@ class TestMergeDicts(unittest.TestCase):
         self.assertEquals(tak['kupujemy'], 'tak')
 
     def test_nest(self):
-        tak = merge_dicts({'kupujemy': {"y": ['tak']}}, {'kupujemy': {"y": ['nie']}})
+        tak = merge_dicts({'kupujemy': {"y": ['tak']}},
+                          {'kupujemy': {"y": ['nie']}})
 
         q = tak['kupujemy']['y']
 
