@@ -265,6 +265,7 @@ def typed(*t_args, **t_kwargs):
     :param t_args:
     :param t_kwargs:
     """
+
     t_args = [(__typeinfo_to_tuple_of_types(x) if x is not None else None) for x in t_args]
 
     t_retarg = t_kwargs.get('returns', None)

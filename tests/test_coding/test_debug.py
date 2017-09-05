@@ -6,6 +6,25 @@ from satella.coding import typed, CallSignature
 
 
 class TestTypecheck(unittest.TestCase):
+    def test_cls(self):
+        # if we don't care about apps
+        class Lol(object):
+            @typed(returns=int)
+            def zomg(self, a):
+                return a
+
+        Lol().zomg(2)
+        self.assertRaises(TypeError, lambda: Lol().zomg('a'))
+
+    def test_cls_test(self):
+
+        class Lol(object):
+            # this should fail, since the first argument the decorator gets is "self", because decorators always get FUNCTION objects!
+            @typed(int, returns=int)
+            def zomg(self, a):
+                return a
+
+        self.assertRaises(TypeError, lambda: Lol().zomg(2))
 
     def test_ta(self):
 
