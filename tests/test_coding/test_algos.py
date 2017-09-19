@@ -13,6 +13,24 @@ class TestMergeDicts(unittest.TestCase):
             fout.write(b'{"a":2}')
 
 
+    def test_advanced_merge_dicts(self):
+
+        DA = {
+            'kupujemy': {
+                'ciekawie': {},
+            }
+        }
+
+        DB = {
+            'kupujemy': {
+                'dupowo': {},
+            }
+        }
+
+        DC = merge_dicts(DA, DB)
+
+        self.assertIn('ciekawie', DC['kupujemy'])
+        self.assertIn('dupowo', DC['kupujemy'])
 
     def test_merge_dicts(self):
 
