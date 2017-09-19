@@ -16,21 +16,28 @@ class TestMergeDicts(unittest.TestCase):
     def test_advanced_merge_dicts(self):
 
         DA = {
-            'kupujemy': {
-                'ciekawie': {},
-            }
+          "google-fcm": {
+             "http-auth": {
+                  "digicort": "key=digi",
+             },
+             "endpoint": "https://fcm.googleapis.com/fcm/send"
+          }
         }
 
         DB = {
-            'kupujemy': {
-                'dupowo': {},
-            }
+          "google-fcm": {
+             "http-auth": {
+                  "springblade": "key=spri"
+             },
+             "endpoint": "https://fcm.googleapis.com/fcm/send"
+          }
         }
 
         DC = merge_dicts(DA, DB)
 
-        self.assertIn('ciekawie', DC['kupujemy'])
-        self.assertIn('dupowo', DC['kupujemy'])
+        self.assertEqual(DC['google-fcm']['http-auth']['digicort'], 'key=digi')
+        self.assertEqual(DC['google-fcm']['http-auth']['springblade'], 'key=spri')
+        self.assertEqual(DC['google-fcm']['endpoint'], 'https://fcm.googleapis.com/fcm/send')
 
     def test_merge_dicts(self):
 
