@@ -3,7 +3,14 @@ from __future__ import print_function, absolute_import, division
 
 import unittest
 
-from satella.coding import TimeBasedHeap, Heap
+from satella.coding import TimeBasedHeap, Heap, CallableGroup
+import six
+import copy
+
+
+class TestCallableGroup(unittest.TestCase):
+    def test_cg_proforma(self):
+        cg = CallableGroup()
 
 
 class TestTimeBasedHeap(unittest.TestCase):
@@ -25,6 +32,14 @@ class TestTimeBasedHeap(unittest.TestCase):
         tbh.put(10, 'ala')
 
         self.assertIn('ala', list(tbh.items()))
+
+    def test_foobar(self):
+        tbh = TimeBasedHeap()
+        bytes(tbh)
+        six.text_type(tbh)
+        repr(tbh)
+        copy.copy(tbh)
+        copy.deepcopy(tbh)
 
 
 class TestHeap(unittest.TestCase):
