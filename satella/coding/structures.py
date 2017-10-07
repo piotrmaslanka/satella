@@ -148,6 +148,9 @@ class Heap(object):
         h.heap = copy.copy(self.heap)
         return h
 
+    def __iter__(self):
+        return self.heap.__iter__()
+
     # TODO needs tests
     def pop(self):
         """
