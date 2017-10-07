@@ -38,6 +38,7 @@ class Monitor(object):
         usage pattern of your class and it's data semantics, your performance
         may vary
         """
+
         @functools.wraps(fun)
         def monitored(*args, **kwargs):
             with args[0]._monitor_lock:
@@ -102,6 +103,6 @@ class RMonitor(Monitor):
     """
 
     def __init__(self):
-        #todo refactor so that a Lock is not created uselessly
+        # todo refactor so that a Lock is not created uselessly
         super(RMonitor, self).__init__()
         self._monitor_lock = threading.RLock()

@@ -15,12 +15,14 @@ Use in such a way:
         print(tb.pretty_print())
         # you can now pickle it if you wish to
 """
-import sys
-import zlib
-import io
-import six
-import traceback
 import inspect
+import io
+import sys
+import traceback
+import zlib
+
+import six
+
 try:
     import cPickle as pickle
 except ImportError:
@@ -36,7 +38,7 @@ class GenerationPolicy(object):
     Override if need be, and pass the class (or instance) to Traceback
     """
 
-    def __init__(self, enable_pickling=True, compress_at=128*1024, repr_length_limit=128*1024):
+    def __init__(self, enable_pickling=True, compress_at=128 * 1024, repr_length_limit=128 * 1024):
         """
         :param enable_pickling: bool, whether to enable pickling at all
         :param compress_at: pickles longer than this (bytes) will be compressed
@@ -134,7 +136,7 @@ class StoredVariable(object):
                         self.pickle = zlib.compress(self.pickle, policy.get_compression_level(self.pickle))
                         self.pickle_type = "pickle/gzip"
                     except zlib.error:
-                        pass    # ok, keep normal
+                        pass  # ok, keep normal
 
     def load_value(self):
         """
@@ -148,7 +150,7 @@ class StoredVariable(object):
         if self.pickle_type is None:
             raise ValueError('value was never pickled')
         elif self.pickle_type == 'failed':
-            raise ValueError('Value has failed to be pickled, reason is %s' % (self.pickle, ))
+            raise ValueError('Value has failed to be pickled, reason is %s' % (self.pickle,))
         elif self.pickle_type == 'pickle/gzip':
             pickle = zlib.decompress(self.pickle)
         elif self.pickle_type == 'pickle':
@@ -198,7 +200,7 @@ class Traceback(object):
             value_pickling_policy = policy()
 
         tb = sys.exc_info()[2]
-        
+
         self.frames = []
 
         if tb is None:

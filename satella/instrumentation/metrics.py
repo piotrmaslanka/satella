@@ -1,8 +1,11 @@
 # coding=UTF-8
 from __future__ import print_function, absolute_import, division
-import six
+
 import time
+
 import monotonic
+import six
+
 from satella.coding import typed
 
 # Detail levels
@@ -60,7 +63,7 @@ class StringMetric(Metric):
         super(StringMetric, self).__init__(instrument, name, minimum_detail, current_detail, description)
 
         self.buffer_size = buffer_size
-        self.buffer = []    # tuple of (real time, monotonic, string - sorted by timestamp ASC)
+        self.buffer = []  # tuple of (real time, monotonic, string - sorted by timestamp ASC)
 
     def _log(self, text, *args):
         """Log - as if formatting string"""
@@ -102,6 +105,3 @@ class CounterMetric(Metric):
         """Add a value to counter"""
         self.value += delta
         self.items += 1
-
-
-

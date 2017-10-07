@@ -6,6 +6,6 @@ All things related to:
 """
 from __future__ import print_function, absolute_import, division
 
-from .trace_back import Traceback
-from .metrics import CounterMetric, StringMetric
 from .instrument import manager, DISABLED, DEBUG, RUNTIME
+from .metrics import CounterMetric, StringMetric
+from .trace_back import Traceback

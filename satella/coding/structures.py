@@ -1,12 +1,14 @@
 # coding=UTF-8
 from __future__ import print_function, absolute_import, division
-import six
-import logging
-import copy
-import heapq
-import functools
-from .typecheck import typed, Callable, Iterable
 
+import copy
+import functools
+import heapq
+import logging
+
+import six
+
+from .typecheck import typed, Callable, Iterable
 
 logger = logging.getLogger(__name__)
 
@@ -36,6 +38,7 @@ class CallableGroup(object):
     will be propagated.
 
     """
+
     # todo not threadsafe with oneshots
 
     def __init__(self, gather=False, swallow_exceptions=False):
@@ -46,7 +49,7 @@ class CallableGroup(object):
                                    silently ignored. If gather is set,
                                    result will be the exception instance
         """
-        self.callables = [] # tuple of (callable, oneshot)
+        self.callables = []  # tuple of (callable, oneshot)
         self.gather = gather
         self.swallow_exceptions = swallow_exceptions
 
@@ -66,7 +69,7 @@ class CallableGroup(object):
 
         :return: list of results if gather was set, else None
         """
-        clbl = self.callables       # for moar thread safety
+        clbl = self.callables  # for moar thread safety
         self.callables = []
 
         if self.gather:
@@ -77,7 +80,7 @@ class CallableGroup(object):
                 q = callable(*args, **kwargs)
             except Exception as e:
                 if not self.swallow_exceptions:
-                    raise   # re-raise
+                    raise  # re-raise
                 q = e
 
             if self.gather:
@@ -91,10 +94,9 @@ class CallableGroup(object):
 
 
 def _extras_to_one(fun):
-
     @functools.wraps(fun)
     def inner(self, a, *args, **kwargs):
-        return fun(self, ((a, ) + args) if len(args) > 0 else a, **kwargs)
+        return fun(self, ((a,) + args) if len(args) > 0 else a, **kwargs)
 
     return inner
 
@@ -109,7 +111,7 @@ class Heap(object):
     Not thread-safe
     """
 
-    __slots__ = ('heap', )      # this is rather private, plz
+    __slots__ = ('heap',)  # this is rather private, plz
 
     def __init__(self, from_list=()):
         self.heap = list(from_list)
@@ -266,4 +268,3 @@ class TimeBasedHeap(Heap):
         Remove all things equal to item
         """
         self.filtermap(filter_fun=lambda i: i != item)
-

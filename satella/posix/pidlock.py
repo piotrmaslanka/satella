@@ -1,6 +1,6 @@
 # coding=UTF-8
 from __future__ import print_function, absolute_import, division
-import six
+
 import logging
 import os
 
@@ -19,6 +19,7 @@ class LockIsHeld(FailedToAcquire):
         pid - integer - PID of the holder
         is_alive - bool - whether the holder is an alive process
     """
+
 
 class AcquirePIDLock(object):
     """
@@ -98,5 +99,3 @@ class AcquirePIDLock(object):
         if self.fileno is not None:
             os.close(self.fileno)
             os.unlink(self.path)
-
-

@@ -3,15 +3,17 @@
 Decorator for debug-time typechecking
 """
 from __future__ import print_function, absolute_import, division
-import six
+
 import inspect
-import logging
 import itertools
+import logging
+
+import six
+
 try:
     import typing
 except ImportError:
     from backports import typing
-import types
 from collections import namedtuple
 import functools
 
@@ -23,7 +25,7 @@ Dict = typing.Dict
 NewType = typing.NewType
 Callable = typing.Callable
 Sequence = typing.Sequence
-Number = six.integer_types + (float, )
+Number = six.integer_types + (float,)
 TypeVar = typing.TypeVar
 Generic = typing.Generic
 Mapping = typing.Mapping
@@ -36,18 +38,20 @@ Optional = typing.Optional
 # Internal tokens - only instances will be
 class _NotGiven(object):
     pass
+
+
 class _NoDefault(object):
     pass
 
 
+_CSArgument = namedtuple('_CSArgument', ('name', 'required', 'default_value'))
 
-_CSArgument = namedtuple('_CSArgument', ('name', 'required','default_value'))
 
 class CSArgument(_CSArgument):
     def __str__(self):
-        p = ['Argument '+self.name]
+        p = ['Argument ' + self.name]
         if not self.required:
-            p.append('optional with default %s' % (self.default_value, ))
+            p.append('optional with default %s' % (self.default_value,))
         return ' '.join(p)
 
     def __eq__(self, other):
@@ -58,11 +62,14 @@ class CSArgument(_CSArgument):
         """
         return self.name == other.name and self.required == other.required and self.default_value == other.default_value
 
+
 class CSVarargsPlaceholder(CSArgument):
     pass
 
+
 class CSKwargsPlaceholder(CSArgument):
     pass
+
 
 class TypeErrorReason(object):
     pass
@@ -72,8 +79,9 @@ class CSTypeError(TypeError):
     """
     A TypeError exception on steroids
     """
+
     def __str__(self):
-        return 'Problem with argument %s' % (arg.name, )
+        return 'Problem with argument %s' % (arg.name,)
 
     def __init__(self, arg):
         """
@@ -83,8 +91,8 @@ class CSTypeError(TypeError):
         super(CSTypeError, self).__init__(str(self))
         self.arg = arg
 
-class CSBadTypeError(CSTypeError):
 
+class CSBadTypeError(CSTypeError):
     def __init__(self, arg, expected, got):
         super(CSBadTypeError, self).__init__(arg)
 
@@ -97,12 +105,12 @@ class CSBadTypeError(CSTypeError):
 
 class CSNotGivenError(CSTypeError):
     def __str__(self):
-        return 'Value for argument %s not given' % (self.arg.name, )
+        return 'Value for argument %s not given' % (self.arg.name,)
 
 
 class CSMultipleValuesGivenError(CSTypeError):
     def __str__(self):
-        return 'Got multiple values for argument' % (self.arg.name, )
+        return 'Got multiple values for argument' % (self.arg.name,)
 
 
 class CallSignature(object):
@@ -117,6 +125,7 @@ class CallSignature(object):
       - varargs_name (Union[str, None]) - name of varargs argument, or None if not present
       - kwargs_name (Union[str, None]) - name of kwargs argument, or None if not present
     """
+
     def count_required_positionals(self):
         c = 0
         for a in self.pos_args:
@@ -148,7 +157,6 @@ class CallSignature(object):
         self.pos_args = []
         self.locals = {}
         for arg, default in zip(args, defaults):
-
             cs_arg = CSArgument(arg,
                                 default is _NoDefault,
                                 default)
@@ -214,15 +222,16 @@ class CallSignature(object):
         """
         if len(args) > len(self.pos_args):
             if not self.has_varargs:
-                return False    # *args expected
+                return False  # *args expected
 
         if len(args) < self.count_required_positionals():
-            return False # Not enough posits
+            return False  # Not enough posits
 
         if len(kwargs) > 0 and not self.has_kwargs:
-            return False    # kwargs expected
+            return False  # kwargs expected
 
         return True
+
 
 def __typeinfo_to_tuple_of_types(typeinfo):
     if typeinfo is None:
@@ -237,6 +246,7 @@ def __typeinfo_to_tuple_of_types(typeinfo):
             return tuple(new_tup)
         else:
             return (typeinfo,)
+
 
 def typed(*t_args, **t_kwargs):
     """

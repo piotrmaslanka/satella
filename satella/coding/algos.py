@@ -1,10 +1,6 @@
 # coding=UTF-8
 from __future__ import print_function, absolute_import, division
-import six
-import logging
-import types
-import copy
-import itertools
+
 from .typecheck import typed
 
 

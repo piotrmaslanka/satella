@@ -1,9 +1,11 @@
 # coding=UTF-8
 from __future__ import print_function, absolute_import, division
-import six
+
 import logging
 import os
 import sys
+
+import six
 
 from satella.coding import typed, Callable
 
@@ -57,17 +59,16 @@ def daemonize(exit_via=sys.exit,
         sys.stdout = open('/dev/null', 'wb')
         sys.stderr = open('/dev/null', 'wb')
 
-
     if uid is not None:
         import pwd
         if isinstance(uid, six.string_types):
-            uid = pwd.getpwnam(uid).pw_uid # raises KeyError
+            uid = pwd.getpwnam(uid).pw_uid  # raises KeyError
 
         os.seteuid(uid)
 
     if gid is not None:
         import grp
         if isinstance(uid, six.string_types):
-            gid = grp.getpwnam(uid).gr_gid # raises KeyError
+            gid = grp.getpwnam(uid).gr_gid  # raises KeyError
 
         os.setegid(gid)

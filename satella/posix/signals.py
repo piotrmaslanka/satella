@@ -3,15 +3,14 @@
 Handle signals, like a boss
 """
 from __future__ import print_function, absolute_import, division
-import six
-import signal
+
 import logging
+import signal
 import time
-from threading import Lock
+
 from satella.coding import typed
 
 logger = logging.getLogger(__name__)
-
 
 end = False
 
@@ -54,11 +53,11 @@ def hang_until_sig(extra_signals=[]):
     while not end:
         try:
             if bugged_pypy:
-                time.sleep(1)   # see https://bugs.pypy.org/issue1255
+                time.sleep(1)  # see https://bugs.pypy.org/issue1255
             else:
                 signal.pause()
-        except:         # pause() is undefined on Windows
-            try:        # we will sleep for small periods of time
+        except:  # pause() is undefined on Windows
+            try:  # we will sleep for small periods of time
                 time.sleep(0.5)
             except IOError:  # "Interrupted system call"
                 pass

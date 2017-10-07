@@ -3,13 +3,13 @@
 UNIX things
 """
 from __future__ import print_function, absolute_import, division
-import six
+
 import logging
 import os
+
 from .daemon import daemonize
 from .pidlock import AcquirePIDLock
 from .signals import hang_until_sig
-
 
 logger = logging.getLogger(__name__)
 
@@ -22,4 +22,3 @@ def is_running_as_root():
     :return: bool
     """
     return os.geteuid() == 0
-
