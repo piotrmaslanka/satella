@@ -234,6 +234,8 @@ class CallSignature(object):
 
 
 def __typeinfo_to_tuple_of_types(typeinfo):
+    if typeinfo == 'self':
+        return None
     if typeinfo is None:
         return (type(None),)
     elif typeinfo == int and six.PY2:
@@ -281,7 +283,6 @@ def typed(*t_args, **t_kwargs):
     :param t_kwargs:
     """
 
-    t_args = [q if t_args != 'self' else None for q in t_args]
     t_args = [(__typeinfo_to_tuple_of_types(x) if x is not None else None) for x in t_args]
 
     t_retarg = t_kwargs.get('returns', None)

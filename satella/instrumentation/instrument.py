@@ -10,6 +10,9 @@ from .metrics import Metric, RUNTIME
 
 logger = logging.getLogger(__name__)
 
+DISABLED = 0
+DEBUG = 1
+RUNTIME = 2
 
 class InstrumentList(list):
     def __init__(self, children):
