@@ -28,6 +28,7 @@ class TestHeap(unittest.TestCase):
 
         tb = [(10, 'ala'), (20, 'ma'), (30, 'kota'), (5, 'yo')]
 
+        tbh.push_many(tb)
         self.assertEqual(sorted(tb), list(tbh.iter_ascending()))
         self.assertEqual(sorted(tb, reverse=True), list(tbh.iter_descending()))
 
