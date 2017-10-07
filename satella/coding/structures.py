@@ -205,7 +205,7 @@ class Heap(object):
         State of the heap is not changed
         :return: Iterator
         """
-        return reversed(self.iter_ascending())
+        return reversed(list(self.iter_ascending()))
 
     @typed(returns=six.integer_types)
     def __len__(self):
