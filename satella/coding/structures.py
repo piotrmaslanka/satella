@@ -88,9 +88,11 @@ class CallableGroup(object):
 
 
 def _extras_to_one(fun):
+
     @functools.wraps(fun)
-    def inner(self, a, *args):
-        return fun(self, ((a, ) + args) if len(args) > 0 else a)
+    def inner(self, a, *args, **kwargs):
+        return fun(self, ((a, ) + args) if len(args) > 0 else a, **kwargs)
+
     return inner
 
 
@@ -207,7 +209,7 @@ class Heap(object):
 
     @typed(returns=six.integer_types)
     def __len__(self):
-        return len(self)
+        return len(self.heap)
 
     def __str__(self):
         return '<satella.coding.Heap: %s elements>' % (len(self.heap, ))
