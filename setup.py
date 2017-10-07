@@ -2,7 +2,7 @@
 from setuptools import setup, find_packages
 
 setup(keywords=['ha', 'high availability', 'scalable', 'scalability', 'server'],
-      packages=find_packages(exclude=['tests.*', 'tests', 'examples.*', 'examples']),
+      packages=find_packages(include=['satella', 'satella.*']),
       install_requires=[
             "six",
             "monotonic",
