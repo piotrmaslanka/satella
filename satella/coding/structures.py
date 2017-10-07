@@ -217,7 +217,7 @@ class Heap(object):
     def __repr__(self):
         return u'<satella.coding.Heap>'
 
-    def __in__(self, item):
+    def __contains__(self, item):
         return item in self.heap
 
 class TimeBasedHeap(Heap):
