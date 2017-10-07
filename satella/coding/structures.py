@@ -16,6 +16,9 @@ __all__ = [
     'TimeBasedHeap'
 ]
 
+returns_bool = typed(returns=bool)
+returns_iterable = typed(returns=Iterable)
+
 
 class CallableGroup(object):
     """
@@ -108,15 +111,9 @@ class Heap(object):
 
     __slots__ = ('heap', )      # this is rather private, plz
 
-    # TODO needs tests
-    @typed(object, (None, Iterable))
-    def __init__(self, from_list=None):
-        
-        if from_list is None:
-            self.heap = []
-        else:
-            self.heap = list(from_list)
-            heapq.heapify(self.heap)
+    def __init__(self, from_list=()):
+        self.heap = list(from_list)
+        heapq.heapify(self.heap)
 
     @typed(object, Iterable)
     def push_many(self, items):
@@ -134,7 +131,7 @@ class Heap(object):
         or:
 
             heap.push(4, myobject)
-                    """
+        """
         heapq.heappush(self.heap, item)
 
     def __copie(self, op):
@@ -151,7 +148,6 @@ class Heap(object):
     def __iter__(self):
         return self.heap.__iter__()
 
-    @typed(returns=object)
     def pop(self):
         """
         Return smallest element of the heap.
@@ -170,14 +166,14 @@ class Heap(object):
         self.heap = list(self.heap) if not isinstance(self.heap, list) else self.heap
         heapq.heapify(self.heap)
 
-    @typed(returns=bool)
+    @returns_bool
     def __bool__(self):
         """
         Is this empty?
         """
         return len(self.heap) > 0
 
-    @typed(returns=Iterable)
+    @returns_iterable
     def iter_ascending(self):
         """
         Return an iterator returning all elements in this heap sorted ascending.
@@ -188,8 +184,8 @@ class Heap(object):
         while cph:
             yield cph.pop()
 
-    @typed(object, object, returns=Iterable)
-    def get_less_than(self, less):
+    @returns_iterable
+    def pop_less_than(self, less):
         """
         Return all elements less (sharp inequality) than particular value.
 
@@ -198,11 +194,11 @@ class Heap(object):
         :return: Iterator
         """
         while self:
-            if self.heap[0] < less:
+            if self.heap[0] >= less:
                 return
             yield self.pop()
 
-    @typed(returns=Iterable)
+    @returns_iterable
     def iter_descending(self):
         """
         Return an iterator returning all elements in this heap sorted descending.
@@ -224,7 +220,7 @@ class Heap(object):
     def __repr__(self):
         return u'<satella.coding.Heap>'
 
-    @typed(returns=bool)
+    @returns_bool
     def __contains__(self, item):
         return item in self.heap
 
@@ -260,7 +256,6 @@ class TimeBasedHeap(Heap):
         """
         self.push(timestamp, item)
 
-    @typed(None, (float, int), returns=list)
     def pop_less_than(self, timestamp):
         """
         Return a list of items with timestamps less than your value.
@@ -268,7 +263,7 @@ class TimeBasedHeap(Heap):
         Items will be removed from heap
         :return: list of tuple(timestamp::float, item)
         """
-        return list(self.get_less_than(timestamp))
+        return list(self.pop_less_than(timestamp))
 
     def remove(self, item):
         """
