@@ -141,7 +141,7 @@ class Heap(object):
         h.heap = op(self.heap)
         return h
 
-    def __deepcopy__(self):
+    def __deepcopy__(self, memo):
         return self.__copie(copy.deepcopy)
 
     def __copy__(self):
