@@ -2,7 +2,7 @@
 from __future__ import print_function, absolute_import, division
 import six
 import unittest
-from satella.coding import typed, CallSignature
+from satella.coding import typed, CallSignature, Number
 
 
 class TestTypecheck(unittest.TestCase):
@@ -100,11 +100,11 @@ class TestTypecheck(unittest.TestCase):
     def test_self(self):
 
         class Wtf(object):
-            @typed('self', int, int, returns=int)
+            @typed('self', Number, Number, returns=Number)
             def add(self, a, b):
                 return a+b
 
-        Wtf().add(1,2)
+        Wtf().add(1,2.5)
 
     def test_T2(self):
 

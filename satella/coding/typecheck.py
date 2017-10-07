@@ -23,6 +23,7 @@ Dict = typing.Dict
 NewType = typing.NewType
 Callable = typing.Callable
 Sequence = typing.Sequence
+Number = six.integer_types + (float, )
 TypeVar = typing.TypeVar
 Generic = typing.Generic
 Mapping = typing.Mapping
