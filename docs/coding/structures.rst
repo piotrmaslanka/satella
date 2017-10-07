@@ -7,11 +7,11 @@ behave like the `heapq <https://docs.python.org/2/library/heapq.html>` library.
 .. autoclass:: satella.coding.Heap
    :members:
 
-TimerHeap
+TimeBasedHeap
 ---------
 
-Timer heap is a good structure if you have many callbacks set to fire at a particular
-time in the future. It bases off Heap.
+Time-based heap is a good structure if you have many callbacks set to fire at a particular
+time in the future. It functions very like a normal Heap.
 
-.. autoclass:: satella.coding.TimerHeap
+.. autoclass:: satella.coding.TimeBasedHeap
    :members:
