@@ -208,6 +208,8 @@ class Traceback(object):
         To be invoked while processing an exception is in progress
 
         :param policy: policy for traceback generation
+        :raise ValueError: there is no traceback to get info from!
+            Is any exception in process?
         """
 
         if inspect.isclass(policy):
@@ -218,7 +220,7 @@ class Traceback(object):
         self.frames = []
 
         if tb is None:
-            self.formatted_traceback = u'No exception.'
+            raise ValueError('No traceback')
         else:
             while tb.tb_next:
                 tb = tb.tb_next

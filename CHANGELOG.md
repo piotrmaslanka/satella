@@ -2,6 +2,7 @@
 
 * Python 3.4 znów wspierany
 * Domyślny czas dla TimeBasedHeap 
+* Traceback uruchamiany bez wyjątku będzie rzucał ValueError
 
 
 ## v2.0.12
