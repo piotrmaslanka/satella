@@ -184,7 +184,7 @@ class Heap(object):
         State of the heap is not changed
         :return: Iterator
         """
-        cph = self.copy()
+        cph = copy.copy(self)
         while cph:
             yield cph.pop()
 
