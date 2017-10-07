@@ -5,10 +5,11 @@ python:
  - "pypy"
 cache: pip
 install:
- - pip install coverage nose mock
+ - echo "coverage\nnose\nmock\ncodeclimate-test-reporter\n" >> requirements.txt
  - pip install -r requirements.txt
  - python setup.py install
 script:
  - bash tests/test_posix/test_hang_until_sig.sh
  - nosetests --with-coverage
-
+after_success:
+ - CODECLIMATE_REPO_TOKEN=cc1c853d7d3b0d97a3de8e245d02b834194d30037ff8644d2b26d0e5f17c5fe6 codeclimate-test-reporter
