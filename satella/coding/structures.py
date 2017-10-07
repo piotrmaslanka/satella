@@ -232,7 +232,7 @@ class TimeBasedHeap(Heap):
     @returns_iterable
     def items(self):
         """Return an iterator, but WITHOUT timestamps (only items), in unspecified order"""
-        return (ts, ob for ts, ob in self.heap)
+        return (ob for ts, ob in self.heap)
 
     def __init__(self):
         """
