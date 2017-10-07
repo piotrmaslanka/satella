@@ -180,9 +180,9 @@ class Heap(object):
         State of the heap is not changed
         :return: Iterator
         """
-        cph = copy.copy(self)
-        while cph:
-            yield cph.pop()
+        heap = copy.copy(self.heap)
+        while heap:
+            yield heapq.heappop(heap)
 
     @returns_iterable
     def pop_less_than(self, less):
