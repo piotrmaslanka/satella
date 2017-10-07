@@ -114,6 +114,11 @@ class Heap(object):
         else:
             self.heap = heapq.heapify(list(from_list))
 
+    @typed(object, Iterable)
+    def pushmany(self, items):
+        for item in items:
+            self.push(item)
+
     # TODO needs tests
     @_extras_to_one
     def push(self, item):

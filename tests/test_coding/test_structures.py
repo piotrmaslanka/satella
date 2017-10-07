@@ -26,8 +26,10 @@ class TestHeap(unittest.TestCase):
 
         tbh = Heap()
 
-        tbh.put((10, 'ala'))
-        tbh.put(20, 'ma')
+        tbh.pushmany([
+            (10, 'ala'),
+            (20, 'ma')
+            ])
 
         self.assertIn((10, 'ala'), tbh)
         self.assertIn((20, 'ma'), tbh)
