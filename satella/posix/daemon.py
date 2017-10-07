@@ -4,13 +4,39 @@ from __future__ import print_function, absolute_import, division
 import logging
 import os
 import sys
-
 import six
+
+try:
+    import pwd
+    import grp
+except ImportError:
+    pass    # Windows?
 
 from satella.coding import typed, Callable
 
 logger = logging.getLogger(__name__)
 
+
+def _redirect_descriptors_to_null():
+    sys.stdin = open('/dev/null', 'rb')
+    sys.stdout = open('/dev/null', 'wb')
+    sys.stderr = open('/dev/null', 'wb')
+
+def _close_descriptors():
+    for d in [sys.stdin, sys.stdout, sys.stderr]:
+        d.close()
+
+def _double_fork(exit_via):
+    os.umask(0)
+
+    if os.fork() > 0:
+        exit_via()  # parent exits
+
+    os.setsid()
+
+    if os.fork() > 0:
+        exit_via()  # parent exits
+    os.chdir('/')
 
 @typed(Callable, bool, (None, int), (None, int))
 def daemonize(exit_via=sys.exit,
@@ -38,36 +64,19 @@ def daemonize(exit_via=sys.exit,
     :raises KeyError: uid/gid was passed as string, but getpwnam() failed
     """
 
-    os.umask(0)
-
-    if os.fork() > 0:
-        exit_via()  # parent exits
-
-    os.setsid()
-
-    if os.fork() > 0:
-        exit_via()  # parent exits
-
-    os.chdir('/')
-
-    sys.stdin.close()
-    sys.stdout.close()
-    sys.stderr.close()
+    _double_fork(exit_via=exit_via)
+    _close_descriptors()
 
     if redirect_std_to_devnull:
-        sys.stdin = open('/dev/null', 'rb')
-        sys.stdout = open('/dev/null', 'wb')
-        sys.stderr = open('/dev/null', 'wb')
+        _redirect_descriptors_to_null()
 
     if uid is not None:
-        import pwd
         if isinstance(uid, six.string_types):
             uid = pwd.getpwnam(uid).pw_uid  # raises KeyError
 
         os.seteuid(uid)
 
     if gid is not None:
-        import grp
         if isinstance(uid, six.string_types):
             gid = grp.getpwnam(uid).gr_gid  # raises KeyError
 
