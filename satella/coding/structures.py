@@ -185,20 +185,6 @@ class Heap(object):
             yield heapq.heappop(heap)
 
     @returns_iterable
-    def pop_less_than(self, less):
-        """
-        Return all elements less (sharp inequality) than particular value.
-
-        This changes state of the heap
-        :param less: value to compare against
-        :return: Iterator
-        """
-        while self:
-            if self.heap[0] < less:
-                return
-            yield self.pop()
-
-    @returns_iterable
     def iter_descending(self):
         """
         Return an iterator returning all elements in this heap sorted descending.
@@ -254,16 +240,21 @@ class TimeBasedHeap(Heap):
         :param timestamp: timestamp for this item
         :param item: object
         """
-        self.push(timestamp, item)
+        self.push((timestamp, item))
 
-    def pop_less_than(self, timestamp):
+    @returns_iterable
+    def pop_less_than(self, less):
         """
-        Return a list of items with timestamps less than your value.
+        Return all elements less (sharp inequality) than particular value.
 
-        Items will be removed from heap
-        :return: list of tuple(timestamp::float, item)
+        This changes state of the heap
+        :param less: value to compare against
+        :return: Iterator
         """
-        return list(Heap.pop_less_than(self, timestamp))
+        while self:
+            if self.heap[0] < less:
+                return
+            yield self.pop()
 
     def remove(self, item):
         """

@@ -23,6 +23,13 @@ class TestTimeBasedHeap(unittest.TestCase):
 
 class TestHeap(unittest.TestCase):
 
+    def test_push(self):
+        tbh = Heap()
+        tbh.push(10, 'A')
+        self.assertEquals((10, 'A'), tbh.pop())
+        tbh.push((10, 'A'))
+        self.assertEquals((10, 'A'), tbh.pop())
+
     def test_tbh_iter(self):
         tbh = Heap()
 
