@@ -22,6 +22,13 @@ class TestTimeBasedHeap(unittest.TestCase):
 
 
 class TestHeap(unittest.TestCase):
+
+    def test_tbh_iter(self):
+        tbh = Heap([(10, 'ala'), (20, 'ma'), (30, 'kota'), (5, 'yo')])
+        
+        self.assertEqual([(5, 'yo'), (10, 'ala'), (20, 'ma'), (30, 'kota')], list(tbh.iter_ascending()))
+        self.assertEqual(reversed([(5, 'yo'), (10, 'ala'), (20, 'ma'), (30, 'kota')]), list(tbh.iter_descending()))
+
     def test_tbh(self):
 
         tbh = Heap()
