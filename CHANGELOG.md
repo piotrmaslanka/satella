@@ -3,6 +3,7 @@
 * Pomniejsze usprawnienia do TimerHeap
 * Dodano `self` do @typed
 * Dodano typ `Number` do @typed
+* Satella korzysta z [Code Climate](https://codeclimate.com/github/piotrmaslanka/satella)
 
 ## v2.0.11
 
