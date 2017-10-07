@@ -252,7 +252,7 @@ class TimeBasedHeap(Heap):
         :return: Iterator
         """
         while self:
-            if self.heap[0] < less:
+            if self.heap[0][0] >= less:
                 return
             yield self.pop()
 
