@@ -25,7 +25,7 @@ class TestHeap(unittest.TestCase):
 
     def test_tbh_iter(self):
         tbh = Heap([(10, 'ala'), (20, 'ma'), (30, 'kota'), (5, 'yo')])
-        
+
         self.assertEqual([(5, 'yo'), (10, 'ala'), (20, 'ma'), (30, 'kota')], list(tbh.iter_ascending()))
         self.assertEqual(reversed([(5, 'yo'), (10, 'ala'), (20, 'ma'), (30, 'kota')]), list(tbh.iter_descending()))
 
@@ -41,7 +41,8 @@ class TestHeap(unittest.TestCase):
         self.assertIn((10, 'ala'), tbh)
         self.assertIn((20, 'ma'), tbh)
 
-        tbh.filtermap(lambda x: x[0] != 20, lambda x: x[0]+10, 'azomg')
+        tbh.filtermap(filter_fun=lambda x: x[0] != 20,
+                      map_fun=lambda x: (x[0]+10, 'azomg'))
 
         self.assertIn((20, 'azomg'), tbh)
         self.assertNotIn((10, 'ala'), tbh)

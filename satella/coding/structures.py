@@ -227,6 +227,7 @@ class Heap(object):
     def __contains__(self, item):
         return item in self.heap
 
+
 class TimeBasedHeap(Heap):
     """
     A heap of items sorted by timestamps.
@@ -239,6 +240,9 @@ class TimeBasedHeap(Heap):
 
     #notthreadsafe
     """
+
+    def __repr__(self):
+        return u'<satella.coding.TimeBasedHeap>'
 
     def __init__(self):
         """
@@ -255,7 +259,7 @@ class TimeBasedHeap(Heap):
         """
         self.push(timestamp, item)
 
-    @typed(None, (float, int))
+    @typed(None, (float, int), returns=list)
     def pop_less_than(self, timestamp):
         """
         Return a list of items with timestamps less than your value.
@@ -269,5 +273,5 @@ class TimeBasedHeap(Heap):
         """
         Remove all things equal to item
         """
-        self.filter(lambda i: i != item)
+        self.filtermap(filter_fun=lambda i: i != item)
 
