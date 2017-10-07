@@ -38,7 +38,8 @@ class GenerationPolicy(object):
     Override if need be, and pass the class (or instance) to Traceback
     """
 
-    def __init__(self, enable_pickling=True, compress_at=128 * 1024, repr_length_limit=128 * 1024):
+    def __init__(self, enable_pickling=True, compress_at=128 * 1024,
+                 repr_length_limit=128 * 1024):
         """
         :param enable_pickling: bool, whether to enable pickling at all
         :param compress_at: pickles longer than this (bytes) will be compressed
@@ -134,7 +135,9 @@ class StoredVariable(object):
             else:
                 if policy.should_compress(self.pickle):
                     try:
-                        self.pickle = zlib.compress(self.pickle, policy.get_compression_level(self.pickle))
+                        self.pickle = zlib.compress(self.pickle,
+                                                    policy.get_compression_level(
+                                                        self.pickle))
                         self.pickle_type = "pickle/gzip"
                     except zlib.error:
                         pass  # ok, keep normal
@@ -143,7 +146,8 @@ class StoredVariable(object):
         """
         Return the value that this represents.
 
-        WARNING! This may result in importing things from environment, as pickle.loads will be called.
+        WARNING! This may result in importing things from environment, as
+        pickle.loads will be called.
 
         :return: stored value - if picklable and was pickled
         :raises ValueError: value has failed to be pickled or was never pickled
@@ -151,7 +155,8 @@ class StoredVariable(object):
         if self.pickle_type is None:
             raise ValueError('value was never pickled')
         elif self.pickle_type == 'failed':
-            raise ValueError('Value has failed to be pickled, reason is %s' % (self.pickle,))
+            raise ValueError(
+                'Value has failed to be pickled, reason is %s' % (self.pickle,))
         elif self.pickle_type == 'pickle/gzip':
             pickle = zlib.decompress(self.pickle)
         elif self.pickle_type == 'pickle':
@@ -160,7 +165,8 @@ class StoredVariable(object):
         try:
             return pickle.loads(pickle)
         except pickle.UnpicklingError:
-            raise ValueError('object picklable, but cannot load in this environment')
+            raise ValueError(
+                'object picklable, but cannot load in this environment')
 
 
 class StackFrame(object):
@@ -240,7 +246,8 @@ class Traceback(object):
         output.write(self.formatted_traceback)
         output.write(u'\n* Stack trace, innermost first\n')
         for frame in self.frames:
-            output.write(u'** %s at %s:%s\n' % (frame.name, frame.filename, frame.lineno))
+            output.write(u'** %s at %s:%s\n' % (
+            frame.name, frame.filename, frame.lineno))
             for name, value in six.iteritems(frame.locals):
                 try:
                     output.write(u'*** %s: %s\n' % (name, value.repr))

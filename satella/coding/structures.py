@@ -160,12 +160,14 @@ class Heap(object):
     @typed(object, (Callable, None), (Callable, None))
     def filtermap(self, filter_fun=None, map_fun=None):
         """
-        Get only items that return True when condition(item) is True. Apply a transform: item' = item(condition) on
+        Get only items that return True when condition(item) is True. Apply a
+         transform: item' = item(condition) on
         the rest. Maintain heap invariant.
         """
-        self.heap = filter(filter_fun, self.heap) if filter_fun else self.heap
-        self.heap = map(map_fun, self.heap) if map_fun else self.heap
-        self.heap = list(self.heap) if not isinstance(self.heap, list) else self.heap
+        heap = filter(filter_fun, self.heap) if filter_fun else self.heap
+        heap = map(map_fun, heap) if map_fun else heap
+        heap = list(heap) if not isinstance(heap, list) else heap
+        self.heap = heap
         heapq.heapify(self.heap)
 
     @returns_bool
@@ -217,10 +219,11 @@ class TimeBasedHeap(Heap):
     """
     A heap of items sorted by timestamps.
 
-    It is easy to ask for items, whose timestamps are LOWER than a value, and easy
-    to remove them.
+    It is easy to ask for items, whose timestamps are LOWER than a value, and
+    easy to remove them.
 
-    Can be used to implement a scheduling service, ie. store jobs, and each interval query
+    Can be used to implement a scheduling service, ie. store jobs, and each
+    interval query
     which of them should be executed. This loses time resolution, but is fast.
 
     #notthreadsafe
@@ -231,7 +234,10 @@ class TimeBasedHeap(Heap):
 
     @returns_iterable
     def items(self):
-        """Return an iterator, but WITHOUT timestamps (only items), in unspecified order"""
+        """
+        Return an iterator, but WITHOUT timestamps (only items), in
+        unspecified order
+        """
         return (ob for ts, ob in self.heap)
 
     def __init__(self):

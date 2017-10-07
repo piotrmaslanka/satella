@@ -123,10 +123,13 @@ class CallSignature(object):
     Properties:
       - has_varargs (Bool) - if has varargs
       - has_kwargs (Bool) - if has kwargs
-      - locals (Dict[str => CSArgument]) - list of locals this function call will generate
+      - locals (Dict[str => CSArgument]) - list of locals this function call
+        will generate
       - pos_args (List[CSArgument)] - list of positional arguments
-      - varargs_name (Union[str, None]) - name of varargs argument, or None if not present
-      - kwargs_name (Union[str, None]) - name of kwargs argument, or None if not present
+      - varargs_name (Union[str, None]) - name of varargs argument, or None if
+        not present
+      - kwargs_name (Union[str, None]) - name of kwargs argument, or None if
+        not present
     """
 
     def count_required_positionals(self):
@@ -224,7 +227,8 @@ class CallSignature(object):
 
     def is_match_amount(self, *args, **kwargs):
         """
-        Would a function call with these arguments succeed, based solely on number and "keywordnessity" or parameters?
+        Would a function call with these arguments succeed, based solely on
+        number and "keywordnessity" or parameters?
         """
         if len(args) > len(self.pos_args):
             if not self.has_varargs:
