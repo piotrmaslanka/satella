@@ -144,7 +144,7 @@ class StoredVariable(object):
                         self.pickle = zlib.compress(
                             self.pickle,
                             policy.get_compression_level(
-                            self.pickle))
+                                self.pickle))
                         self.pickle_type = "pickle/gzip"
                     except zlib.error:
                         pass  # ok, keep normal
@@ -255,7 +255,7 @@ class Traceback(object):
         output.write(u'\n* Stack trace, innermost first\n')
         for frame in self.frames:
             output.write(u'** %s at %s:%s\n' % (
-            frame.name, frame.filename, frame.lineno))
+                frame.name, frame.filename, frame.lineno))
             for name, value in six.iteritems(frame.locals):
                 try:
                     output.write(u'*** %s: %s\n' % (name, value.repr))
