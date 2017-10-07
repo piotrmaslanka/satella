@@ -1,9 +1,12 @@
 # coding=UTF-8
 """
-Allows you to preserve entire stack frame along with all variables (even pickles them).
+Allows you to preserve entire stack frame along with all variables (even
+ pickles them).
 
-After this, you can send this report somewhere. At target, it will be unpickled in a safe way
-(without importing anything extra from environment). You can unpickle particular variables stored,
+After this, you can send this report somewhere. At target, it will be unpickled
+ in a safe way
+(without importing anything extra from environment). You can unpickle
+particular variables stored,
 but that may involve an import.
 
 Use in such a way:
@@ -70,7 +73,8 @@ class GenerationPolicy(object):
         """
         What compression level to use to pickle this?
         :param pickledata: bytes, pickle value
-        :return: int, 1-9, where "1" is the fastest, and "9" is the slowest, but produces best compression
+        :return: int, 1-9, where "1" is the fastest, and "9" is the slowest,
+            but produces best compression
         """
         return 6
 
@@ -96,12 +100,14 @@ class StoredVariable(object):
     Attributes are:
         .repr - a text representation obtained using repr
         .typeinfo - a text representation of variable's type
-        .pickle - bytes with pickled (optionally processed) value, or None if not available
+        .pickle - bytes with pickled (optionally processed) value, or None if
+            not available
         .pickle_type - what is stored in .pickle?
             None - nothing
             "pickle" - normal Python pickle
             "pickle/gzip" - Python pickle treated with zlib.compress
-            "failed" - could not pickle, pickle contains a text with human-readable reason
+            "failed" - could not pickle, pickle contains a text with
+            human-readable reason
 
     """
     __slots__ = ('repr', 'type_', 'pickle', 'pickle_type')
@@ -135,9 +141,10 @@ class StoredVariable(object):
             else:
                 if policy.should_compress(self.pickle):
                     try:
-                        self.pickle = zlib.compress(self.pickle,
-                                                    policy.get_compression_level(
-                                                        self.pickle))
+                        self.pickle = zlib.compress(
+                            self.pickle,
+                            policy.get_compression_level(
+                            self.pickle))
                         self.pickle_type = "pickle/gzip"
                     except zlib.error:
                         pass  # ok, keep normal
@@ -229,7 +236,8 @@ class Traceback(object):
 
     def pretty_format(self):
         """
-        Return a multi-line, pretty-printed representation of all exception data.
+        Return a multi-line, pretty-printed representation of all exception
+        data.
         :return: text
         """
         bio = io.StringIO()
