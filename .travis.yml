@@ -9,5 +9,3 @@ install:
 script:
  - bash tests/test_posix/test_hang_until_sig.sh
  - python setup.py tests
-after_success:
- - CODECLIMATE_REPO_TOKEN=cc1c853d7d3b0d97a3de8e245d02b834194d30037ff8644d2b26d0e5f17c5fe6 codeclimate-test-reporter

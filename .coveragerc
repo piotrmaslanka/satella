@@ -6,3 +6,4 @@ omit=
     tests/*
     examples/*
     docs/*
+show_missing=true

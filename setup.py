@@ -9,7 +9,7 @@ setup(keywords=['ha', 'high availability', 'scalable', 'scalability', 'server'],
             "backports.typing"
       ],
       tests_require=[
-          "nose", "mock", "coverage", "codeclimate-test-reporter"
+          "nose", "mock", "coverage"
       ],
       test_suite='nose.collector',
       classifiers=[
