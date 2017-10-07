@@ -4,18 +4,22 @@ from __future__ import print_function, absolute_import, division
 import logging
 import os
 import sys
+
 import six
 
 try:
     import pwd
     import grp
 except ImportError:
-    pass    # Windows?
+    # Windows?
+    class L(object):    # always return UID=GID=0
+        def __getattr__(self, item):
+            return lambda q: 0
+    pwd = grp = L()
 
 from satella.coding import typed, Callable
 
 logger = logging.getLogger(__name__)
-
 
 
 @typed(Callable, bool, (None, int), (None, int))
@@ -38,8 +42,10 @@ def daemonize(exit_via=sys.exit,
     Refer - "Advanced Programming in the UNIX Environment" 13.3
 
     :param exit_via: callable used to terminate process
-    :param redirect_std_to_devnull: whether to redirect stdin, stdout and stderr to /dev/null
-    :param uid: User to set (via seteuid). Default - this won't be done. You can pass either user name as string or UID.
+    :param redirect_std_to_devnull: whether to redirect stdin, stdout and
+        stderr to /dev/null
+    :param uid: User to set (via seteuid). Default - this won't be done. You
+        can pass either user name as string or UID.
     :param gid: Same as UID, but for groups. These will be resolved too.
     :raises KeyError: uid/gid was passed as string, but getpwnam() failed
     """
@@ -60,14 +66,17 @@ def _parse_ug(no, module, fieldname, osfun):
             no = getattr(module.getpwnam(no), fieldname)
         osfun(no)
 
+
 def _redirect_descriptors_to_null():
     sys.stdin = open('/dev/null', 'rb')
     sys.stdout = open('/dev/null', 'wb')
     sys.stderr = open('/dev/null', 'wb')
 
+
 def _close_descriptors():
     for d in [sys.stdin, sys.stdout, sys.stderr]:
         d.close()
+
 
 def _double_fork(exit_via):
     os.umask(0)
