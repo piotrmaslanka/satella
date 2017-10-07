@@ -226,6 +226,12 @@ class TimeBasedHeap(Heap):
     interval query
     which of them should be executed. This loses time resolution, but is fast.
 
+    Can use current time with put/pop_less_than.
+    Use default_clock_source to pass a callable:
+
+      * time.time
+      * monotonic.monotonic
+
     #notthreadsafe
     """
 
@@ -240,23 +246,31 @@ class TimeBasedHeap(Heap):
         """
         return (ob for ts, ob in self.heap)
 
-    def __init__(self):
+    def __init__(self, default_clock_source=lambda: None):
         """
         Initialize an empty heap
         """
+        self.default_clock_source = default_clock_source
         super(TimeBasedHeap, self).__init__()
 
-    @typed(None, (float, int), None)
-    def put(self, timestamp, item):
+    def put(self, *args):
         """
-        Put an item of heap
-        :param timestamp: timestamp for this item
-        :param item: object
+        Put an item of heap.
+
+        Pass timestamp, item or just an item for default time
         """
+        assert len(args) in (1, 2)
+
+        if len(args) == 1:
+            timestamp, item = self.default_clock_source(), args[0]
+        else:
+            timestamp, item = args
+
+        assert timestamp is not None
         self.push((timestamp, item))
 
     @returns_iterable
-    def pop_less_than(self, less):
+    def pop_less_than(self, less=None):
         """
         Return all elements less (sharp inequality) than particular value.
 
@@ -264,6 +278,12 @@ class TimeBasedHeap(Heap):
         :param less: value to compare against
         :return: Iterator
         """
+
+        if less is None:
+            less = self.default_clock_source()
+
+        assert less is not None
+
         while self:
             if self.heap[0][0] >= less:
                 return

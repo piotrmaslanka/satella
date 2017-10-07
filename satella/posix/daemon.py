@@ -21,6 +21,8 @@ from satella.coding import typed, Callable
 
 logger = logging.getLogger(__name__)
 
+DEVNULL = '/dev/null'
+
 
 @typed(Callable, bool, (None, int), (None, int))
 def daemonize(exit_via=sys.exit,
@@ -68,9 +70,9 @@ def _parse_ug(no, module, fieldname, osfun):
 
 
 def _redirect_descriptors_to_null():
-    sys.stdin = open('/dev/null', 'rb')
-    sys.stdout = open('/dev/null', 'wb')
-    sys.stderr = open('/dev/null', 'wb')
+    sys.stdin = open(DEVNULL, 'rb')
+    sys.stdout = open(DEVNULL, 'wb')
+    sys.stderr = open(DEVNULL, 'wb')
 
 
 def _close_descriptors():

@@ -1,11 +1,12 @@
 ## v2.0.13
 
-* Python 3.4 znów wspierany 
+* Python 3.4 znów wspierany
+* Domyślny czas dla TimeBasedHeap 
 
 
 ## v2.0.12
 
-* Pomniejsze usprawnienia do TimerHeap
+* Pomniejsze usprawnienia do TimeBasedHeap
 * Dodano `self` do @typed
 * Dodano typ `Number` do @typed
 * Satella korzysta z [Code Climate](https://codeclimate.com/github/piotrmaslanka/satella)

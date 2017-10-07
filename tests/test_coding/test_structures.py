@@ -33,6 +33,33 @@ class TestTimeBasedHeap(unittest.TestCase):
 
         self.assertIn('ala', list(tbh.items()))
 
+
+    def test_def(self):
+
+        class DCS(object):
+            def __call__(self):
+                return self.v
+            def set(self, v):
+                self.v = v
+
+        clk = DCS()
+        clk.set(0)
+
+        tbh = TimeBasedHeap(default_clock_source=clk)
+        tbh.put('ala')
+        tbh.put(4, 'alla')
+
+        clk.set(3)
+
+        q = set(tbh.pop_less_than())
+
+        self.assertIn((0, 'ala'), q)
+        self.assertNotIn((4, 'alla'), q)
+
+
+
+        self.assertIn('ala', list(tbh.items()))
+
     def test_foobar(self):
         tbh = TimeBasedHeap()
         bytes(tbh)
