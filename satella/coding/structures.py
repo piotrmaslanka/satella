@@ -153,21 +153,15 @@ class Heap(object):
         """
         return heapq.heappop(self.heap)
 
-    # TODO needs tests
     @typed(object, (Callable, None), (Callable, None))
     def filtermap(self, filter_fun=None, map_fun=None):
         """
         Get only items that return True when condition(item) is True. Apply a transform: item' = item(condition) on
         the rest. Maintain heap invariant.
         """
-        if self.filter_fun:
-            self.heap = filter(filter_fun, self.heap)
-        if self.map_fun:
-            self.heap = map(map_fun, self.heap)
-
-        if not isinstance(self.heap, list):
-            self.heap = list(self.heap)
-
+        self.heap = filter(filter_fun, self.heap) if filter_fun else self.heap
+        self.heap = map(map_fun, self.heap) if map_fun else self.heap
+        self.heap = list(self.heap) if not isinstance(self.heap, list) else self.heap
         heapq.heapify(self.heap)
 
     @typed(returns=bool)
