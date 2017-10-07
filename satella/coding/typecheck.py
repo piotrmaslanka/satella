@@ -60,7 +60,9 @@ class CSArgument(_CSArgument):
         :param other: CSArgument
         :return: bool
         """
-        return self.name == other.name and self.required == other.required and self.default_value == other.default_value
+        return self.name == other.name and \
+               self.required == other.required and \
+               self.default_value == other.default_value
 
 
 class CSVarargsPlaceholder(CSArgument):
@@ -100,7 +102,8 @@ class CSBadTypeError(CSTypeError):
         self.got = got
 
     def __str__(self):
-        return 'Bad type given for arg %s, expected %s got %s' % (self.arg.name, self.expected, self.got)
+        return 'Bad type given for arg %s, expected %s got %s' % (
+            self.arg.name, self.expected, self.got)
 
 
 class CSNotGivenError(CSTypeError):
@@ -143,7 +146,8 @@ class CallSignature(object):
         if any(a != b for a, b in zip(self.pos_args, other.pos_args)):
             return False
 
-        return (self.has_kwargs == other.has_kwargs) and (self.has_varargs == other.has_varargs)
+        return self.has_kwargs == other.has_kwargs and \
+               self.has_varargs == other.has_varargs
 
     def __init__(self, callable):
         args, varargs, kwargs, defaults = inspect.getargspec(callable)
@@ -166,14 +170,16 @@ class CallSignature(object):
         self.varargs_name = varargs
         if varargs is not None:
             self.has_varargs = True
-            self.locals[self.varargs_name] = CSVarargsPlaceholder(self.varargs_name, False, [])
+            self.locals[self.varargs_name] = CSVarargsPlaceholder(
+                self.varargs_name, False, [])
         else:
             self.has_varargs = False
 
         self.kwargs_name = kwargs
         if kwargs is not None:
             self.has_kwargs = True
-            self.locals[self.kwargs_name] = CSKwargsPlaceholder(self.kwargs_name, False, {})
+            self.locals[self.kwargs_name] = CSKwargsPlaceholder(
+                self.kwargs_name, False, {})
         else:
             self.has_kwargs = False
 
@@ -236,7 +242,7 @@ class CallSignature(object):
 def __typeinfo_to_tuple_of_types(typeinfo):
     if typeinfo == 'self':
         return None
-    if typeinfo is None:
+    elif typeinfo is None:
         return (type(None),)
     elif typeinfo == int and six.PY2:
         return six.integer_types
@@ -269,21 +275,22 @@ def typed(*t_args, **t_kwargs):
         def method(self, a, b):
         ..
 
-    If you specify extra argument - mandatory=True - type will always be checked,
-    regardless if debug mode is enabled
+    If you specify extra argument - mandatory=True - type will always be
+    checked, regardless if debug mode is enabled
 
     Same rules apply.
 
     int will automatically include long for checking (Python 3 compatibility)
     If you want to check for None, type (None, )
-    None for an argument means "do no checking", (None, ) means "type must be NoneType"
-    You can pass tuples or lists to match for multiple types
+    None for an argument means "do no checking", (None, ) means "type must be
+    NoneType". You can pass tuples or lists to match for multiple types
 
     :param t_args:
     :param t_kwargs:
     """
 
-    t_args = [(__typeinfo_to_tuple_of_types(x) if x is not None else None) for x in t_args]
+    t_args = [(__typeinfo_to_tuple_of_types(x) if x is not None else None)
+              for x in t_args]
 
     t_retarg = t_kwargs.get('returns', None)
     is_mandatory = t_kwargs.get('mandatory', False)
@@ -301,16 +308,16 @@ def typed(*t_args, **t_kwargs):
             for argument, typedescr in zip(args, t_args):
                 if typedescr is not None:
                     if not isinstance(argument, typedescr):
-                        raise TypeError('Got %s, expected %s' % (type(argument), typedescr))
+                        raise TypeError('Got %s, expected %s' % (
+                            type(argument), typedescr))
 
             rt = fun(*args, **kwargs)
 
             if t_retarg is not None:
                 if not isinstance(rt, t_retarg):
-                    raise TypeError('Returned %s, expected %s' % (type(rt), t_retarg))
+                    raise TypeError('Returned %s, expected %s' % (
+                        type(rt), t_retarg))
 
             return rt
-
         return inner
-
     return outer
