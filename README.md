@@ -3,9 +3,9 @@ satella
 [![Build Status](https://travis-ci.org/piotrmaslanka/satella.svg)](https://travis-ci.org/piotrmaslanka/satella)
 [![Code Climate](https://codeclimate.com/github/piotrmaslanka/satella/badges/gpa.svg)](https://codeclimate.com/github/piotrmaslanka/satella)
 [![Issue Count](https://codeclimate.com/github/piotrmaslanka/satella/badges/issue_count.svg)](https://codeclimate.com/github/piotrmaslanka/satella)
-[![PyPI](https://img.shields.io/pypi/pyversions/satella.svg)]()
+[![PyPI](https://img.shields.io/pypi/pyversions/satella.svg)](https://pypi.python.org/pypi/satella)
 [![PyPI version](https://badge.fury.io/py/satella.svg)](https://badge.fury.io/py/satella)
-[![PyPI](https://img.shields.io/pypi/implementation/satella.svg)]()
+[![PyPI](https://img.shields.io/pypi/implementation/satella.svg)](https://pypi.python.org/pypi/satella)
 [![Documentation Status](https://readthedocs.org/projects/satella/badge/?version=latest)](http://satella.readthedocs.io/en/latest/?badge=latest)
 
 _satella.posix_ in unavailable on non-POSIX systems, but the rest should work OK.
