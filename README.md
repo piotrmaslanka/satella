@@ -1,8 +1,8 @@
 satella
 ========
 [![Build Status](https://travis-ci.org/piotrmaslanka/satella.svg)](https://travis-ci.org/piotrmaslanka/satella)
-[![Code Climate](https://codeclimate.com/github/henrietta/satella/badges/gpa.svg)](https://codeclimate.com/github/henrietta/satella)
-[![Issue Count](https://codeclimate.com/github/henrietta/satella/badges/issue_count.svg)](https://codeclimate.com/github/henrietta/satella)
+[![Code Climate](https://codeclimate.com/github/piotrmaslanka/satella/badges/gpa.svg)](https://codeclimate.com/github/piotrmaslanka/satella)
+[![Issue Count](https://codeclimate.com/github/piotrmaslanka/satella/badges/issue_count.svg)](https://codeclimate.com/github/piotrmaslanka/satella)
 [![PyPI](https://img.shields.io/pypi/pyversions/satella.svg)]()
 [![PyPI version](https://badge.fury.io/py/satella.svg)](https://badge.fury.io/py/satella)
 [![PyPI](https://img.shields.io/pypi/implementation/satella.svg)]()
