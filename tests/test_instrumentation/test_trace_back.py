@@ -15,8 +15,8 @@ class TestTraceback(unittest.TestCase):
     def test_tb(self):
 
         try:
-            loc = 'hello world'
-            raise ValueError('hello')
+            loc = u'hello world'
+            raise ValueError(u'hello')
         except ValueError:
             tb = Traceback()
 
