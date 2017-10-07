@@ -16,7 +16,7 @@ engines:
 exclude_paths:
 - examples/**
 - tests/**
-- coolamqp/framing/definitions.py
+- docs/**
 ratings:
   paths:
-  - coolamqp/**
+  - satella/**

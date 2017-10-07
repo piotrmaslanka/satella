@@ -14,7 +14,7 @@ setup(name='satella',
             "backports.typing"
       ],
       tests_require=[
-          "nose", "mock", "coverage"
+          "nose", "mock", "coverage", "codeclimate-test-reporter"
       ],
       test_suite='nose.collector',
       classifiers=[
