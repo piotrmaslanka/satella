@@ -1,6 +1,6 @@
 ## v2.0.13
 
-* 
+* Python 3.4 znów wspierany 
 
 
 ## v2.0.12
