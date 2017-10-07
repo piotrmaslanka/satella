@@ -8,4 +8,4 @@ install:
  - pip install -r requirements.txt
 script:
  - bash tests/test_posix/test_hang_until_sig.sh
- - python setup.py tests
+ - python setup.py nosetests
