@@ -26,7 +26,7 @@ class TestHeap(unittest.TestCase):
 
         tbh = Heap()
 
-        tbh.pushmany([
+        tbh.push_many([
             (10, 'ala'),
             (20, 'ma')
             ])

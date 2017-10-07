@@ -109,13 +109,14 @@ class Heap(object):
     # TODO needs tests
     @typed(object, (None, Iterable))
     def __init__(self, from_list=None):
+        
         if from_list is None:
             self.heap = []
         else:
             self.heap = heapq.heapify(list(from_list))
 
     @typed(object, Iterable)
-    def pushmany(self, items):
+    def push_many(self, items):
         for item in items:
             self.push(item)
 
