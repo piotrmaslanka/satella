@@ -115,7 +115,8 @@ class Heap(object):
         if from_list is None:
             self.heap = []
         else:
-            self.heap = heapq.heapify(list(from_list))
+            self.heap = list(from_list)
+            heapq.heapify(self.heap)
 
     @typed(object, Iterable)
     def push_many(self, items):
@@ -136,24 +137,24 @@ class Heap(object):
                     """
         heapq.heappush(self.heap, item)
 
-    # TODO needs tests
-    def __deepcopy__(self):
+    def __copie(self, op):
         h = Heap()
-        h.heap = copy.deepcopy(self.heap)
+        h.heap = op(self.heap)
         return h
 
-    # TODO needs tests
+    def __deepcopy__(self):
+        return self.__copie(copy.deepcopy)
+
     def __copy__(self):
-        h = Heap()
-        h.heap = copy.copy(self.heap)
-        return h
+        return self.__copie(copy.copy)
 
     def __iter__(self):
         return self.heap.__iter__()
 
-    # TODO needs tests
+    @typed(returns=object)
     def pop(self):
         """
+        Return smallest element of the heap.
         :raises IndexError: on empty heap
         """
         return heapq.heappop(self.heap)
@@ -223,6 +224,7 @@ class Heap(object):
     def __repr__(self):
         return u'<satella.coding.Heap>'
 
+    @typed(returns=bool)
     def __contains__(self, item):
         return item in self.heap
 
