@@ -1,12 +1,7 @@
 # coding=UTF-8
 from setuptools import setup, find_packages
 
-setup(name='satella',
-      version='2.0.12rc3',
-      description=u'Utilities for writing servers in Python',
-      author=u'Piotr Maślanka',
-      author_email='piotrm@smok.co',
-      keywords=['ha', 'high availability', 'scalable', 'scalability', 'server'],
+setup(keywords=['ha', 'high availability', 'scalable', 'scalability', 'server'],
       packages=find_packages(exclude=['tests.*', 'tests', 'examples.*', 'examples']),
       install_requires=[
             "six",
