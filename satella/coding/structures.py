@@ -263,7 +263,7 @@ class TimeBasedHeap(Heap):
         Items will be removed from heap
         :return: list of tuple(timestamp::float, item)
         """
-        return list(self.pop_less_than(timestamp))
+        return list(Heap.pop_less_than(self, timestamp))
 
     def remove(self, item):
         """
