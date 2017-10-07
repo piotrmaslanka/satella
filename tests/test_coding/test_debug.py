@@ -97,6 +97,28 @@ class TestTypecheck(unittest.TestCase):
         testa(a=None)
         testa(a=6)
 
+    def test_self(self):
+
+        class Wtf(object):
+            @typed('self', int, int, returns=int)
+            def add(self, a, b):
+                return a+b
+
+        Wtf().add(1,2)
+
+    def test_T2(self):
+
+        @typed((int, None))
+        def testa(a=5):
+            pass
+
+        self.assertRaises(TypeError, lambda: testa(2.0))
+        testa(a=2.0)
+        self.assertRaises(TypeError, lambda: testa('yuyu'))
+        testa(a=None)
+        testa(a=6)
+
+
 
     def test_t3(self):
         def a(b, c):

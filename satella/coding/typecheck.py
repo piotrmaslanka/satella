@@ -247,10 +247,14 @@ def typed(*t_args, **t_kwargs):
             
     You can also check for return type with kw argument of "returns", ie.
     
-    @typed(int, int, returns=int)
-    def sum(a, b):
-        return a+b
-        
+        @typed(int, int, returns=int)
+        def sum(a, b):
+            return a+b
+
+    Or
+        @typed('self', a, b):
+        def method(self, a, b):
+        ..
 
     If you specify extra argument - mandatory=True - type will always be checked,
     regardless if debug mode is enabled
@@ -266,6 +270,7 @@ def typed(*t_args, **t_kwargs):
     :param t_kwargs:
     """
 
+    t_args = [q if t_args != 'self' else None for q in t_args]
     t_args = [(__typeinfo_to_tuple_of_types(x) if x is not None else None) for x in t_args]
 
     t_retarg = t_kwargs.get('returns', None)

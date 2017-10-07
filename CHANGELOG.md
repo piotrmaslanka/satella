@@ -1,6 +1,7 @@
 ## v2.0.12
 
 * Pomniejsze usprawnienia do TimerHeap
+* Dodano `self` do @typed
 
 ## v2.0.11
 
