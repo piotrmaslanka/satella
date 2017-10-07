@@ -227,6 +227,11 @@ class TimeBasedHeap(Heap):
     def __repr__(self):
         return u'<satella.coding.TimeBasedHeap>'
 
+    @returns_iterable
+    def items(self):
+        """Return an iterator, but WITHOUT timestamps (only items), in unspecified order"""
+        return (ts, ob for ts, ob in self.heap)
+
     def __init__(self):
         """
         Initialize an empty heap

@@ -1,3 +1,6 @@
+## v2.0.12
+
+* Pomniejsze usprawnienia do TimerHeap
 
 ## v2.0.11
 

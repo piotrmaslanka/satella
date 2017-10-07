@@ -21,6 +21,12 @@ class TestTimeBasedHeap(unittest.TestCase):
         self.assertNotIn((30, 'kota'), q)
 
 
+    def test_imprv(self):
+        tbh = TimeBasedHeap()
+        tbh.put(10, 'ala')
+
+        self.assertIn('ala', list(tbh.items()))
+
 class TestHeap(unittest.TestCase):
 
     def test_push(self):
