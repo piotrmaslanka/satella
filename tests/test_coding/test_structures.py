@@ -6,6 +6,7 @@ import unittest
 from satella.coding import TimeBasedHeap, Heap, CallableGroup
 import six
 import copy
+import mock
 
 
 class TestCallableGroup(unittest.TestCase):
@@ -35,21 +36,13 @@ class TestTimeBasedHeap(unittest.TestCase):
 
 
     def test_def(self):
-
-        class DCS(object):
-            def __call__(self):
-                return self.v
-            def set(self, v):
-                self.v = v
-
-        clk = DCS()
-        clk.set(0)
+        clk = mock.Mock(return_value=0)
 
         tbh = TimeBasedHeap(default_clock_source=clk)
         tbh.put('ala')
         tbh.put(4, 'alla')
 
-        clk.set(3)
+        clk.return_value = 3
 
         q = set(tbh.pop_less_than())
 
