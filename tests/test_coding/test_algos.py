@@ -1,36 +1,38 @@
 # coding=UTF-8
 from __future__ import print_function, absolute_import, division
-import six
+
+import os
 import unittest
+
 from satella.coding import merge_dicts
 
 
 class TestMergeDicts(unittest.TestCase):
-
-
     def test_lolwut(self):
-        with open('lolwut', 'wb') as fout:
-            fout.write(b'{"a":2}')
-
+        try:
+            with open('lolwut', 'wb') as fout:
+                fout.write(b'{"a":2}')
+        finally:
+            os.unlink('lolwut')
 
     def test_advanced_merge_dicts(self):
 
         DA = {
-          "google-fcm": {
-             "http-auth": {
-                  "digicort": "key=digi",
-             },
-             "endpoint": "https://fcm.googleapis.com/fcm/send"
-          }
+            "google-fcm": {
+                "http-auth": {
+                    "digicort": "key=digi",
+                },
+                "endpoint": "https://fcm.googleapis.com/fcm/send"
+            }
         }
 
         DB = {
-          "google-fcm": {
-             "http-auth": {
-                  "springblade": "key=spri"
-             },
-             "endpoint": "https://fcm.googleapis.com/fcm/send"
-          }
+            "google-fcm": {
+                "http-auth": {
+                    "springblade": "key=spri"
+                },
+                "endpoint": "https://fcm.googleapis.com/fcm/send"
+            }
         }
 
         DC = merge_dicts(DA, DB)
@@ -48,7 +50,7 @@ class TestMergeDicts(unittest.TestCase):
         self.assertEquals(nie['kupujemy'], 'tak')
 
     def test_merge_lists(self):
-        
+
         tak = merge_dicts({'kupujemy': ['tak']}, {'kupujemy': ['nie']})
 
         self.assertEqual(set(tak['kupujemy']), set(['tak', 'nie']))

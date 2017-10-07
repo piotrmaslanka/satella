@@ -1,7 +1,10 @@
 # coding=UTF-8
 from __future__ import print_function, absolute_import, division
-import six
+
 import unittest
+
+import six
+
 from satella.coding import typed, CallSignature, Number
 
 
@@ -17,7 +20,6 @@ class TestTypecheck(unittest.TestCase):
         self.assertRaises(TypeError, lambda: Lol().zomg('a'))
 
     def test_cls_test(self):
-
         class Lol(object):
             # this should fail, since the first argument the decorator gets is "self", because decorators always get FUNCTION objects!
             @typed(int, returns=int)
@@ -27,20 +29,18 @@ class TestTypecheck(unittest.TestCase):
         self.assertRaises(TypeError, lambda: Lol().zomg(2))
 
     def test_ta(self):
-
         @typed(int, int, returns=int)
         def sum(a, b):
-            return a+b
+            return a + b
 
         @typed(int, int, returns=str)
         def sum2(a, b):
-            return a+b
+            return a + b
 
         sum(1, 2)
         self.assertRaises(TypeError, lambda: sum2(2, 3))
 
     def test_tma(self):
-
         def test(a, b, c, **d):
             pass
 
@@ -52,7 +52,6 @@ class TestTypecheck(unittest.TestCase):
         self.assertFalse(cs.is_match_amount(1, 2, 3, 4))
 
     def test_t1(self):
-
         @typed(int, float, six.text_type)
         def testf(a_int, a_float, a_string):
             pass
@@ -78,7 +77,7 @@ class TestTypecheck(unittest.TestCase):
         testb(u'hello', 1)
         testb(object, 2)
 
-        @typed((None, ))
+        @typed((None,))
         def testc(p):
             pass
 
@@ -86,7 +85,6 @@ class TestTypecheck(unittest.TestCase):
         testc(None)
 
     def test_t2(self):
-
         @typed((int, None))
         def testa(a=5):
             pass
@@ -98,16 +96,14 @@ class TestTypecheck(unittest.TestCase):
         testa(a=6)
 
     def test_self(self):
-
         class Wtf(object):
             @typed('self', Number, Number, returns=Number)
             def add(self, a, b):
-                return a+b
+                return a + b
 
-        Wtf().add(1,2.5)
+        Wtf().add(1, 2.5)
 
     def test_T2(self):
-
         @typed((int, None))
         def testa(a=5):
             pass
@@ -117,8 +113,6 @@ class TestTypecheck(unittest.TestCase):
         self.assertRaises(TypeError, lambda: testa('yuyu'))
         testa(a=None)
         testa(a=6)
-
-
 
     def test_t3(self):
         def a(b, c):
@@ -132,4 +126,3 @@ class TestTypecheck(unittest.TestCase):
 
         self.assertEquals(CallSignature(a), CallSignature(b))
         self.assertNotEquals(CallSignature(a), CallSignature(c))
-

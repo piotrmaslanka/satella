@@ -1,14 +1,13 @@
+import unittest
 from threading import Thread
-from satella.coding import Monitor
 from time import sleep
+
 from six.moves.queue import Queue
 
-import unittest
-
+from satella.coding import Monitor
 
 
 class MonitorTest(unittest.TestCase):
-
     def test_release_contextmanager(self):
         class TestedClass(Monitor):
             def __init__(self, cqueue):
@@ -36,9 +35,9 @@ class MonitorTest(unittest.TestCase):
 
         with Monitor.acquire(tc):
             with Monitor.release(tc):
-                    tt.start()
-                    sleep(0.4)
-                    self.assertEqual(cq.qsize(), 2)
+                tt.start()
+                sleep(0.4)
+                self.assertEqual(cq.qsize(), 2)
 
     def test_acquire_contextmanager(self):
         class TestedClass(Monitor):
@@ -71,7 +70,6 @@ class MonitorTest(unittest.TestCase):
             self.assertEqual(cq.qsize(), 1)
 
     def test_monitoring(self):
-
         class TestedClass(Monitor):
             def __init__(self, cqueue):
                 self.cqueue = cqueue

@@ -1,13 +1,15 @@
 # coding=UTF-8
 from __future__ import print_function, absolute_import, division
-import six
-import monotonic
+
 import unittest
-from satella.instrumentation import instrument, DEBUG, RUNTIME, DISABLED, manager
+
+import monotonic
+import six
+
+from satella.instrumentation import DEBUG, RUNTIME, DISABLED, manager
 
 
 class TestInstrumentsAndMetrics(unittest.TestCase):
-
     def test_m1(self):
         root = manager.getInstrument(u'zomg')
 
@@ -22,14 +24,14 @@ class TestInstrumentsAndMetrics(unittest.TestCase):
         st = monotonic.monotonic()
 
         for x in six.moves.xrange(0, 100):
-            txt.log(u'Dupa'+str(x))
+            txt.log(u'Dupa' + str(x))
 
         self.assertEqual(len(txt.view()), 30)
 
         for i, q in enumerate(txt.view()):
             ts, m, txt = q
             self.assertGreaterEqual(m, st)
-            self.assertEquals(u'Dupa'+str(70 + i), txt)
+            self.assertEquals(u'Dupa' + str(70 + i), txt)
 
     def test_kids(self):
         root = manager.getInstrument(u'root')

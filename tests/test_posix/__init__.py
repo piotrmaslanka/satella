@@ -1,20 +1,16 @@
 # coding=UTF-8
 from __future__ import print_function, absolute_import, division
 
+import os
 import sys
-import six
 import unittest
-import time
-import threading
 
 from mock import patch, Mock
-import os
 
 
 class TestPidlock(unittest.TestCase):
-
     def test_pidlock(self):
-        from satella.posix.pidlock import AcquirePIDLock, FailedToAcquire
+        from satella.posix.pidlock import AcquirePIDLock
 
         with AcquirePIDLock('lock', '.', delete_on_dead=True):
             self.assertTrue(os.path.exists('./lock'))
@@ -22,7 +18,7 @@ class TestPidlock(unittest.TestCase):
             try:
                 r = int(r)
             except ValueError:
-                return    # lol wut
+                return  # lol wut
             self.assertEquals(int(r), os.getpid())
 
         self.assertTrue(not os.path.exists('./lock'))
@@ -32,9 +28,8 @@ class TestDaemon(unittest.TestCase):
     @unittest.skipIf('win' in sys.platform, 'Running on Windows')
     def test_daemonize(self):
         with patch('sys.stdin') as stdin, patch('sys.stdout') as stdout, patch('sys.stderr') as stderr, \
-             patch('os.fork', return_value=0) as fork, patch('os.umask') as umask, patch('os.setsid') as setsid, \
-             patch('os.chdir') as chdir, patch('sys.exit', new=lambda: 0) as exit:
-
+                patch('os.fork', return_value=0) as fork, patch('os.umask') as umask, patch('os.setsid') as setsid, \
+                patch('os.chdir') as chdir, patch('sys.exit', new=lambda: 0) as exit:
             from satella.posix import daemonize
 
             stdin.close, stdout.close, stderr.close = Mock(), Mock(), Mock()
