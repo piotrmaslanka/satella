@@ -406,7 +406,7 @@ def coerce(*t_args, **t_kwargs):
 
     def argify(args):
         return [_do_if_not_type(argument, typedescr) \
-                        for argument, typedescr in itertools.zip_longest(args, t_args)]
+                        for argument, typedescr in six.moves.zip_longest(args, t_args)]
 
     t_retarg = t_kwargs.get('returns', None)
 
