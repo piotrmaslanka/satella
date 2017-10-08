@@ -16,6 +16,7 @@ except ImportError:
     from backports import typing
 from collections import namedtuple
 import functools
+import itertools
 
 logger = logging.getLogger(__name__)
 
@@ -405,7 +406,7 @@ def coerce(*t_args, **t_kwargs):
 
     def argify(args):
         return [_do_if_not_type(argument, typedescr) \
-                        for argument, typedescr in zip(args, t_args)]
+                        for argument, typedescr in itertools.zip_longest(args, t_args)]
 
     t_retarg = t_kwargs.get('returns', None)
 
@@ -416,6 +417,7 @@ def coerce(*t_args, **t_kwargs):
         @functools.wraps(fun)
         def inner(*args, **kwargs):
             # add extra 'None' argument if unbound method
+
             new_args = argify(args)
 
             rt = fun(*new_args, **kwargs)
