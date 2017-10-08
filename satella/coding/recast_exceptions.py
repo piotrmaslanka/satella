@@ -19,10 +19,10 @@ def silence_excs(*exc_types):
 class rethrow_as(object):
     """Decorator + context manager"""
 
-    def __init__(self, *pairs, exception_preprocessor=repr):
+    def __init__(self, *pairs, **kwargs):
         self.to_catch = tuple(p[0] for p in pairs)
         self.pairs = pairs
-        self.exception_preprocessor = exception_preprocessor
+        self.exception_preprocessor = kwargs.get('exception_preprocessor', repr)
 
     def __call__(self, fun):
         @functools.wraps(fun)

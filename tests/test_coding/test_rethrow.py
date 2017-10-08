@@ -7,6 +7,10 @@ from satella.coding import rethrow_as, silence_excs
 
 class TestStuff(unittest.TestCase):
 
+    @silence_excs(ValueError)
+    def test_silencer_2(self):
+        raise ValueError()
+
     def test_silencer(self):
         with silence_excs(TypeError):
             raise TypeError()
