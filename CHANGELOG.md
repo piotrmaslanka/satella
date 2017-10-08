@@ -1,3 +1,7 @@
+## v2.0.16
+
+* Dodano `OmniHashableMixin`
+
 ## v2.0.15
 
 * Usprawnienia do `rethrow_as`

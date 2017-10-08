@@ -1,11 +1,18 @@
 # coding=UTF-8
+from __future__ import print_function, absolute_import, division
 """
 Decorator for debug-time typechecking
+
+If you are simultaneously using @typed and @coerce, use them in following order:
+
+    @coerce(...)
+    @typed(...)
+    def fun(..):
+        ...
+
 """
-from __future__ import print_function, absolute_import, division
 
 import inspect
-import itertools
 import logging
 
 import six
@@ -369,37 +376,7 @@ def typed(*t_args, **t_kwargs):
 
 
 def coerce(*t_args, **t_kwargs):
-    """
-    Use like:
-
-        @typed(int, six.text_type)
-        def display(times, text):
-            ...
-
-    You can also check for return type with kw argument of "returns", ie.
-
-        @typed(int, int, returns=int)
-        def sum(a, b):
-            return a+b
-
-    Or
-        @typed('self', a, b):
-        def method(self, a, b):
-        ..
-
-    If you specify extra argument - mandatory=True - type will always be
-    checked, regardless if debug mode is enabled
-
-    Same rules apply.
-
-    int will automatically include long for checking (Python 3 compatibility)
-    If you want to check for None, type (None, )
-    None for an argument means "do no checking", (None, ) means "type must be
-    NoneType". You can pass tuples or lists to match for multiple types
-
-    :param t_args:
-    :param t_kwargs:
-    """
+    """#todo banana banana banana"""
 
     t_args = [(__typeinfo_to_tuple_of_types(x, operator=lambda x: x))
               for x in t_args]
@@ -413,7 +390,6 @@ def coerce(*t_args, **t_kwargs):
     t_retarg = __typeinfo_to_tuple_of_types(t_retarg, operator=lambda x: x)
 
     def outer(fun):
-
         @functools.wraps(fun)
         def inner(*args, **kwargs):
             # add extra 'None' argument if unbound method
@@ -422,7 +398,5 @@ def coerce(*t_args, **t_kwargs):
 
             rt = fun(*new_args, **kwargs)
             return _do_if_not_type(rt, t_retarg)
-
         return inner
-
     return outer

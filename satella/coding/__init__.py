@@ -10,10 +10,10 @@ from .recast_exceptions import rethrow_as, silence_excs
 from .typecheck import typed, List, Tuple, Dict, NewType, Callable, Sequence, \
     TypeVar, Generic, Mapping, Iterable, Union, Any, Optional, CallSignature, \
     Number, coerce
-from .structures import TimeBasedHeap, Heap, typednamedtuple
+from .structures import TimeBasedHeap, Heap, typednamedtuple, OmniHashableMixin
 
 __all__ = [
-    'typednamedtuple',
+    'typednamedtuple', 'OmniHashableMixin'
     'TimeBasedHeap', 'Heap', 'CallableGroup',
     'Monitor', 'RMonitor', 'merge_dicts',
     'typed', 'List', 'Tuple', 'Dict', 'NewType', 'Callable', 'Sequence', 'coerce'

@@ -5,7 +5,7 @@ import copy
 import functools
 import heapq
 import logging
-
+import operator
 import six
 
 from satella.coding.typecheck import typed, Callable, Iterable
@@ -14,12 +14,33 @@ logger = logging.getLogger(__name__)
 
 __all__ = [
     'Heap',
-    'TimeBasedHeap'
+    'TimeBasedHeap',
+    'OmniHashableMixin'
 ]
 
 returns_bool = typed(returns=bool)
 returns_iterable = typed(returns=Iterable)
 
+
+class OmniHashableMixin(object):
+
+    _HASH_FIELDS_TO_USE = []
+
+    def __hash__(self):
+        return functools.reduce(operator.xor, (hash(getattr(self, fname)) for fname in self.FIELDS_TO_USE))
+
+    def __eq__(self, other):
+        cons = lambda p: [getattr(p, fname) for fname in self.FIELDS_TO_USE]
+        if cons(self) == cons(other):
+            return True
+
+        if not isinstance(other, OmniHashableMixin):
+            return str(self) == str(other)
+        else:
+            return False
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
 
 
 def _extras_to_one(fun):

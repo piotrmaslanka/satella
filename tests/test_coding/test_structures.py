@@ -3,7 +3,8 @@ from __future__ import print_function, absolute_import, division
 
 import unittest
 
-from satella.coding import TimeBasedHeap, Heap, CallableGroup, typednamedtuple
+from satella.coding import TimeBasedHeap, Heap, CallableGroup, typednamedtuple, \
+    OmniHashableMixin
 import six
 import copy
 import mock
@@ -15,6 +16,29 @@ class TestCallableGroup(unittest.TestCase):
 
 
 class TestTimeBasedHeap(unittest.TestCase):
+    
+    def test_omni(self):
+        
+        class Omni(OmniHashableMixin):
+            _HASH_FIELDS_TO_USE = ['a']
+
+            def __init__(self, a):
+                self.a = a
+
+        e1 = Omni(2)
+        e2 = Omni(1)
+        e3 = Omni(1)
+
+        self.assertEqual(e2, e3)
+        self.assertNotEqual(e1, e2)
+        self.assertNotEqual(e1, e3)
+
+        a = {
+            e1: '1', e2: '2', e3: '3'
+        }
+
+        self.assertEqual(a[e1], '1')
+
     def test_tbh(self):
         tbh = TimeBasedHeap()
 
