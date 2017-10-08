@@ -13,7 +13,6 @@ from satella.coding.typecheck import typed, Callable, Iterable
 logger = logging.getLogger(__name__)
 
 __all__ = [
-    'CallableGroup',
     'Heap',
     'TimeBasedHeap'
 ]
