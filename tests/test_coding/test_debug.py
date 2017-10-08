@@ -95,6 +95,20 @@ class TestTypecheck(unittest.TestCase):
         testa(a=None)
         testa(a=6)
 
+    def test_shorter_coerces(self):
+
+        @coerce(int, None, str)
+        def test(a, b, c, d, e):
+            return a, b, c, d, e
+
+        a, b, c, d, e = test('1', 2, 3, 4, 5)
+
+        self.assertEqual(a, 1)
+        self.assertEqual(b, 2)
+        self.assertEqual(c, '3')
+        self.assertEqual(d, 4)
+        self.assertEqual(e, 5)
+
     def test_coerce(self):
         class Wtf(object):
             @coerce('self', float, float)

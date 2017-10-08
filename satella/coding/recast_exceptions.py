@@ -44,7 +44,7 @@ class rethrow_as(object):
         """
 
         # You can also provide just two exceptions
-        if len(pairs) == 2 and all(map(lambda p: issubclass(p, Exception), pairs)):
+        if len(pairs) == 2 and all(issubclass(p, Exception) for p in pairs):
             a, b = pairs
             pairs = [(a, b)]
 
@@ -63,7 +63,6 @@ class rethrow_as(object):
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-
         if not isinstance(exc_val, self.to_catch):
             return
 
