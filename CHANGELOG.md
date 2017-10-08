@@ -1,3 +1,7 @@
+## v2.0.14
+
+* Dodano `rethrow_as`
+
 ## v2.0.13
 
 * Python 3.4 znów wspierany

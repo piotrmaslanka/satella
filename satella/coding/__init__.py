@@ -9,10 +9,13 @@ from .monitor import Monitor, RMonitor
 from .structures import TimeBasedHeap, CallableGroup, Heap
 from .typecheck import typed, List, Tuple, Dict, NewType, Callable, Sequence, \
     TypeVar, Generic, Mapping, Iterable, Union, Any, Optional, CallSignature, Number
+from .recast_exceptions import rethrow_as, silence_excs
 
 __all__ = [
     'TimeBasedHeap', 'Heap', 'CallableGroup',
     'Monitor', 'RMonitor', 'merge_dicts',
     'typed', 'List', 'Tuple', 'Dict', 'NewType', 'Callable', 'Sequence',
-    'TypeVar', 'Generic', 'Mapping', 'Iterable', 'Union', 'Any', 'Optional', 'CallSignature', 'Number'
+    'TypeVar', 'Generic', 'Mapping', 'Iterable', 'Union', 'Any', 'Optional', 'CallSignature', 'Number',
+    'rethrow_as', 'silence_excs'
 ]
+
