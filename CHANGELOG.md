@@ -1,6 +1,7 @@
 ## v2.0.15
 
 * Usprawnienia do `rethrow_as`
+* Travis teraz wrzuca na PyPI, a nie ja :)
 
 ## v2.0.14
 

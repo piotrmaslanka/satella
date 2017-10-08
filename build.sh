@@ -8,6 +8,3 @@ if [ $TRAVIS_BRANCH == "master" ]; then
     python setup.py bdist bdist_wheel
     twine upload -u $PYPI_USER -p $PYPI_PWD dist/*
 fi
-
-
-
