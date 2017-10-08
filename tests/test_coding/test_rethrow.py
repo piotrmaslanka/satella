@@ -24,5 +24,10 @@ class TestStuff(unittest.TestCase):
 
         self.fail()
 
+    def test_rethrow_2(self):
 
-        
+        @rethrow_as((ValueError, NameError))
+        def lol():
+            raise ValueError()
+
+        self.assertRaises(NameError, lol)

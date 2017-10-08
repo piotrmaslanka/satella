@@ -13,13 +13,30 @@ __all__ = [
 
 
 def silence_excs(*exc_types):
+    """
+    Silence given exception types.
+
+    Can be either a decorator or a context manager
+    """
     return rethrow_as(*[(t, None) for t in exc_types])
 
 
 class rethrow_as(object):
-    """Decorator + context manager"""
+    """
+    Transform some exceptions into others.
+
+    Either a decorator or a context manager
+    """
 
     def __init__(self, *pairs, **kwargs):
+        """
+        Pass tuples of (exception to catch - exception to transform to).
+
+        New exception will be created by calling exception to transform to with
+        repr of current one.
+        :param exception_preprocessor: other callable/1 to use instead od repr.
+            Should return a text
+        """
         self.to_catch = tuple(p[0] for p in pairs)
         self.pairs = pairs
         self.exception_preprocessor = kwargs.get('exception_preprocessor', repr)
