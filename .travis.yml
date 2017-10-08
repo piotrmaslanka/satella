@@ -10,3 +10,7 @@ install:
 script:
  - bash tests/test_posix/test_hang_until_sig.sh
  - python setup.py nosetests
+after_success:
+- bash build.sh
+
+
