@@ -117,6 +117,13 @@ class TestTypecheck(unittest.TestCase):
 
         self.assertEqual(Wtf().add('1', '2.5'), 3.5)
 
+    def test_coerce_result(self):
+
+        @coerce(returns=str)
+        def add(a, b):
+            return a+b
+
+        self.assertEqual(add(1, 2), '3')
 
     def test_self(self):
         class Wtf(object):
@@ -125,6 +132,8 @@ class TestTypecheck(unittest.TestCase):
                 return a + b
 
         Wtf().add(1, 2.5)
+
+
 
     def test_T2(self):
         @typed((int, None))
