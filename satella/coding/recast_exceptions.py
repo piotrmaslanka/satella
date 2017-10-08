@@ -47,7 +47,6 @@ class rethrow_as(object):
         if len(pairs) == 2 and all(map(lambda p: issubclass(p, Exception), pairs)):
             a, b = pairs
             pairs = [(a, b)]
-        print(pairs)
 
         self.to_catch = tuple([p[0] for p in pairs])
         self.pairs = pairs
