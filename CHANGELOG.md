@@ -1,3 +1,7 @@
+## v2.0.15
+
+* Usprawnienia do `rethrow_as`
+
 ## v2.0.14
 
 * Dodano `rethrow_as`

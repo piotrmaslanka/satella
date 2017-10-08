@@ -34,10 +34,22 @@ class rethrow_as(object):
 
         New exception will be created by calling exception to transform to with
         repr of current one.
+
+        You can also provide just two exceptions, eg.
+
+          rethrow_as(NameError, ValueError)
+
         :param exception_preprocessor: other callable/1 to use instead od repr.
             Should return a text
         """
-        self.to_catch = tuple(p[0] for p in pairs)
+
+        # You can also provide just two exceptions
+        if len(pairs) == 2 and all(map(lambda p: issubclass(p, Exception), pairs)):
+            a, b = pairs
+            pairs = [(a, b)]
+        print(pairs)
+
+        self.to_catch = tuple([p[0] for p in pairs])
         self.pairs = pairs
         self.exception_preprocessor = kwargs.get('exception_preprocessor', repr)
 
