@@ -1,19 +1,17 @@
 # coding=UTF-8
 from __future__ import print_function, absolute_import, division
 import six
-import functools
-import itertools
 import logging
 from collections import namedtuple
 
-from .typecheck import typed, coerce, CallSignature
-
 logger = logging.getLogger(__name__)
 
+__all__ = [
+    'typednamedtuple',
+]
 
 def _nth(it, n):
     return [x[n] for x in it]
-
 
 def _adjust(q):
     var, type_ = q
@@ -28,11 +26,25 @@ def typednamedtuple(cls_name, *arg_name_type):
     Fields will be coerced to type passed in the pair.
 
     Parameters are tuples of (field name, class/constructor as callable/1)
+
+    For example:
+
+      tnt = typednamedtuple('tnt', ('x', float), ('y', float))
+      a = tnt('5.0', y=2)
+
+      a.x is float, a.y is float too
     """
-    fieldnames = _nth(arg_name_type, 0)
-    typeops = _nth(arg_name_type, 1)
+
+    fieldnames = []
+    typeops = []
+    mapping = {}
+
+    for name, type_ in arg_name_type:
+        fieldnames.append(name)
+        typeops.append(type_)
+        mapping[name] = type_
+
     MyCls = namedtuple(cls_name, fieldnames)
-    mapping = dict(arg_name_type)
 
     class Wrapper(MyCls):
         __doc__ = MyCls.__doc__
@@ -45,13 +57,12 @@ def typednamedtuple(cls_name, *arg_name_type):
                 try:
                     nargs.append(_adjust((kwargs.pop(next_field_name), mapping[next_field_name])))
                 except KeyError:
-                    raise ValueError('Field %s not given', next_field_name)
+                    raise TypeError('Field %s not given', next_field_name)
 
             if len(kwargs) > 0:
-                raise ValueError('Too many parameters')
+                raise TypeError('Too many parameters')
 
             return MyCls.__new__(MyCls, *nargs)
-
     return Wrapper
 
 

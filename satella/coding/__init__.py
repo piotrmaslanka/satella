@@ -4,15 +4,13 @@ Just useful objects to make your coding nicer every day
 """
 from __future__ import print_function, absolute_import, division
 
+from .concurrent import Monitor, RMonitor, CallableGroup
 from .algos import merge_dicts
-from .monitor import Monitor, RMonitor
-from .structures import TimeBasedHeap, CallableGroup, Heap
+from .recast_exceptions import rethrow_as, silence_excs
 from .typecheck import typed, List, Tuple, Dict, NewType, Callable, Sequence, \
     TypeVar, Generic, Mapping, Iterable, Union, Any, Optional, CallSignature, \
     Number, coerce
-from .recast_exceptions import rethrow_as, silence_excs
-from .typednamedtuple import typednamedtuple
-
+from .structures import TimeBasedHeap, Heap, typednamedtuple
 
 __all__ = [
     'typednamedtuple',
