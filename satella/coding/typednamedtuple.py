@@ -23,6 +23,12 @@ def _adjust(q):
 
 
 def typednamedtuple(cls_name, *arg_name_type):
+    """
+    Returns a new subclass of tuple with named fields.
+    Fields will be coerced to type passed in the pair.
+
+    Parameters are tuples of (field name, class/constructor as callable/1)
+    """
     fieldnames = _nth(arg_name_type, 0)
     typeops = _nth(arg_name_type, 1)
     MyCls = namedtuple(cls_name, fieldnames)
