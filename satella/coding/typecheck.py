@@ -9,7 +9,7 @@ import itertools
 import logging
 
 import six
-
+from copy import copy
 try:
     import typing
 except ImportError:
@@ -186,6 +186,24 @@ class CallSignature(object):
         else:
             self.has_kwargs = False
 
+    def to_invocation(self, locals):
+        """
+        Return an invocation to the function reconstructed from its locals
+        :param locals: as returned by .result()
+        :return: tuple of (args, kwargs)
+        """
+        locals = copy(locals)
+        args = []
+
+        for arg in self.pos_args:
+            if arg.name in locals:
+                args.append(locals.pop(arg.name))
+            elif not arg.required:
+                args.append(arg.default_value)
+                del locals[arg.name]
+
+        return args, locals
+
     def result(self, *args, **kwargs):
         """
         Simulate a function call, see what locals are defined
@@ -243,11 +261,11 @@ class CallSignature(object):
         return True
 
 
-def __typeinfo_to_tuple_of_types(typeinfo):
+def __typeinfo_to_tuple_of_types(typeinfo, operator=type):
     if typeinfo == 'self':
         return None
     elif typeinfo is None:
-        return (type(None),)
+        return (operator(None),)
     elif typeinfo == int and six.PY2:
         return six.integer_types
     else:
@@ -258,6 +276,31 @@ def __typeinfo_to_tuple_of_types(typeinfo):
             return tuple(new_tup)
         else:
             return (typeinfo,)
+
+
+def _do_if_not_type(var, type_, fun='default'):
+
+    if type_ in ((type(None), ), ) and (fun == 'default'):
+        return None
+
+    if type_ in (None, (None, ), 'self'):
+        return var
+
+    if not isinstance(var, type_):
+
+        if fun == 'default':
+            if type_[0] == type(None):
+                return None
+            else:
+                print(var, 'to', type_[0])
+                return type_[0](var)
+
+        q = fun()
+        if isinstance(q, Exception):
+            raise q
+        return q
+    else:
+        return var
 
 
 def typed(*t_args, **t_kwargs):
@@ -310,18 +353,74 @@ def typed(*t_args, **t_kwargs):
         def inner(*args, **kwargs):
             # add extra 'None' argument if unbound method
             for argument, typedescr in zip(args, t_args):
-                if typedescr is not None:
-                    if not isinstance(argument, typedescr):
-                        raise TypeError('Got %s, expected %s' % (
-                            type(argument), typedescr))
+                _do_if_not_type(argument, typedescr, lambda: \
+                    TypeError('Got %s, expected %s' % (
+                            type(argument), typedescr)))
 
             rt = fun(*args, **kwargs)
 
-            if t_retarg is not None:
-                if not isinstance(rt, t_retarg):
-                    raise TypeError('Returned %s, expected %s' % (
-                        type(rt), t_retarg))
+            return _do_if_not_type(rt, t_retarg, lambda:
+                    TypeError('Returned %s, expected %s' % (
+                        type(rt), t_retarg)))
 
-            return rt
         return inner
+    return outer
+
+
+def coerce(*t_args, **t_kwargs):
+    """
+    Use like:
+
+        @typed(int, six.text_type)
+        def display(times, text):
+            ...
+
+    You can also check for return type with kw argument of "returns", ie.
+
+        @typed(int, int, returns=int)
+        def sum(a, b):
+            return a+b
+
+    Or
+        @typed('self', a, b):
+        def method(self, a, b):
+        ..
+
+    If you specify extra argument - mandatory=True - type will always be
+    checked, regardless if debug mode is enabled
+
+    Same rules apply.
+
+    int will automatically include long for checking (Python 3 compatibility)
+    If you want to check for None, type (None, )
+    None for an argument means "do no checking", (None, ) means "type must be
+    NoneType". You can pass tuples or lists to match for multiple types
+
+    :param t_args:
+    :param t_kwargs:
+    """
+
+    t_args = [(__typeinfo_to_tuple_of_types(x, operator=lambda x: x))
+              for x in t_args]
+
+    def argify(args):
+        return [_do_if_not_type(argument, typedescr) \
+                        for argument, typedescr in zip(args, t_args)]
+
+    t_retarg = t_kwargs.get('returns', None)
+
+    t_retarg = __typeinfo_to_tuple_of_types(t_retarg, operator=lambda x: x)
+
+    def outer(fun):
+
+        @functools.wraps(fun)
+        def inner(*args, **kwargs):
+            # add extra 'None' argument if unbound method
+            new_args = argify(args)
+
+            rt = fun(*new_args, **kwargs)
+            return _do_if_not_type(rt, t_retarg)
+
+        return inner
+
     return outer

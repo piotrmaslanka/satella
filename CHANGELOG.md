@@ -2,6 +2,7 @@
 
 * Usprawnienia do `rethrow_as`
 * Travis teraz wrzuca na PyPI, a nie ja :)
+* Dodano `typednamedtuple`
 
 ## v2.0.14
 

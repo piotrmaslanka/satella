@@ -5,7 +5,7 @@ import unittest
 
 import six
 
-from satella.coding import typed, CallSignature, Number
+from satella.coding import typed, CallSignature, Number, coerce
 
 
 class TestTypecheck(unittest.TestCase):
@@ -94,6 +94,15 @@ class TestTypecheck(unittest.TestCase):
         self.assertRaises(TypeError, lambda: testa('yuyu'))
         testa(a=None)
         testa(a=6)
+
+    def test_coerce(self):
+        class Wtf(object):
+            @coerce('self', float, float)
+            def add(self, a, b):
+                return a + b
+
+        self.assertEqual(Wtf().add('1', '2.5'), 3.5)
+
 
     def test_self(self):
         class Wtf(object):

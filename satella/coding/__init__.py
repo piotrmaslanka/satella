@@ -8,13 +8,17 @@ from .algos import merge_dicts
 from .monitor import Monitor, RMonitor
 from .structures import TimeBasedHeap, CallableGroup, Heap
 from .typecheck import typed, List, Tuple, Dict, NewType, Callable, Sequence, \
-    TypeVar, Generic, Mapping, Iterable, Union, Any, Optional, CallSignature, Number
+    TypeVar, Generic, Mapping, Iterable, Union, Any, Optional, CallSignature, \
+    Number, coerce
 from .recast_exceptions import rethrow_as, silence_excs
+from .typednamedtuple import typednamedtuple
+
 
 __all__ = [
+    'typednamedtuple',
     'TimeBasedHeap', 'Heap', 'CallableGroup',
     'Monitor', 'RMonitor', 'merge_dicts',
-    'typed', 'List', 'Tuple', 'Dict', 'NewType', 'Callable', 'Sequence',
+    'typed', 'List', 'Tuple', 'Dict', 'NewType', 'Callable', 'Sequence', 'coerce'
     'TypeVar', 'Generic', 'Mapping', 'Iterable', 'Union', 'Any', 'Optional', 'CallSignature', 'Number',
     'rethrow_as', 'silence_excs'
 ]

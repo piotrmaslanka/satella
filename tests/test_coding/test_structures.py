@@ -3,7 +3,7 @@ from __future__ import print_function, absolute_import, division
 
 import unittest
 
-from satella.coding import TimeBasedHeap, Heap, CallableGroup
+from satella.coding import TimeBasedHeap, Heap, CallableGroup, typednamedtuple
 import six
 import copy
 import mock
@@ -34,6 +34,17 @@ class TestTimeBasedHeap(unittest.TestCase):
 
         self.assertIn('ala', list(tbh.items()))
 
+    def test_typednamedtuple(self):
+        tnt = typednamedtuple('tnt',
+                              ('x', float),
+                              ('y', float))
+
+        a = tnt('2.5', y=3)
+
+        self.assertEqual(a.x, 2.5)
+        self.assertEqual(a.y, 3.0)
+        self.assertIsInstance(a.y, float)
+        self.assertIsInstance(a, tuple)
 
     def test_def(self):
         clk = mock.Mock(return_value=0)
