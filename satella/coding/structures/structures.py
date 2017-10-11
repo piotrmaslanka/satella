@@ -109,8 +109,7 @@ class Heap(object):
         """
         return heapq.heappop(self.heap)
 
-    @typed('self', Optional[Callable[[object], bool]],
-           Optional[Callable[[object], object]])
+    @typed('self', Optional(Callable), Optional(Callable))
     def filtermap(self, filter_fun=None, map_fun=None):
         """
         Get only items that return True when condition(item) is True. Apply a
@@ -199,7 +198,7 @@ class TimeBasedHeap(Heap):
         """
         return (ob for ts, ob in self.heap)
 
-    @typed('self', Optional[Callable[[], Number]])
+    @typed('self', Optional(Callable((), Number)))
     def __init__(self, default_clock_source=None):
         """
         Initialize an empty heap
@@ -224,7 +223,7 @@ class TimeBasedHeap(Heap):
         self.push((timestamp, item))
 
     @returns_iterable
-    @typed('self', Optional[Number])
+    @typed('self', Optional(Number))
     def pop_less_than(self, less=None):
         """
         Return all elements less (sharp inequality) than particular value.

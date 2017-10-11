@@ -5,7 +5,8 @@ import unittest
 
 import six
 
-from satella.coding import typed, CallSignature, Number, coerce, Optional
+from satella.coding import typed, CallSignature, Number, coerce, Optional, \
+    List, Dict, Tuple, Set, Callable
 
 
 class TestTypecheck(unittest.TestCase):
@@ -16,8 +17,14 @@ class TestTypecheck(unittest.TestCase):
             def zomg(self, a):
                 return a
 
+            @typed('self', List(int), Dict(str, int), Tuple(int), Set(int),
+                   Callable(int, None))
+            def lel(self, lst, dct, tpl, st, cbl):
+                pass
+
         Lol().zomg(2)
         self.assertRaises(TypeError, lambda: Lol().zomg('a'))
+        Lol().lel([], {}, (), set([1]), lambda a: None)
 
     def test_cls_test(self):
         class Lol(object):
@@ -85,7 +92,7 @@ class TestTypecheck(unittest.TestCase):
         testc(None)
 
     def test_t2(self):
-        @typed(Optional[int])
+        @typed(Optional(int))
         def testa(a=5):
             pass
         
@@ -147,7 +154,7 @@ class TestTypecheck(unittest.TestCase):
         testa(a=6)
 
     def test_T2a(self):
-        @typed(Optional[int])
+        @typed(Optional(int))
         def testa(a=5):
             pass
 

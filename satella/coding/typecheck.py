@@ -28,16 +28,18 @@ import itertools
 
 logger = logging.getLogger(__name__)
 
-Callable = typing.Callable
+Callable = lambda *args: typing.Callable
 Sequence = typing.Sequence
 Number = numbers.Real
 Mapping = typing.Mapping
 Iterable = typing.Iterable
-Union = typing.Union
 Any = typing.Any
-Optional = typing.Optional
+Optional = lambda opt: opt + (None, ) if isinstance(opt, tuple) else (opt, None)
 TypeVar = typing.TypeVar
-
+List = lambda *opt: list
+Tuple = lambda *opt: tuple
+Dict = lambda *p: dict
+Set = lambda *p: set
 
 # Internal tokens - only instances will be
 class _NotGiven(object):
@@ -130,9 +132,9 @@ class CallSignature(object):
       - locals (Dict[str => CSArgument]) - list of locals this function call
         will generate
       - pos_args (List[CSArgument)] - list of positional arguments
-      - varargs_name (Union[str, None]) - name of varargs argument, or None if
+      - varargs_name ((str, None)) - name of varargs argument, or None if
         not present
-      - kwargs_name (Union[str, None]) - name of kwargs argument, or None if
+      - kwargs_name ((str, None)) - name of kwargs argument, or None if
         not present
     """
 
@@ -293,17 +295,12 @@ def istype(var, type_):
             return True
 
     except TypeError as e:   # must be a typing.* annotation
-        if type(type_) == type(typing.Union):
-            return istype(var, tuple(type_.__args__))
-
-        if type(type(type_)) == typing.Callable:
-            return '__call__' in var
         try:
             return all(hasattr(var, n) for n in {
-                typing.Iterable: ('__iter__',),
-                typing.Sequence: ('__iter__', '__getattr__', '__len__'),
-                typing.Callable: ('__call__', ),
-                typing.Mapping: ('__getitem__', ),
+                Iterable: ('__iter__',),
+                Sequence: ('__iter__', '__getattr__', '__len__'),
+                Callable: ('__call__', ),
+                Mapping: ('__getitem__', ),
             }[type(var)])
         except KeyError:
             pass
