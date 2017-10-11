@@ -14,7 +14,7 @@ If you are simultaneously using @typed and @coerce, use them in following order:
 
 import inspect
 import logging
-
+from ..coding.recast_exceptions import silence_excs
 import six
 from copy import copy
 try:
@@ -23,6 +23,7 @@ except ImportError:
     from backports import typing
 from collections import namedtuple
 import functools
+import numbers
 import itertools
 
 logger = logging.getLogger(__name__)
@@ -30,17 +31,15 @@ logger = logging.getLogger(__name__)
 List = typing.List
 Tuple = typing.Tuple
 Dict = typing.Dict
-NewType = typing.NewType
 Callable = typing.Callable
 Sequence = typing.Sequence
-Number = six.integer_types + (float,)
-TypeVar = typing.TypeVar
-Generic = typing.Generic
+Number = numbers.Real
 Mapping = typing.Mapping
 Iterable = typing.Iterable
 Union = typing.Union
 Any = typing.Any
 Optional = typing.Optional
+TypeVar = typing.TypeVar
 
 
 # Internal tokens - only instances will be
@@ -285,6 +284,38 @@ def __typeinfo_to_tuple_of_types(typeinfo, operator=type):
         else:
             return (typeinfo,)
 
+def istype(var, type_):
+    print(var, type_)
+
+    if type_ is None or type_ == 'self':
+        return True
+
+    elif type(type_) == tuple:
+        return any(istype(var, subtype) for subtype in type_)
+
+    try:
+        if isinstance(var, type_):
+            return True
+
+    except TypeError as e:   # must be a typing.* annotation
+        if type(type_) == type(typing.Union):
+            return any(tuple(type_.__args__))
+
+        try:
+            return all(hasattr(var, n) for n in {
+                typing.Iterable: ('__iter__',),
+                typing.Sequence: ('__iter__', '__getattr__', '__len__'),
+                typing.Callable: ('__call__', ),
+                typing.Mapping: ('__getitem__', ),
+            }[type(var)])
+        except KeyError:
+            pass
+
+        return type(var) == type_
+
+
+    return False
+
 
 def _do_if_not_type(var, type_, fun='default'):
 
@@ -294,7 +325,7 @@ def _do_if_not_type(var, type_, fun='default'):
     if type_ in (None, (None, ), 'self'):
         return var
 
-    if not isinstance(var, type_):
+    if not istype(var, type_):
 
         if fun == 'default':
             if type_[0] == type(None):

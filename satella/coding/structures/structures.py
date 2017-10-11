@@ -3,12 +3,14 @@ from __future__ import print_function, absolute_import, division
 
 import copy
 import functools
+import time
 import heapq
 import logging
 import operator
 import six
 
-from satella.coding.typecheck import typed, Callable, Iterable
+from satella.coding.typecheck import typed, Callable, Iterable, Optional, \
+    Number
 
 logger = logging.getLogger(__name__)
 
@@ -27,10 +29,11 @@ class OmniHashableMixin(object):
     _HASH_FIELDS_TO_USE = []
 
     def __hash__(self):
-        return functools.reduce(operator.xor, (hash(getattr(self, fname)) for fname in self.FIELDS_TO_USE))
+        return functools.reduce(operator.xor, (hash(getattr(self, fname)) \
+                                               for fname in self. _HASH_FIELDS_TO_USE))
 
     def __eq__(self, other):
-        cons = lambda p: [getattr(p, fname) for fname in self.FIELDS_TO_USE]
+        cons = lambda p: [getattr(p, fname) for fname in self. _HASH_FIELDS_TO_USE]
         if cons(self) == cons(other):
             return True
 
@@ -100,6 +103,7 @@ class Heap(object):
     def __iter__(self):
         return self.heap.__iter__()
 
+    @typed(returns=object)
     def pop(self):
         """
         Return smallest element of the heap.
@@ -107,7 +111,8 @@ class Heap(object):
         """
         return heapq.heappop(self.heap)
 
-    @typed(object, (Callable, None), (Callable, None))
+    @typed('self', Optional[Callable[[object], bool]],
+           Optional[Callable[[object], object]])
     def filtermap(self, filter_fun=None, map_fun=None):
         """
         Get only items that return True when condition(item) is True. Apply a
@@ -188,7 +193,7 @@ class TimeBasedHeap(Heap):
     def __repr__(self):
         return u'<satella.coding.TimeBasedHeap>'
 
-    @returns_iterable
+    @typed(returns=Iterable)
     def items(self):
         """
         Return an iterator, but WITHOUT timestamps (only items), in
@@ -196,11 +201,12 @@ class TimeBasedHeap(Heap):
         """
         return (ob for ts, ob in self.heap)
 
-    def __init__(self, default_clock_source=lambda: None):
+    @typed('self', Optional[Callable[[], Number]])
+    def __init__(self, default_clock_source=None):
         """
         Initialize an empty heap
         """
-        self.default_clock_source = default_clock_source
+        self.default_clock_source = default_clock_source or time.time
         super(TimeBasedHeap, self).__init__()
 
     def put(self, *args):
@@ -220,6 +226,7 @@ class TimeBasedHeap(Heap):
         self.push((timestamp, item))
 
     @returns_iterable
+    @typed('self', Optional[Number])
     def pop_less_than(self, less=None):
         """
         Return all elements less (sharp inequality) than particular value.
