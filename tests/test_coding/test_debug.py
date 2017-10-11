@@ -6,7 +6,7 @@ import unittest
 import six
 
 from satella.coding import typed, CallSignature, Number, coerce, Optional, \
-    List, Dict, Tuple, Set, Callable
+    List, Dict, Tuple, Set, Callable, checked_coerce
 
 
 class TestTypecheck(unittest.TestCase):
@@ -25,6 +25,18 @@ class TestTypecheck(unittest.TestCase):
         Lol().zomg(2)
         self.assertRaises(TypeError, lambda: Lol().zomg('a'))
         Lol().lel([], {}, (), set([1]), lambda a: None)
+
+    def test_checked_coerce(self):
+
+        @checked_coerce(((str, int), int), returns=(int, float))
+        def testa(a):
+            return a
+
+
+        self.assertRaises(TypeError, lambda: testa(5.0))
+        self.assertEqual(testa('5'), 5.0)
+        self.assertEqual(testa(5), 5.0)
+        self.assertIsInstance(testa('5'), float)
 
     def test_cls_test(self):
         class Lol(object):

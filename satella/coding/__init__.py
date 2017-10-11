@@ -9,7 +9,7 @@ from .algos import merge_dicts
 from .recast_exceptions import rethrow_as, silence_excs
 from .typecheck import typed, Callable, Sequence, \
     TypeVar, Mapping, Iterable, Any, Optional, CallSignature, \
-    Number, coerce, Set, Dict, List, Tuple
+    Number, coerce, Set, Dict, List, Tuple, checked_coerce
 from .structures import TimeBasedHeap, Heap, typednamedtuple, OmniHashableMixin
 
 __all__ = [
@@ -19,7 +19,7 @@ __all__ = [
     'typed', 'NewType', 'Callable', 'Sequence', 'coerce'
     'TypeVar','Mapping', 'Iterable', 'Union', 'Any', 'Optional',
     'CallSignature', 'Number',
-    'Set', 'Dict', 'List', 'Tuple',
+    'Set', 'Dict', 'List', 'Tuple', 'checked_coerce',
     'rethrow_as', 'silence_excs'
 ]
 
