@@ -327,7 +327,6 @@ def _do_if_not_type(var, type_, fun='default'):
             if type_[0] == type(None):
                 return None
             else:
-                print(var, 'to', type_[0])
                 return type_[0](var)
 
         q = fun()

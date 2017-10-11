@@ -1,4 +1,4 @@
-## v2.0.16 = v2.0.17
+## v2.0.16 = v2.0.17 == v2.0.18
 
 * Dodano `OmniHashableMixin`
 * Poprawiono zachowanie type checkera w obliczu anotacji z `typing.*`
