@@ -322,7 +322,6 @@ def _do_if_not_type(var, type_, fun='default'):
     if not istype(var, type_):
 
         if fun == 'default':
-            print(type_)
             if type_[0] == type(None):
                 return None
             else:
@@ -428,21 +427,20 @@ def coerce(*t_args, **t_kwargs):
     return outer
 
 
+
 def checked_coerce(*t_args, **t_kwargs):
     """#todo banana banana banana"""
 
-    def ptc(item):
+    def ptc(item, pt=list):
         if item is None:
             return None, None
-        elif isinstance(item, tuple):
+        elif isinstance(item, pt):
             if len(item) == 2:
                 return item[0], item[1]
         return item, None
 
-    def sselector(q, z, operator=None):
-        print(q, z)
-        s = ptc(q)[z]
-        print(s, z)
+    def sselector(q, z, operator=None, pt=list):
+        s = ptc(q, pt=pt)[z]
         if s is None and operator is None:
             return None
         return __typeinfo_to_tuple_of_types(s, operator=operator)
@@ -455,10 +453,8 @@ def checked_coerce(*t_args, **t_kwargs):
                         for argument, typedescr in six.moves.zip_longest(args, t_args_c)]
 
     t_retarg = t_kwargs.get('returns', None)
-    t_retarg_t = sselector(t_retarg, 0)
-    t_retarg_c = sselector(t_retarg, 1, operator=__NOP)
-
-    print('t_args_t=%s, t_args_c=%s, t_retarg_t=%s t_retarg_c=%s' % (t_args_t, t_args_c, t_retarg_t, t_retarg_c))
+    t_retarg_t = sselector(t_retarg, 0, pt=tuple)
+    t_retarg_c = sselector(t_retarg, 1, operator=__NOP, pt=tuple)
 
     def outer(fun):
         @functools.wraps(fun)
@@ -471,11 +467,10 @@ def checked_coerce(*t_args, **t_kwargs):
                             type(argument), typedescr))
 
             rt = fun(*argify(args), **kwargs)
-            print(t_retarg_t)
-            # if not istype(rt, t_retarg_t):
-            #     raise TypeError('Returned %s, expected %s' % (
-            #             type(rt), t_retarg_t))
-            #
+            if not istype(rt, t_retarg_t):
+                raise TypeError('Returned %s, expected %s' % (
+                        type(rt), t_retarg_t))
+
             return _do_if_not_type(rt, t_retarg_c)
         return inner
     return outer

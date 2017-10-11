@@ -26,12 +26,22 @@ class TestTypecheck(unittest.TestCase):
         self.assertRaises(TypeError, lambda: Lol().zomg('a'))
         Lol().lel([], {}, (), set([1]), lambda a: None)
 
-    def test_checked_coerce(self):
+    def test_che_co2(self):
 
-        @checked_coerce(((str, int), int), returns=(int, float))
-        def testa(a):
+        @checked_coerce((int, None))
+        def p(a):
             return a
 
+        p(5)
+        p(None)
+        self.assertRaises(TypeError, lambda: p(5.0))
+
+
+    def test_checked_coerce(self):
+
+        @checked_coerce([(str, int), int], returns=(int, float))
+        def testa(a):
+            return a
 
         self.assertRaises(TypeError, lambda: testa(5.0))
         self.assertEqual(testa('5'), 5.0)
