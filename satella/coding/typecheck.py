@@ -14,7 +14,7 @@ If you are simultaneously using @typed and @coerce, use them in following order:
 
 import inspect
 import logging
-
+from ..coding.recast_exceptions import silence_excs
 import six
 from copy import copy
 try:
@@ -23,24 +23,20 @@ except ImportError:
     from backports import typing
 from collections import namedtuple
 import functools
+import numbers
 import itertools
 
 logger = logging.getLogger(__name__)
 
-List = typing.List
-Tuple = typing.Tuple
-Dict = typing.Dict
-NewType = typing.NewType
 Callable = typing.Callable
 Sequence = typing.Sequence
-Number = six.integer_types + (float,)
-TypeVar = typing.TypeVar
-Generic = typing.Generic
+Number = numbers.Real
 Mapping = typing.Mapping
 Iterable = typing.Iterable
 Union = typing.Union
 Any = typing.Any
 Optional = typing.Optional
+TypeVar = typing.TypeVar
 
 
 # Internal tokens - only instances will be
@@ -285,6 +281,37 @@ def __typeinfo_to_tuple_of_types(typeinfo, operator=type):
         else:
             return (typeinfo,)
 
+def istype(var, type_):
+    if type_ is None or type_ == 'self':
+        return True
+
+    elif type(type_) == tuple:
+        return any(istype(var, subtype) for subtype in type_)
+
+    try:
+        if isinstance(var, type_):
+            return True
+
+    except TypeError as e:   # must be a typing.* annotation
+        if type(type_) == type(typing.Union):
+            return istype(var, tuple(type_.__args__))
+
+        if type(type(type_)) == typing.Callable:
+            return '__call__' in var
+        try:
+            return all(hasattr(var, n) for n in {
+                typing.Iterable: ('__iter__',),
+                typing.Sequence: ('__iter__', '__getattr__', '__len__'),
+                typing.Callable: ('__call__', ),
+                typing.Mapping: ('__getitem__', ),
+            }[type(var)])
+        except KeyError:
+            pass
+
+        return type(var) == type_
+
+    return False
+
 
 def _do_if_not_type(var, type_, fun='default'):
 
@@ -294,7 +321,7 @@ def _do_if_not_type(var, type_, fun='default'):
     if type_ in (None, (None, ), 'self'):
         return var
 
-    if not isinstance(var, type_):
+    if not istype(var, type_):
 
         if fun == 'default':
             if type_[0] == type(None):
@@ -361,16 +388,17 @@ def typed(*t_args, **t_kwargs):
         def inner(*args, **kwargs):
             # add extra 'None' argument if unbound method
             for argument, typedescr in zip(args, t_args):
-                _do_if_not_type(argument, typedescr, lambda: \
-                    TypeError('Got %s, expected %s' % (
-                            type(argument), typedescr)))
+                if not istype(argument, typedescr):
+                    raise TypeError('Got %s, expected %s' % (
+                            type(argument), typedescr))
 
             rt = fun(*args, **kwargs)
 
-            return _do_if_not_type(rt, t_retarg, lambda:
-                    TypeError('Returned %s, expected %s' % (
-                        type(rt), t_retarg)))
+            if not istype(rt, t_retarg):
+                raise TypeError('Returned %s, expected %s' % (
+                        type(rt), t_retarg))
 
+            return rt
         return inner
     return outer
 

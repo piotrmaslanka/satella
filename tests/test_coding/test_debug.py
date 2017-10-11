@@ -5,7 +5,7 @@ import unittest
 
 import six
 
-from satella.coding import typed, CallSignature, Number, coerce
+from satella.coding import typed, CallSignature, Number, coerce, Optional
 
 
 class TestTypecheck(unittest.TestCase):
@@ -85,10 +85,10 @@ class TestTypecheck(unittest.TestCase):
         testc(None)
 
     def test_t2(self):
-        @typed((int, None))
+        @typed(Optional[int])
         def testa(a=5):
             pass
-
+        
         self.assertRaises(TypeError, lambda: testa(2.0))
         testa(a=2.0)
         self.assertRaises(TypeError, lambda: testa('yuyu'))
@@ -137,6 +137,17 @@ class TestTypecheck(unittest.TestCase):
 
     def test_T2(self):
         @typed((int, None))
+        def testa(a=5):
+            pass
+
+        self.assertRaises(TypeError, lambda: testa(2.0))
+        testa(a=2.0)
+        self.assertRaises(TypeError, lambda: testa('yuyu'))
+        testa(a=None)
+        testa(a=6)
+
+    def test_T2a(self):
+        @typed(Optional[int])
         def testa(a=5):
             pass
 

@@ -28,6 +28,7 @@ class rethrow_as(object):
     Either a decorator or a context manager
     """
 
+
     def __init__(self, *pairs, **kwargs):
         """
         Pass tuples of (exception to catch - exception to transform to).
@@ -44,12 +45,11 @@ class rethrow_as(object):
         """
 
         # You can also provide just two exceptions
-        if len(pairs) == 2 and all(issubclass(p, Exception) for p in pairs):
-            a, b = pairs
-            pairs = [(a, b)]
+        if len(pairs) == 2 and all(issubclass(p, BaseException) for p in pairs):
+            self.mapping = {pairs[0]: pairs[1]}
+        else:
+            self.mapping = dict(pairs)
 
-        self.to_catch = tuple([p[0] for p in pairs])
-        self.pairs = pairs
         self.exception_preprocessor = kwargs.get('exception_preprocessor', repr)
 
     def __call__(self, fun):
@@ -63,12 +63,12 @@ class rethrow_as(object):
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        if not isinstance(exc_val, self.to_catch):
+        if exc_type not in self.mapping:
             return
 
-        for from_, to in self.pairs:
-            if isinstance(exc_val, from_):
-                if to is None:
-                    return True
-                else:
-                    raise to(self.exception_preprocessor(exc_val))
+        fate = self.mapping[exc_type]
+
+        if fate is None:    # mask it
+            return True
+        else:
+            raise fate(self.exception_preprocessor(exc_val))
