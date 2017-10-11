@@ -477,6 +477,8 @@ def checked_coerce(*t_args, **t_kwargs):
 
 
 def for_argument(*t_ops, **t_kwops):
+    t_ops = [None for op in t_ops if op == 'self']
+
     def outer(fun):
         @functools.wraps(fun)
         def inner(*args, **kwargs):
