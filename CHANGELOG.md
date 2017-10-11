@@ -1,6 +1,6 @@
 ## v2.0.19
 
-* Dodano `checked_coerce`
+* Dodano `checked_coerce` i `for_argument`
 
 ## v2.0.16 = v2.0.17 == v2.0.18
 

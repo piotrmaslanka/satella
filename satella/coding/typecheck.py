@@ -475,3 +475,14 @@ def checked_coerce(*t_args, **t_kwargs):
         return inner
     return outer
 
+
+def for_argument(*t_ops, **t_kwops):
+    def outer(fun):
+        @functools.wraps(fun)
+        def inner(*args, **kwargs):
+            # add extra 'None' argument if unbound method
+            assert len(args) >= len(t_ops)
+            return fun(*((op or __NOP)(arg) for arg, op in six.moves.zip_longest(args, t_ops)),
+                       **{k: t_kwops.get(k, __NOP)(v) for k, v in kwargs.items()})
+        return inner
+    return outer
