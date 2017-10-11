@@ -1,4 +1,4 @@
-## v2.0.16
+## v2.0.16 = v2.0.17
 
 * Dodano `OmniHashableMixin`
 
