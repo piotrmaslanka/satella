@@ -28,9 +28,6 @@ import itertools
 
 logger = logging.getLogger(__name__)
 
-List = typing.List
-Tuple = typing.Tuple
-Dict = typing.Dict
 Callable = typing.Callable
 Sequence = typing.Sequence
 Number = numbers.Real
@@ -285,8 +282,6 @@ def __typeinfo_to_tuple_of_types(typeinfo, operator=type):
             return (typeinfo,)
 
 def istype(var, type_):
-    print(var, type_)
-
     if type_ is None or type_ == 'self':
         return True
 
@@ -299,8 +294,10 @@ def istype(var, type_):
 
     except TypeError as e:   # must be a typing.* annotation
         if type(type_) == type(typing.Union):
-            return any(tuple(type_.__args__))
+            return istype(var, tuple(type_.__args__))
 
+        if type(type(type_)) == typing.Callable:
+            return '__call__' in var
         try:
             return all(hasattr(var, n) for n in {
                 typing.Iterable: ('__iter__',),
@@ -312,7 +309,6 @@ def istype(var, type_):
             pass
 
         return type(var) == type_
-
 
     return False
 
@@ -392,16 +388,17 @@ def typed(*t_args, **t_kwargs):
         def inner(*args, **kwargs):
             # add extra 'None' argument if unbound method
             for argument, typedescr in zip(args, t_args):
-                _do_if_not_type(argument, typedescr, lambda: \
-                    TypeError('Got %s, expected %s' % (
-                            type(argument), typedescr)))
+                if not istype(argument, typedescr):
+                    raise TypeError('Got %s, expected %s' % (
+                            type(argument), typedescr))
 
             rt = fun(*args, **kwargs)
 
-            return _do_if_not_type(rt, t_retarg, lambda:
-                    TypeError('Returned %s, expected %s' % (
-                        type(rt), t_retarg)))
+            if not istype(rt, t_retarg):
+                raise TypeError('Returned %s, expected %s' % (
+                        type(rt), t_retarg))
 
+            return rt
         return inner
     return outer
 

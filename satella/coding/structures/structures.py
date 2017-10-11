@@ -64,8 +64,6 @@ class Heap(object):
     Not thread-safe
     """
 
-    __slots__ = ('heap',)  # this is rather private, plz
-
     def __init__(self, from_list=()):
         self.heap = list(from_list)
         heapq.heapify(self.heap)
@@ -157,7 +155,7 @@ class Heap(object):
         return len(self.heap)
 
     def __str__(self):
-        return '<satella.coding.Heap: %s elements>' % (len(self.heap, ))
+        return '<satella.coding.Heap: %s elements>' % (len(self, ))
 
     def __unicode__(self):
         return six.text_type(str(self))
@@ -207,7 +205,7 @@ class TimeBasedHeap(Heap):
         Initialize an empty heap
         """
         self.default_clock_source = default_clock_source or time.time
-        super(TimeBasedHeap, self).__init__()
+        super(TimeBasedHeap, self).__init__(from_list=())
 
     def put(self, *args):
         """
