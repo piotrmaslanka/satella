@@ -1,6 +1,8 @@
 ## v2.0.19
 
 * Dodano `checked_coerce` i `for_argument`
+* Dodano `precondition`
+* Zdeprekowano `checked_coerce` i `coerce`
 
 ## v2.0.16 = v2.0.17 == v2.0.18
 

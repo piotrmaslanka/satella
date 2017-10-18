@@ -25,8 +25,11 @@ from collections import namedtuple
 import functools
 import numbers
 import itertools
+import warnings
+
 
 logger = logging.getLogger(__name__)
+
 
 Callable = lambda *args: typing.Callable
 Sequence = typing.Sequence
@@ -49,8 +52,9 @@ class _NotGiven(object):
 class _NoDefault(object):
     pass
 
-__NOP = lambda x: x
 
+__NOP = lambda x: x
+__TRUE = lambda x: True
 _CSArgument = namedtuple('_CSArgument', ('name', 'required', 'default_value'))
 
 
@@ -402,6 +406,7 @@ def typed(*t_args, **t_kwargs):
 
 def coerce(*t_args, **t_kwargs):
     """#todo banana banana banana"""
+    warnings.warn('Using coerce is considered harmful', DeprecationWarning)
 
     t_args = [(__typeinfo_to_tuple_of_types(x, operator=__NOP))
               for x in t_args]
@@ -427,9 +432,9 @@ def coerce(*t_args, **t_kwargs):
     return outer
 
 
-
 def checked_coerce(*t_args, **t_kwargs):
     """#todo banana banana banana"""
+    warnings.warn('Using checked_coerce is considered harmful', DeprecationWarning)
 
     def ptc(item, pt=list):
         if item is None:
@@ -472,6 +477,66 @@ def checked_coerce(*t_args, **t_kwargs):
                         type(rt), t_retarg_t))
 
             return _do_if_not_type(rt, t_retarg_c)
+        return inner
+    return outer
+
+
+class PreconditionError(ValueError):
+    """
+    A precondition was not met for the argument
+    """
+
+
+def precondition(*t_ops):
+    """
+    Check that a precondition happens for given parameter.
+    Only positional arguments are supported.
+
+    You can do it like this:
+
+    @precondition(lambda x: x == 1)
+    def return_two(x):
+        return x*2
+
+    or
+
+    @precondition('x == 1')
+    def return_two(x):
+        ..
+
+    If None is passed then argument will be always assumed to be True.
+    You can use all standard locals in precondition.
+
+    You function call will return a PreconditionError (subclass of
+    ValueError) if a precondition fails
+    """
+
+    tn_ops = []
+
+    for t_op in t_ops:
+        if t_op is None:
+            precond = __TRUE
+        elif isinstance(t_op, six.string_types):
+            q = dict(globals())
+            exec('_precond = lambda x: '+t_op, q)
+            precond = q['_precond']
+        else:
+            precond = t_op
+
+        tn_ops.append(precond)
+
+    from satella.coding.recast_exceptions import rethrow_as
+
+    def outer(fun):
+        @functools.wraps(fun)
+        def inner(*args, **kwargs):
+            assert len(args) >= len(tn_ops), 'More preconditions than positional arguments!'
+            with rethrow_as(TypeError, PreconditionError):
+                for arg, precond in six.moves.zip_longest(args, tn_ops, fillvalue=__TRUE):
+                    print(arg, precond, precond.__doc__)
+                    if not precond(arg):
+                        raise PreconditionError('Argument of value %s failed precondition check' % (arg, ))
+            return fun(*args, **kwargs)
         return inner
     return outer
 

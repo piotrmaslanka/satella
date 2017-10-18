@@ -6,10 +6,22 @@ import unittest
 import six
 
 from satella.coding import typed, CallSignature, Number, coerce, Optional, \
-    List, Dict, Tuple, Set, Callable, checked_coerce, for_argument
+    List, Dict, Tuple, Set, Callable, checked_coerce, for_argument, \
+    precondition, PreconditionError
 
 
 class TestTypecheck(unittest.TestCase):
+    
+    def test_precondition(self):
+
+        @precondition('len(x) == 1', lambda x: x == 1, None)
+        def return_double(x, y, z):
+            pass
+
+        self.assertRaises(PreconditionError, lambda: return_double([], 1, 5))
+        self.assertRaises(PreconditionError, lambda: return_double([1], 2, 5))
+        return_double([1], 1, 'dupa')
+    
     def test_cls(self):
         # if we don't care about apps
         class Lol(object):
