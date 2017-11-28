@@ -1,3 +1,7 @@
+## v2.0.20
+
+* Naprawiono requirements
+
 ## v2.0.19
 
 * Dodano `checked_coerce` i `for_argument`

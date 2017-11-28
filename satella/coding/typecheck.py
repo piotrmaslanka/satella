@@ -17,10 +17,7 @@ import logging
 from ..coding.recast_exceptions import silence_excs
 import six
 from copy import copy
-try:
-    import typing
-except ImportError:
-    from backports import typing
+import typing
 from collections import namedtuple
 import functools
 import numbers
