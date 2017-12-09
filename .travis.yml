@@ -12,5 +12,6 @@ script:
  - python setup.py nosetests
 after_success:
 - bash build.sh
-
+notifications:
+   slack: digicort:lbgdFcFmWmHtHKDEMI3FwQK5
 
