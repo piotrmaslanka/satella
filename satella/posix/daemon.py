@@ -12,9 +12,11 @@ try:
     import grp
 except ImportError:
     # Windows?
-    class L(object):    # always return UID=GID=0
+    class L(object):  # always return UID=GID=0
         def __getattr__(self, item):
             return lambda q: 0
+
+
     pwd = grp = L()
 
 from satella.coding import typed, Callable

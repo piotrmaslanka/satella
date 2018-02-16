@@ -3,10 +3,11 @@ from __future__ import print_function, absolute_import, division
 
 import copy
 import functools
-import time
 import heapq
 import logging
 import operator
+import time
+
 import six
 
 from satella.coding.typecheck import typed, Callable, Iterable, Optional, \
@@ -25,15 +26,14 @@ returns_iterable = typed(returns=Iterable)
 
 
 class OmniHashableMixin(object):
-
     _HASH_FIELDS_TO_USE = []
 
     def __hash__(self):
         return functools.reduce(operator.xor, (hash(getattr(self, fname)) \
-                                               for fname in self. _HASH_FIELDS_TO_USE))
+                                               for fname in self._HASH_FIELDS_TO_USE))
 
     def __eq__(self, other):
-        cons = lambda p: [getattr(p, fname) for fname in self. _HASH_FIELDS_TO_USE]
+        cons = lambda p: [getattr(p, fname) for fname in self._HASH_FIELDS_TO_USE]
         if cons(self) == cons(other):
             return True
 

@@ -1,15 +1,16 @@
 # coding=UTF-8
 from __future__ import print_function, absolute_import, division
-import six
+
 import logging
+
 from ..typecheck import typed, Callable
 
 logger = logging.getLogger(__name__)
 
-
 __all__ = [
     'CallableGroup',
 ]
+
 
 class CallableGroup(object):
     """
@@ -80,5 +81,3 @@ class CallableGroup(object):
 
         if self.gather:
             return results
-
-
