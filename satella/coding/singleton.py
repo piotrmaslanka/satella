@@ -12,7 +12,7 @@ __all__ = [
 if six.PY3:
 
     # Taken from https://wiki.python.org/moin/PythonDecoratorLibrary
-    def Singleton(cls):
+    def singleton(cls):
         """
         Make a singleton out of decorated class.
 
@@ -59,10 +59,13 @@ else:
 
 
     # taken from https://pypi.python.org/pypi/singleton-decorator/1.0.0
-    def Singleton(cls):
+    def singleton(cls):
         """
         A singleton decorator. Returns a wrapper objects. A call on that object
         returns a single instance object of decorated class. Use the __wrapped__
         attribute to access decorated class directly in unit tests.
         """
         return _SingletonWrapper(cls)
+
+
+Singleton = singleton
