@@ -1,6 +1,6 @@
 # coding=UTF-8
 from __future__ import print_function, absolute_import, division
-import six
+
 import logging
 from collections import namedtuple
 
@@ -10,8 +10,10 @@ __all__ = [
     'typednamedtuple',
 ]
 
+
 def _nth(it, n):
     return [x[n] for x in it]
+
 
 def _adjust(q):
     var, type_ = q
@@ -51,7 +53,7 @@ def typednamedtuple(cls_name, *arg_name_type):
         __name__ = MyCls.__name__
 
         def __new__(cls, *args, **kwargs):
-            nargs = list(map(_adjust, zip(args, typeops[:len(args)]) ))
+            nargs = list(map(_adjust, zip(args, typeops[:len(args)])))
 
             for next_field_name in fieldnames[len(nargs):]:
                 try:
@@ -63,6 +65,5 @@ def typednamedtuple(cls_name, *arg_name_type):
                 raise TypeError('Too many parameters')
 
             return MyCls.__new__(MyCls, *nargs)
+
     return Wrapper
-
-

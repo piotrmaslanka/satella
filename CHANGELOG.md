@@ -1,3 +1,9 @@
+## v2.0.22rc3
+
+* fixes #15
+* fixes #20
+* fixes #21
+
 ## v2.0.22rc2
 
 * fixes #18

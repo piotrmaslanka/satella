@@ -5,6 +5,7 @@ __all__ = [
     'Monitor', 'RMonitor'
 ]
 
+
 class Monitor(object):
     """
     Base utility class for creating monitors (the synchronization thingies!)

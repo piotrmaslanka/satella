@@ -1,8 +1,8 @@
 # coding=UTF-8
 from __future__ import print_function, absolute_import, division
-import six
-import logging
+
 import functools
+import logging
 
 logger = logging.getLogger(__name__)
 
@@ -27,7 +27,6 @@ class rethrow_as(object):
 
     Either a decorator or a context manager
     """
-
 
     def __init__(self, *pairs, **kwargs):
         """
@@ -58,6 +57,7 @@ class rethrow_as(object):
         def inner(*args, **kwargs):
             with self:
                 return fun(*args, **kwargs)
+
         return inner
 
     def __enter__(self):
@@ -69,7 +69,7 @@ class rethrow_as(object):
 
         fate = self.mapping[exc_type]
 
-        if fate is None:    # mask it
+        if fate is None:  # mask it
             return True
         else:
             raise fate(self.exception_preprocessor(exc_val))
