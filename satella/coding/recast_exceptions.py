@@ -46,11 +46,20 @@ class rethrow_as(object):
         """
 
         # You can also provide just two exceptions
-        if len(pairs) == 2 and not isinstance(pairs[1], (tuple, list)) \
-                and all(issubclass(p, BaseException) for p in pairs[0]) \
-                and (pairs[1] is None or
-                     issubclass(pairs[1], BaseException)):
-            self.mapping = [pairs]
+
+        two_entries_provided = True
+
+        if len(pairs) != 2:
+            two_entries_provided = False
+        else:
+            a, b = pairs
+            if isinstance(b, (tuple, list)):
+                two_entries_provided = False
+            elif not ((b is None) or (issubclass(b, BaseException))):
+                two_entries_provided = False
+
+        if two_entries_provided:
+            self.mapping = [(a, b)]
         else:
             self.mapping = list(pairs)
 
