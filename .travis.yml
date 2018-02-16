@@ -16,6 +16,4 @@ script:
 after_success:
  - codeclimate-test-reporter
  - bash build.sh
-notifications:
-   slack: digicort:lbgdFcFmWmHtHKDEMI3FwQK5
 
