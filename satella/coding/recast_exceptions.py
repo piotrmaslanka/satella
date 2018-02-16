@@ -46,9 +46,9 @@ class rethrow_as(object):
         # You can also provide just two exceptions
         if len(pairs) == 2 and not isinstance(pairs[1], (tuple, list)) \
                 and all(issubclass(p, BaseException) for p in pairs):
-            self.mapping = {pairs[0]: pairs[1]}
+            self.mapping = [(pairs[0], pairs[1])]
         else:
-            self.mapping = dict(pairs)
+            self.mapping = list(pairs)
 
         self.exception_preprocessor = kwargs.get('exception_preprocessor', repr)
 
@@ -64,12 +64,6 @@ class rethrow_as(object):
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        if exc_type not in self.mapping:
-            return
-
-        fate = self.mapping[exc_type]
-
-        if fate is None:  # mask it
-            return True
-        else:
-            raise fate(self.exception_preprocessor(exc_val))
+        for from_, to in self.mapping:
+            if issubclass(exc_type, from_):
+                raise to(self.exception_preprocessor(exc_val))

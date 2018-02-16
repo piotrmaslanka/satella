@@ -53,3 +53,13 @@ class TestStuff(unittest.TestCase):
 
         self.assertRaises(WTFException1, lambda: provide(NameError))
         self.assertRaises(WTFException2, lambda: provide(TypeError))
+
+    def test_issue_14(self):
+
+        @rethrow_as(((NameError, ValueError), TypeError))
+        def ro(p):
+            raise p()
+
+        self.assertRaises(TypeError, lambda: p(NameError))
+        self.assertRaises(TypeError, lambda: p(ValueError))
+        self.assertRaises(RuntimeError, lambda: p(RuntimeError))
