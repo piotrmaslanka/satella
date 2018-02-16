@@ -1,8 +1,13 @@
 # coding=UTF-8
 from __future__ import print_function, absolute_import, division
+
 import functools
+
 import six
 
+__all__ = [
+    'Singleton',
+]
 
 if six.PY3:
 
@@ -22,7 +27,7 @@ if six.PY3:
 
         @functools.wraps(cls.__new__)
         def singleton_new(cls, *args, **kw):
-            it =  cls.__dict__.get('__it__')
+            it = cls.__dict__.get('__it__')
             if it is not None:
                 return it
 
@@ -51,6 +56,7 @@ else:
             if self._instance is None:
                 self._instance = self.__wrapped__(*args, **kwargs)
             return self._instance
+
 
     # taken from https://pypi.python.org/pypi/singleton-decorator/1.0.0
     def Singleton(cls):
