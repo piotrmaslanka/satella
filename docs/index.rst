@@ -12,7 +12,6 @@ Welcome to satella's documentation!
        instrumentation/traceback
        instrumentation/metrics
        source/modules
-       examples/echoist
        posix
 
 
