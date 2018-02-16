@@ -18,7 +18,7 @@ def silence_excs(*exc_types):
 
     Can be either a decorator or a context manager
     """
-    return rethrow_as(*[(t, None) for t in exc_types])
+    return rethrow_as(exc_types, None)
 
 
 class rethrow_as(object):
@@ -66,4 +66,7 @@ class rethrow_as(object):
     def __exit__(self, exc_type, exc_val, exc_tb):
         for from_, to in self.mapping:
             if issubclass(exc_type, from_):
-                raise to(self.exception_preprocessor(exc_val))
+                if to is None:
+                    return True
+                else:
+                    raise to(self.exception_preprocessor(exc_val))
