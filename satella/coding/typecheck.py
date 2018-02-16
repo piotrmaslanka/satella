@@ -293,19 +293,21 @@ def istype(var, type_):
         return any(istype(var, subtype) for subtype in type_)
 
     try:
+        if type_ in (Callable, Iterable, Sequence, Mapping):
+            raise TypeError()
+
         if isinstance(var, type_):
             return True
 
     except TypeError as e:   # must be a typing.* annotation
-        try:
-            return all(hasattr(var, n) for n in {
-                Iterable: ('__iter__',),
-                Sequence: ('__iter__', '__getattr__', '__len__'),
-                Callable: ('__call__', ),
-                Mapping: ('__getitem__', ),
-            }[type(var)])
-        except KeyError:
-            pass
+        if type_ == Callable:
+            return hasattr(var, '__call__')
+        elif type_ == Iterable:
+            return hasattr(var, '__iter__')
+        elif type_ == Sequence:
+            return hasattr(var, '__iter__') and hasattr(var, '__getattr__') and hasattr(var, '__len__')
+        elif type_ == Mapping:
+            return hasattr(var, '__getitem__')
 
         return type(var) == type_
 

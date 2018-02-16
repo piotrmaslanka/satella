@@ -48,6 +48,13 @@ class TestTypecheck(unittest.TestCase):
         p(None)
         self.assertRaises(TypeError, lambda: p(5.0))
 
+    def test_lambda(self):
+        @typed(Callable)
+        def q(p):
+            pass
+
+        q(lambda: None)
+
     def test_forarg(self):
         @for_argument(int)
         def testa(a):
