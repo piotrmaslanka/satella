@@ -71,9 +71,10 @@ class rethrow_as(object):
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        for from_, to in self.mapping:
-            if issubclass(exc_type, from_):
-                if to is None:
-                    return True
-                else:
-                    raise to(self.exception_preprocessor(exc_val))
+        if exc_type is not None:
+            for from_, to in self.mapping:
+                if issubclass(exc_type, from_):
+                    if to is None:
+                        return True
+                    else:
+                        raise to(self.exception_preprocessor(exc_val))
