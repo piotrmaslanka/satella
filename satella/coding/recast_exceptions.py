@@ -39,6 +39,8 @@ class rethrow_as(object):
 
           rethrow_as(NameError, ValueError)
 
+        If the second value is a None, exception will be silenced.
+
         :param exception_preprocessor: other callable/1 to use instead od repr.
             Should return a text
         """
