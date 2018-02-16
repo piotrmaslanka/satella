@@ -8,7 +8,8 @@ setup(keywords=['ha', 'high availability', 'scalable', 'scalability', 'server'],
       install_requires=[
           "six",
           "monotonic",
-          "typing"
+          "typing",
+          'singleton-decorator==1.0.0'
       ],
       tests_require=[
           "nose", "mock", "coverage"

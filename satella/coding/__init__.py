@@ -13,7 +13,8 @@ from .typecheck import typed, Callable, Sequence, \
     Number, coerce, Set, Dict, List, Tuple, checked_coerce, for_argument, \
     precondition, PreconditionError
 from .structures import TimeBasedHeap, Heap, typednamedtuple, OmniHashableMixin
-from .singleton import Singleton
+from singleton_decorator import singleton as Singleton
+
 
 __all__ = [
     'typednamedtuple', 'OmniHashableMixin'
