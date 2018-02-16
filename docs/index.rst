@@ -13,6 +13,7 @@ Welcome to satella's documentation!
        instrumentation/metrics
        source/modules
        examples/echoist
+       posix
 
 
 Indices and tables
