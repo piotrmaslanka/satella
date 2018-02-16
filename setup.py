@@ -8,7 +8,7 @@ setup(keywords=['ha', 'high availability', 'scalable', 'scalability', 'server'],
       install_requires=[
           "six",
           "monotonic",
-          "typing"
+          "typing",
       ],
       tests_require=[
           "nose", "mock", "coverage"

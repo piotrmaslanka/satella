@@ -18,7 +18,7 @@ def silence_excs(*exc_types):
 
     Can be either a decorator or a context manager
     """
-    return rethrow_as(*[(t, None) for t in exc_types])
+    return rethrow_as(exc_types, None)
 
 
 class rethrow_as(object):
@@ -39,17 +39,24 @@ class rethrow_as(object):
 
           rethrow_as(NameError, ValueError)
 
+        If the second value is a None, exception will be silenced.
+
         :param exception_preprocessor: other callable/1 to use instead od repr.
             Should return a text
         """
 
-        # You can also provide just two exceptions
-        if len(pairs) == 2 and not isinstance(pairs[1], (tuple, list)) \
-                and all(issubclass(p, BaseException) for p in pairs):
-            self.mapping = {pairs[0]: pairs[1]}
-        else:
-            self.mapping = dict(pairs)
+        try:
+            a, b = pairs                        # throws ValueError
+            op = issubclass(b, BaseException)   # throws TypeError
+        except TypeError:
+            op = b is None
+        except ValueError:
+            op = False
 
+        if op:
+            pairs = [pairs]
+
+        self.mapping = list(pairs)
         self.exception_preprocessor = kwargs.get('exception_preprocessor', repr)
 
     def __call__(self, fun):
@@ -64,12 +71,10 @@ class rethrow_as(object):
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        if exc_type not in self.mapping:
-            return
-
-        fate = self.mapping[exc_type]
-
-        if fate is None:  # mask it
-            return True
-        else:
-            raise fate(self.exception_preprocessor(exc_val))
+        if exc_type is not None:
+            for from_, to in self.mapping:
+                if issubclass(exc_type, from_):
+                    if to is None:
+                        return True
+                    else:
+                        raise to(self.exception_preprocessor(exc_val))

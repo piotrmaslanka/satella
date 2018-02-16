@@ -1,5 +1,6 @@
 # coding=UTF-8
 from __future__ import print_function, absolute_import, division
+
 import six
 
 __all__ = [
@@ -7,6 +8,7 @@ __all__ = [
 ]
 
 from .basics import *
+
 
 def _typeinfo_to_tuple_of_types(typeinfo, operator=type):
     if typeinfo == 'self':
@@ -26,55 +28,51 @@ def _typeinfo_to_tuple_of_types(typeinfo, operator=type):
 
 
 def istype(var, type_):
+    retv = False
+
     if type_ is None or type_ == 'self':
-        return True
+        retv = True
 
     elif type(type_) == tuple:
-        return any(istype(var, subtype) for subtype in type_)
+        retv = any(istype(var, subtype) for subtype in type_)
 
-    try:
-        if type_ in (Callable, Iterable, Sequence, Mapping):
-            raise TypeError()
-
-        if isinstance(var, type_):
-            return True
-
-    except TypeError as e:  # must be a typing.* annotation
+    elif type_ in (Callable, Iterable, Sequence, Mapping):
         if type_ == Callable:
-            return hasattr(var, '__call__')
+            retv = hasattr(var, '__call__')
         elif type_ == Iterable:
-            return hasattr(var, '__iter__')
+            retv = hasattr(var, '__iter__')
         elif type_ == Sequence:
-            return hasattr(var, '__iter__') and hasattr(var, '__getattr__') and hasattr(var,
+            retv = hasattr(var, '__iter__') and hasattr(var, '__getattr__') and hasattr(var,
                                                                                         '__len__')
         elif type_ == Mapping:
-            return hasattr(var, '__getitem__')
+            retv = hasattr(var, '__getitem__')
+    else:
+        try:
+            if isinstance(var, type_):
+                retv = True
+        except TypeError:  # must be a typing.* annotation
+            retv = type(var) == type_
 
-        return type(var) == type_
-
-    return False
+    return retv
 
 
 def _do_if_not_type(var, type_, fun='default'):
     if type_ in ((type(None),),) and (fun == 'default'):
-        return None
+        retv = None
 
-    if type_ in (None, (None,), 'self'):
-        return var
+    elif type_ in (None, (None,), 'self'):
+        retv = var
 
-    if not istype(var, type_):
+    elif not istype(var, type_):
 
         if fun == 'default':
-            if type_[0] == type(None):
-                return None
-            else:
-                return type_[0](var)
-
-        q = fun()
-        if isinstance(q, Exception):
-            raise q
-        return q
+            retv = None if type_[0] == type(None) else type_[0](var)
+        else:
+            q = fun()
+            if isinstance(q, Exception):
+                raise q
+            retv = q
     else:
-        return var
+        retv = var
 
-
+    return retv

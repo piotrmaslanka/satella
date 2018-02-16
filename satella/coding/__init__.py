@@ -15,6 +15,7 @@ from .typecheck import typed, Callable, Sequence, \
 from .structures import TimeBasedHeap, Heap, typednamedtuple, OmniHashableMixin
 from .singleton import Singleton
 
+
 __all__ = [
     'typednamedtuple', 'OmniHashableMixin'
     'TimeBasedHeap', 'Heap', 'CallableGroup',
