@@ -60,6 +60,6 @@ class TestStuff(unittest.TestCase):
         def ro(p):
             raise p()
 
-        self.assertRaises(TypeError, lambda: p(NameError))
-        self.assertRaises(TypeError, lambda: p(ValueError))
-        self.assertRaises(RuntimeError, lambda: p(RuntimeError))
+        self.assertRaises(TypeError, lambda: ro(NameError))
+        self.assertRaises(TypeError, lambda: ro(ValueError))
+        self.assertRaises(RuntimeError, lambda: ro(RuntimeError))
