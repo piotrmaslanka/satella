@@ -45,24 +45,18 @@ class rethrow_as(object):
             Should return a text
         """
 
-        # You can also provide just two exceptions
+        try:
+            a, b = pairs                        # throws ValueError
+            op = issubclass(b, BaseException)   # throws TypeError
+        except TypeError:
+            op = b is None
+        except ValueError:
+            op = False
 
-        two_entries_provided = True
+        if op:
+            pairs = [pairs]
 
-        if len(pairs) != 2:
-            two_entries_provided = False
-        else:
-            a, b = pairs
-            if isinstance(b, (tuple, list)):
-                two_entries_provided = False
-            elif not ((b is None) or (issubclass(b, BaseException))):
-                two_entries_provided = False
-
-        if two_entries_provided:
-            self.mapping = [(a, b)]
-        else:
-            self.mapping = list(pairs)
-
+        self.mapping = list(pairs)
         self.exception_preprocessor = kwargs.get('exception_preprocessor', repr)
 
     def __call__(self, fun):

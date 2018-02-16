@@ -56,7 +56,7 @@ class TestStuff(unittest.TestCase):
 
     def test_issue_14a(self):
 
-        @rethrow_as(((NameError, ValueError), TypeError))
+        @rethrow_as(*(((NameError, ValueError), TypeError), ))
         def ro(p):
             raise p()
 
@@ -66,7 +66,7 @@ class TestStuff(unittest.TestCase):
 
     def test_issue_14b(self):
 
-        @rethrow_as((((NameError, ValueError), TypeError), ))
+        @rethrow_as((NameError, ValueError), TypeError)
         def ro(p):
             raise p()
 
