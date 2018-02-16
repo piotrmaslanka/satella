@@ -23,5 +23,5 @@ from .basics import __all__ as __all_basics__
 
 __all__ = __all_decorators__ + \
           __all_argparse__ + \
-          filter(lambda p: not p.startswith(_), __all_basics__)
+          filter(lambda p: not p.startswith('_'), __all_basics__)
 
