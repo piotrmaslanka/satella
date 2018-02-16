@@ -25,6 +25,16 @@ class TestTraceback(unittest.TestCase):
         self.assertTrue(p_fmt)
         print(p_fmt)
 
+    def test_issue_21(self):
+        try:
+            loc = u'hello world'
+            raise ValueError(u'hello')
+        except ValueError:
+            tb = Traceback()
+            a = tb.pickle()
+            self.assertIsInstance(Traceback, pickle.loads(a))
+
+
     def test_compression_happens(self):
 
         try:
