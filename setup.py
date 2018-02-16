@@ -11,5 +11,7 @@ setup(keywords=['ha', 'high availability', 'scalable', 'scalability', 'server'],
       tests_require=[
           "nose", "mock", "coverage"
       ],
-      test_suite='nose.collector'
+      test_suite='nose.collector',
+      python_requires='>=2.7.*,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*'
       )
+
