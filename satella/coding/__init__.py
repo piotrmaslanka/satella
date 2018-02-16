@@ -4,9 +4,10 @@ Just useful objects to make your coding nicer every day
 """
 from __future__ import print_function, absolute_import, division
 
-from .concurrent import Monitor, RMonitor, CallableGroup
 from .algos import merge_dicts
+from .concurrent import Monitor, RMonitor, CallableGroup
 from .recast_exceptions import rethrow_as, silence_excs
+from .structures import TimeBasedHeap, Heap, typednamedtuple, OmniHashableMixin
 from .typecheck import typed, Callable, Sequence, \
     TypeVar, Mapping, Iterable, Any, Optional, CallSignature, \
     Number, coerce, Set, Dict, List, Tuple, checked_coerce, for_argument, \

@@ -1,5 +1,6 @@
 # coding=UTF-8
 from __future__ import print_function, absolute_import, division
+
 """
 Decorator for debug-time typechecking
 
@@ -14,7 +15,6 @@ If you are simultaneously using @typed and @coerce, use them in following order:
 
 import inspect
 import logging
-from ..coding.recast_exceptions import silence_excs
 import six
 from copy import copy
 import typing
@@ -24,9 +24,7 @@ import numbers
 import itertools
 import warnings
 
-
 logger = logging.getLogger(__name__)
-
 
 Callable = lambda *args: typing.Callable
 Sequence = typing.Sequence
@@ -34,12 +32,13 @@ Number = numbers.Real
 Mapping = typing.Mapping
 Iterable = typing.Iterable
 Any = typing.Any
-Optional = lambda opt: opt + (None, ) if isinstance(opt, tuple) else (opt, None)
+Optional = lambda opt: opt + (None,) if isinstance(opt, tuple) else (opt, None)
 TypeVar = typing.TypeVar
 List = lambda *opt: list
 Tuple = lambda *opt: tuple
 Dict = lambda *p: dict
 Set = lambda *p: set
+
 
 # Internal tokens - only instances will be
 class _NotGiven(object):
@@ -285,6 +284,7 @@ def __typeinfo_to_tuple_of_types(typeinfo, operator=type):
         else:
             return (typeinfo,)
 
+
 def istype(var, type_):
     if type_ is None or type_ == 'self':
         return True
@@ -299,13 +299,14 @@ def istype(var, type_):
         if isinstance(var, type_):
             return True
 
-    except TypeError as e:   # must be a typing.* annotation
+    except TypeError as e:  # must be a typing.* annotation
         if type_ == Callable:
             return hasattr(var, '__call__')
         elif type_ == Iterable:
             return hasattr(var, '__iter__')
         elif type_ == Sequence:
-            return hasattr(var, '__iter__') and hasattr(var, '__getattr__') and hasattr(var, '__len__')
+            return hasattr(var, '__iter__') and hasattr(var, '__getattr__') and hasattr(var,
+                                                                                        '__len__')
         elif type_ == Mapping:
             return hasattr(var, '__getitem__')
 
@@ -315,11 +316,10 @@ def istype(var, type_):
 
 
 def _do_if_not_type(var, type_, fun='default'):
-
-    if type_ in ((type(None), ), ) and (fun == 'default'):
+    if type_ in ((type(None),),) and (fun == 'default'):
         return None
 
-    if type_ in (None, (None, ), 'self'):
+    if type_ in (None, (None,), 'self'):
         return var
 
     if not istype(var, type_):
@@ -390,16 +390,18 @@ def typed(*t_args, **t_kwargs):
             for argument, typedescr in zip(args, t_args):
                 if not istype(argument, typedescr):
                     raise TypeError('Got %s, expected %s' % (
-                            type(argument), typedescr))
+                        type(argument), typedescr))
 
             rt = fun(*args, **kwargs)
 
             if not istype(rt, t_retarg):
                 raise TypeError('Returned %s, expected %s' % (
-                        type(rt), t_retarg))
+                    type(rt), t_retarg))
 
             return rt
+
         return inner
+
     return outer
 
 
@@ -412,7 +414,7 @@ def coerce(*t_args, **t_kwargs):
 
     def argify(args):
         return [_do_if_not_type(argument, typedescr) \
-                        for argument, typedescr in six.moves.zip_longest(args, t_args)]
+                for argument, typedescr in six.moves.zip_longest(args, t_args)]
 
     t_retarg = t_kwargs.get('returns', None)
 
@@ -427,7 +429,9 @@ def coerce(*t_args, **t_kwargs):
 
             rt = fun(*new_args, **kwargs)
             return _do_if_not_type(rt, t_retarg)
+
         return inner
+
     return outer
 
 
@@ -454,7 +458,7 @@ def checked_coerce(*t_args, **t_kwargs):
 
     def argify(args):
         return [_do_if_not_type(argument, typedescr) \
-                        for argument, typedescr in six.moves.zip_longest(args, t_args_c)]
+                for argument, typedescr in six.moves.zip_longest(args, t_args_c)]
 
     t_retarg = t_kwargs.get('returns', None)
     t_retarg_t = sselector(t_retarg, 0, pt=tuple)
@@ -468,15 +472,17 @@ def checked_coerce(*t_args, **t_kwargs):
             for argument, typedescr in zip(args, t_args_t):
                 if not istype(argument, typedescr):
                     raise TypeError('Got %s, expected %s' % (
-                            type(argument), typedescr))
+                        type(argument), typedescr))
 
             rt = fun(*argify(args), **kwargs)
             if not istype(rt, t_retarg_t):
                 raise TypeError('Returned %s, expected %s' % (
-                        type(rt), t_retarg_t))
+                    type(rt), t_retarg_t))
 
             return _do_if_not_type(rt, t_retarg_c)
+
         return inner
+
     return outer
 
 
@@ -517,7 +523,7 @@ def precondition(*t_ops):
             precond = __TRUE
         elif isinstance(t_op, six.string_types):
             q = dict(globals())
-            exec('_precond = lambda x: '+t_op, q)
+            exec('_precond = lambda x: ' + t_op, q)
             precond = q['_precond']
         else:
             precond = t_op
@@ -534,9 +540,12 @@ def precondition(*t_ops):
                 for arg, precond in six.moves.zip_longest(args, tn_ops, fillvalue=__TRUE):
                     print(arg, precond, precond.__doc__)
                     if not precond(arg):
-                        raise PreconditionError('Argument of value %s failed precondition check' % (arg, ))
+                        raise PreconditionError(
+                            'Argument of value %s failed precondition check' % (arg,))
             return fun(*args, **kwargs)
+
         return inner
+
     return outer
 
 
@@ -548,7 +557,10 @@ def for_argument(*t_ops, **t_kwops):
         def inner(*args, **kwargs):
             # add extra 'None' argument if unbound method
             assert len(args) >= len(t_ops)
-            return fun(*((__NOP if op is None else op)(arg) for arg, op in six.moves.zip_longest(args, t_ops)),
+            return fun(*((__NOP if op is None else op)(arg) for arg, op in
+                         six.moves.zip_longest(args, t_ops)),
                        **{k: t_kwops.get(k, __NOP)(v) for k, v in kwargs.items()})
+
         return inner
+
     return outer
