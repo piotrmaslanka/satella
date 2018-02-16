@@ -9,11 +9,13 @@ python:
 cache: pip
 install:
  - pip install -r requirements.txt
+ - pip install codeclimate-test-reporter
 script:
  - bash tests/test_posix/test_hang_until_sig.sh
  - python setup.py nosetests
 after_success:
-- bash build.sh
+ - codeclimate-test-reporter
+ - bash build.sh
 notifications:
    slack: digicort:lbgdFcFmWmHtHKDEMI3FwQK5
 
