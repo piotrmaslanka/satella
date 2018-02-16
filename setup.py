@@ -9,7 +9,6 @@ setup(keywords=['ha', 'high availability', 'scalable', 'scalability', 'server'],
           "six",
           "monotonic",
           "typing",
-          'singleton-decorator==1.0.0'
       ],
       tests_require=[
           "nose", "mock", "coverage"
