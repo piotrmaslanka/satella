@@ -23,7 +23,6 @@ class TestTraceback(unittest.TestCase):
             p_fmt = tb.pretty_format()
 
         self.assertTrue(p_fmt)
-        print(p_fmt)
 
     def test_issue_21(self):
         try:
@@ -32,8 +31,7 @@ class TestTraceback(unittest.TestCase):
         except ValueError:
             tb = Traceback()
             a = tb.pickle()
-            self.assertIsInstance(Traceback, pickle.loads(a))
-
+            self.assertIsInstance(pickle.loads(a), Traceback)
 
     def test_compression_happens(self):
 
