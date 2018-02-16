@@ -232,9 +232,15 @@ class Traceback(object):
 
             self.formatted_traceback = six.text_type(traceback.format_exc())
 
+    def pickle_to(self, stream):
+        """Pickle self to target stream"""
+        pickle.dump(self, stream, pickle.HIGHEST_PROTOCOL)
+
     def pickle(self):
         """Returns this instance, pickled"""
-        return pickle.dumps(self, pickle.HIGHEST_PROTOCOL)
+        bio = io.BytesIO()
+        self.pickle_to(bio)
+        return bio.getvalue()
 
     def pretty_format(self):
         """
