@@ -40,3 +40,16 @@ class TestStuff(unittest.TestCase):
             raise ValueError()
 
         self.assertRaises(NameError, lol)
+
+    def test_issue_10(self):
+
+        class WTFException1(Exception): pass
+        class WTFException2(Exception): pass
+
+        @rethrow_as((NameError, WTFException1),
+                    (TypeError, WTFException2))
+        def provide(exc):
+            raise exc()
+
+        self.assertRaises(WTFException1, lambda: provide(NameError))
+        self.assertRaises(WTFException2, lambda: provide(TypeError))
