@@ -1,12 +1,12 @@
 # coding=UTF-8
 from __future__ import print_function, absolute_import, division
 import six
-import logging
 
 __all__ = [
     '_typeinfo_to_tuple_of_types', 'istype', '_do_if_not_type'
 ]
 
+from .basics import *
 
 def _typeinfo_to_tuple_of_types(typeinfo, operator=type):
     if typeinfo == 'self':
