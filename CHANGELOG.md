@@ -1,3 +1,8 @@
+## v2.0.21
+
+* fixed #10
+* fixed #11
+
 ## v2.0.20
 
 * Naprawiono requirements
@@ -30,17 +35,16 @@
 * Domyślny czas dla TimeBasedHeap 
 * Traceback uruchamiany bez wyjątku będzie rzucał ValueError
 
-
 ## v2.0.12
 
-* Pomniejsze usprawnienia do TimeBasedHeap
-* Dodano `self` do @typed
-* Dodano typ `Number` do @typed
+* minor improvements to TimeBasedHeap
+* added `self` to @typed
+* added `Number` type to @typed
 * Satella korzysta z [Code Climate](https://codeclimate.com/github/piotrmaslanka/satella)
 
 ## v2.0.11
 
-* dodano Heap
+* Heap added
 
 ## v2.0.10
 
