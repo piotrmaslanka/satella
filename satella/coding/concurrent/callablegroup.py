@@ -46,6 +46,7 @@ class CallableGroup(object):
     @typed(None, Callable, bool)
     def add(self, callable, oneshot=False):
         """
+        :param callable: callable
         :param oneshot: if True, callable will be unregistered after single call
         """
         self.callables.append((callable, oneshot))

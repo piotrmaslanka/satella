@@ -42,15 +42,20 @@ class GenerationPolicy(object):
     """
 
     def __init__(self, enable_pickling=True, compress_at=128 * 1024,
-                 repr_length_limit=128 * 1024):
+                 repr_length_limit=128 * 1024,
+                 compression_level=6):
         """
         :param enable_pickling: bool, whether to enable pickling at all
         :param compress_at: pickles longer than this (bytes) will be compressed
         :param repr_length_limit: maximum length of __repr__. None for no limit.
+        :param compression_level: "1" is fastest, "9" is slowest
         """
+        assert isinstance(compression_level, int) and 1 <= compression_level <= 9
+
         self.enable_pickling = enable_pickling
         self.compress_at = compress_at
         self.repr_length_limit = repr_length_limit
+        self.compression_level = compression_level
 
     def should_pickle(self, value):
         """
@@ -76,7 +81,7 @@ class GenerationPolicy(object):
         :return: int, 1-9, where "1" is the fastest, and "9" is the slowest,
             but produces best compression
         """
-        return 6
+        return self.compression_level
 
     def process_repr(self, r):
         """

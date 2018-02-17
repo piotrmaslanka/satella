@@ -71,7 +71,7 @@ class AcquirePIDLock(object):
                         pid = int(flock.read())
                     except ValueError:
                         logger.warning(
-                            'PID file found but does not contain an int, pretending it did not exist')
+                            'PID file found but doesn''t have an int, skipping')
                         return
             except IOError as e:
                 raise FailedToAcquire()

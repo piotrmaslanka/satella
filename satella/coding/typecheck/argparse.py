@@ -86,7 +86,7 @@ class CSNotGivenError(CSTypeError):
 
 class CSMultipleValuesGivenError(CSTypeError):
     def __str__(self):
-        return 'Got multiple values for argument' % (self.arg.name,)
+        return 'Got multiple values for argument %s' % (self.arg.name,)
 
 
 class CallSignature(object):
