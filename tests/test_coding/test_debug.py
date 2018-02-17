@@ -11,9 +11,7 @@ from satella.coding import typed, CallSignature, Number, coerce, Optional, \
 
 
 class TestTypecheck(unittest.TestCase):
-    
     def test_precondition(self):
-
         @precondition('len(x) == 1', lambda x: x == 1, None)
         def return_double(x, y, z):
             pass
@@ -21,7 +19,7 @@ class TestTypecheck(unittest.TestCase):
         self.assertRaises(PreconditionError, lambda: return_double([], 1, 5))
         self.assertRaises(PreconditionError, lambda: return_double([1], 2, 5))
         return_double([1], 1, 'dupa')
-    
+
     def test_cls(self):
         # if we don't care about apps
         class Lol(object):
@@ -39,7 +37,6 @@ class TestTypecheck(unittest.TestCase):
         Lol().lel([], {}, (), set([1]), lambda a: None)
 
     def test_che_co2(self):
-
         @checked_coerce((int, None))
         def p(a):
             return a
@@ -65,7 +62,6 @@ class TestTypecheck(unittest.TestCase):
         self.assertIsInstance(testa('5'), int)
 
     def test_checked_coerce(self):
-
         @checked_coerce([(str, int), int], returns=(int, float))
         def testa(a):
             return a
@@ -144,7 +140,7 @@ class TestTypecheck(unittest.TestCase):
         @typed(Optional(int))
         def testa(a=5):
             pass
-        
+
         self.assertRaises(TypeError, lambda: testa(2.0))
         testa(a=2.0)
         self.assertRaises(TypeError, lambda: testa('yuyu'))
@@ -152,7 +148,6 @@ class TestTypecheck(unittest.TestCase):
         testa(a=6)
 
     def test_shorter_coerces(self):
-
         @coerce(int, None, str)
         def test(a, b, c, d, e):
             return a, b, c, d, e
@@ -174,10 +169,9 @@ class TestTypecheck(unittest.TestCase):
         self.assertEqual(Wtf().add('1', '2.5'), 3.5)
 
     def test_coerce_result(self):
-
         @coerce(returns=str)
         def add(a, b):
-            return a+b
+            return a + b
 
         self.assertEqual(add(1, 2), '3')
 
@@ -188,8 +182,6 @@ class TestTypecheck(unittest.TestCase):
                 return a + b
 
         Wtf().add(1, 2.5)
-
-
 
     def test_T2(self):
         @typed((int, None))

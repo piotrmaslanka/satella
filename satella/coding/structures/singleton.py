@@ -67,5 +67,4 @@ else:
         """
         return _SingletonWrapper(cls)
 
-
 Singleton = singleton

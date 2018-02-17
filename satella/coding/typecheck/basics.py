@@ -1,14 +1,14 @@
 # coding=UTF-8
 from __future__ import print_function, absolute_import, division
-import typing
+
 import numbers
+import typing
 
 __all__ = [
     'Callable', 'Sequence', 'Number', 'Mapping', 'Iterable', 'Any',
     'Optional', 'TypeVar', 'List', 'Tuple', 'Dict', 'Set',
     '_NotGiven', '_NoDefault', '_NOP', '_TRUE'
 ]
-
 
 Callable = lambda *args: typing.Callable
 Sequence = typing.Sequence
@@ -22,6 +22,7 @@ List = lambda *opt: list
 Tuple = lambda *opt: tuple
 Dict = lambda *p: dict
 Set = lambda *p: set
+
 
 # Internal tokens - only instances will be
 class _NotGiven(object):

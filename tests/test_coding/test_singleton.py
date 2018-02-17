@@ -1,12 +1,13 @@
 # coding=UTF-8
 from __future__ import print_function, absolute_import, division
+
 import unittest
+
 from satella.coding import Singleton
 
 
 class TestSingleton(unittest.TestCase):
     def test_singleton(self):
-
         @Singleton
         class MyClass(object):
             def __init__(self):
@@ -18,4 +19,3 @@ class TestSingleton(unittest.TestCase):
         a.a = 6
 
         self.assertEqual(b.a, 6)
-

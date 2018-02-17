@@ -60,6 +60,7 @@ author = u'Piotr Maślanka'
 #
 # The short X.Y version.
 from satella import __version__
+
 version = '.'.join(__version__.split('.', 2)[:2])
 # The full version, including alpha/beta/rc tags.
 release = __version__

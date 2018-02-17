@@ -27,8 +27,10 @@ class TestPidlock(unittest.TestCase):
 class TestDaemon(unittest.TestCase):
     @unittest.skipIf('win' in sys.platform, 'Running on Windows')
     def test_daemonize(self):
-        with patch('sys.stdin') as stdin, patch('sys.stdout') as stdout, patch('sys.stderr') as stderr, \
-                patch('os.fork', return_value=0) as fork, patch('os.umask') as umask, patch('os.setsid') as setsid, \
+        with patch('sys.stdin') as stdin, patch('sys.stdout') as stdout, patch(
+                'sys.stderr') as stderr, \
+                patch('os.fork', return_value=0) as fork, patch('os.umask') as umask, patch(
+            'os.setsid') as setsid, \
                 patch('os.chdir') as chdir, patch('sys.exit', new=lambda: 0) as exit:
             from satella.posix import daemonize
 

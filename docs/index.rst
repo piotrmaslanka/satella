@@ -2,17 +2,17 @@ Welcome to satella's documentation!
 ===================================
 
 .. toctree::
-       :maxdepth: 2
-       :caption: Contents:
+:maxdepth: 2
+           :caption: Contents:
 
-       coding/monitor
-       coding/debug
-       coding/typechecking
-       coding/structures
-       instrumentation/traceback
-       instrumentation/metrics
-       source/modules
-       posix
+               coding/monitor
+               coding/debug
+               coding/typechecking
+               coding/structures
+               instrumentation/traceback
+               instrumentation/metrics
+               source/modules
+               posix
 
 
 Indices and tables

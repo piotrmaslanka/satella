@@ -1,10 +1,12 @@
 # coding=UTF-8
 from __future__ import print_function, absolute_import, division
+
 import inspect
-from copy import copy
 import itertools
-from .basics import *
 from collections import namedtuple
+from copy import copy
+
+from .basics import *
 
 __all__ = [
     '_CSArgument',
