@@ -18,3 +18,15 @@ class Cheese(object):
     def add_two_ints(self, a, b):
         return a+b
 ```
+
+## Singleton
+
+If you need to make your class into a singleton, do the following:
+
+```python
+from satella.coding import Singleton
+
+@Singleton
+class MyClass(object):
+    pass
+```
