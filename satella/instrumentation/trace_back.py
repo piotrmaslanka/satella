@@ -139,7 +139,7 @@ class StoredVariable(object):
             try:
                 self.pickle = pickle.dumps(value, pickle.HIGHEST_PROTOCOL)
                 self.pickle_type = 'pickle'
-            except (pickle.PicklingError, TypeError, AttributeError) as e:
+            except BaseException as e:
                 # yes, they all can happen!
                 self.pickle = repr(e.args)
                 self.pickle_type = "failed"
