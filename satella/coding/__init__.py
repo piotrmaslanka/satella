@@ -13,6 +13,7 @@ from .typecheck import typed, Callable, Sequence, \
     TypeVar, Mapping, Iterable, Any, Optional, CallSignature, \
     Number, coerce, Set, Dict, List, Tuple, checked_coerce, for_argument, \
     precondition, PreconditionError
+from .decorators import treat_result_with
 
 __all__ = [
     'typednamedtuple', 'OmniHashableMixin'
@@ -25,5 +26,6 @@ __all__ = [
     'Set', 'Dict', 'List', 'Tuple', 'checked_coerce', 'for_argument',
     'precondition', 'PreconditionError',
     'rethrow_as', 'silence_excs',
-    'Singleton'
+    'Singleton',
+    'treat_result_with'
 ]
