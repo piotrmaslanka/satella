@@ -237,6 +237,7 @@ def for_argument(*t_ops, **t_kwops):
     """
     t_ops = [_NOP if op == 'self' else op for op in t_ops]
     returns = t_kwops.pop('returns', _NOP)
+
     def outer(fun):
         @functools.wraps(fun)
         def inner(*args, **kwargs):
