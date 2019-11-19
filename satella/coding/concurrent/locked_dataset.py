@@ -9,12 +9,6 @@ from ...exceptions import ResourceLocked, ResourceNotLocked
 
 logger = logging.getLogger(__name__)
 
-class InternalDataset(object):
-    def __init__(self):
-        self.lock = threading.Lock()
-        self.locked = False
-        self.args = ()
-
 
 class LockedDataset(object):
     """
@@ -39,10 +33,18 @@ class LockedDataset(object):
     except ResourceLocked:
         print('Could not update the resource')
 
+    If no lock is held, this class that derives from such will raise ResourceNotLocked upon
+    element access while a lock is not being held
     """
 
+    class InternalDataset(object):
+        def __init__(self):
+            self.lock = threading.Lock()
+            self.locked = False
+            self.args = ()
+
     def __init__(self):
-        self.__internal = InternalDataset()
+        self.__internal = LockedDataset.InternalDataset()
 
     @staticmethod
     def locked(blocking=True, timeout=-1):
