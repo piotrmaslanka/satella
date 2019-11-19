@@ -1,6 +1,8 @@
-## v2.0.23a1
+## v2.0.24
 
-TBA
+* added [LockedDataset](/satella/coding/concurrent/locked_dataset.py)
+* added [static_var](/satella/coding/fun_static.py)
+* added [treat_result_with](/satella/coding/decorators.py)
 
 ## v2.0.22
 
