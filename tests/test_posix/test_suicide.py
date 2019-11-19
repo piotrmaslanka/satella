@@ -5,9 +5,11 @@ import os
 import unittest
 
 from satella.posix import suicide
+import sys
 
 
 class TestSuicide(unittest.TestCase):
+    @unittest.skipIf('win' in sys.platform, 'Running on Windows')
     def test_suicide(self):
         pcid = os.fork()
 
