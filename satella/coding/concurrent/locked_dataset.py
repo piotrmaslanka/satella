@@ -6,7 +6,7 @@ import threading
 logger = logging.getLogger(__name__)
 
 
-class LockedDataset:
+class LockedDataset(object):
     """
     A locked dataset. Subclass like
 
