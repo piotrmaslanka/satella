@@ -14,7 +14,7 @@ def _typeinfo_to_tuple_of_types(typeinfo, operator=type):
     if typeinfo == 'self':
         return None
     elif typeinfo is None:
-        return (operator(None),)
+        return operator(None),
     elif typeinfo == int and six.PY2:
         return six.integer_types
     else:
@@ -24,55 +24,55 @@ def _typeinfo_to_tuple_of_types(typeinfo, operator=type):
                 new_tup.extend(_typeinfo_to_tuple_of_types(elem))
             return tuple(new_tup)
         else:
-            return (typeinfo,)
+            return typeinfo,
 
 
 def istype(var, type_):
-    retv = False
+    ret_v = False
 
     if type_ is None or type_ == 'self':
-        retv = True
+        ret_v = True
 
     elif type(type_) == tuple:
-        retv = any(istype(var, subtype) for subtype in type_)
+        ret_v = any(istype(var, subtype) for subtype in type_)
 
     elif type_ in (Callable, Iterable, Sequence, Mapping):
         if type_ == Callable:
-            retv = hasattr(var, '__call__')
+            ret_v = hasattr(var, '__call__')
         elif type_ == Iterable:
-            retv = hasattr(var, '__iter__')
+            ret_v = hasattr(var, '__iter__')
         elif type_ == Sequence:
-            retv = hasattr(var, '__iter__') and hasattr(var, '__getattr__') and hasattr(var,
+            ret_v = hasattr(var, '__iter__') and hasattr(var, '__getattr__') and hasattr(var,
                                                                                         '__len__')
         elif type_ == Mapping:
-            retv = hasattr(var, '__getitem__')
+            ret_v = hasattr(var, '__getitem__')
     else:
         try:
             if isinstance(var, type_):
-                retv = True
+                ret_v = True
         except TypeError:  # must be a typing.* annotation
-            retv = type(var) == type_
+            ret_v = type(var) == type_
 
-    return retv
+    return ret_v
 
 
 def _do_if_not_type(var, type_, fun='default'):
     if type_ in ((type(None),),) and (fun == 'default'):
-        retv = None
+        ret_v = None
 
     elif type_ in (None, (None,), 'self'):
-        retv = var
+        ret_v = var
 
     elif not istype(var, type_):
 
         if fun == 'default':
-            retv = None if type_[0] == type(None) else type_[0](var)
+            ret_v = None if type_[0] == type(None) else type_[0](var)
         else:
             q = fun()
             if isinstance(q, Exception):
                 raise q
-            retv = q
+            ret_v = q
     else:
-        retv = var
+        ret_v = var
 
-    return retv
+    return ret_v

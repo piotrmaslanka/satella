@@ -52,6 +52,14 @@ class TestTypecheck(unittest.TestCase):
 
         q(lambda: None)
 
+    def test_forarg_kwords(self):
+        @for_argument(int, typed=bool)
+        def check(v1, typed='True'):
+            if typed:
+                return v1
+
+        self.assertEquals(check('5'), 5)
+
     def test_forarg(self):
         @for_argument(int)
         def testa(a):

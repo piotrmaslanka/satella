@@ -19,3 +19,9 @@ class ResourceLocked(BaseSatellaException):
 
 class ResourceNotLocked(BaseSatellaException):
     """Locking given resource is needed in order to access it"""
+
+
+class PreconditionError(BaseSatellaException, ValueError):
+    """
+    A precondition was not met for the argument
+    """

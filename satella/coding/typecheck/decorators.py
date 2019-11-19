@@ -6,6 +6,7 @@ import six
 
 from .corechk import *
 from .basics import *
+from ...exceptions import PreconditionError
 
 __all__ = [
     'typed',
@@ -15,8 +16,11 @@ __all__ = [
     'PreconditionError', 'precondition'
 ]
 
+
 def typed(*t_args, **t_kwargs):
     """
+    Check for given types before a function is called. Raise TypeError if something goes wrong
+
     Use like:
 
         @typed(int, six.text_type)
@@ -43,9 +47,6 @@ def typed(*t_args, **t_kwargs):
     If you want to check for None, type (None, )
     None for an argument means "do no checking", (None, ) means "type must be
     NoneType". You can pass tuples or lists to match for multiple types
-
-    :param t_args:
-    :param t_kwargs:
     """
 
     t_args = [(_typeinfo_to_tuple_of_types(x) if x is not None else None)
@@ -163,12 +164,6 @@ def checked_coerce(*t_args, **t_kwargs):
     return outer
 
 
-class PreconditionError(ValueError):
-    """
-    A precondition was not met for the argument
-    """
-
-
 def precondition(*t_ops):
     """
     Check that a precondition happens for given parameter.
@@ -227,6 +222,17 @@ def precondition(*t_ops):
 
 
 def for_argument(*t_ops, **t_kwops):
+    """
+    Calls a callable for each of the arguments
+
+    Use like:
+
+    @for_argument(int, str, typed=bool)
+    def check(val1, val2, typed='True'):
+        if typed:
+            return val1 + int(val2)
+
+    """
     t_ops = [_NOP if op == 'self' else op for op in t_ops]
 
     def outer(fun):
