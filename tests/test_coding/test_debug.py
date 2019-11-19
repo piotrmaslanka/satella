@@ -60,6 +60,22 @@ class TestTypecheck(unittest.TestCase):
 
         self.assertEquals(check('5'), 5)
 
+    def test_forarg_shorter(self):
+        @for_argument(int)
+        def check(v1, v2):
+            if v2 != 'str':
+                raise ValueError()
+            return v1
+
+        self.assertEquals(check('5', 'str'), 5)
+
+    def test_forarg_returns(self):
+        @for_argument(returns=bool)
+        def check(v1, v2):
+            return v1 and v2
+
+        self.assertTrue(check('dupa', 'zbita'))
+
     def test_forarg(self):
         @for_argument(int)
         def testa(a):

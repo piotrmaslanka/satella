@@ -1,6 +1,7 @@
 import logging
 import typing
 import functools
+import warnings
 logger = logging.getLogger(__name__)
 
 __all__ = ['treat_result_with']
@@ -20,6 +21,7 @@ def treat_result_with(callable):
 
     fun = lambda *args, **kwargs: callable(fun(*args, **kwargs))
     """
+    warnings.warn('Use for_argument(returns=x) instead', DeprecationWarning)
     def inner(f):
         @functools.wraps(f)
         def inner2(*args, **kwargs):
