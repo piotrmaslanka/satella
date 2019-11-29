@@ -11,7 +11,7 @@ satella
 
 _satella.posix_ in unavailable on non-POSIX systems, but the rest should work OK.
 
-Satella is a Python library for writing server applications, especially those dealing with mundane but useful things.
+Satella is a Python 3.5+ library for writing server applications, especially those dealing with mundane but useful things.
 
 See [LICENSE](LICENSE) for text of the license.
 
