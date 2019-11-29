@@ -7,6 +7,43 @@ from satella.configuration.sources import DirectorySource
 
 
 class TestSchema(unittest.TestCase):
+
+    def test_descriptor_from_schema(self):
+        schema = {
+            "key_s": "str",
+            "key_i": "int",
+            "key_f": "float",
+            "ip_addr": "ipv4",
+            "nested": {
+                "key_s": "str",
+            },
+            "default_five": {
+                "type": "int",
+                "optional": True,
+                "default": 5
+            }
+        }
+
+        s = descriptor_from_dict(schema)
+        self.assertEquals(s.convert({
+            'key_s': 'string',
+            'key_i': '5',
+            'key_f': '5.5',
+            'ip_addr': '10.2.3.43',
+            'nested': {
+                'key_s': "string"
+            }
+        }), {
+            'key_s': 'string',
+            'key_i': 5,
+            'key_f': 5.5,
+            'ip_addr': '10.2.3.43',
+            'nested': {
+                'key_s': "string"
+            },
+            'default_five': 5
+        })
+
     def test_schema(self):
         D1 = {
             'key_s': 'value',

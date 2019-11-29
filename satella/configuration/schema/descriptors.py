@@ -3,7 +3,7 @@ import typing as tp
 import re
 
 from satella.coding import rethrow_as, CallableGroup, for_argument
-from ...exceptions import ConfigurationValidationError
+from ...exceptions import ConfigurationValidationError, ConfigurationSchemaError
 
 __all__ = [
     'Descriptor',
@@ -14,6 +14,7 @@ __all__ = [
     'must_be_one_of',
     'CheckerCondition',
     'ConfigDictValue',
+    'descriptor_from_dict',
 ]
 
 ConfigDictValue = tp.Optional[tp.Union[int, float, str, dict, list, bool]]
@@ -58,6 +59,9 @@ class Descriptor(object):
     def __init__(self):
         self.pre_checkers = CallableGroup()
         self.post_checkers = CallableGroup()
+        self.name = None
+        self.optional = None
+        self.default = None
 
         for checker in self.__class__.CHECKERS:
             self.add_checker(checker)
@@ -159,27 +163,76 @@ class Dict(Descriptor):
         self.keys = {item.name: item for item in keys}  #  tp.Dict[str, DictDescriptorKey]
         self.unknown_key_mapper = unknown_key_mapper    # Dict.UnknownKeyHandlerType
 
-    @for_argument('self', copy.copy)
     def convert(self, value: ConfigDictValue):
+        value = copy.copy(value)
         assert isinstance(value, dict)
         value = super(Dict, self).convert(value)
         assert isinstance(value, dict)
 
         output = {}
 
-        for key, keydescriptor in self.keys.items():
+        for key, key_descriptor in self.keys.items():
             try:
                 v = value.pop(key)
             except KeyError:
-                if keydescriptor.optional:
-                    output[key] = keydescriptor.default
+                if key_descriptor.optional:
+                    output[key] = key_descriptor.default
                 else:
-                    raise ConfigurationSchemaError('required key %s not found',
-                                                   key)
+                    raise ConfigurationValidationError('required key %s not found' % (key, ))
             else:
-                output[key] = keydescriptor.convert(v)
+                output[key] = key_descriptor.convert(v)
 
         for k, v in value.items():
             output[k] = self.unknown_key_mapper(k, v)
 
         return output
+
+
+BASE_LOOKUP_TABLE = {'int': Integer, 'float': Float, 'str': String, 'ipv4': IPv4, 'list': List, 'dict': Dict}
+
+
+def _get_descriptor_for(key: str, value: tp.Any) -> Descriptor:
+    if isinstance(value, str):
+        if value in ('int', 'float', 'str', 'ipv4'):
+            return create_key(BASE_LOOKUP_TABLE[value](),
+                              key, False, None)
+    elif isinstance(value, dict):
+        if 'type' not in value:
+            return create_key(descriptor_from_dict(value),
+                              key, False, None)
+        else:
+            optional = value.get('optional', False)
+            default = value.get('default', None)
+            descriptor = BASE_LOOKUP_TABLE[value['type']]()
+            return create_key(descriptor, key, optional, default)
+    else:
+        raise ConfigurationSchemaError('invalid schema, unrecognized config object %s' % (value, ))
+
+
+def descriptor_from_dict(dct: dict) -> Descriptor:
+    """
+    Giving a Python dictionary-defined schema of the configuration, return a Descriptor-based one
+
+    :param dct: something like
+    {
+        "a": "int",
+        "b": "str",
+        "c": {
+            "type": "int"
+            "optional": True,
+            "default": 5
+        },
+        "d": {
+            "a": "int",
+            "b": "str"
+        }
+    }
+    :return: a Descriptor-based schema
+    """
+    fields = []
+
+    for key, value in dct.items():
+        descriptor = _get_descriptor_for(key, value)
+        fields.append(descriptor)
+
+    return Dict(fields)
