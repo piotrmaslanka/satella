@@ -15,7 +15,7 @@ def static_var(var_name, value):
     def count():
         count.counter += 1
 
-    or (syntax valid only on Python 3)
+    or:
 
     class MyClass:
         @static_var('counter', 2)
