@@ -1,8 +1,8 @@
 import logging
 import typing
 import functools
+import itertools
 import warnings
-import six
 
 logger = logging.getLogger(__name__)
 
@@ -43,7 +43,7 @@ def precondition(*t_ops):
     for t_op in t_ops:
         if t_op is None:
             precond = _TRUE
-        elif isinstance(t_op, six.string_types):
+        elif isinstance(t_op, str):
             q = dict(globals())
             exec('_precond = lambda x: ' + t_op, q)
             precond = q['_precond']
@@ -59,7 +59,7 @@ def precondition(*t_ops):
         def inner(*args, **kwargs):
             assert len(args) >= len(tn_ops), 'More preconditions than positional arguments!'
             with rethrow_as(TypeError, PreconditionError):
-                for arg, precond in six.moves.zip_longest(args, tn_ops, fillvalue=_TRUE):
+                for arg, precond in itertools.zip_longest(args, tn_ops, fillvalue=_TRUE):
                     print(arg, precond, precond.__doc__)
                     if not precond(arg):
                         raise PreconditionError(
@@ -94,33 +94,10 @@ def for_argument(*t_ops, **t_kwops):
             # add extra 'None' argument if unbound method
             assert len(args) >= len(t_ops)
             a = fun(*((_NOP if op is None else op)(arg) for arg, op in
-                         six.moves.zip_longest(args, t_ops, fillvalue=None)),
+                        itertools.zip_longest(args, t_ops, fillvalue=None)),
                        **{k: t_kwops.get(k, _NOP)(v) for k, v in kwargs.items()})
             return returns(a)
 
         return inner
 
     return outer
-
-
-def treat_result_with(callable):
-    """
-    Before this function returns, process it's result with callable
-
-    @treat_result_with(callable)
-    def fun(*args, **kwargs):
-        ...
-
-    is equivalent to:
-    def fun(*args, **kwargs):
-        ...
-
-    fun = lambda *args, **kwargs: callable(fun(*args, **kwargs))
-    """
-    warnings.warn('Use for_argument(returns=x) instead', DeprecationWarning)
-    def inner(f):
-        @functools.wraps(f)
-        def inner2(*args, **kwargs):
-            return callable(f(*args, **kwargs))
-        return inner2
-    return inner

@@ -3,8 +3,6 @@ from __future__ import print_function, absolute_import, division
 
 import unittest
 
-import six
-
 from satella.coding import for_argument, precondition
 from satella.exceptions import PreconditionError
 

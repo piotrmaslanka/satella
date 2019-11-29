@@ -2,7 +2,7 @@ import unittest
 from threading import Thread
 from time import sleep
 
-from six.moves.queue import Queue
+from queue import Queue
 
 from satella.coding import Monitor
 

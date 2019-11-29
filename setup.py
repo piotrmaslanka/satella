@@ -6,7 +6,6 @@ setup(keywords=['ha', 'high availability', 'scalable', 'scalability', 'server'],
       packages=find_packages(include=['satella', 'satella.*']),
       version=__version__,
       install_requires=[
-          "six",
       ],
       tests_require=[
           "nose", "mock", "coverage"

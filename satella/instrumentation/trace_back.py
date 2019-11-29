@@ -24,7 +24,6 @@ import sys
 import traceback
 import zlib
 import typing as tp
-import six
 
 try:
     import cPickle as pickle
@@ -129,16 +128,13 @@ class StoredVariableValue:
         """
         self.repr = repr(value)
         self.type_ = repr(type(value))
-        if six.PY2:
-            self.repr = six.text_type(self.repr, 'utf8')
-            self.type_ = six.text_type(self.type_, 'utf8')
 
         policy = policy or GenerationPolicy()
 
         self.repr = policy.process_repr(self.repr)
 
-        self.pickle: bytes = None
-        self.pickle_type: str = None
+        self.pickle = None
+        self.pickle_type = None
 
         if policy.should_pickle(value):
             try:
@@ -202,11 +198,11 @@ class StackFrame:
         self.lineno = frame.f_lineno
 
         self.locals = {}
-        for key, value in six.iteritems(frame.f_locals):
+        for key, value in frame.f_locals.items():
             self.locals[key] = StoredVariableValue(value, policy)
 
         self.globals = {}
-        for key, value in six.iteritems(frame.f_globals):
+        for key, value in frame.f_globals.items():
             self.globals[key] = StoredVariableValue(value, policy)
 
 
@@ -249,7 +245,7 @@ class Traceback(object):
             self.frames.append(StackFrame(f, value_pickling_policy))
             f = f.f_back
 
-        self.formatted_traceback = six.text_type(traceback.format_exc())
+        self.formatted_traceback = str(traceback.format_exc())
 
     def pickle_to(self, stream: tp.BinaryIO):
         """Pickle self to target stream"""
@@ -283,7 +279,7 @@ class Traceback(object):
         for frame in self.frames:
             output.write(u'** %s at %s:%s\n' % (
                 frame.name, frame.filename, frame.lineno))
-            for name, value in six.iteritems(frame.locals):
+            for name, value in frame.locals.items():
                 try:
                     output.write(u'*** %s: %s\n' % (name, value.repr))
                 except BaseException as e:

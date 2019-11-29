@@ -6,8 +6,6 @@ import os
 import sys
 import typing as tp
 
-import six
-
 try:
     import pwd
     import grp
@@ -65,7 +63,7 @@ def daemonize(exit_via: tp.Callable = sys.exit,
 
 def _parse_ug(no, module, fieldname, osfun):
     if no is not None:
-        if isinstance(no, six.string_types):
+        if isinstance(no, str):
             no = getattr(module.getpwnam(no), fieldname)
         osfun(no)
 

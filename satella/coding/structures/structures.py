@@ -9,8 +9,6 @@ import typing as tp
 import operator
 import time
 
-import six
-
 logger = logging.getLogger(__name__)
 
 __all__ = [

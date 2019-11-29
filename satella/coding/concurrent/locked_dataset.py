@@ -3,7 +3,6 @@ import typing
 import threading
 import inspect
 import functools
-import six
 
 from ...exceptions import ResourceLocked, ResourceNotLocked
 
@@ -73,10 +72,7 @@ class LockedDataset(object):
         return super(LockedDataset, self).__setattr__(key, value)
 
     def __call__(self, blocking=True, timeout=-1):
-        if six.PY2:
-            get_internal(self).args = blocking,
-        else:
-            get_internal(self).args = blocking, timeout
+        get_internal(self).args = blocking, timeout
         return self
 
     def __enter__(self):
