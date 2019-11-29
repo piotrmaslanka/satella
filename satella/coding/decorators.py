@@ -2,9 +2,105 @@ import logging
 import typing
 import functools
 import warnings
+import six
+
 logger = logging.getLogger(__name__)
 
-__all__ = ['treat_result_with']
+from ..exceptions import PreconditionError
+
+__all__ = ['treat_result_with', 'precondition', 'for_argument']
+
+
+_NOP = lambda x: x
+_TRUE = lambda x: True
+
+def precondition(*t_ops):
+    """
+    Check that a precondition happens for given parameter.
+    Only positional arguments are supported.
+
+    You can do it like this:
+
+    @precondition(lambda x: x == 1)
+    def return_two(x):
+        return x*2
+
+    or
+
+    @precondition('x == 1')
+    def return_two(x):
+        ..
+
+    If None is passed then argument will be always assumed to be True.
+    You can use all standard locals in precondition.
+
+    You function call will return a PreconditionError (subclass of
+    ValueError) if a precondition fails
+    """
+
+    tn_ops = []
+
+    for t_op in t_ops:
+        if t_op is None:
+            precond = _TRUE
+        elif isinstance(t_op, six.string_types):
+            q = dict(globals())
+            exec('_precond = lambda x: ' + t_op, q)
+            precond = q['_precond']
+        else:
+            precond = t_op
+
+        tn_ops.append(precond)
+
+    from satella.coding.recast_exceptions import rethrow_as
+
+    def outer(fun):
+        @functools.wraps(fun)
+        def inner(*args, **kwargs):
+            assert len(args) >= len(tn_ops), 'More preconditions than positional arguments!'
+            with rethrow_as(TypeError, PreconditionError):
+                for arg, precond in six.moves.zip_longest(args, tn_ops, fillvalue=_TRUE):
+                    print(arg, precond, precond.__doc__)
+                    if not precond(arg):
+                        raise PreconditionError(
+                            'Argument of value %s failed precondition check' % (arg,))
+            return fun(*args, **kwargs)
+
+        return inner
+
+    return outer
+
+
+def for_argument(*t_ops, **t_kwops):
+    """
+    Calls a callable for each of the arguments.
+
+    returns is a special keyword, a callable to process the result through
+
+    Use like:
+
+    @for_argument(int, str, typed=bool, returns=int)
+    def check(val1, val2, typed='True'):
+        if typed:
+            return val1 + int(val2)
+
+    """
+    t_ops = [_NOP if op == 'self' else op for op in t_ops]
+    returns = t_kwops.pop('returns', _NOP)
+
+    def outer(fun):
+        @functools.wraps(fun)
+        def inner(*args, **kwargs):
+            # add extra 'None' argument if unbound method
+            assert len(args) >= len(t_ops)
+            a = fun(*((_NOP if op is None else op)(arg) for arg, op in
+                         six.moves.zip_longest(args, t_ops, fillvalue=None)),
+                       **{k: t_kwops.get(k, _NOP)(v) for k, v in kwargs.items()})
+            return returns(a)
+
+        return inner
+
+    return outer
 
 
 def treat_result_with(callable):

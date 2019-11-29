@@ -1,8 +1,6 @@
 # coding=UTF-8
 from __future__ import print_function, absolute_import, division
 
-from .typecheck import typed
-
 
 def _merge(v1, v2):
     if isinstance(v1, dict) and isinstance(v2, dict):
@@ -20,6 +18,5 @@ def _merge(v1, v2):
     return v2
 
 
-@typed(dict, dict, returns=dict)
 def merge_dicts(first, second):
     return _merge(first, second)

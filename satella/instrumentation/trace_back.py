@@ -23,7 +23,7 @@ import io
 import sys
 import traceback
 import zlib
-
+import typing as tp
 import six
 
 try:
@@ -41,9 +41,10 @@ class GenerationPolicy(object):
     Override if need be, and pass the class (or instance) to Traceback
     """
 
-    def __init__(self, enable_pickling=True, compress_at=128 * 1024,
-                 repr_length_limit=128 * 1024,
-                 compression_level=6):
+    def __init__(self, enable_pickling: bool = True,
+                 compress_at: int = 128 * 1024,
+                 repr_length_limit: int = 128 * 1024,
+                 compression_level: int = 6):
         """
         :param enable_pickling: bool, whether to enable pickling at all
         :param compress_at: pickles longer than this (bytes) will be compressed
@@ -57,7 +58,7 @@ class GenerationPolicy(object):
         self.repr_length_limit = repr_length_limit
         self.compression_level = compression_level
 
-    def should_pickle(self, value):
+    def should_pickle(self, value: tp.Any) -> bool:
         """
         Should this value be pickled?
 
@@ -66,15 +67,15 @@ class GenerationPolicy(object):
         """
         return self.enable_pickling
 
-    def should_compress(self, pickledata):
+    def should_compress(self, pickledata: bytes) -> bool:
         """
         Should this pickle undergo compression?
-        :param pickledata: bytes, pickle value
+        :param pickledata: pickle value
         :return: bool
         """
         return len(pickledata) > self.compress_at
 
-    def get_compression_level(self, pickledata):
+    def get_compression_level(self, pickledata: bytes) -> int:
         """
         What compression level to use to pickle this?
         :param pickledata: bytes, pickle value
@@ -83,7 +84,7 @@ class GenerationPolicy(object):
         """
         return self.compression_level
 
-    def process_repr(self, r):
+    def process_repr(self, r: str) -> str:
         """
         Process the string obtained from __repr__ing
         :param r: result of a __repr__ on value
@@ -98,7 +99,7 @@ class GenerationPolicy(object):
                 return r
 
 
-class StoredVariable(object):
+class StoredVariableValue:
     """
     Class used to store a variable value. Picklable.
 
@@ -111,13 +112,15 @@ class StoredVariable(object):
             None - nothing
             "pickle" - normal Python pickle
             "pickle/gzip" - Python pickle treated with zlib.compress
-            "failed" - could not pickle, pickle contains a text with
-            human-readable reason
+            "failed" - could not pickle, pickle contains a UTF-8 text with
+                human-readable exception reason
+            "failed/gzip" - compression failed, pickle contains a UTF-8 text with
+                human-readable exception reason
 
     """
     __slots__ = ('repr', 'type_', 'pickle', 'pickle_type')
 
-    def __init__(self, value, policy):
+    def __init__(self, value: tp.Any, policy: tp.Optional[GenerationPolicy] = None):
         """
         If value cannot be pickled, it's repr will be at least preserved
 
@@ -130,10 +133,12 @@ class StoredVariable(object):
             self.repr = six.text_type(self.repr, 'utf8')
             self.type_ = six.text_type(self.type_, 'utf8')
 
+        policy = policy or GenerationPolicy()
+
         self.repr = policy.process_repr(self.repr)
 
-        self.pickle = None
-        self.pickle_type = None
+        self.pickle: bytes = None
+        self.pickle_type: str = None
 
         if policy.should_pickle(value):
             try:
@@ -141,7 +146,7 @@ class StoredVariable(object):
                 self.pickle_type = 'pickle'
             except BaseException as e:
                 # yes, they all can happen!
-                self.pickle = repr(e.args)
+                self.pickle = repr((e,)+e.args).encode('utf8')
                 self.pickle_type = "failed"
             else:
                 if policy.should_compress(self.pickle):
@@ -151,8 +156,9 @@ class StoredVariable(object):
                             policy.get_compression_level(
                                 self.pickle))
                         self.pickle_type = "pickle/gzip"
-                    except zlib.error:
-                        pass  # ok, keep normal
+                    except zlib.error as e:
+                        self.pickle = ('failed to gzip, reason is %s' % (repr(e), )).encode('utf8')
+                        self.pickle_type = "failed/gzip"
 
     def load_value(self):
         """
@@ -170,24 +176,24 @@ class StoredVariable(object):
             raise ValueError(
                 'Value has failed to be pickled, reason is %s' % (self.pickle,))
         elif self.pickle_type == 'pickle/gzip':
-            pickle = zlib.decompress(self.pickle)
+            pickle_ = zlib.decompress(self.pickle)
         elif self.pickle_type == 'pickle':
-            pickle = self.pickle
+            pickle_ = self.pickle
 
         try:
-            return pickle.loads(pickle)
+            return pickle.loads(pickle_)
         except pickle.UnpicklingError:
             raise ValueError(
                 'object picklable, but cannot load in this environment')
 
 
-class StackFrame(object):
+class StackFrame:
     """
     Class used to verily preserve stack frames. Picklable.
     """
     __slots__ = ('locals', 'globals', 'name', 'filename', 'lineno')
 
-    def __init__(self, frame, policy):
+    def __init__(self, frame: "<class 'frame'>", policy: GenerationPolicy):
         """
         :type frame: Python stack frame
         """
@@ -197,21 +203,27 @@ class StackFrame(object):
 
         self.locals = {}
         for key, value in six.iteritems(frame.f_locals):
-            self.locals[key] = StoredVariable(value, policy)
+            self.locals[key] = StoredVariableValue(value, policy)
 
         self.globals = {}
         for key, value in six.iteritems(frame.f_globals):
-            self.globals[key] = StoredVariable(value, policy)
+            self.globals[key] = StoredVariableValue(value, policy)
 
 
 class Traceback(object):
-    """Class used to preserve exceptions. Picklable."""
+    """
+    Class used to preserve exceptions and chains of stack frames.
+     Picklable.
+     """
     __slots__ = ('formatted_traceback', 'frames')
 
-    def __init__(self, policy=GenerationPolicy):
+    def __init__(self, starting_frame=None, policy=GenerationPolicy):
         """
         To be invoked while processing an exception is in progress
 
+        :param starting_frame: frame to start tracking the traceback from.
+            Must be either None, in which case an exception must be in progress and will be taken
+            else must be an instance of <class 'frame'>.
         :param policy: policy for traceback generation
         :raise ValueError: there is no traceback to get info from!
             Is any exception in process?
@@ -224,30 +236,32 @@ class Traceback(object):
 
         self.frames = []
 
-        if tb is None:
-            raise ValueError('No traceback')
-        else:
+        if starting_frame is None:
+            if tb is None:
+                raise ValueError('No traceback')
             while tb.tb_next:
                 tb = tb.tb_next
-
             f = tb.tb_frame
-            while f:
-                self.frames.append(StackFrame(f, value_pickling_policy))
-                f = f.f_back
+        else:
+            f = starting_frame
 
-            self.formatted_traceback = six.text_type(traceback.format_exc())
+        while f:
+            self.frames.append(StackFrame(f, value_pickling_policy))
+            f = f.f_back
 
-    def pickle_to(self, stream):
+        self.formatted_traceback = six.text_type(traceback.format_exc())
+
+    def pickle_to(self, stream: tp.BinaryIO):
         """Pickle self to target stream"""
         pickle.dump(self, stream, pickle.HIGHEST_PROTOCOL)
 
-    def pickle(self):
+    def pickle(self) -> bytes:
         """Returns this instance, pickled"""
         bio = io.BytesIO()
         self.pickle_to(bio)
         return bio.getvalue()
 
-    def pretty_format(self):
+    def pretty_format(self) -> str:
         """
         Return a multi-line, pretty-printed representation of all exception
         data.
@@ -257,7 +271,7 @@ class Traceback(object):
         self.pretty_print(bio)
         return bio.getvalue()
 
-    def pretty_print(self, output=sys.stderr):
+    def pretty_print(self, output: tp.TextIO = sys.stderr) -> tp.NoReturn:
         """
         Pretty-print the exception
         :param output: a file-like object in text mode
@@ -272,5 +286,5 @@ class Traceback(object):
             for name, value in six.iteritems(frame.locals):
                 try:
                     output.write(u'*** %s: %s\n' % (name, value.repr))
-                except:
-                    output.write(u'*** %s: repr unavailable\n' % name)
+                except BaseException as e:
+                    output.write(u'*** %s: repr unavailable (due to locally raised %s)\n' % (name, repr(e)))

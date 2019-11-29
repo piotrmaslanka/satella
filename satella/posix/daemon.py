@@ -4,6 +4,7 @@ from __future__ import print_function, absolute_import, division
 import logging
 import os
 import sys
+import typing as tp
 
 import six
 
@@ -19,17 +20,15 @@ except ImportError:
 
     pwd = grp = L()
 
-from satella.coding import typed, Callable
-
 logger = logging.getLogger(__name__)
 
 DEVNULL = '/dev/null'
 
 
-@typed(Callable, bool, (None, int), (None, int))
-def daemonize(exit_via=sys.exit,
-              redirect_std_to_devnull=True,
-              uid=None, gid=None):
+def daemonize(exit_via: tp.Callable = sys.exit,
+              redirect_std_to_devnull: bool = True,
+              uid: tp.Optional[int] = None,
+              gid: tp.Optional[int] = None):
     """
     Make this process into a daemon.
 

@@ -32,7 +32,7 @@ def is_running_as_root():
     return os.geteuid() == 0
 
 
-def suicide(kill_entire_pg=True):
+def suicide(kill_entire_pg: bool = True):
     """
     Kill self.
 
