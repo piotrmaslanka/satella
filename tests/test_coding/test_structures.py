@@ -105,6 +105,11 @@ class TestDictObject(unittest.TestCase):
         a.a = 5
         self.assertEquals(a.a, 5)
 
+        def delete():
+            del a.c
+
+        self.assertRaises(AttributeError, delete)
+
 
 class TestHeap(unittest.TestCase):
     def test_push(self):
