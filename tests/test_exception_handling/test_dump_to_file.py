@@ -10,34 +10,37 @@ from . import ExceptionHandlingTestCase
 
 
 class TestDumpToFile(ExceptionHandlingTestCase):
-    def test_dump_to_file(self):
-        sq, sa, tf = io.StringIO(), io.StringIO(), tempfile.mktemp()
-        op = io.BytesIO()
-
-        self.exception_handler = DumpToFileHandler(human_readables=[sq, sa, tf],
-                                                   trace_pickles=[op])
+    def setUp(self):
+        self.sq, self.sa, self.tf = io.StringIO(), io.StringIO(), tempfile.mktemp()
+        self.op = io.BytesIO()
+        self.exception_handler = DumpToFileHandler(human_readables=[self.sq, self.sa, self.tf, None],
+                                                   trace_pickles=[self.op])
         self.exception_handler.install()
 
+    def tearDown(self):
+        self.exception_handler.uninstall()
+
+    def test_dump_to_file(self):
         try:
             def makeexc():
-                print(hello)
+                print(hello)        # raises NameError
 
             self.make_exception(makeexc)
 
-            sq, sa = sq.getvalue(), sa.getvalue()
-            with open(tf, 'r', encoding='utf8') as fi:
+            self.sq, self.sa = self.sq.getvalue(), self.sa.getvalue()
+            with open(self.tf, 'r', encoding='utf8') as fi:
                 sb = fi.read()
 
             def assertIn(txt):
-                self.assertIn(txt, sq)
-                self.assertIn(txt, sa)
+                self.assertIn(txt, self.sq)
+                self.assertIn(txt, self.sa)
                 self.assertIn(txt, sb)
 
             assertIn('NameError')
             assertIn('hello')
         finally:
             with silence_excs(FileNotFoundError):
-                os.unlink(tf)
+                os.unlink(self.tf)
 
-        tbp = pickle.loads(op.getvalue())
+        tbp = pickle.loads(self.op.getvalue())
         self.assertIsInstance(tbp, Traceback)

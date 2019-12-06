@@ -32,7 +32,7 @@ class AsStream:
 
         if isinstance(o, str):
             if os.path.isdir(o):
-                o = os.path.join(o, uuid.uuid4().hex)
+                self.o = os.path.join(o, uuid.uuid4().hex)
 
             self.mode = AsStream.MODE_FILE
 
