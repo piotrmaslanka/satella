@@ -1,8 +1,10 @@
-# v2.1
+# v2.1.1
 
 * removed support for Python 2.7
 * most of the typecheck module was cut
 * implemented tracking standard stack frames, not only the exception ones
+* added support for _DictObject_
+* added _exception_handling_ and _configuration_
 
 ## v2.0.24
 
