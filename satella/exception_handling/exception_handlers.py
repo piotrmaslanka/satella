@@ -1,5 +1,6 @@
 import types
 import typing as tb
+from abc import abstractmethod
 
 __all__ = [
     'BaseExceptionHandler',
@@ -27,6 +28,7 @@ class BaseExceptionHandler:
         from .global_eh import GlobalExcepthook
         GlobalExcepthook().remove_hook(self)
 
+    @abstractmethod
     def handle_exception(self, type_: tb.Optional[type], value,
                          traceback: types.TracebackType) -> tb.Optional[bool]:
         """Return True to intercept the exception. It won't be propagated to other handlers."""
