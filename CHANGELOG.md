@@ -2,6 +2,7 @@
 
 * modified EnvironmentSource to accept custom config names
 * added new descriptor type _Boolean_
+* added _install_dump_frames_on_
 
 # v2.1.1
 
