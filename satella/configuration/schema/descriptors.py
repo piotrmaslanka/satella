@@ -7,7 +7,7 @@ from ...exceptions import ConfigurationValidationError, ConfigurationSchemaError
 
 __all__ = [
     'Descriptor',
-    'Integer', 'Float', 'String',
+    'Integer', 'Float', 'String', 'Boolean',
     'IPv4',
     'List', 'Dict', 'create_key',
     'must_be_type',
@@ -84,6 +84,23 @@ class Descriptor(object):
             self.pre_checkers.add(checker)
         else:
             self.post_checkers.add(checker)
+
+
+@staticmethod
+def _make_boolean(v: tp.Any) -> bool:
+    if isinstance(v, str):
+        if v.upper() == 'TRUE':
+            return True
+        elif v.upper() == 'FALSE':
+            return False
+        else:
+            raise ConfigurationValidationError('Unknown value of "%s" posing to be a bool' % (v, ))
+    else:
+        return bool(v)
+
+
+class Boolean(Descriptor):
+    BASIC_MAKER = _make_boolean
 
 
 class Integer(Descriptor):
@@ -187,14 +204,14 @@ class Dict(Descriptor):
 
 
 BASE_LOOKUP_TABLE = {'int': Integer, 'float': Float, 'str': String, 'ipv4': IPv4, 'list': List, 'dict': Dict,
-                     'any': Descriptor}
+                     'any': Descriptor, 'bool': Boolean}
 
 
 def _get_descriptor_for(key: str, value: tp.Any) -> Descriptor:
     if value == '':
         return Descriptor()
     elif isinstance(value, str):
-        if value in ('int', 'float', 'str', 'ipv4', 'any'):
+        if value in ('int', 'float', 'str', 'ipv4', 'any', 'bool'):
             return create_key(BASE_LOOKUP_TABLE[value](),
                               key, False, None)
     elif isinstance(value, dict):

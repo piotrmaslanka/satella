@@ -33,6 +33,8 @@ class TestSchema(unittest.TestCase):
                     }
                 }
             },
+            'boolean2': 'bool',
+            'boolean': 'bool',
             'anything': 'any',
             "list": {
                 "type": "list",
@@ -47,9 +49,11 @@ class TestSchema(unittest.TestCase):
             'key_f': '5.5',
             'ip_addr': '10.2.3.43',
             'anything': 'any',
+            'boolean': 'false',
             'nested': {
                 'key_s': "string"
             },
+            'boolean2': 0,
             'logstash': [
                 {'host': 'ipv4'}
             ],
@@ -58,8 +62,10 @@ class TestSchema(unittest.TestCase):
             'key_s': 'string',
             'key_i': 5,
             'key_f': 5.5,
+            'boolean': False,
             'ip_addr': '10.2.3.43',
             'anything': 'any',
+            'boolean2': False,
             'nested': {
                 'key_s': "string"
             },

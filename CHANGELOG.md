@@ -1,6 +1,7 @@
 # v2.1.2
 
 * modified EnvironmentSource to accept custom config names
+* added new descriptor type _Boolean_
 
 # v2.1.1
 
