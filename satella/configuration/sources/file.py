@@ -80,9 +80,9 @@ class DirectorySource(FileSource):
                     e, directory))
             return []
 
-        for fname in files:
+        for file_name in files:
 
-            fullname = os.path.join(directory, fname)
+            fullname = os.path.join(directory, file_name)
             if os.path.isfile(fullname):
                 sources.append(FileSource(fullname, encoding=self.encoding,
                                           interpret_as=self.source_classes))
