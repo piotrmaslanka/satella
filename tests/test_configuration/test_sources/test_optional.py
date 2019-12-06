@@ -1,5 +1,5 @@
 from satella.configuration.sources import MergingSource, JSONSource, \
-    AlternativeSource
+    AlternativeSource, StaticSource
 from satella.exceptions import ConfigurationError
 from .utils import SourceTestCase
 
@@ -14,6 +14,10 @@ class TestMergingSource(SourceTestCase):
 
     def test_empty(self):
         self.assertSourceEmpty(MergingSource())
+
+    def test_static(self):
+        st = StaticSource({'a': 5})
+        self.assertEquals(st.provide(), {'a': 5})
 
 
 class TestAlternativeSource(SourceTestCase):

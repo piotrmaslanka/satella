@@ -1,5 +1,6 @@
 __all__ = [
-    'BaseSource'
+    'BaseSource',
+    'StaticSource'
 ]
 
 
@@ -13,3 +14,14 @@ class BaseSource(object):
         :raise ConfigurationError: on invalid configuration
         """
         return {}
+
+
+class StaticSource(BaseSource):
+    """
+    A static piece of configuration. Returns exactly what is passed
+    """
+    def __init__(self, config: dict):
+        self.config = config
+
+    def provide(self) -> dict:
+        return self.config
