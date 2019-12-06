@@ -7,7 +7,7 @@ import unittest
 import mock
 
 from satella.coding import TimeBasedHeap, Heap, CallableGroup, typednamedtuple, \
-    OmniHashableMixin
+    OmniHashableMixin, DictObject
 
 
 class TestCallableGroup(unittest.TestCase):
@@ -89,6 +89,21 @@ class TestTimeBasedHeap(unittest.TestCase):
         repr(tbh)
         copy.copy(tbh)
         copy.deepcopy(tbh)
+
+
+class TestDictObject(unittest.TestCase):
+    def test_dict_object(self):
+        a = {'a': 1, 'b': 2}
+
+        a = DictObject(a)
+
+        self.assertEquals(a.a, 1)
+        self.assertEquals(a.b, 2)
+        self.assertRaises(AttributeError, lambda: a.c)
+        del a.a
+        self.assertRaises(AttributeError, lambda: a.a)
+        a.a = 5
+        self.assertEquals(a.a, 5)
 
 
 class TestHeap(unittest.TestCase):
