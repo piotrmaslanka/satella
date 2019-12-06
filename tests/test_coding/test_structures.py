@@ -5,7 +5,6 @@ import copy
 import unittest
 
 import mock
-import six
 
 from satella.coding import TimeBasedHeap, Heap, CallableGroup, typednamedtuple, \
     OmniHashableMixin
@@ -86,7 +85,7 @@ class TestTimeBasedHeap(unittest.TestCase):
     def test_foobar(self):
         tbh = TimeBasedHeap()
         bytes(tbh)
-        six.text_type(tbh)
+        str(tbh)
         repr(tbh)
         copy.copy(tbh)
         copy.deepcopy(tbh)

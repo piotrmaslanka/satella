@@ -25,3 +25,20 @@ class PreconditionError(BaseSatellaException, ValueError):
     """
     A precondition was not met for the argument
     """
+
+
+class ConfigurationError(BaseSatellaException):
+    """A generic error during configuration"""
+
+class ConfigurationSchemaError(ConfigurationError):
+    """Schema mismatch to what was seen"""
+
+
+class ConfigurationValidationError(ConfigurationSchemaError):
+    """A validator failed"""
+    def __init__(self, msg, value=None):
+        """
+        :param value: value found
+        """
+        super(ConfigurationValidationError, self).__init__(msg)
+        self.value = value

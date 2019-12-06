@@ -1,2 +1,3 @@
 # coding=UTF-8
-__version__ = '2.0.25a2'
+__version__ = '2.1.1rc2'
+

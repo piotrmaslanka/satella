@@ -5,13 +5,9 @@ import copy
 import functools
 import heapq
 import logging
+import typing as tp
 import operator
 import time
-
-import six
-
-from satella.coding.typecheck import typed, Callable, Iterable, Optional, \
-    Number
 
 logger = logging.getLogger(__name__)
 
@@ -20,9 +16,6 @@ __all__ = [
     'TimeBasedHeap',
     'OmniHashableMixin'
 ]
-
-returns_bool = typed(returns=bool)
-returns_iterable = typed(returns=Iterable)
 
 
 class OmniHashableMixin(object):
@@ -68,8 +61,7 @@ class Heap(object):
         self.heap = list(from_list)
         heapq.heapify(self.heap)
 
-    @typed(object, Iterable)
-    def push_many(self, items):
+    def push_many(self, items: tp.Iterable):
         for item in items:
             self.push(item)
 
@@ -101,16 +93,15 @@ class Heap(object):
     def __iter__(self):
         return self.heap.__iter__()
 
-    @typed(returns=object)
-    def pop(self):
+    def pop(self) -> tp.Any:
         """
         Return smallest element of the heap.
         :raises IndexError: on empty heap
         """
         return heapq.heappop(self.heap)
 
-    @typed('self', Optional(Callable), Optional(Callable))
-    def filtermap(self, filter_fun=None, map_fun=None):
+    def filtermap(self, filter_fun: tp.Optional[tp.Callable] = None,
+                  map_fun: tp.Optional[tp.Callable] = None):
         """
         Get only items that return True when condition(item) is True. Apply a
          transform: item' = item(condition) on
@@ -122,15 +113,13 @@ class Heap(object):
         self.heap = heap
         heapq.heapify(self.heap)
 
-    @returns_bool
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """
         Is this empty?
         """
         return len(self.heap) > 0
 
-    @returns_iterable
-    def iter_ascending(self):
+    def iter_ascending(self) -> tp.Iterator:
         """
         Return an iterator returning all elements in this heap sorted ascending.
         State of the heap is not changed
@@ -140,8 +129,7 @@ class Heap(object):
         while heap:
             yield heapq.heappop(heap)
 
-    @returns_iterable
-    def iter_descending(self):
+    def iter_descending(self) -> tp.Iterator:
         """
         Return an iterator returning all elements in this heap sorted descending.
         State of the heap is not changed
@@ -149,21 +137,16 @@ class Heap(object):
         """
         return reversed(list(self.iter_ascending()))
 
-    @typed(returns=six.integer_types)
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.heap)
 
     def __str__(self):
         return '<satella.coding.Heap: %s elements>' % (len(self, ))
 
-    def __unicode__(self):
-        return six.text_type(str(self))
-
     def __repr__(self):
         return u'<satella.coding.Heap>'
 
-    @returns_bool
-    def __contains__(self, item):
+    def __contains__(self, item) -> bool:
         return item in self.heap
 
 
@@ -182,7 +165,6 @@ class TimeBasedHeap(Heap):
     Use default_clock_source to pass a callable:
 
       * time.time
-      * monotonic.monotonic
 
     #notthreadsafe
     """
@@ -190,16 +172,14 @@ class TimeBasedHeap(Heap):
     def __repr__(self):
         return u'<satella.coding.TimeBasedHeap>'
 
-    @typed(returns=Iterable)
-    def items(self):
+    def items(self) -> tp.Iterable:
         """
         Return an iterator, but WITHOUT timestamps (only items), in
         unspecified order
         """
         return (ob for ts, ob in self.heap)
 
-    @typed('self', Optional(Callable((), Number)))
-    def __init__(self, default_clock_source=None):
+    def __init__(self, default_clock_source: tp.Callable[[], int] = None):
         """
         Initialize an empty heap
         """
@@ -222,9 +202,7 @@ class TimeBasedHeap(Heap):
         assert timestamp is not None
         self.push((timestamp, item))
 
-    @returns_iterable
-    @typed('self', Optional(Number))
-    def pop_less_than(self, less=None):
+    def pop_less_than(self, less: tp.Optional[tp.Union[int, float]] = None) -> tp.Iterator:
         """
         Return all elements less (sharp inequality) than particular value.
 

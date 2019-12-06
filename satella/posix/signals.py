@@ -6,21 +6,21 @@ from __future__ import print_function, absolute_import, division
 
 import logging
 import signal
-import sys
 import time
 
-from satella.coding import typed
+import typing as tp
 
 logger = logging.getLogger(__name__)
 
 end = False
 
+
 def __sighandler(a, b):
     global end
     end = True
 
-@typed((list, None))
-def hang_until_sig(extra_signals=None):
+
+def hang_until_sig(extra_signals: tp.Optional[tp.List] = None):
     """Will hang until this process receives SIGTERM or SIGINT.
     If you pass extra signal IDs (signal.SIG*) with extra_signals,
     then also on those signals this call will release."""

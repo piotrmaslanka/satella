@@ -1,3 +1,9 @@
+# v2.1
+
+* removed support for Python 2.7
+* most of the typecheck module was cut
+* implemented tracking standard stack frames, not only the exception ones
+
 ## v2.0.24
 
 * added [LockedDataset](/satella/coding/concurrent/locked_dataset.py)
