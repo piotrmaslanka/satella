@@ -10,8 +10,8 @@ logger = logging.getLogger(__name__)
 def dump_frames_on(sig_no, stack_frame, output):
     sys.stderr.write("Stack frame dump requested\n")
     # noinspection PyProtectedMember
-    for frame in sys._current_frames():
-        sys.stderr.write("For stack frame %s" % (repr(frame),))
+    for frame_no, frame in sys._current_frames().items():
+        sys.stderr.write("For stack frame %s" % (frame_no,))
         tb = Traceback(frame)
         tb.pretty_print(output=output)
     sys.stderr.write("End of stack frame dump\n")
