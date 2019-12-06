@@ -33,6 +33,7 @@ class TestSchema(unittest.TestCase):
                     }
                 }
             },
+            'anything': 'any',
             "list": {
                 "type": "list",
                 "of": "str"
@@ -45,6 +46,7 @@ class TestSchema(unittest.TestCase):
             'key_i': '5',
             'key_f': '5.5',
             'ip_addr': '10.2.3.43',
+            'anything': 'any',
             'nested': {
                 'key_s': "string"
             },
@@ -57,6 +59,7 @@ class TestSchema(unittest.TestCase):
             'key_i': 5,
             'key_f': 5.5,
             'ip_addr': '10.2.3.43',
+            'anything': 'any',
             'nested': {
                 'key_s': "string"
             },

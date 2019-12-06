@@ -22,8 +22,6 @@ CheckerConditionType = tp.Callable[[ConfigDictValue], bool]
 ObjectMakerType = tp.Callable[
     [ConfigDictValue], tp.Any]  # might raise ConfigurationSchemaError as well
 
-_NOP = lambda v: v
-
 
 class CheckerCondition(object):
     PRE_CHECKER = 0
@@ -52,7 +50,7 @@ def must_be_one_of(*items):
 
 
 class Descriptor(object):
-    BASIC_MAKER = _NOP  # of ObjectMakerType
+    BASIC_MAKER = staticmethod(lambda v: v)
     MY_EXCEPTIONS = [TypeError, ValueError] # a list of Exception classes
     CHECKERS = []   # a list of CheckerCondition
 
@@ -74,7 +72,7 @@ class Descriptor(object):
 
         try:
             value = self.BASIC_MAKER(value)
-        except cls.MY_EXCEPTIONS:
+        except self.MY_EXCEPTIONS:
             raise ConfigurationValidationError('could not pass to maker', value)
 
         self.post_checkers(value)
@@ -188,14 +186,15 @@ class Dict(Descriptor):
         return output
 
 
-BASE_LOOKUP_TABLE = {'int': Integer, 'float': Float, 'str': String, 'ipv4': IPv4, 'list': List, 'dict': Dict}
+BASE_LOOKUP_TABLE = {'int': Integer, 'float': Float, 'str': String, 'ipv4': IPv4, 'list': List, 'dict': Dict,
+                     'any': Descriptor}
 
 
 def _get_descriptor_for(key: str, value: tp.Any) -> Descriptor:
     if value == '':
         return Descriptor()
     elif isinstance(value, str):
-        if value in ('int', 'float', 'str', 'ipv4'):
+        if value in ('int', 'float', 'str', 'ipv4', 'any'):
             return create_key(BASE_LOOKUP_TABLE[value](),
                               key, False, None)
     elif isinstance(value, dict):
