@@ -13,7 +13,7 @@ from .exception_handlers import BaseExceptionHandler
 logger = logging.getLogger(__name__)
 
 __all__ = [
-    'DumpToFileHandler'
+    'DumpToFileHandler', 'AsStream'
 ]
 
 AsStreamTypeAccept = tb.Union[str, tb.IO, None]
@@ -84,8 +84,8 @@ class DumpToFileHandler(BaseExceptionHandler):
         :param trace_pickles: iterable of either a file-like objects, or paths where pickles with stack status will be output
         """
         super(DumpToFileHandler, self).__init__()
-        self.hr = [AsStream(x, True) for x in human_readables]
-        self.tp = [AsStream(x, False) for x in trace_pickles]
+        self.hr = [AsStream(x, True) if not isinstance(x, AsStream) else x for x in human_readables]
+        self.tp = [AsStream(x, False) if not isinstance(x, AsStream) else x for x in trace_pickles]
 
     def handle_exception(self, type_, value, traceback):
         try:
