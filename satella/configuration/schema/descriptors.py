@@ -66,7 +66,7 @@ class Descriptor(object):
         for checker in self.__class__.CHECKERS:
             self.add_checker(checker)
 
-    def convert(self, value: ConfigDictValue) -> tp.Any:
+    def __call__(self, value: ConfigDictValue) -> tp.Any:
         """
         raises ConfigurationSchemaError: on invalid schema
         """
@@ -108,8 +108,8 @@ class Regexp(String):
         if isinstance(self.REGEXP, str):
             self.REGEXP = re.compile(self.REGEXP)
 
-    def convert(self, value: ConfigDictValue) -> str:
-        value = super(Regexp, self).convert(value)
+    def __call__(self, value: ConfigDictValue) -> str:
+        value = super(Regexp, self).__call__(value)
 
         match = self.REGEXP.match(value)
         if not match:
@@ -127,14 +127,14 @@ class List(Descriptor):
     BASIC_MAKER = list
     MY_EXCEPTIONS = []
 
-    def __init__(self, type_maker: ObjectMakerType = _NOP):
+    def __init__(self, type_desciptor: tp.Optional[Descriptor] = None):
         super(List, self).__init__()
-        self.type_maker = type_maker
+        self.type_descriptor = type_desciptor or Descriptor()
 
-    def convert(self, value: ConfigDictValue) -> tp.List:
-        value = super(List, self).convert(value)
+    def __call__(self, value: ConfigDictValue) -> tp.List:
+        value = super(List, self).__call__(value)
 
-        return [self.type_maker(p) for p in value]
+        return [self.type_descriptor(p) for p in value]
 
 
 DictDescriptorKey = tp.NewType('DictDescriptorKey', Descriptor)
@@ -163,10 +163,10 @@ class Dict(Descriptor):
         self.keys = {item.name: item for item in keys}  #  tp.Dict[str, DictDescriptorKey]
         self.unknown_key_mapper = unknown_key_mapper    # Dict.UnknownKeyHandlerType
 
-    def convert(self, value: ConfigDictValue):
+    def __call__(self, value: ConfigDictValue) -> dict:
         value = copy.copy(value)
         assert isinstance(value, dict)
-        value = super(Dict, self).convert(value)
+        value = super(Dict, self).__call__(value)
         assert isinstance(value, dict)
 
         output = {}
@@ -180,7 +180,7 @@ class Dict(Descriptor):
                 else:
                     raise ConfigurationValidationError('required key %s not found' % (key, ))
             else:
-                output[key] = key_descriptor.convert(v)
+                output[key] = key_descriptor(v)
 
         for k, v in value.items():
             output[k] = self.unknown_key_mapper(k, v)
@@ -192,7 +192,9 @@ BASE_LOOKUP_TABLE = {'int': Integer, 'float': Float, 'str': String, 'ipv4': IPv4
 
 
 def _get_descriptor_for(key: str, value: tp.Any) -> Descriptor:
-    if isinstance(value, str):
+    if value == '':
+        return Descriptor()
+    elif isinstance(value, str):
         if value in ('int', 'float', 'str', 'ipv4'):
             return create_key(BASE_LOOKUP_TABLE[value](),
                               key, False, None)
@@ -201,9 +203,14 @@ def _get_descriptor_for(key: str, value: tp.Any) -> Descriptor:
             return create_key(descriptor_from_dict(value),
                               key, False, None)
         else:
+            args = ()
+            type = value['type']
+            if type == 'list':
+                of = _get_descriptor_for('', value.get('of', ''))
+                args = (of, )
             optional = value.get('optional', False)
             default = value.get('default', None)
-            descriptor = BASE_LOOKUP_TABLE[value['type']]()
+            descriptor = BASE_LOOKUP_TABLE[type](*args)
             return create_key(descriptor, key, optional, default)
     else:
         raise ConfigurationSchemaError('invalid schema, unrecognized config object %s' % (value, ))

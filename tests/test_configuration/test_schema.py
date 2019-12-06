@@ -21,18 +21,23 @@ class TestSchema(unittest.TestCase):
                 "type": "int",
                 "optional": True,
                 "default": 5
+            },
+            "list": {
+                "type": "list",
+                "of": "str"
             }
         }
 
         s = descriptor_from_dict(schema)
-        self.assertEquals(s.convert({
+        self.assertEquals(s({
             'key_s': 'string',
             'key_i': '5',
             'key_f': '5.5',
             'ip_addr': '10.2.3.43',
             'nested': {
                 'key_s': "string"
-            }
+            },
+            'list': [1, 2, 3]
         }), {
             'key_s': 'string',
             'key_i': 5,
@@ -41,6 +46,7 @@ class TestSchema(unittest.TestCase):
             'nested': {
                 'key_s': "string"
             },
+            'list': ['1', '2', '3'],
             'default_five': 5
         })
 
@@ -65,7 +71,7 @@ class TestSchema(unittest.TestCase):
         D2 = D1.copy()
         D2.update(key_not_present='hello world', key_i=5, key_f=5.2,
                   unknown_key='None')
-        self.assertEqual(s.convert(D1), D2)
+        self.assertEqual(s(D1), D2)
 
 
     def test_schema_x(self):
@@ -92,4 +98,4 @@ class TestSchema(unittest.TestCase):
                 ]), 'logstash')
             ]), 'logging')
         ])
-        source = schema.convert(source)
+        source = schema(source)
