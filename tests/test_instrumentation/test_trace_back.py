@@ -3,6 +3,7 @@
 from __future__ import print_function, absolute_import, division
 
 import pickle
+import sys
 import unittest
 
 from satella.instrumentation import Traceback
@@ -32,6 +33,10 @@ class TestTraceback(unittest.TestCase):
             tb = Traceback()
             a = tb.pickle()
             self.assertIsInstance(pickle.loads(a), Traceback)
+
+    def test_normal_stack_frames(self):
+        tb = Traceback(list(sys._current_frames().values())[0])
+        tb.pretty_format()
 
     def test_compression_happens(self):
 

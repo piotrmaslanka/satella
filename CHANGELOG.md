@@ -1,6 +1,27 @@
-## v2.0.23a1
+# v2.1.2
 
-TBA
+* modified EnvironmentSource to accept custom config names
+* added new descriptor type _Boolean_
+* added _install_dump_frames_on_
+* changed _descriptor_from_dict_ to assume optionality 
+  when default value is provided
+* dict descriptor will display the value if it's not a dict
+* translated the [CHANGELOG](CHANGELOG.md) to English
+* fixed (with an unit test) a bug wherein _EnvironmentSource_ raising an exception would fail
+
+# v2.1.1
+
+* removed support for Python 2.7
+* most of the typecheck module was cut
+* implemented tracking standard stack frames, not only the exception ones
+* added support for _DictObject_
+* added _exception_handling_ and _configuration_
+
+## v2.0.24
+
+* added [LockedDataset](/satella/coding/concurrent/locked_dataset.py)
+* added [static_var](/satella/coding/fun_static.py)
+* added [treat_result_with](/satella/coding/decorators.py)
 
 ## v2.0.22
 
@@ -27,35 +48,35 @@ TBA
 
 ## v2.0.20
 
-* Naprawiono requirements
+* requirements were fixed
 
 ## v2.0.19
 
-* Dodano `checked_coerce` i `for_argument`
-* Dodano `precondition`
-* Zdeprekowano `checked_coerce` i `coerce`
+* added `checked_coerce` and `for_argument`
+* added `precondition`
+* deprecated `checked_coerce` and `coerce`
 
 ## v2.0.16 = v2.0.17 == v2.0.18
 
-* Dodano `OmniHashableMixin`
-* Poprawiono zachowanie type checkera w obliczu anotacji z `typing.*`
+* added `OmniHashableMixin`
+* fixed checker's behaviour facing `typing.*` annotations
 
 ## v2.0.15
 
-* Usprawnienia do `rethrow_as`
-* Travis teraz wrzuca na PyPI, a nie ja :)
-* Dodano `typednamedtuple`
-* Poprawione zachowanie `coerce`
+* fixed `rethrow_as`
+* Travis will now deploy to PyPI, not me
+* added `typednamedtuple`
+* fixed the behaviour of `coerce`
 
 ## v2.0.14
 
-* Dodano `rethrow_as`
+* added `rethrow_as`
 
 ## v2.0.13
 
-* Python 3.4 znów wspierany
-* Domyślny czas dla TimeBasedHeap 
-* Traceback uruchamiany bez wyjątku będzie rzucał ValueError
+* Python 3.4 is back in the game
+* Default time for _TimeBasedHeap_ 
+* Traceback() called when not exceptions will result in ValueError
 
 ## v2.0.12
 

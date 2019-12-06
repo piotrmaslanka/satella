@@ -39,4 +39,4 @@ class MyProtectedClass(Monitor):
 
 You can also use _Monitor.release_ and _Monitor.acquire_ with other objects than self, but exercise 
 caution and think over the consequences.
-    
+

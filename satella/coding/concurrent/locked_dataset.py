@@ -3,17 +3,10 @@ import typing
 import threading
 import inspect
 import functools
-import six
 
 from ...exceptions import ResourceLocked, ResourceNotLocked
 
 logger = logging.getLogger(__name__)
-
-class InternalDataset(object):
-    def __init__(self):
-        self.lock = threading.Lock()
-        self.locked = False
-        self.args = ()
 
 
 class LockedDataset(object):
@@ -39,10 +32,18 @@ class LockedDataset(object):
     except ResourceLocked:
         print('Could not update the resource')
 
+    If no lock is held, this class that derives from such will raise ResourceNotLocked upon
+    element access while a lock is not being held
     """
 
+    class InternalDataset(object):
+        def __init__(self):
+            self.lock = threading.Lock()
+            self.locked = False
+            self.args = ()
+
     def __init__(self):
-        self.__internal = InternalDataset()
+        self.__internal = LockedDataset.InternalDataset()
 
     @staticmethod
     def locked(blocking=True, timeout=-1):
@@ -71,10 +72,7 @@ class LockedDataset(object):
         return super(LockedDataset, self).__setattr__(key, value)
 
     def __call__(self, blocking=True, timeout=-1):
-        if six.PY2:
-            get_internal(self).args = blocking,
-        else:
-            get_internal(self).args = blocking, timeout
+        get_internal(self).args = blocking, timeout
         return self
 
     def __enter__(self):

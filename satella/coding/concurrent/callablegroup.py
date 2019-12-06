@@ -2,8 +2,7 @@
 from __future__ import print_function, absolute_import, division
 
 import logging
-
-from ..typecheck import typed, Callable
+import typing as tp
 
 logger = logging.getLogger(__name__)
 
@@ -31,7 +30,7 @@ class CallableGroup(object):
 
     # todo not threadsafe with oneshots
 
-    def __init__(self, gather=False, swallow_exceptions=False):
+    def __init__(self, gather: bool = True, swallow_exceptions: bool = False):
         """
         :param gather: if True, results from all callables will be gathered
                        into a list and returned from __call__
@@ -43,13 +42,12 @@ class CallableGroup(object):
         self.gather = gather
         self.swallow_exceptions = swallow_exceptions
 
-    @typed(None, Callable, bool)
-    def add(self, callable, oneshot=False):
+    def add(self, callable_: tp.Callable, oneshot: bool = False):
         """
         :param callable: callable
         :param oneshot: if True, callable will be unregistered after single call
         """
-        self.callables.append((callable, oneshot))
+        self.callables.append((callable_, oneshot))
 
     def __call__(self, *args, **kwargs):
         """
