@@ -3,6 +3,8 @@
 * modified EnvironmentSource to accept custom config names
 * added new descriptor type _Boolean_
 * added _install_dump_frames_on_
+* changed _descriptor_from_dict_ to assume optionality 
+  when default value is provided
 
 # v2.1.1
 

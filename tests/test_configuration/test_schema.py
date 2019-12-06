@@ -19,7 +19,6 @@ class TestSchema(unittest.TestCase):
             },
             "default_five": {
                 "type": "int",
-                "optional": True,
                 "default": 5
             },
             'logstash': {

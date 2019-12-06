@@ -156,7 +156,7 @@ DictDescriptorKey = tp.NewType('DictDescriptorKey', Descriptor)
 
 
 def create_key(descriptor: Descriptor, name: str, optional: bool = False,
-               default=None) -> DictDescriptorKey:
+               default: tp.Optional[tp.Any] = None) -> DictDescriptorKey:
     descriptor.name = name
     descriptor.optional = optional
     descriptor.default = default
@@ -224,8 +224,11 @@ def _get_descriptor_for(key: str, value: tp.Any) -> Descriptor:
             if type == 'list':
                 of = _get_descriptor_for('', value.get('of', ''))
                 args = (of, )
-            optional = value.get('optional', False)
-            default = value.get('default', None)
+            optional, default = False, None
+            if 'default' in value:
+                optional = True
+                default = value['default']
+            optional = value.get('optional', optional)
             descriptor = BASE_LOOKUP_TABLE[type](*args)
             return create_key(descriptor, key, optional, default)
     else:
