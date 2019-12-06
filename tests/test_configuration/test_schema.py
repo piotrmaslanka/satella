@@ -22,6 +22,17 @@ class TestSchema(unittest.TestCase):
                 "optional": True,
                 "default": 5
             },
+            'logstash': {
+                'type': 'list',
+                'of': {
+                    'host': 'str',
+                    'port': {
+                        'type': 'int',
+                        'default': 9600,
+                        'optional': True
+                    }
+                }
+            },
             "list": {
                 "type": "list",
                 "of": "str"
@@ -37,6 +48,9 @@ class TestSchema(unittest.TestCase):
             'nested': {
                 'key_s': "string"
             },
+            'logstash': [
+                {'host': 'ipv4'}
+            ],
             'list': [1, 2, 3]
         }), {
             'key_s': 'string',
@@ -46,6 +60,7 @@ class TestSchema(unittest.TestCase):
             'nested': {
                 'key_s': "string"
             },
+            'logstash': [{'host': 'ipv4', 'port': 9600}],
             'list': ['1', '2', '3'],
             'default_five': 5
         })
