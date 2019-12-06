@@ -180,9 +180,9 @@ class Dict(Descriptor):
 
     def __call__(self, value: ConfigDictValue) -> dict:
         value = copy.copy(value)
-        assert isinstance(value, dict)
+        assert isinstance(value, dict), 'value is an instance of %s' % (repr(value), )
         value = super(Dict, self).__call__(value)
-        assert isinstance(value, dict)
+        assert isinstance(value, dict), 'value is an instance of %s' % (repr(value), )
 
         output = {}
 
