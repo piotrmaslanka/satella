@@ -1,5 +1,6 @@
 import logging
 import os
+import typing as tp
 import sys
 
 from satella.coding import rethrow_as
@@ -19,16 +20,17 @@ class EnvironmentSource(BaseSource):
     This just returns a dictionary of { env_name => that env's value }
     """
 
-    def __init__(self, env_name: str, cast_to=lambda v: v):
+    def __init__(self, env_name: str, config_name: tp.Optional[str] = None, cast_to=lambda v: v):
         super(EnvironmentSource, self).__init__()
         self.env_name = env_name
+        self.config_name = config_name or env_name
         self.cast_to = cast_to
 
     @rethrow_as([ValueError, TypeError, KeyError], ConfigurationError)
     def provide(self) -> dict:
         v = self.cast_to(os.environ[self.env_name])
 
-        return {self.env_name: v}
+        return {self.config_name: v}
 
 
 class EnvVarsSource(JSONSource):

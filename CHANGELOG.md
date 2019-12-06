@@ -1,3 +1,7 @@
+# v2.1.2
+
+* modified EnvironmentSource to accept custom config names
+
 # v2.1.1
 
 * removed support for Python 2.7
