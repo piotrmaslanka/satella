@@ -7,6 +7,7 @@
   when default value is provided
 * dict descriptor will display the value if it's not a dict
 * translated the [CHANGELOG](CHANGELOG.md) to English
+* fixed (with an unit test) a bug wherein _EnvironmentSource_ raising an exception would fail
 
 # v2.1.1
 
