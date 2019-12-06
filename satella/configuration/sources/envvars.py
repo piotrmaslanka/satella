@@ -26,7 +26,7 @@ class EnvironmentSource(BaseSource):
         self.config_name = config_name or env_name
         self.cast_to = cast_to
 
-    @rethrow_as([ValueError, TypeError, KeyError], ConfigurationError)
+    @rethrow_as((ValueError, TypeError, KeyError), ConfigurationError)
     def provide(self) -> dict:
         v = self.cast_to(os.environ[self.env_name])
 

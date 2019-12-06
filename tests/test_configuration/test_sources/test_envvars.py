@@ -1,4 +1,5 @@
-from satella.configuration.sources import EnvVarsSource, OptionalSource
+from satella.configuration.sources import EnvVarsSource, OptionalSource, AlternativeSource, EnvironmentSource, \
+    StaticSource
 from .utils import SourceTestCase, mock_env
 
 
@@ -10,3 +11,10 @@ class TestEnvVarsSource(SourceTestCase):
     def test_none(self):
         self.assertSourceEmpty(OptionalSource(EnvVarsSource('satella')))
         self.assertSourceFails(EnvVarsSource('satella'))
+
+    def test_alternative(self):
+        ds = AlternativeSource(
+            EnvironmentSource('test', 'test'),
+            StaticSource({'test': 'test'})
+        )
+        self.assertSourceHas(ds, {'test': 'test'})
