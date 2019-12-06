@@ -15,7 +15,7 @@ def install_dump_frames_on(signal, output=sys.stderr):
         sys.stderr.write("Stack frame dump requested\n")
         # noinspection PyProtectedMember
         for frame in sys._current_frames():
-            sys.stderr.write(f"For stack frame %s" % (repr(frame), ))
+            sys.stderr.write("For stack frame %s" % (repr(frame), ))
             tb = Traceback(frame)
             tb.pretty_print(output=output)
         sys.stderr.write("End of stack frame dump\n")
