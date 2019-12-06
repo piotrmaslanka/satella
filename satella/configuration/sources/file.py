@@ -34,7 +34,7 @@ class FileSource(BaseSource):
         self.path = path
         self.encoding = encoding
 
-    @rethrow_as([IOError, OSError], ConfigurationError)
+    @rethrow_as((IOError, OSError), ConfigurationError)
     def provide(self) -> dict:
 
         with open(self.path, 'rb') as fin:
