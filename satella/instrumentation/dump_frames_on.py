@@ -6,7 +6,7 @@ from satella.instrumentation import Traceback
 logger = logging.getLogger(__name__)
 
 
-def install_dump_frames_on(signal, output=sys.stderr):
+def install_dump_frames_on(signal_number, output=sys.stderr):
     """
     Instruct Python to dump all frames onto output, along with their local variables
     upon receiving given signal
@@ -19,4 +19,4 @@ def install_dump_frames_on(signal, output=sys.stderr):
             tb = Traceback(frame)
             tb.pretty_print(output=output)
         sys.stderr.write("End of stack frame dump\n")
-    signal.signal(signal, dump_frames_on)
+    signal.signal(signal_number, dump_frames_on)
