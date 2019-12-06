@@ -1,5 +1,6 @@
 import logging
 import sys
+import signal
 from satella.instrumentation import Traceback
 
 
