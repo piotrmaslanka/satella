@@ -1,6 +1,3 @@
-# coding=UTF-8
-from __future__ import print_function, absolute_import, division
-
 import logging
 import typing as tp
 
@@ -44,7 +41,7 @@ class CallableGroup(object):
 
     def add(self, callable_: tp.Callable, oneshot: bool = False):
         """
-        :param callable: callable
+        :param callable_: callable
         :param oneshot: if True, callable will be unregistered after single call
         """
         self.callables.append((callable_, oneshot))

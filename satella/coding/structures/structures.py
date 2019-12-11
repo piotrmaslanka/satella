@@ -1,6 +1,3 @@
-# coding=UTF-8
-from __future__ import print_function, absolute_import, division
-
 import copy
 import functools
 import heapq
@@ -18,7 +15,7 @@ __all__ = [
 ]
 
 
-class OmniHashableMixin(object):
+class OmniHashableMixin:
     _HASH_FIELDS_TO_USE = []
 
     def __hash__(self):

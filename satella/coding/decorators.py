@@ -14,6 +14,7 @@ __all__ = ['treat_result_with', 'precondition', 'for_argument']
 _NOP = lambda x: x
 _TRUE = lambda x: True
 
+
 def precondition(*t_ops):
     """
     Check that a precondition happens for given parameter.

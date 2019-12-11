@@ -1,8 +1,6 @@
-# coding=UTF-8
-from __future__ import print_function, absolute_import, division
-
 import functools
 import logging
+import typing as tp
 
 logger = logging.getLogger(__name__)
 
@@ -21,7 +19,7 @@ def silence_excs(*exc_types):
     return rethrow_as(exc_types, None)
 
 
-class rethrow_as(object):
+class rethrow_as:
     """
     Transform some exceptions into others.
 
@@ -59,7 +57,7 @@ class rethrow_as(object):
         self.mapping = list(pairs)
         self.exception_preprocessor = kwargs.get('exception_preprocessor', repr)
 
-    def __call__(self, fun):
+    def __call__(self, fun: tp.Callable) -> tp.Any:
         @functools.wraps(fun)
         def inner(*args, **kwargs):
             with self:
