@@ -1,5 +1,5 @@
 import types
-import typing as tb
+import typing as tp
 from abc import abstractmethod
 
 __all__ = [
@@ -29,14 +29,14 @@ class BaseExceptionHandler:
         GlobalExcepthook().remove_hook(self)
 
     @abstractmethod
-    def handle_exception(self, type_: tb.Optional[type], value,
-                         traceback: types.TracebackType) -> tb.Optional[bool]:
+    def handle_exception(self, type_: tp.Optional[type], value,
+                         traceback: types.TracebackType) -> tp.Optional[bool]:
         """Return True to intercept the exception. It won't be propagated to other handlers."""
         pass
 
 
 class FunctionExceptionHandler(BaseExceptionHandler):
-    def __init__(self, fun, priority=NORMAL_PRIORITY):
+    def __init__(self, fun: tp.Callable, priority: int = NORMAL_PRIORITY):
         super(FunctionExceptionHandler, self).__init__(priority)
         self.fun = fun
 
@@ -46,7 +46,7 @@ class FunctionExceptionHandler(BaseExceptionHandler):
         return self.fun(type_, value, traceback)
 
 
-def exception_handler(priority=NORMAL_PRIORITY):
+def exception_handler(priority: int = NORMAL_PRIORITY):
     """
     Convert a callable to an FunctionExceptionHandler. Usage
 

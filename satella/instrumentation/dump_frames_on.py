@@ -1,13 +1,21 @@
 import logging
 import sys
 import signal
+import types
+import typing as tp
 from satella.instrumentation import Traceback
 
+try:
+    SIG_TYPE = signal._SIG
+except AttributeError:
+    SIG_TYPE = int  # we are running on Windows
 
 logger = logging.getLogger(__name__)
 
 
-def dump_frames_on(sig_no, stack_frame, output):
+# noinspection PyUnusedLocal
+# noinspection PyProtectedMember
+def dump_frames_on(sig_no: SIG_TYPE, stack_frame: types.FrameType, output: tp.TextIO):
     sys.stderr.write("Stack frame dump requested\n")
     # noinspection PyProtectedMember
     for frame_no, frame in sys._current_frames().items():
@@ -17,7 +25,8 @@ def dump_frames_on(sig_no, stack_frame, output):
     sys.stderr.write("End of stack frame dump\n")
 
 
-def install_dump_frames_on(signal_number, output=sys.stderr):
+# noinspection PyProtectedMember
+def install_dump_frames_on(signal_number: SIG_TYPE, output: tp.TextIO = sys.stderr):
     """
     Instruct Python to dump all frames onto output, along with their local variables
     upon receiving given signal

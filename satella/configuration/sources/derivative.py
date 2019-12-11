@@ -53,7 +53,7 @@ class MergingSource(BaseSource):
     RAISE = 0       # Raise ConfigurationError if one of sources fails
     SILENT = 1      # Silently continue loading from next files if one fails
 
-    def __init__(self, *sources: BaseSource, on_fail=RAISE):
+    def __init__(self, *sources: BaseSource, on_fail: int = RAISE):
         self.sources = sources
         self.on_fail = on_fail
 

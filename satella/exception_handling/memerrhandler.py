@@ -1,5 +1,6 @@
 import logging
 import sys
+import typing as tp
 import time
 
 from satella.posix import suicide
@@ -9,16 +10,16 @@ logger = logging.getLogger(__name__)
 
 
 class MemoryErrorExceptionHandler(BaseExceptionHandler):
-    def __init__(self, custom_hook=lambda type, value, traceback: None,
-                 killpg=False):
+    def __init__(self, custom_hook: tp.Callable=lambda type, value, traceback: None,
+                 kill_pg: bool=False):
         """
-        :param killpg: kill entire process group, if applicable
+        :param kill_pg: kill entire process group, if applicable
         """
         super(MemoryErrorExceptionHandler, self).__init__()
         self.priority = ALWAYS_FIRST  # always run first!
         self._free_on_memoryerror = {'a': bytearray(1024 * 2)}
         self.custom_hook = custom_hook
-        self.killpg = killpg
+        self.kill_pg = kill_pg
         self.installed = False
 
     def install(self):
@@ -28,15 +29,16 @@ class MemoryErrorExceptionHandler(BaseExceptionHandler):
         from .global_eh import GlobalExcepthook
         GlobalExcepthook().add_hook(self)
 
-    def handle_exception(self, type, value, traceback) -> bool:
+    def handle_exception(self, type, value, traceback) -> tp.Optional[bool]:
         if not issubclass(type, MemoryError):
-            return False
+            return
 
         del self._free_on_memoryerror['a']
 
+        # noinspection PyBroadException
         try:
             self.custom_hook(type, value, traceback)
-        except:
+        except Exception as e:
             pass
 
         try:
@@ -46,7 +48,7 @@ class MemoryErrorExceptionHandler(BaseExceptionHandler):
         except (IOError, OSError):
             pass
 
-        suicide(self.killpg)
+        suicide(self.kill_pg)
 
         time.sleep(5)
         return True

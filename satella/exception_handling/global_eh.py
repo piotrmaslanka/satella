@@ -1,7 +1,7 @@
 import functools
 import sys
 import threading
-import typing as tb
+import typing as tp
 
 from satella.coding import Singleton
 from satella.instrumentation import Traceback
@@ -34,8 +34,8 @@ class GlobalExcepthook:
         """
         self.installed_hooks.remove(hook)
 
-    def add_hook(self, new_hook: tb.Union[
-        tb.Callable, BaseExceptionHandler]) -> BaseExceptionHandler:
+    def add_hook(self, new_hook: tp.Union[
+            tp.Callable, BaseExceptionHandler]) -> BaseExceptionHandler:
         """
         Register a hook to fire in case of an exception.
 
@@ -69,6 +69,7 @@ class GlobalExcepthook:
 
             @functools.wraps(run_old)
             def run_with_except_hook(*args, **kw):  # our new run
+                # noinspection PyBroadException
                 try:
                     return run_old(*args, **kw)
                 except Exception as e:
@@ -89,13 +90,13 @@ class GlobalExcepthook:
 
         threading.Thread.__init__ = init
 
-    def __except_handle(self, type, value, traceback):
+    def __except_handle(self, type, value, traceback) -> None:
         hooks_to_run = self.installed_hooks + [self.old_excepthook]
 
         for hook in sorted(hooks_to_run, key=lambda hook: hook.priority):
+            # noinspection PyBroadException
             try:
-                v = hook.handle_exception(type, value, traceback)
-                if v:
+                if hook.handle_exception(type, value, traceback):
                     break
             except Exception as e:
                 tb = Traceback()
