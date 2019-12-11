@@ -1,6 +1,6 @@
 # v2.1.3
 
-* if an arg in `load_source_from_*` starts with a lambda, it will be tried to be evaluated
+* TBA
 
 # v2.1.2
 

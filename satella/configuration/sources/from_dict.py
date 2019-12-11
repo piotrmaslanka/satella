@@ -58,14 +58,6 @@ def load_source_from_dict(dct: dict) -> BaseSource:
             else:
                 raise ValueError(
                     'unrecognized argument type %s' % (arg['type'],))
-        elif isinstance(arg, str):
-            if arg.startswith('lambda'):
-                # noinspection PyBroadException
-                try:
-                    return eval(arg)
-                except Exception as e:
-                    pass
-            return arg
         else:
             return arg
 
