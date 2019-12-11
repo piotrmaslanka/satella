@@ -10,3 +10,7 @@ omit=
 [paths]
 source =
     satella/*
+
+[report]
+include=
+    satella/*
