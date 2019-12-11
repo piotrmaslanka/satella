@@ -67,7 +67,7 @@ class MergingSource(BaseSource):
                 if self.on_fail == MergingSource.RAISE:
                     raise e
                 elif self.on_fail == MergingSource.SILENT:
-                    pass
+                    p = {}
                 else:
                     raise ConfigurationError('Invalid on_fail parameter %s' % (self.on_fail, ))
             assert isinstance(p, dict), 'what was provided by the config was not a dict'

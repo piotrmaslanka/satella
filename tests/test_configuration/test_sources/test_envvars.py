@@ -1,5 +1,5 @@
 from satella.configuration.sources import EnvVarsSource, OptionalSource, AlternativeSource, EnvironmentSource, \
-    StaticSource
+    StaticSource, MergingSource
 from .utils import SourceTestCase, mock_env
 
 
@@ -18,3 +18,10 @@ class TestEnvVarsSource(SourceTestCase):
             StaticSource({'test': 'test'})
         )
         self.assertSourceHas(ds, {'test': 'test'})
+
+    def test_merging(self):
+        ds = MergingSource(
+            EnvironmentSource('test', 'test'),
+            on_fail=MergingSource.SILENT
+        )
+        self.assertEquals(ds.provide(), {})

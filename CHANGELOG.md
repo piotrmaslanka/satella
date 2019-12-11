@@ -1,6 +1,6 @@
 # v2.1.3
 
-* TBA
+* bugfix in MergingSource
 
 # v2.1.2
 
