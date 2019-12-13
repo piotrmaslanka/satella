@@ -73,7 +73,6 @@ class Descriptor(object):
         """
         self.pre_checkers(value)
 
-        print(repr(self.MY_EXCEPTIONS))
         try:
             value = self.BASIC_MAKER(value)
         except self.MY_EXCEPTIONS:
