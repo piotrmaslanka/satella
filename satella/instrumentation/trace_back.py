@@ -14,12 +14,13 @@ Use in such a way:
     try:
         ...
     except WhateverError as e:
-        tb = Traceback()
-        print(tb.pretty_print())
+        tp = Traceback()
+        print(tp.pretty_print())
         # you can now pickle it if you wish to
 """
 import inspect
 import io
+import types
 import sys
 import traceback
 import zlib
@@ -213,7 +214,8 @@ class Traceback(object):
      """
     __slots__ = ('formatted_traceback', 'frames')
 
-    def __init__(self, starting_frame=None, policy=GenerationPolicy):
+    def __init__(self, starting_frame: tp.Optional[types.FrameType] = None,
+                 policy=GenerationPolicy):
         """
         To be invoked while processing an exception is in progress
 
@@ -247,7 +249,7 @@ class Traceback(object):
 
         self.formatted_traceback = str(traceback.format_exc())
 
-    def pickle_to(self, stream: tp.BinaryIO):
+    def pickle_to(self, stream: tp.BinaryIO) -> None:
         """Pickle self to target stream"""
         pickle.dump(self, stream, pickle.HIGHEST_PROTOCOL)
 
@@ -267,7 +269,7 @@ class Traceback(object):
         self.pretty_print(bio)
         return bio.getvalue()
 
-    def pretty_print(self, output: tp.TextIO = sys.stderr):
+    def pretty_print(self, output: tp.TextIO = sys.stderr) -> None:
         """
         Pretty-print the exception
         :param output: a file-like object in text mode

@@ -28,7 +28,7 @@ class FileSource(BaseSource):
         """
         super(FileSource, self).__init__()
         from .. import sources
-        self.source_classes = [ # list of tb.Type[FormatSource]
+        self.source_classes = [ # list of tp.Type[FormatSource]
             (p if not isinstance(p, str) else getattr(sources, p)) for p in
             interpret_as]
         self.path = path
@@ -65,7 +65,7 @@ class DirectorySource(FileSource):
         :param filter: callable that tells whether to use this file (or subdirectory if scan_subdirectories is enabled)
         """
         super(DirectorySource, self).__init__(path, encoding, interpret_as)
-        self.filter = lambda files: filter(fname_filter, files) # tb.Callable[[tb.List[str]], tb.List[str]]
+        self.filter = lambda files: filter(fname_filter, files) # tp.Callable[[tp.List[str]], tp.List[str]]
         self.scan_subdirectories = scan_subdirectories
 
     def get_sources_from_directory(self, directory: str) -> tb.List[FileSource]:

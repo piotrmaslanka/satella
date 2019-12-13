@@ -53,7 +53,7 @@ class MergingSource(BaseSource):
     RAISE = 0       # Raise ConfigurationError if one of sources fails
     SILENT = 1      # Silently continue loading from next files if one fails
 
-    def __init__(self, *sources: BaseSource, on_fail=RAISE):
+    def __init__(self, *sources: BaseSource, on_fail: int = RAISE):
         self.sources = sources
         self.on_fail = on_fail
 
@@ -67,7 +67,7 @@ class MergingSource(BaseSource):
                 if self.on_fail == MergingSource.RAISE:
                     raise e
                 elif self.on_fail == MergingSource.SILENT:
-                    pass
+                    p = {}
                 else:
                     raise ConfigurationError('Invalid on_fail parameter %s' % (self.on_fail, ))
             assert isinstance(p, dict), 'what was provided by the config was not a dict'

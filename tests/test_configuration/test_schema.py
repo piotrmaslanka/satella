@@ -1,12 +1,20 @@
-import unittest
-import tempfile
 import os
+import tempfile
+import unittest
 
 from satella.configuration.schema import *
 from satella.configuration.sources import DirectorySource
+from satella.exceptions import ConfigurationValidationError
 
 
 class TestSchema(unittest.TestCase):
+
+    def test_union(self):
+        ps = Union(List(), Dict(keys=[create_key(String(), 'a')]))
+
+        self.assertEquals(ps([1, 2, 3]), [1, 2, 3])
+        self.assertEquals(ps({'a': 'b'}), {'a': 'b'})
+        self.assertRaises(ConfigurationValidationError, lambda: ps(3))
 
     def test_descriptor_from_schema(self):
         schema = {
@@ -95,7 +103,6 @@ class TestSchema(unittest.TestCase):
         D2.update(key_not_present='hello world', key_i=5, key_f=5.2,
                   unknown_key='None')
         self.assertEqual(s(D1), D2)
-
 
     def test_schema_x(self):
         dir = tempfile.mkdtemp()

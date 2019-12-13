@@ -2,8 +2,7 @@ from __future__ import print_function, absolute_import, division
 
 import logging
 import os
-import typing as tb
-import typing.io as iotb
+import typing as tp
 import uuid
 
 from satella.coding import silence_excs
@@ -16,9 +15,9 @@ __all__ = [
     'DumpToFileHandler', 'AsStream'
 ]
 
-AsStreamTypeAccept = tb.Union[str, tb.IO, None]
-AsStreamTypeAcceptHR = tb.Union[str, tb.TextIO]
-AsStreamTypeAcceptBIN = tb.Union[str, tb.BinaryIO]
+AsStreamTypeAccept = tp.Union[str, tp.IO, None]
+AsStreamTypeAcceptHR = tp.Union[str, tp.TextIO]
+AsStreamTypeAcceptpIN = tp.Union[str, tp.BinaryIO]
 
 
 class AsStream:
@@ -26,7 +25,12 @@ class AsStream:
     MODE_STREAM = 1
     MODE_DEVNULL = 2
 
-    def __init__(self, o: AsStreamTypeAccept, human_readable):
+    def __init__(self, o: AsStreamTypeAccept, human_readable: bool):
+        """
+        :param o: stream, or a file name to use, or None to use /dev/null
+        :param human_readable: whether the output should be human-readable
+            or a pickle (False for pickle)
+        """
         self.o = o
         self.human_readable = human_readable
 
@@ -44,7 +48,7 @@ class AsStream:
         else:
             raise TypeError('invalid stream object')
 
-    def __enter__(self) -> tb.Union[iotb.TextIO, iotb.BinaryIO]:
+    def __enter__(self) -> tp.Union[tp.TextIO, tp.BinaryIO]:
         if self.mode == AsStream.MODE_FILE:
             self.file = open(self.o, 'w' if self.human_readable else 'wb',
                              encoding='utf8' if self.human_readable else None)
@@ -62,9 +66,9 @@ class AsStream:
             self.o = NoopFile()
             return self.o
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
+    def __exit__(self, exc_type, exc_val, exc_tp):
         if self.mode == AsStream.MODE_FILE:
-            return self.file.__exit__(exc_type, exc_val, exc_tb)
+            return self.file.__exit__(exc_type, exc_val, exc_tp)
         elif self.mode == AsStream.MODE_STREAM:
             with silence_excs(AttributeError):
                 self.o.flush()
@@ -77,27 +81,27 @@ class DumpToFileHandler(BaseExceptionHandler):
     Write the stack trace to a stream-file
     """
 
-    def __init__(self, human_readables: tb.Iterable[AsStreamTypeAcceptHR],
-                 trace_pickles: tb.Iterable[AsStreamTypeAcceptBIN]=[]):
+    def __init__(self, human_readables: tp.Iterable[AsStreamTypeAcceptHR],
+                 trace_pickles: tp.Iterable[AsStreamTypeAcceptpIN]=[]):
         """
         :param human_readables: iterable of either a file-like objects, or paths where human-readable files will be output
         :param trace_pickles: iterable of either a file-like objects, or paths where pickles with stack status will be output
         """
         super(DumpToFileHandler, self).__init__()
         self.hr = [AsStream(x, True) if not isinstance(x, AsStream) else x for x in human_readables]
-        self.tp = [AsStream(x, False) if not isinstance(x, AsStream) else x for x in trace_pickles]
+        self.tb = [AsStream(x, False) if not isinstance(x, AsStream) else x for x in trace_pickles]
 
-    def handle_exception(self, type_, value, traceback):
+    def handle_exception(self, type_, value, traceback) -> bool:
         try:
             tb = Traceback()
         except ValueError:
-            return  # no traceback, probably hit KeyboardInterrupt or SystemExit
+            return False  # no traceback, probably hit KeyboardInterrupt or SystemExit, continue with it
 
         for q in self.hr:
             with q as f:
                 f.write('Unhandled exception caught: \n')
                 tb.pretty_print(output=f)
 
-        for q in self.tp:
+        for q in self.tb:
             with q as f:
                 f.write(tb.pickle())

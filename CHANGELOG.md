@@ -1,3 +1,9 @@
+# v2.1.3
+
+* bugfix in MergingSource
+* argument rename in MemoryErrorExceptionHandler `killpg` -> `kill_pg`
+* added the Union descriptor
+
 # v2.1.2
 
 * modified EnvironmentSource to accept custom config names
