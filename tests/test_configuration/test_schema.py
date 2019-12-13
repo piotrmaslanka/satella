@@ -46,7 +46,18 @@ class TestSchema(unittest.TestCase):
             "list": {
                 "type": "list",
                 "of": "str"
-            }
+            },
+            "unioned_list": {
+                "type": "list",
+                "of": {
+                    "type": "union",
+                    "of": [
+                        {
+                            "a": "str"
+                        },
+                        "int"
+                    ]
+                }}
         }
 
         s = descriptor_from_dict(schema)
@@ -57,6 +68,7 @@ class TestSchema(unittest.TestCase):
             'ip_addr': '10.2.3.43',
             'anything': 'any',
             'boolean': 'false',
+            'unioned_list': [{"a": "a"}, 5],
             'nested': {
                 'key_s': "string"
             },
@@ -73,6 +85,7 @@ class TestSchema(unittest.TestCase):
             'ip_addr': '10.2.3.43',
             'anything': 'any',
             'boolean2': False,
+            'unioned_list': [{"a": "a"}, 5],
             'nested': {
                 'key_s': "string"
             },

@@ -1,6 +1,6 @@
 # v2.1.5
 
-* TBA
+* bugfix release: proper recovery of union from a dict thru `descriptor_from_dict`
 
 # v2.1.4
 

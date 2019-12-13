@@ -249,6 +249,8 @@ def _get_descriptor_for(key: str, value: tp.Any) -> Descriptor:
             if type == 'list':
                 of = _get_descriptor_for('', value.get('of', ''))
                 args = (of, )
+            elif type == 'union':
+                args = [_get_descriptor_for('', x) for x in value.get('of', [])]
             optional, default = False, None
             if 'default' in value:
                 optional = True
