@@ -32,7 +32,7 @@ def apply_dict_object(v: tp.Any) -> tp.Union[DictObject, tp.Any]:
         return [apply_dict_object(x) for x in v]
     elif isinstance(v, dict):
         return DictObject({
-            k: apply_dict_object(val) for k, val in v.iteritems()
+            k: apply_dict_object(val) for k, val in v.items()
         })
     else:
         return v
