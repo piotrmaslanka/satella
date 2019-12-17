@@ -1,14 +1,9 @@
-import logging
-import typing
 import functools
 import itertools
-import warnings
-
-logger = logging.getLogger(__name__)
 
 from ..exceptions import PreconditionError
 
-__all__ = ['treat_result_with', 'precondition', 'for_argument']
+__all__ = ['precondition', 'for_argument']
 
 
 _NOP = lambda x: x

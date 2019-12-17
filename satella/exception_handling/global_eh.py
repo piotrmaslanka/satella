@@ -74,13 +74,10 @@ class GlobalExcepthook:
                     return run_old(*args, **kw)
                 except Exception as e:
                     try:
-                        eh = my_self.__except_handle(
+                        my_self.__except_handle(
                             *sys.exc_info())  # by now, it's our handler :D
                     except AttributeError:
                         eh = None  # Python interpreter is in an advanced state of shutdown, just let it go
-
-                    if eh is not None:
-                        eh(*sys.exc_info())
 
                     raise  # re-raise if running on debug
 

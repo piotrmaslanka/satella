@@ -6,7 +6,7 @@ __all__ = [
 ]
 
 
-class Monitor(object):
+class Monitor:
     """
     Base utility class for creating monitors (the synchronization thingies!)
 
@@ -45,12 +45,13 @@ class Monitor(object):
 
         @functools.wraps(fun)
         def monitored(*args, **kwargs):
+            # noinspection PyProtectedMember
             with args[0]._monitor_lock:
                 return fun(*args, **kwargs)
 
         return monitored
 
-    class release(object):
+    class release:
         """
         Returns a context manager object that can release another object
         as long as that object is a monitor.
@@ -72,13 +73,15 @@ class Monitor(object):
             self.foo = foo
 
         def __enter__(self):
+            # noinspection PyProtectedMember
             self.foo._monitor_lock.release()
 
         def __exit__(self, e1, e2, e3):
+            # noinspection PyProtectedMember
             self.foo._monitor_lock.acquire()
             return False
 
-    class acquire(object):
+    class acquire:
         """
         Returns a context manager object that can lock another object,
         as long as that object is a monitor.
@@ -94,9 +97,11 @@ class Monitor(object):
             self.foo = foo
 
         def __enter__(self):
+            # noinspection PyProtectedMember
             self.foo._monitor_lock.acquire()
 
         def __exit__(self, e1, e2, e3):
+            # noinspection PyProtectedMember
             self.foo._monitor_lock.release()
             return False
 

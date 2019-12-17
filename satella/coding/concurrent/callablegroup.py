@@ -58,8 +58,7 @@ class CallableGroup(object):
         clbl = self.callables  # for moar thread safety
         self.callables = []
 
-        if self.gather:
-            results = []
+        results = []
 
         for callable, oneshot in clbl:
             try:

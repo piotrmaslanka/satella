@@ -82,14 +82,16 @@ class DumpToFileHandler(BaseExceptionHandler):
     """
 
     def __init__(self, human_readables: tp.Iterable[AsStreamTypeAcceptHR],
-                 trace_pickles: tp.Iterable[AsStreamTypeAcceptpIN]=[]):
+                 trace_pickles: tp.Iterable[AsStreamTypeAcceptpIN] = None):
         """
-        :param human_readables: iterable of either a file-like objects, or paths where human-readable files will be output
-        :param trace_pickles: iterable of either a file-like objects, or paths where pickles with stack status will be output
+        :param human_readables: iterable of either a file-like objects, or paths where human-readable files will
+            be output
+        :param trace_pickles: iterable of either a file-like objects, or paths where pickles with stack status
+            will be output
         """
         super(DumpToFileHandler, self).__init__()
         self.hr = [AsStream(x, True) if not isinstance(x, AsStream) else x for x in human_readables]
-        self.tb = [AsStream(x, False) if not isinstance(x, AsStream) else x for x in trace_pickles]
+        self.tb = [AsStream(x, False) if not isinstance(x, AsStream) else x for x in trace_pickles or []]
 
     def handle_exception(self, type_, value, traceback) -> bool:
         try:

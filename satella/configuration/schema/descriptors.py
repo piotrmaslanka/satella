@@ -89,6 +89,7 @@ class Descriptor(object):
             self.post_checkers.add(checker)
 
 
+# noinspection PyDecorator
 @staticmethod
 def _make_boolean(v: tp.Any) -> bool:
     if isinstance(v, str):

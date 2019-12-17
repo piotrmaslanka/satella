@@ -1,6 +1,3 @@
-# coding=UTF-8
-from __future__ import print_function, absolute_import, division
-
 import logging
 import os
 
@@ -21,7 +18,7 @@ class LockIsHeld(FailedToAcquire):
     """
 
 
-class AcquirePIDLock(object):
+class AcquirePIDLock:
     """
     Acquire a PID lock file.
 
@@ -41,8 +38,6 @@ class AcquirePIDLock(object):
     """
 
     def __init__(self, pid, is_alive):
-        super(LockIsHeld, self).__init__()
-
         self.pid = pid
         self.is_alive = is_alive
 

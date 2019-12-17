@@ -30,6 +30,7 @@ class PreconditionError(BaseSatellaException, ValueError):
 class ConfigurationError(BaseSatellaException):
     """A generic error during configuration"""
 
+
 class ConfigurationSchemaError(ConfigurationError):
     """Schema mismatch to what was seen"""
 

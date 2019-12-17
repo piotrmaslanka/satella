@@ -4,7 +4,8 @@ __all__ = [
     'TimeBasedHeap',
     'OmniHashableMixin',
     'Singleton',
-    'DictObject'
+    'DictObject',
+    'apply_dict_object'
 ]
 
 from .singleton import Singleton

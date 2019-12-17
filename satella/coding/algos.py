@@ -1,8 +1,9 @@
-# coding=UTF-8
-from __future__ import print_function, absolute_import, division
+import typing as tp
+
+__all__ = ['merge_dicts']
 
 
-def merge_dicts(v1, v2):
+def merge_dicts(v1: tp.Any, v2: tp.Any) -> tp.Any:
     if isinstance(v1, dict) and isinstance(v2, dict):
         for k in v2.keys():
             try:

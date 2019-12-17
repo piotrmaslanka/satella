@@ -44,7 +44,7 @@ class FileSource(BaseSource):
             try:
                 s = source_class(data, encoding=self.encoding).provide()
                 if not isinstance(s, dict):
-                    raise ConfigurationError()
+                    raise ConfigurationError('%s is not a dict instance' % (s, ))
                 return s
             except ConfigurationError:
                 pass

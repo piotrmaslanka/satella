@@ -176,6 +176,8 @@ class StoredVariableValue:
             pickle_ = zlib.decompress(self.pickle)
         elif self.pickle_type == 'pickle':
             pickle_ = self.pickle
+        else:
+            raise ValueError('unknown pickle type of %s' % (self.pickle_type, ))
 
         try:
             return pickle.loads(pickle_)
@@ -229,6 +231,8 @@ class Traceback(object):
 
         if inspect.isclass(policy):
             value_pickling_policy = policy()
+        else:
+            value_pickling_policy = policy
 
         tb = sys.exc_info()[2]
 

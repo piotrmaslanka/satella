@@ -1,16 +1,10 @@
-# coding=UTF-8
 """
 Handle signals, like a boss
 """
-from __future__ import print_function, absolute_import, division
-
-import logging
 import signal
 import time
 
 import typing as tp
-
-logger = logging.getLogger(__name__)
 
 end = False
 

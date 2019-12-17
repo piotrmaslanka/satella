@@ -1,5 +1,4 @@
 import logging
-import typing
 import threading
 import inspect
 import functools
@@ -9,7 +8,7 @@ from ...exceptions import ResourceLocked, ResourceNotLocked
 logger = logging.getLogger(__name__)
 
 
-class LockedDataset(object):
+class LockedDataset:
     """
     A locked dataset. Subclass like
 

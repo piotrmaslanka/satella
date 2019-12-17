@@ -4,6 +4,7 @@ from abc import abstractmethod
 
 __all__ = [
     'BaseExceptionHandler',
+    'FunctionExceptionHandler',
     'exception_handler',
     'ALWAYS_FIRST',
     'ALWAYS_LAST',

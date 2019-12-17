@@ -5,8 +5,8 @@ import typing as tp
 logger = logging.getLogger(__name__)
 
 __all__ = [
-    'silence',
-    'rethrow_as'
+    'rethrow_as',
+    'silence_excs'
 ]
 
 

@@ -1,6 +1,8 @@
 # v2.1.6
 
 * added [json](satella/json.py) support
+* added `apply_dict_object`
+* multiple bugfixes, thanks to finally listening to PyCharm's code inspection
 
 # v2.1.5
 
