@@ -1,3 +1,7 @@
+# v2.1.8
+
+* _TBA_
+
 # v2.1.7
 
 * bugfix release, don't use 2.1.6
