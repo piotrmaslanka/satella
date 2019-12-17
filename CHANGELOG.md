@@ -1,3 +1,7 @@
+# v2.1.7
+
+* _TBA_
+
 # v2.1.6
 
 * added [json](satella/json.py) support
