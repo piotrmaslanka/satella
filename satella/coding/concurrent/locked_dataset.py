@@ -79,14 +79,12 @@ class LockedDataset:
 
         if not get_internal(self).lock.acquire(*args):
             raise ResourceLocked('Could not acquire the lock on the object')
-        print('Lock acquired')
         get_internal(self).locked = True
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         get_internal(self).lock.release()
         get_internal(self).locked = False
-        print('Lock released')
         return False
 
 

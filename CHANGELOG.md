@@ -1,6 +1,6 @@
 # v2.1.8
 
-* _TBA_
+* bugfix release: removed prints from LockedDataset
 
 # v2.1.7
 
