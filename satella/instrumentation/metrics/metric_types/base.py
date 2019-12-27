@@ -2,10 +2,10 @@ import typing as tp
 import abc
 from satella.json import JSONAble
 
-DISABLED: int = 1
-RUNTIME: int = 2
-DEBUG: int = 3
-INHERIT: int = 4
+DISABLED = 1
+RUNTIME = 2
+DEBUG = 3
+INHERIT = 4
 
 
 class Metric(JSONAble):
