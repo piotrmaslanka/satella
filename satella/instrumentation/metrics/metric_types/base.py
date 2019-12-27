@@ -25,7 +25,8 @@ class Metric(JSONAble):
         del metrics.metrics[self.name]
         self.children = []
 
-    def __init__(self, name, root_metric: 'Metric' = None, metric_level: str = None):
+    def __init__(self, name, root_metric: 'Metric' = None, metric_level: str = None, **kwargs):
+        """When reimplementing the method, remember to pass kwargs here!"""
         self.name = name
         self.root_metric = root_metric
         self.level = metric_level or RUNTIME

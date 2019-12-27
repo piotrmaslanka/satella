@@ -25,7 +25,7 @@ method.
 You obtain metrics using `getMetric()` as follows:
 
 ```python
-metric = getMetric(__name__+'.StringMetric', 'string', RUNTIME)
+metric = getMetric(__name__+'.StringMetric', 'string', RUNTIME, **kwargs)
 ```
 
 Where the second argument is a metric type. Following metric types
@@ -35,6 +35,8 @@ are available:
 * string - for string values
 * int - for int values
 * float - for float values
+* cps - will count given amount of calls to handle() during last
+  time period, as specified by user
 
 Third parameter is optional. If set, all child metrics created 
 during this metric's instantiation will receive such metric level.
@@ -50,3 +52,5 @@ metric.
 If you don't specify it, the metric level for root metric will be
 set to RUNTIME. Same if you specify INHERIT.
 
+If you specify any kwargs, they will be delivered to the last
+metric's in chain constructor.

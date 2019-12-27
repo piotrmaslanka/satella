@@ -14,9 +14,9 @@ metrics = {}
 metrics_lock = threading.Lock()
 
 
-def getMetric(metric_name: str, metric_type: str = 'base', metric_level: tp.Optional[str] = None):
+def getMetric(metric_name: str, metric_type: str = 'base', metric_level: tp.Optional[str] = None, **kwargs):
     """
-    Obtain a metric of given name
+    Obtain a metric of given name.
     :param metric_name: must be a module name
     """
     metric_level_to_set_for_children = metric_level or INHERIT
@@ -39,7 +39,7 @@ def getMetric(metric_name: str, metric_type: str = 'base', metric_level: tp.Opti
                     metric.level = RUNTIME
                     root_metric = metric
                 elif metric_name == tentative_name:
-                    metric = METRIC_NAMES_TO_CLASSES[metric_type](tentative_name, root_metric, metric_level)
+                    metric = METRIC_NAMES_TO_CLASSES[metric_type](tentative_name, root_metric, metric_level, **kwargs)
                 else:
                     metric = Metric(tentative_name, root_metric, metric_level_to_set_for_children)
                 metrics[tentative_name] = metric

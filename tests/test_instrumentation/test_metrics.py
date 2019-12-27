@@ -1,4 +1,5 @@
 import unittest
+import time
 import typing as tp
 from satella.instrumentation.metrics import getMetric, DEBUG, RUNTIME, INHERIT
 
@@ -73,3 +74,13 @@ class TestMetric(unittest.TestCase):
                 }
             }
         })
+
+    def test_cps(self):
+        metric = getMetric('root.CPSValue', 'cps', time_unit_vectors=[1, 2])
+        metric.runtime()
+        self.assertEquals(metric.to_json(), [1])
+        metric.runtime()
+        self.assertEquals(metric.to_json(), [2])
+        time.sleep(1.2)
+        self.assertEquals(metric.to_json(), [0])
+
