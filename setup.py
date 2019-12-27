@@ -1,7 +1,7 @@
 from distutils.core import setup
 
 setup(name='satella',
-      version='1.0',
+      version='1.1',
       description='Network, concurrency, instrumentation for servers',
       author='Piotr Maslanka',
       author_email='piotr.maslanka@henrietta.com.pl',

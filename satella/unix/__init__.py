@@ -49,6 +49,7 @@ def hang_until_sig(extra_signals=[]):
                 time.sleep(0.5)
             except IOError:  # "Interrupted system call"
                 pass
+    end = False     # fix a bug where subsequent calls to hang_until_sig would return automatically
 
 def daemonize(uid=None, gid=None, redirect_stdouterr=True):
     """On POSIX-compatible systems, make the current process a daemon.
