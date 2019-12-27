@@ -1,3 +1,7 @@
+# v2.1.10
+
+* _TBA_
+
 # v2.1.9
 
 * bugfix release: fixed an occurrence where next calls to 
