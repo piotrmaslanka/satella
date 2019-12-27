@@ -78,9 +78,9 @@ class TestMetric(unittest.TestCase):
     def test_cps(self):
         metric = getMetric('root.CPSValue', 'cps', time_unit_vectors=[1, 2])
         metric.runtime()
-        self.assertEquals(metric.to_json(), [1])
+        self.assertEquals(metric.to_json(), [1, 1])
         metric.runtime()
-        self.assertEquals(metric.to_json(), [2])
+        self.assertEquals(metric.to_json(), [2, 2])
         time.sleep(1.2)
-        self.assertEquals(metric.to_json(), [0])
+        self.assertEquals(metric.to_json(), [0, 2])
 

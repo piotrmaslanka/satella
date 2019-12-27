@@ -22,13 +22,16 @@ class ClicksPerTimeUnitMetric(Metric):
         monotime = time.monotonic()
         if self.can_process_this_level(level):
             self.last_clicks.append(time.monotonic())
-            while self.last_clicks[0] <= monotime + self.cutoff_period:
-                self.last_clicks.popleft()
+            try:
+                while self.last_clicks[0] <= monotime - self.cutoff_period:
+                    self.last_clicks.popleft()
+            except IndexError:
+                pass
 
     def to_json(self) -> tp.List[int]:
         count_map = [0] * len(self.time_unit_vectors)
         monotime = time.monotonic()
-        time_unit_vectors = [v+monotime for v in self.time_unit_vectors]
+        time_unit_vectors = [monotime-v for v in self.time_unit_vectors]
 
         for v in self.last_clicks:
             for index, cutoff in enumerate(time_unit_vectors):

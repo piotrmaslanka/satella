@@ -21,8 +21,11 @@ class Metric(JSONAble):
     def reset(self) -> None:
         """Delete all child metrics that this metric contains"""
         from satella.instrumentation import metrics
-        metrics.metrics = {k: v for k, v in metrics.metrics.items() if not k.startswith(self.name+'.')}
-        del metrics.metrics[self.name]
+        if self.name == '':
+            metrics.metrics = {}
+        else:
+            metrics.metrics = {k: v for k, v in metrics.metrics.items() if not k.startswith(self.name+'.')}
+            del metrics.metrics[self.name]
         self.children = []
 
     def __init__(self, name, root_metric: 'Metric' = None, metric_level: str = None, **kwargs):
