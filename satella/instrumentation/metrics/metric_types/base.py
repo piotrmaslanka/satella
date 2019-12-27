@@ -12,11 +12,11 @@ class Metric(JSONAble):
     """
     A base metric class
     """
-    CLASS_NAME: str = 'base'
-    name: str = None
-    level: int = None
-    children: tp.List['Metric'] = None
-    root_metric: tp.Optional['Metric'] = None
+    CLASS_NAME = 'base'
+    name = None
+    level = None
+    children = None
+    root_metric = None
 
     def reset(self) -> None:
         """Delete all child metrics that this metric contains"""
