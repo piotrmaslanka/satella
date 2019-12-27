@@ -1,6 +1,7 @@
 # v2.1.9
 
-* _TBA_
+* bugfix release: fixed an occurrence where next calls to 
+  [hang_until_sig](satella/posix/signals.py) would return immediately
 
 # v2.1.8
 
