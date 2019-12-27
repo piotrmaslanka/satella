@@ -4,9 +4,8 @@ from .base import Metric
 
 class SimpleMetric(Metric):
 
-    CLASS_NAME: str = 'string'
-    CONSTRUCTOR: tp.Callable = str
-    data: str = None
+    CLASS_NAME = 'string'
+    CONSTRUCTOR = str
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -24,7 +23,7 @@ class SimpleMetric(Metric):
 
 
 class StringMetric(SimpleMetric):
-    CONSTRUCTOR = str
+    pass
 
 
 class IntegerMetric(SimpleMetric):
