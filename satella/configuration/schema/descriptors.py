@@ -9,6 +9,7 @@ __all__ = [
     'Descriptor',
     'Integer', 'Float', 'String', 'Boolean',
     'IPv4',
+    'Regexp',
     'List', 'Dict', 'Union',
     'create_key',
     'must_be_type',
@@ -16,6 +17,7 @@ __all__ = [
     'CheckerCondition',
     'ConfigDictValue',
     'descriptor_from_dict',
+    'register_custom_descriptor',
 ]
 
 ConfigDictValue = tp.Optional[tp.Union[int, float, str, dict, list, bool]]
@@ -51,6 +53,9 @@ def must_be_one_of(*items):
 
 
 class Descriptor(object):
+    """
+    Base class for a descriptor
+    """
     BASIC_MAKER = staticmethod(lambda v: v)
     MY_EXCEPTIONS = [TypeError, ValueError] # a list of Exception classes
     CHECKERS = []   # a list of CheckerCondition
@@ -104,22 +109,40 @@ def _make_boolean(v: tp.Any) -> bool:
 
 
 class Boolean(Descriptor):
+    """
+    This value must be a boolean, or be converted to one
+    """
     BASIC_MAKER = _make_boolean
 
 
 class Integer(Descriptor):
+    """
+    This value must be an integer, or be converted to one
+    """
     BASIC_MAKER = int
 
 
 class Float(Descriptor):
+    """
+    This value must be a float, or be converted to one
+    """
     BASIC_MAKER = float
 
 
 class String(Descriptor):
+    """
+    This value must be a string, or be converted to one
+    """
     BASIC_MAKER = str
 
 
 class Regexp(String):
+    """
+    Base class for declaring regexp-based descriptors. Overload it's attribute REGEXP. Use as following:
+
+        class IPv6(Regexp):
+            REGEXP = '(\A([0-9a-f]{1,4}:)' ...
+    """
     REGEXP = r'.*'
 
     def __init__(self):
@@ -138,10 +161,16 @@ class Regexp(String):
 
 
 class IPv4(Regexp):
+    """
+    This must be a valid IPv4 address (no hostnames allowed)
+    """
     REGEXP = r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}'
 
 
 class List(Descriptor):
+    """
+    This must be a list, made of entries of a descriptor (this is optional)
+    """
     CHECKERS = [must_be_type(list, tuple)]
     BASIC_MAKER = list
 
@@ -168,6 +197,20 @@ def create_key(descriptor: Descriptor, name: str, optional: bool = False,
 
 
 class Dict(Descriptor):
+    """
+    This entry must be a dict, having at least specified keys.
+
+    Use like:
+
+        Dict([
+            create_key(String(), 'key_s'),
+            create_key(Integer(), 'key_i'),
+            create_key(Float(), 'key_f'),
+            create_key(String(), 'key_not_present', optional=True,
+                       default='hello world'),
+            create_key(IPv4(), 'ip_addr')
+        ])
+    """
     BASIC_MAKER = dict
     CHECKERS = [must_be_type(dict)]
 
@@ -261,6 +304,24 @@ def _get_descriptor_for(key: str, value: tp.Any) -> Descriptor:
             return create_key(descriptor, key, optional, default)
     else:
         raise ConfigurationSchemaError('invalid schema, unrecognized config object %s' % (value, ))
+
+
+def register_custom_descriptor(name: str):
+    """
+    A decorator used for registering custom descriptors in order to be loadable via descriptor_from_dict
+
+    Use like:
+
+        @register_custom_descriptor('ipv6')
+        class IPv6(Regexp):
+            REGEXP = '(\A([0-9a-f]{1,4}:)' ...
+
+    name -- name under which it is supposed to be invokable
+    """
+    def inner(cls):
+        BASE_LOOKUP_TABLE[name] = cls
+        return cls
+    return inner
 
 
 def descriptor_from_dict(dct: dict) -> Descriptor:

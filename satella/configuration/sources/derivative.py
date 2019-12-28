@@ -9,10 +9,10 @@ __all__ = [
 
 
 class AlternativeSource(BaseSource):
+    """
+    If first source of configuration fails with ConfigurationError, use the next one instead, ad nauseam.
+    """
     def __init__(self, *sources: BaseSource):
-        """
-        If one fails, use the next
-        """
         self.sources = sources
 
     def provide(self) -> dict:
@@ -31,17 +31,18 @@ class AlternativeSource(BaseSource):
 
 
 class OptionalSource(AlternativeSource):
+    """
+     This will substitute for empty dict if underlying config would fail.
+
+     Apply this to your sources if you expect that they will fail.
+
+     Use as
+
+         OptionalSource(SomeOtherSource1)
+
+     """
+
     def __init__(self, source: BaseSource):
-        """
-        This will substitute for empty dict if underlying config would fail.
-
-        Apply this to your sources if you expect that they will fail.
-
-        Use as
-
-            OptionalSource(SomeOtherSource1)
-
-        """
         super(OptionalSource, self).__init__(source, BaseSource())
 
 

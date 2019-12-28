@@ -21,6 +21,10 @@ class EnvironmentSource(BaseSource):
     """
 
     def __init__(self, env_name: str, config_name: tp.Optional[str] = None, cast_to=lambda v: v):
+        """
+        env_name -- name of the environment variable to check for
+        config_name -- name of the env_name in the dictionary to return
+        """
         super(EnvironmentSource, self).__init__()
         self.env_name = env_name
         self.config_name = config_name or env_name
@@ -34,6 +38,9 @@ class EnvironmentSource(BaseSource):
 
 
 class EnvVarsSource(JSONSource):
+    """
+    Return a dictionary that is the JSON encoded within a particular environment variable
+    """
     def __init__(self, env_name: str):
         super(EnvVarsSource, self).__init__('',
                                             encoding=sys.getfilesystemencoding())

@@ -8,12 +8,12 @@ from satella.exceptions import ConfigurationError
 """
 If a dict has a field "type" then it will be treated specially:
 
-    "binary" - it is a binary value of "value" to be encoded with "encoding" (default ascii)
-    "lambda" - it allows expressing the simplest filters there can be
-    name of a source class - it will be instantated with arguments "args".
-                             rest keys will be kwargs.
+* "binary" - it is a binary value of "value" to be encoded with "encoding" (default ascii)
+* "lambda" - it allows expressing the simplest filters there can be
+  name of a source class - it will be instantated with arguments "args".
+  rest keys will be kwargs.
                              
-                             Special key is "optional" to be bool - if so, the source will be decorated as optional
+Special key is "optional" to be bool - if so, the source will be decorated as optional
                                                           
 See the unit test for more in-depth knowledge
 """

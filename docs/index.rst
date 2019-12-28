@@ -5,13 +5,14 @@ Welcome to satella's documentation!
            :maxdepth: 2
            :caption: Contents:
 
+           configuration/index
+           configuration/schema
+           configuration/sources
            coding/monitor
-           coding/typechecking
            coding/structures
            coding/concurrent
            instrumentation/traceback
            instrumentation/metrics
-           source/modules
            posix
            recipes
 
