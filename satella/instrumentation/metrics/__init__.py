@@ -17,7 +17,8 @@ metrics_lock = threading.Lock()
 def getMetric(metric_name: str, metric_type: str = 'base', metric_level: tp.Optional[str] = None, **kwargs):
     """
     Obtain a metric of given name.
-    :param metric_name: must be a module name
+
+    metric_name --  must be a module name
     """
     metric_level_to_set_for_children = metric_level or INHERIT
     name = metric_name.split('.')

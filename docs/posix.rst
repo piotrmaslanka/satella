@@ -1,5 +1,5 @@
 suicide
-----
+-------
 
 Kill your process (and your process group)
 

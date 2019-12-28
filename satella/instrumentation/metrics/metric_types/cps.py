@@ -5,13 +5,13 @@ import collections
 
 
 class ClicksPerTimeUnitMetric(Metric):
+    """
+    This tracks the amount of calls to handle() during the last time periods, as specified by time_unit_vectors
+    (in seconds). You may specify multiple time periods as consequent entries in the list.
+    """
     CLASS_NAME = 'cps'
 
     def __init__(self, *args, time_unit_vectors: tp.Optional[tp.List[float]] = None, **kwargs):
-        """
-        :param time_unit_vectors: time units (in seconds) to count the clicks in between.
-            Default - track a single value, amount of calls to .handle() in last second
-        """
         super().__init__(*args, **kwargs)
         time_unit_vectors = time_unit_vectors or [1]
         self.last_clicks = collections.deque()

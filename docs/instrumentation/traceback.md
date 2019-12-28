@@ -11,6 +11,9 @@ in case of an exception. It preserves:
 It also allows to pretty print the exception. Traceback is picklable, so you 
 can safely do so and analyze the exception at your own leisure.
 
+Unpickling _Traceback_ objects in any environment is safe. However, obtaining
+variable values via _load_value_ might be not.
+
 Usage:
 ```python
 from satella.instrumentation import Traceback
@@ -28,5 +31,12 @@ except:
 _Traceback_ should be created in the exception it is supposed to capture,
 as it captures exception info from _sys.exc_info()_.
 
-Unpickling _Traceback_ objects in any environment is safe. However, obtaining
-variable values via _load_value_ might be not.
+Alternatively, you can pass a `<frame>` object to Traceback, in order to serialize it, for example:
+
+```python
+import sys
+
+frame_1 = next(iter(sys._current_frames().values()))
+tb = Traceback(frame_1)
+
+```
