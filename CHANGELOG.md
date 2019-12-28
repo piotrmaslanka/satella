@@ -1,3 +1,7 @@
+# v2.1.11
+
+* _TBA_
+
 # v2.1.10
 
 * added [metrics](satella/instrumentation/metrics)
