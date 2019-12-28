@@ -28,4 +28,4 @@ try to assign something else there.
 Singleton
 ---------
 
-.. autodecorator:: satella.coding.Singleton
+.. autofunction:: satella.coding.Singleton
