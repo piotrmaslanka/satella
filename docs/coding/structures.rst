@@ -23,3 +23,9 @@ It's a named tuple, but it has typed fields. You will get a TypeError if you
 try to assign something else there.
 
 .. autofunction:: satella.coding.typednamedtuple
+
+
+Singleton
+---------
+
+.. autodecorator:: satella.coding.Singleton
