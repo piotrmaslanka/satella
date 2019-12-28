@@ -28,5 +28,15 @@ except:
 _Traceback_ should be created in the exception it is supposed to capture,
 as it captures exception info from _sys.exc_info()_.
 
+Alternatively, you can pass a `<frame>` object to Traceback, in order to serialize it, for example:
+
+```python
+import sys
+
+frame_1 = next(iter(sys._current_frames().values()))
+tb = Traceback(frame_1)
+
+```
+
 Unpickling _Traceback_ objects in any environment is safe. However, obtaining
 variable values via _load_value_ might be not.

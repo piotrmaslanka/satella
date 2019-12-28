@@ -22,14 +22,16 @@ DEBUG, which will cause more data to be registered. If a metric
 is in state INHERIT, it will inherit the metric level from it's
 parent, traversing the tree if required.
 
-You can switch the metric anytime by calling it's `switch_level`
-method.
+You can switch the metric anytime by calling it's ``switch_level``
+method, or by specifying it's metric level during a call to ``getMetric()``.
 
-You obtain metrics using `getMetric()` as follows:
+The call to ``getMetric()`` is specified as follows
 
-```python
-metric = getMetric(__name__+'.StringMetric', 'string', RUNTIME, **kwargs)
-```
+.. autofunction:: satella.instrumentation.metrics.getMetric
+
+You obtain metrics using ``getMetric()`` as follows:
+
+    ``metric = getMetric(__name__+'.StringMetric', 'string', RUNTIME, **kwargs)``
 
 Where the second argument is a metric type. Following metric types
 are available:
@@ -41,6 +43,8 @@ are available:
 * cps - will count given amount of calls to handle() during last
   time period, as specified by user
 
+    .. autoclass :: satella.instrumentation.metrics.metric_types.cps.ClicksPerTimeUnitMetric
+
 Third parameter is optional. If set, all child metrics created 
 during this metric's instantiation will receive such metric level.
 If the metric already exists, it's level will be set to provided
@@ -48,7 +52,7 @@ metric level, if passed.
 
 All child metrics (going from the root metric to 0) will be initialized
 with the value that you just passed. In order to keep them in order,
-an additional parameter passed to `getMetric()`, `metric_level`, if
+an additional parameter passed to ``getMetric()``, ``metric_level``, if
 specified, will set given level upon returning the even existing
 metric.
 
