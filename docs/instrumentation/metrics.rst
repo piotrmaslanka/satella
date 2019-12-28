@@ -1,3 +1,6 @@
+Metrics
+-------
+
 Metrics and instruments are a system to output real-time statistics.
 
 Metrics are defined and meant to be used in a similar way

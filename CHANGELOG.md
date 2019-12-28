@@ -1,6 +1,7 @@
 # v2.1.10
 
-* _TBA_
+* added [metrics](satella/instrumentation/metrics)
+* [documentation](https://satella.readthedocs.io/en/develop/) improved
 
 # v2.1.9
 
