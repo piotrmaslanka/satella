@@ -12,7 +12,7 @@ def static_var(var_name: str, starting_value):
 
     >>> class MyClass:
     >>>     @static_var('counter', 2)
-    >>>     def count():
+    >>>     def count(self):
     >>>         MyClass.count.counter += 1
     """
     def decorate(func):
