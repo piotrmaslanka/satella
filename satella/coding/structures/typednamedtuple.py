@@ -25,10 +25,10 @@ def typednamedtuple(cls_name, *arg_name_type):
 
     For example:
 
-      tnt = typednamedtuple('tnt', ('x', float), ('y', float))
-      a = tnt('5.0', y=2)
+    >>> tnt = typednamedtuple('tnt', ('x', float), ('y', float))
+    >>> a = tnt('5.0', y=2)
 
-      a.x is float, a.y is float too
+    a.x is float, a.y is float too
     """
 
     fieldnames = []

@@ -12,7 +12,7 @@ from .fun_static import static_var
 
 
 __all__ = [
-    'typednamedtuple', 'OmniHashableMixin'
+    'typednamedtuple', 'OmniHashableMixin',
                        'TimeBasedHeap', 'Heap', 'CallableGroup', 'DictObject', 'apply_dict_object',
     'Monitor', 'RMonitor', 'CallableGroup', 'LockedDataset', 'merge_dicts',
     'for_argument',

@@ -1,8 +1,6 @@
 import functools
-import logging
 import typing as tp
 
-logger = logging.getLogger(__name__)
 
 __all__ = [
     'rethrow_as',
@@ -24,20 +22,20 @@ class rethrow_as:
     Transform some exceptions into others.
 
     Either a decorator or a context manager
+
+    New exception will be created by calling exception to transform to with
+    repr of current one.
+
+    You can also provide just two exceptions, eg.
+
+    >>> rethrow_as(NameError, ValueError)
+
+    If the second value is a None, exception will be silenced.
     """
 
     def __init__(self, *pairs, **kwargs):
         """
         Pass tuples of (exception to catch - exception to transform to).
-
-        New exception will be created by calling exception to transform to with
-        repr of current one.
-
-        You can also provide just two exceptions, eg.
-
-          rethrow_as(NameError, ValueError)
-
-        If the second value is a None, exception will be silenced.
 
         :param exception_preprocessor: other callable/1 to use instead od repr.
             Should return a text

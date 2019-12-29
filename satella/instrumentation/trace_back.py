@@ -11,12 +11,12 @@ but that may involve an import.
 
 Use in such a way:
 
-    try:
-        ...
-    except WhateverError as e:
-        tp = Traceback()
-        print(tp.pretty_print())
-        # you can now pickle it if you wish to
+>>> try:
+>>>     ...
+>>> except WhateverError as e:
+>>>     tp = Traceback()
+>>>     print(tp.pretty_print())
+>>>     # you can now pickle it if you wish to
 """
 import inspect
 import io

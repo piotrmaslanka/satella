@@ -27,6 +27,8 @@ class AsStream:
 
     def __init__(self, o: AsStreamTypeAccept, human_readable: bool):
         """
+        A stream to dump to
+
         :param o: stream, or a file name to use, or None to use /dev/null
         :param human_readable: whether the output should be human-readable
             or a pickle (False for pickle)
@@ -84,6 +86,8 @@ class DumpToFileHandler(BaseExceptionHandler):
     def __init__(self, human_readables: tp.Iterable[AsStreamTypeAcceptHR],
                  trace_pickles: tp.Iterable[AsStreamTypeAcceptpIN] = None):
         """
+        Handler that dumps an exception to a file.
+
         :param human_readables: iterable of either a file-like objects, or paths where human-readable files will
             be output
         :param trace_pickles: iterable of either a file-like objects, or paths where pickles with stack status

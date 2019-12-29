@@ -9,10 +9,12 @@ Welcome to satella's documentation!
            configuration/schema
            configuration/sources
            coding/monitor
+           coding/functions
            coding/structures
            coding/concurrent
            instrumentation/traceback
            instrumentation/metrics
+           json
            posix
            recipes
 

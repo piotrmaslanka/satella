@@ -16,13 +16,31 @@ __all__ = [
 
 
 class OmniHashableMixin:
+    """
+    A mix-in. Provides hashing and equal comparison for your own class using specified fields.
+
+    Example of use:
+
+    class Point2D(OmniHashableMixin):
+        _HASH_FIELDS_TO_USE = ['x', 'y']
+
+        def __init__(self, x, y):
+            ...
+
+    and now class Point2D has defined __hash__ and __eq__ by these fields.
+    Do everything in your power to make specified fields immutable, as mutating them will result
+    in a different hash.
+    """
     _HASH_FIELDS_TO_USE = []
 
     def __hash__(self):
         return functools.reduce(operator.xor, (hash(getattr(self, fname)) \
                                                for fname in self._HASH_FIELDS_TO_USE))
 
-    def __eq__(self, other):
+    def __eq__(self, other: 'OmniHashableMixin') -> bool:
+        """
+        Note that this will only compare _HASH_FIELDS_TO_USE
+        """
         cons = lambda p: [getattr(p, fname) for fname in self._HASH_FIELDS_TO_USE]
         if cons(self) == cons(other):
             return True
@@ -32,7 +50,7 @@ class OmniHashableMixin:
         else:
             return False
 
-    def __ne__(self, other):
+    def __ne__(self, other: 'OmniHashableMixin') -> bool:
         return not self.__eq__(other)
 
 
@@ -93,6 +111,7 @@ class Heap(object):
     def pop(self) -> tp.Any:
         """
         Return smallest element of the heap.
+
         :raises IndexError: on empty heap
         """
         return heapq.heappop(self.heap)
@@ -120,7 +139,6 @@ class Heap(object):
         """
         Return an iterator returning all elements in this heap sorted ascending.
         State of the heap is not changed
-        :return: Iterator
         """
         heap = copy.copy(self.heap)
         while heap:
@@ -130,17 +148,16 @@ class Heap(object):
         """
         Return an iterator returning all elements in this heap sorted descending.
         State of the heap is not changed
-        :return: Iterator
         """
         return reversed(list(self.iter_ascending()))
 
     def __len__(self) -> int:
         return len(self.heap)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return '<satella.coding.Heap: %s elements>' % (len(self, ))
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return u'<satella.coding.Heap>'
 
     def __contains__(self, item) -> bool:
@@ -204,6 +221,7 @@ class TimeBasedHeap(Heap):
         Return all elements less (sharp inequality) than particular value.
 
         This changes state of the heap
+
         :param less: value to compare against
         :return: Iterator
         """

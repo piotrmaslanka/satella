@@ -21,6 +21,7 @@ class JSONEncoder(json.JSONEncoder):
 def json_encode(x) -> str:
     """
     Convert an object to JSON. Will properly handle subclasses of JSONAble
+
     :param x: object to convert
     """
     return JSONEncoder().encode(x)

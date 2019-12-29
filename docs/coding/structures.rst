@@ -1,3 +1,8 @@
+Structures
+==========
+
+The following is a guide to all the data structures that Satella defines.
+
 Heap
 ----
 
@@ -25,7 +30,36 @@ try to assign something else there.
 .. autofunction:: satella.coding.typednamedtuple
 
 
+
+OmniHashableMixin
+-----------------
+
+If you need quick __hash__ and __eq__ operators from listed fields of the class.
+
+.. autoclass:: satella.coding.OmniHashableMixin
+    :members:
+
+.. autofunction:: satella.coding.typednamedtuple
+
+
 Singleton
 ---------
 
+Makes the resulting object's ``__init__()`` be called at most once, then caches the object and returns the same
+upon each instantiation.
+
 .. autofunction:: satella.coding.Singleton
+
+DictObject
+----------
+
+DictObject is an object constructed out of a dict, that allows it's values to be obtained as getattr(), and not only
+getitem().
+
+.. autoclass:: satella.coding.DictObject
+    :members:
+
+You can use the following function to recursively turn every dict into a DictObject
+
+.. autofunction:: satella.coding.apply_dict_object
+

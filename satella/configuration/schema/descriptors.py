@@ -202,14 +202,14 @@ class Dict(Descriptor):
 
     Use like:
 
-        Dict([
-            create_key(String(), 'key_s'),
-            create_key(Integer(), 'key_i'),
-            create_key(Float(), 'key_f'),
-            create_key(String(), 'key_not_present', optional=True,
-                       default='hello world'),
-            create_key(IPv4(), 'ip_addr')
-        ])
+    >>> Dict([
+    >>>     create_key(String(), 'key_s'),
+    >>>     create_key(Integer(), 'key_i'),
+    >>>     create_key(Float(), 'key_f'),
+    >>>     create_key(String(), 'key_not_present', optional=True,
+    >>>                default='hello world'),
+    >>>     create_key(IPv4(), 'ip_addr')
+    >>>])
     """
     BASIC_MAKER = dict
     CHECKERS = [must_be_type(dict)]
@@ -312,11 +312,11 @@ def register_custom_descriptor(name: str):
 
     Use like:
 
-        @register_custom_descriptor('ipv6')
-        class IPv6(Regexp):
-            REGEXP = '(\A([0-9a-f]{1,4}:)' ...
+    >>> @register_custom_descriptor('ipv6')
+    >>> class IPv6(Regexp):
+    >>>     REGEXP = '(\A([0-9a-f]{1,4}:)' ...
 
-    name -- name under which it is supposed to be invokable
+    :param name: under which it is supposed to be invokable
     """
     def inner(cls):
         BASE_LOOKUP_TABLE[name] = cls

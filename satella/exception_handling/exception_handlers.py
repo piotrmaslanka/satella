@@ -51,9 +51,9 @@ def exception_handler(priority: int = NORMAL_PRIORITY):
     """
     Convert a callable to an FunctionExceptionHandler. Usage
 
-        @exception_handler(priority=-10)
-        def handle_exc(type, val, traceback):
-            ...
+    >>> @exception_handler(priority=-10)
+    >>> def handle_exc(type, val, traceback):
+    >>>     ...
 
     :return: ExceptionHandler instance
     """

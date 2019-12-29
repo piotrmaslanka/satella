@@ -1,3 +1,6 @@
+POSIX-specifics
+===============
+
 suicide
 -------
 

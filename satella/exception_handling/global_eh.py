@@ -29,6 +29,7 @@ class GlobalExcepthook:
     def remove_hook(self, hook: BaseExceptionHandler):
         """
         Unregister a hook
+
         :param hook: hook to remove
         :raise ValueError: if hook not in list
         """

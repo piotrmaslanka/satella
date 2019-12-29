@@ -1,12 +1,10 @@
-# coding=UTF-8
-from __future__ import print_function, absolute_import, division
-
 import functools
 
 
 __all__ = [
     'Singleton',
 ]
+
 
 # Taken from https://wiki.python.org/moin/PythonDecoratorLibrary
 def Singleton(cls):
@@ -15,9 +13,9 @@ def Singleton(cls):
 
     Usage:
 
-        @Singleton
-        class MyClass(object):
-            ...
+    >>> @Singleton
+    >>> class MyClass(object):
+    >>>     ...
     """
 
     cls.__new_old__ = cls.__new__

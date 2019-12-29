@@ -17,15 +17,15 @@ def precondition(*t_ops):
 
     You can do it like this:
 
-    @precondition(lambda x: x == 1)
-    def return_two(x):
-        return x*2
+    >>> @precondition(lambda x: x == 1)
+    >>> def return_two(x):
+    >>>     return x*2
 
     or
 
-    @precondition('x == 1')
-    def return_two(x):
-        ..
+    >>> @precondition('x == 1')
+    >>> def return_two(x):
+    >>>     ..
 
     If None is passed then argument will be always assumed to be True.
     You can use all standard locals in precondition.
@@ -69,17 +69,16 @@ def precondition(*t_ops):
 
 def for_argument(*t_ops, **t_kwops):
     """
-    Calls a callable for each of the arguments.
+    Calls a callable for each of the arguments. Pass None if you do not wish to process given argument.
 
     returns is a special keyword, a callable to process the result through
 
     Use like:
 
-    @for_argument(int, str, typed=bool, returns=int)
-    def check(val1, val2, typed='True'):
-        if typed:
-            return val1 + int(val2)
-
+    >>> @for_argument(int, str, typed=bool, returns=int)
+    >>> def check(val1, val2, typed='True'):
+    >>>     if typed:
+    >>>         return val1 + int(val2)
     """
     t_ops = [_NOP if op == 'self' else op for op in t_ops]
     returns = t_kwops.pop('returns', _NOP)
