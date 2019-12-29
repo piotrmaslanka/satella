@@ -1,3 +1,7 @@
+# v2.1.12
+
+* _TBA_
+
 # v2.1.11
 
 * bugfix release: __all__ in [coding](satella/coding/__init__.py) fixed
