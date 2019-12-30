@@ -29,7 +29,7 @@ def is_running_as_root() -> bool:
     return os.geteuid() == 0
 
 
-def suicide(kill_entire_pg: bool = True) -> tp.NoReturn:
+def suicide(kill_entire_pg: bool = True) -> None:
     """
     Kill self.
 
