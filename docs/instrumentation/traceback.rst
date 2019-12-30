@@ -1,42 +1,47 @@
-# Traceback
+=========
+Traceback
+=========
 
-_Traceback_ object is used to preserve all the information you can get
+Traceback object is used to preserve all the information you can get
 in case of an exception. It preserves:
 * Information about all stack frames in this thread
 * Every local and global variable at every stack frame
     * If the variable is pickable, and pickling is enabled, it is pickled on the spot
     * Variable's _repr_ is always preserved
     * Of course variable name is saved
-    
-It also allows to pretty print the exception. Traceback is picklable, so you 
+
+It also allows to pretty print the exception. Traceback is picklable, so you
 can safely do so and analyze the exception at your own leisure.
 
 Unpickling _Traceback_ objects in any environment is safe. However, obtaining
 variable values via _load_value_ might be not.
 
 Usage:
-```python
-from satella.instrumentation import Traceback
 
-try:
-    ...
-except:
-    tb = Traceback()
-    
-    print(tb.pretty_print())    # print stack trace
-    
-    tb_p = tb.pickle()  # pickles the traceback
-```
+::
 
-_Traceback_ should be created in the exception it is supposed to capture,
+    from satella.instrumentation import Traceback
+
+    try:
+        ...
+    except:
+        tb = Traceback()
+
+        print(tb.pretty_print())    # print stack trace
+
+        tb_p = tb.pickle()  # pickles the traceback
+
+Traceback should be created in the exception it is supposed to capture,
 as it captures exception info from _sys.exc_info()_.
 
 Alternatively, you can pass a `<frame>` object to Traceback, in order to serialize it, for example:
 
-```python
-import sys
+::
 
-frame_1 = next(iter(sys._current_frames().values()))
-tb = Traceback(frame_1)
+    import sys
 
-```
+    frame_1 = next(iter(sys._current_frames().values()))
+    tb = Traceback(frame_1)
+
+.. autoclass:: satella.instrumentation.Traceback
+    :members:
