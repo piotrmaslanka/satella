@@ -1,3 +1,7 @@
+# v2.2.2
+
+* _TBA_
+
 # v2.2.1
 
 * added [TerminableThread](satella/coding/concurrent/thread.py)
