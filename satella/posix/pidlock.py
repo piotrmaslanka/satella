@@ -43,14 +43,14 @@ class FileLock:
         :param base_dir: base lock directory
         """
         self.path = os.path.join(base_dir, pid_file)
-        self.fileno = None
+        self.file_no = None
 
     def release(self):
         """
         Free the lock
         """
-        if self.fileno is not None:
-            os.close(self.fileno)
+        if self.file_no is not None:
+            os.close(self.file_no)
             os.unlink(self.path)
 
     def acquire(self):
@@ -60,16 +60,12 @@ class FileLock:
         :raises LockIsHeld: if lock if held
         """
         try:
-            self.fileno = os.open(self.path, os.O_CREAT | os.O_EXCL)
+            self.file_no = os.open(self.path, os.O_CREAT | os.O_EXCL)
         except (OSError, FileExistsError) as e:
             try:
-                os.unlink(self.path)
-            except Exception as e:
-                import sys
-                sys.stderr.write(str(type(e)) + '\n')
+                self.file_no = os.open(self.path, os.O_EXCL)
+            except OSError:
                 raise LockIsHeld()
-            else:
-                return self.acquire()
 
     def __enter__(self):
         self.acquire()
