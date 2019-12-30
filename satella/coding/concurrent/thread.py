@@ -1,5 +1,5 @@
-import threading
 import ctypes
+import threading
 
 
 class TerminableThread(threading.Thread):
@@ -15,6 +15,7 @@ class TerminableThread(threading.Thread):
 
     Flag whether to terminate is stored in self._terminating
     """
+
     def __init__(self):
         super().__init__()
         self._terminating = False
@@ -49,18 +50,8 @@ class TerminableThread(threading.Thread):
         """
         self._terminating = True
         if force:
-            found = False
-            for tid, tobj in threading._active.items():
-                if tobj is self:
-                    found = True
-                    target_tid = tid
-                    break
-
-            if not found:
-                raise ValueError('Thread ID for thread %s was not found' % (self, ))
-
-            ret = ctypes.pythonapi.PyThreadState_SetAsyncExc(target_tid, ctypes.py_object(SystemExit))
+            ret = ctypes.pythonapi.PyThreadState_SetAsyncExc(self._ident, ctypes.py_object(SystemExit))
             if ret == 0:
-                raise ValueError('Invalid thread ID %s obtained for %s' % (target_tid, self))
+                raise ValueError('Invalid thread ID %s obtained for %s' % (self._ident, self))
 
         return self
