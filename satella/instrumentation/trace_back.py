@@ -48,6 +48,7 @@ class GenerationPolicy(object):
                  repr_length_limit: int = 128 * 1024,
                  compression_level: int = 6):
         """
+
         :param enable_pickling: bool, whether to enable pickling at all
         :param compress_at: pickles longer than this (bytes) will be compressed
         :param repr_length_limit: maximum length of __repr__. None for no limit.
@@ -72,6 +73,7 @@ class GenerationPolicy(object):
     def should_compress(self, pickledata: bytes) -> bool:
         """
         Should this pickle undergo compression?
+
         :param pickledata: pickle value
         :return: bool
         """
@@ -80,6 +82,7 @@ class GenerationPolicy(object):
     def get_compression_level(self, pickledata: bytes) -> int:
         """
         What compression level to use to pickle this?
+
         :param pickledata: bytes, pickle value
         :return: int, 1-9, where "1" is the fastest, and "9" is the slowest,
             but produces best compression
@@ -89,6 +92,7 @@ class GenerationPolicy(object):
     def process_repr(self, r: str) -> str:
         """
         Process the string obtained from __repr__ing
+
         :param r: result of a __repr__ on value
         :return: processed result
         """
@@ -269,6 +273,7 @@ class Traceback(object):
         """
         Return a multi-line, pretty-printed representation of all exception
         data.
+
         :return: text
         """
         bio = io.StringIO()
@@ -278,6 +283,7 @@ class Traceback(object):
     def pretty_print(self, output: tp.TextIO = sys.stderr) -> None:
         """
         Pretty-print the exception
+
         :param output: a file-like object in text mode
         :return: unicode
         """
