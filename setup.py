@@ -1,5 +1,6 @@
 # coding=UTF-8
 from setuptools import setup, find_packages
+
 from satella import __version__
 
 setup(keywords=['ha', 'high availability', 'scalable', 'scalability', 'server'],

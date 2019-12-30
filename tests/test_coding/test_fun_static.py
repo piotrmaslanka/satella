@@ -1,7 +1,4 @@
 import unittest
-from threading import Thread
-from time import sleep
-from queue import Queue
 
 from satella.coding import static_var
 

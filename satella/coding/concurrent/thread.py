@@ -1,8 +1,7 @@
 import ctypes
 import logging
-import threading
 import platform
-
+import threading
 
 logger = logging.getLogger(__name__)
 

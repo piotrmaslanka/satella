@@ -19,7 +19,6 @@ logger = logging.getLogger(__name__)
 
 DEVNULL = '/dev/null'
 
-
 __all__ = ['daemonize']
 
 

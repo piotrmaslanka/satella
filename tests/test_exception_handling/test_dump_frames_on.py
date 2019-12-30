@@ -1,10 +1,9 @@
 import logging
-import typing as tp
-import unittest
-import os
-import signal
 import sys
+import unittest
+
 from satella.instrumentation.dump_frames_on import dump_frames_on
+
 logger = logging.getLogger(__name__)
 
 

@@ -80,7 +80,7 @@ Lists you define as following
     {
         "type": "list",
         "of": {
-            .. descriptor type that this list has to have ..
+            ".. descriptor type that this list has to have .."
         }
     }
 
@@ -91,9 +91,9 @@ Unions you define the following
     {
         "type": "union",
         "of": [
-            .. descriptor type 1 ..
-            .. descriptor type 2 ..
-        ]
+            ".. descriptor type 1 ..",
+            ".. descriptor type 2 .."
+            ]
     }
 
 Dicts are more simple. Each key contains the key that should be present in the dict, and value is it's descriptor

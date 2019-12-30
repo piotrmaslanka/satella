@@ -23,7 +23,7 @@ class TestDumpToFile(ExceptionHandlingTestCase):
     def test_dump_to_file(self):
         try:
             def makeexc():
-                print(hello)        # raises NameError
+                print(hello)  # raises NameError
 
             self.make_exception(makeexc)
 

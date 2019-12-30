@@ -14,9 +14,9 @@ engines:
   radon:
     enabled: true
 exclude_paths:
-- examples/**
-- tests/**
-- docs/**
+  - examples/**
+  - tests/**
+  - docs/**
 ratings:
   paths:
-  - satella/**
+    - satella/**

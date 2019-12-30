@@ -1,6 +1,8 @@
 # coding=UTF-8
 from __future__ import print_function, absolute_import, division
+
 import unittest
+
 from satella.coding import rethrow_as, silence_excs
 
 
@@ -43,6 +45,7 @@ class TestStuff(unittest.TestCase):
     def test_issue_10(self):
 
         class WTFException1(Exception): pass
+
         class WTFException2(Exception): pass
 
         @rethrow_as((NameError, WTFException1),
@@ -55,7 +58,7 @@ class TestStuff(unittest.TestCase):
 
     def test_issue_14a(self):
 
-        @rethrow_as(*(((NameError, ValueError), TypeError), ))
+        @rethrow_as(*(((NameError, ValueError), TypeError),))
         def ro(p):
             raise p()
 

@@ -1,6 +1,6 @@
-import unittest
 import time
-import typing as tp
+import unittest
+
 from satella.instrumentation.metrics import getMetric, DEBUG, RUNTIME, INHERIT
 
 
@@ -83,4 +83,3 @@ class TestMetric(unittest.TestCase):
         self.assertEquals(metric.to_json(), [2, 2])
         time.sleep(1.2)
         self.assertEquals(metric.to_json(), [0, 2])
-

@@ -1,7 +1,7 @@
 import functools
 import os
-import unittest
 import typing as tp
+import unittest
 
 from satella.configuration.sources import BaseSource
 from satella.exceptions import ConfigurationError

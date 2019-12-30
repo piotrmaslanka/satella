@@ -3,11 +3,11 @@ POSIX things
 """
 
 import os
+import typing as tp
 
 from .daemon import daemonize
 from .pidlock import AcquirePIDLock
 from .signals import hang_until_sig
-
 
 __all__ = [
     'daemonize',
@@ -18,7 +18,7 @@ __all__ = [
 ]
 
 
-def is_running_as_root():
+def is_running_as_root() -> bool:
     """
     Is this process running as root?
 
@@ -29,7 +29,7 @@ def is_running_as_root():
     return os.geteuid() == 0
 
 
-def suicide(kill_entire_pg: bool = True):
+def suicide(kill_entire_pg: bool = True) -> tp.NoReturn:
     """
     Kill self.
 

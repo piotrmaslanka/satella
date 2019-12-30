@@ -2,10 +2,10 @@
 from __future__ import print_function, absolute_import, division
 
 import os
+import sys
 import unittest
 
 from satella.posix import suicide
-import sys
 
 
 class TestSuicide(unittest.TestCase):
