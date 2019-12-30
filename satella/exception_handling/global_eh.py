@@ -36,7 +36,7 @@ class GlobalExcepthook:
         self.installed_hooks.remove(hook)
 
     def add_hook(self, new_hook: tp.Union[
-        tp.Callable, BaseExceptionHandler]) -> BaseExceptionHandler:
+            tp.Callable, BaseExceptionHandler]) -> BaseExceptionHandler:
         """
         Register a hook to fire in case of an exception.
 
@@ -78,7 +78,7 @@ class GlobalExcepthook:
                         my_self.__except_handle(
                             *sys.exc_info())  # by now, it's our handler :D
                     except AttributeError:
-                        eh = None  # Python interpreter is in an advanced state of shutdown, just let it go
+                        pass  # Python interpreter is in an advanced state of shutdown, just let it go
 
                     raise  # re-raise if running on debug
 
@@ -88,13 +88,13 @@ class GlobalExcepthook:
 
         threading.Thread.__init__ = init
 
-    def __except_handle(self, type, value, traceback) -> None:
+    def __except_handle(self, type_, value, traceback) -> None:
         hooks_to_run = self.installed_hooks + [self.old_excepthook]
 
-        for hook in sorted(hooks_to_run, key=lambda hook: hook.priority):
+        for hook in sorted(hooks_to_run, key=lambda h: h.priority):
             # noinspection PyBroadException
             try:
-                if hook.handle_exception(type, value, traceback):
+                if hook.handle_exception(type_, value, traceback):
                     break
             except Exception as e:
                 tb = Traceback()

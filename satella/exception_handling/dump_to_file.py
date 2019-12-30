@@ -12,12 +12,12 @@ from .exception_handlers import BaseExceptionHandler
 logger = logging.getLogger(__name__)
 
 __all__ = [
-    'DumpToFileHandler', 'AsStream'
+    'DumpToFileHandler'
 ]
 
 AsStreamTypeAccept = tp.Union[str, tp.IO, None]
 AsStreamTypeAcceptHR = tp.Union[str, tp.TextIO]
-AsStreamTypeAcceptpIN = tp.Union[str, tp.BinaryIO]
+AsStreamTypeAcceptIN = tp.Union[str, tp.BinaryIO]
 
 
 class AsStream:
@@ -80,11 +80,13 @@ class AsStream:
 
 class DumpToFileHandler(BaseExceptionHandler):
     """
-    Write the stack trace to a stream-file
+    Write the stack trace to a stream-file.
+
+    Note that your file-like objects you throw into that must support only .write() and optionally .flush()
     """
 
     def __init__(self, human_readables: tp.Iterable[AsStreamTypeAcceptHR],
-                 trace_pickles: tp.Iterable[AsStreamTypeAcceptpIN] = None):
+                 trace_pickles: tp.Iterable[AsStreamTypeAcceptIN] = None):
         """
         Handler that dumps an exception to a file.
 

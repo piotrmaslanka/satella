@@ -1,5 +1,6 @@
-Schema validation
-=================
+===============================
+Configuration schema validation
+===============================
 
 As noted in index_, your configuration is mostly supposed to be a dict. To validate your schema,
 you should instantiate a Descriptor. Descriptor reflects how your config is nested.

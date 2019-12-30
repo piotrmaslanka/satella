@@ -1,5 +1,6 @@
-Sources
-=======
+=====================
+Configuration sources
+=====================
 
 At the core of your config files, there are Sources. A Source is a single source of configuration - it could be
 an environment variable, or a particular file, or a directory full of these files.
@@ -34,6 +35,7 @@ Then there are abstract sources of configuration.
 .. autoclass:: satella.configuration.sources.MergingSource
     :members:
 
+In order to actually load the configuration, use the method ``provide()``.
 
 
 JSON schema

@@ -1,23 +1,27 @@
-import logging
 import sys
 import time
 import typing as tp
 
 from satella.posix import suicide
-from .exception_handlers import BaseExceptionHandler, ALWAYS_FIRST
-
-logger = logging.getLogger(__name__)
+from .exception_handlers import BaseExceptionHandler, ALWAYS_FIRST, ExceptionHandlerCallable
 
 
 class MemoryErrorExceptionHandler(BaseExceptionHandler):
-    def __init__(self, custom_hook: tp.Callable = lambda type, value, traceback: None,
+    """
+    A handler that terminates the entire process (or process group) is a MemoryError is seen.
+
+    `custom_hook` is an exception callable to implement you own behavior. If it returns True,
+    then MemoryErrorExceptionHandler won't kill anyone.
+    """
+    def __init__(self, custom_hook: ExceptionHandlerCallable = lambda type_, value, traceback: False,
                  kill_pg: bool = False):
         """
-        :param kill_pg: kill entire process group, if applicable
+        :param kill_pg: whether to kill entire process group, if applicable
         """
         super(MemoryErrorExceptionHandler, self).__init__()
         self.priority = ALWAYS_FIRST  # always run first!
-        self._free_on_memoryerror = {'a': bytearray(1024 * 2)}
+        # so that we have some spare space in case a MemoryError is thrown
+        self._free_on_memory_error = {'a': bytearray(1024 * 2)}
         self.custom_hook = custom_hook
         self.kill_pg = kill_pg
         self.installed = False
@@ -29,15 +33,16 @@ class MemoryErrorExceptionHandler(BaseExceptionHandler):
         from .global_eh import GlobalExcepthook
         GlobalExcepthook().add_hook(self)
 
-    def handle_exception(self, type, value, traceback) -> tp.Optional[bool]:
-        if not issubclass(type, MemoryError):
+    def handle_exception(self, type_, value, traceback) -> tp.Optional[bool]:
+        if not issubclass(type_, MemoryError):
             return
 
-        del self._free_on_memoryerror['a']
+        del self._free_on_memory_error['a']
 
         # noinspection PyBroadException
         try:
-            self.custom_hook(type, value, traceback)
+            if self.custom_hook(type_, value, traceback):
+                return
         except Exception as e:
             pass
 

@@ -14,7 +14,7 @@ Welcome to satella's documentation!
            coding/concurrent
            instrumentation/traceback
            instrumentation/metrics
-           exception_handling/index
+           exception_handling
            json
            posix
            recipes
