@@ -1,6 +1,7 @@
 # v2.2.3
 
 * more unit tests for `AcquirePIDLock`
+    * it finally works
 
 # v2.2.2
 
