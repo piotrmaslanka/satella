@@ -35,7 +35,7 @@ A monitor is a Java-like synchronization idea. Inheriting from Monitor outfits t
 Take care to invoke Monitor's constructor when inheriting, or this won't work.
 
 You can decorate your methods with *Monitor.synchronized* to have them execute with the lock acquired.
-If you have such a method, you can also temporarily release the lock using context manager  _Monitor.release_
+If you have such a method, you can also temporarily release the lock using context manager  *Monitor.release*
 (it will be reacquired) when context manager is exited.
 
 You can also use manual synchronization with context manager *Monitor.acquire*.
