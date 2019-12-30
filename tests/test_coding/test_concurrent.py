@@ -18,7 +18,7 @@ class TestCallableGroup(unittest.TestCase):
         mtt.start()
         mtt.terminate().join()
 
-    @unittest.skipIf(platform.python_implementation() == 'PyPy')
+    @unittest.skipIf(platform.python_implementation() == 'PyPy', 'force=True doesn''t work on PyPy')
     def test_terminable_thread_force(self):
 
         class MyTerminableThread(TerminableThread):

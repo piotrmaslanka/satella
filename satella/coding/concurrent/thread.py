@@ -54,6 +54,8 @@ class TerminableThread(threading.Thread):
         Forcing, if requested, will be done by injecting a SystemExit exception into target
         thread, so the thread must acquire GIL. For example, following would not be interruptable:
 
+        Note that calling force=True on PyPy won't work, and RuntimeError will be raised instead.
+
         >>> time.sleep(1000000)
 
         :param force: Whether to force a quit
