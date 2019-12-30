@@ -55,7 +55,6 @@ def precondition(*t_ops):
             assert len(args) >= len(tn_ops), 'More preconditions than positional arguments!'
             with rethrow_as(TypeError, PreconditionError):
                 for arg, precond in itertools.zip_longest(args, tn_ops, fillvalue=_TRUE):
-                    print(arg, precond, precond.__doc__)
                     if not precond(arg):
                         raise PreconditionError(
                             'Argument of value %s failed precondition check' % (arg,))
