@@ -5,12 +5,12 @@ POSIX things
 import os
 
 from .daemon import daemonize
-from .pidlock import AcquirePIDLock
+from .pidlock import AcquirePIDLock, LockIsHeld, FailedToAcquire
 from .signals import hang_until_sig
 
 __all__ = [
     'daemonize',
-    'AcquirePIDLock',
+    'AcquirePIDLock', 'LockIsHeld', 'FailedToAcquire',
     'hang_until_sig',
     'is_running_as_root',
     'suicide'

@@ -1,6 +1,6 @@
 # v2.2.3
 
-* _TBA_
+* more unit tests for `AcquirePIDLock`
 
 # v2.2.2
 

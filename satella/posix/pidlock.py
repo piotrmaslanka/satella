@@ -74,24 +74,31 @@ class AcquirePIDLock:
         try:
             self.fileno = os.open(self.path, os.O_CREAT | os.O_EXCL)
         except (IOError, OSError):
+            logger.warning('Acquire path')
             try:
                 with open(self.path, 'rb') as flock:
                     try:
-                        pid = int(flock.read())
+                        data = flock.read().strip().decode('utf8')
+                        pid = int(data)
                     except ValueError:
-                        logger.warning(
-                            'PID file found but doesn''t have an int, skipping')
-                        return
+                        raise FailedToAcquire(
+                            'PID file found but doesn''t have an int (contains "%s") skipping' % (data,))
+                    else:
+                        # Is this process alive?
+                        try:
+                            os.kill(pid, 0)
+                        except OSError:  # dead
+                            return self.acquire()   # retry acquisition
+                        else:
+                            raise LockIsHeld(pid, True)
+
             except IOError as e:
                 raise FailedToAcquire(repr(e))
 
-            # Is this process alive?
-            try:
-                os.kill(pid, 0)
-            except OSError:  # dead
-                raise LockIsHeld(pid, False)
-            else:
-                raise LockIsHeld(pid, True)
+        else:
+            file = open(self.fileno)
+            file.write(str(os.getpid()))
+            file.flush()
 
     def __enter__(self):
         try:
