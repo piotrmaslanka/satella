@@ -50,8 +50,8 @@ class FileLock:
         Free the lock
         """
         if self.file_no is not None:
-            os.close(self.file_no)
             os.unlink(self.path)
+            self.file_no = None
 
     def acquire(self):
         """
@@ -60,15 +60,28 @@ class FileLock:
         :raises LockIsHeld: if lock if held
         """
         try:
-            self.file_no = os.open(self.path, os.O_CREAT | os.O_EXCL)
-        except (OSError, FileExistsError) as e:
+            self.file_no = os.open(self.path, os.O_CREAT | os.O_EXCL | os.O_RDWR)
+        except (OSError, FileExistsError):
+            with open(self.path, 'r') as fin:
+                data = fin.read().strip()
+
             try:
-                self.file_no = os.open(self.path, os.O_EXCL)
+                pid = int(data)
+            except ValueError:
+                os.unlink(self.path)
+                return self.acquire()
+
+            try:
+                os.kill(pid, 0)
             except OSError:
+                # does not exist
+                os.unlink(self.path)
+                return self.acquire()
+            else:
                 raise LockIsHeld()
-            except Exception as e:
-                import sys
-                sys.stderr.write(str(type(e)) + ' ' + str(e) + '\n')
+
+        open(self.file_no).write(str(os.getpid()))
+        os.close(self.file_no)
 
     def __enter__(self):
         self.acquire()
