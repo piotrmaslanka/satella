@@ -73,44 +73,46 @@ class AcquirePIDLock:
         """
         try:
             self.fileno = os.open(self.path, os.O_CREAT | os.O_EXCL)
-        except (IOError, OSError):
-            logger.warning('Acquire path')
+        except (FileExistsError, IOError, OSError):
             try:
                 with open(self.path, 'r') as flock:
                     try:
                         data = flock.read().strip()
                         pid = int(data)
                     except ValueError:
-                        raise FailedToAcquire(
-                            'PID file found but doesn''t have an int (contains "%s") skipping' % (data,))
+                        if self.delete_on_dead:
+                            try:
+                                os.unlink(self.path)
+                            except PermissionError:
+                                raise FailedToAcquire('Cannot unlink the lock file')
+                            else:
+                                return self.acquire()
+                        else:
+                            raise FailedToAcquire(
+                                'PID file found but doesn''t have an int (contains "%s") skipping' % (data,))
                     else:
                         # Is this process alive?
                         try:
                             os.kill(pid, 0)
                         except OSError:  # dead
-                            return self.acquire()   # retry acquisition
+                            if self.delete_on_dead:
+                                os.unlink(self.path)
+                                return self.acquire()  # retry acquisition
+                            else:
+                                raise LockIsHeld(pid, False)
                         else:
                             raise LockIsHeld(pid, True)
-
-            except IOError as e:
+            except PermissionError as e:
                 raise FailedToAcquire(repr(e))
-
         else:
             file = open(self.fileno)
             file.write(str(os.getpid()))
             file.flush()
+            self.success = True
 
     def __enter__(self):
-        try:
-            self.acquire()
-        except LockIsHeld as e:
-            if self.delete_on_dead and (not e.is_alive):
-                os.unlink(self.path)
-                self.acquire()
-            else:
-                raise
+        self.acquire()
 
-        self.success = True
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.release()
