@@ -1,4 +1,4 @@
-from satella.configuration import load_source_from_dict, load_source_from_list
+from satella.configuration.sources import load_source_from_dict, load_source_from_list
 from .test_sources.utils import SourceTestCase
 
 INNER_DATA = [
