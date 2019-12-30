@@ -3,7 +3,7 @@ from __future__ import print_function, absolute_import, division
 
 import unittest
 
-from satella.coding import Singleton
+from satella.coding.structures import Singleton
 
 
 class TestSingleton(unittest.TestCase):

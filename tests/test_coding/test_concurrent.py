@@ -3,8 +3,7 @@ from __future__ import print_function, absolute_import, division
 import unittest
 import time
 
-from satella.coding import CallableGroup
-from satella.coding.concurrent import TerminableThread
+from satella.coding.concurrent import TerminableThread, CallableGroup
 
 
 class TestCallableGroup(unittest.TestCase):

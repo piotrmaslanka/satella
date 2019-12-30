@@ -1,6 +1,9 @@
-# v2.1.12
+# v2.2.1
 
 * added [TerminableThread](satella/coding/concurrent/thread.py)
+* **COMPATIBILITY BREAKERS**
+    * `Singleton` and family are meant to be imported from `satella.coding.structures`
+    * `CallableGroup` is meant to be imported from `satella.coding.concurrent`
 
 # v2.1.11
 

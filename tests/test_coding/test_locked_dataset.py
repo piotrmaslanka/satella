@@ -1,6 +1,6 @@
 import unittest
 
-from satella.coding import LockedDataset
+from satella.coding.concurrent import LockedDataset
 from satella.exceptions import ResourceLocked, ResourceNotLocked
 
 

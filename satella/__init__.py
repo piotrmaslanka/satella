@@ -1,2 +1,2 @@
 # coding=UTF-8
-__version__ = '2.1.12rc1'
+__version__ = '2.2.1rc1'

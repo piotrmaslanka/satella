@@ -6,8 +6,9 @@ import unittest
 
 import mock
 
-from satella.coding import TimeBasedHeap, Heap, CallableGroup, typednamedtuple, \
+from satella.coding.structures import TimeBasedHeap, Heap, typednamedtuple, \
     OmniHashableMixin, DictObject, apply_dict_object
+from satella.coding.concurrent import CallableGroup
 
 
 class TestCallableGroup(unittest.TestCase):
