@@ -128,7 +128,9 @@ class TestHeap(unittest.TestCase):
         tbh.push(10, 'A')
         self.assertEquals((10, 'A'), tbh.pop())
         tbh.push((10, 'A'))
+        self.assertEquals(tbh[0], (10, 'A'))
         self.assertEquals((10, 'A'), tbh.pop())
+        self.assertEquals(tbh.data, [])
 
     def test_tbh_iter(self):
         tbh = Heap()

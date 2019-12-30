@@ -1,3 +1,4 @@
+import collections
 import copy
 import functools
 import heapq
@@ -65,7 +66,7 @@ def _extras_to_one(fun):
 HeapVar = tp.TypeVar('T')
 
 
-class Heap(tp.Generic[HeapVar]):
+class Heap(collections.UserList, tp.Generic[HeapVar]):
     """
     Sane heap as object - not like heapq.
 
@@ -76,10 +77,10 @@ class Heap(tp.Generic[HeapVar]):
     """
 
     def __init__(self, from_list: tp.Optional[tp.Iterable[HeapVar]] = None):
-        self.heap = list(from_list or ())
-        heapq.heapify(self.heap)
+        super().__init__(from_list)
+        heapq.heapify(self.data)
 
-    def push_many(self, items: tp.Iterable[HeapVar]) -> None:
+    def push_many(self, items: tp.Iterator[HeapVar]) -> None:
         for item in items:
             self.push(item)
 
@@ -94,11 +95,11 @@ class Heap(tp.Generic[HeapVar]):
 
             heap.push(4, myobject)
         """
-        heapq.heappush(self.heap, item)
+        heapq.heappush(self.data, item)
 
     def __copy(self, op) -> 'Heap':
         h = Heap()
-        h.heap = op(self.heap)
+        h.data = op(self.data)
         return h
 
     def __deepcopy__(self, memo) -> 'Heap':
@@ -108,7 +109,7 @@ class Heap(tp.Generic[HeapVar]):
         return self.__copy(copy.copy)
 
     def __iter__(self) -> tp.Iterator[HeapVar]:
-        return self.heap.__iter__()
+        return self.data.__iter__()
 
     def pop(self) -> HeapVar:
         """
@@ -116,7 +117,7 @@ class Heap(tp.Generic[HeapVar]):
 
         :raises IndexError: on empty heap
         """
-        return heapq.heappop(self.heap)
+        return heapq.heappop(self.data)
 
     def filter_map(self, filter_fun: tp.Optional[tp.Callable[[HeapVar], bool]] = None,
                    map_fun: tp.Optional[tp.Callable[[HeapVar], tp.Any]] = None):
@@ -125,24 +126,24 @@ class Heap(tp.Generic[HeapVar]):
          transform: item' = item(condition) on
         the rest. Maintain heap invariant.
         """
-        heap = filter(filter_fun, self.heap) if filter_fun else self.heap
+        heap = filter(filter_fun, self.data) if filter_fun else self.data
         heap = map(map_fun, heap) if map_fun else heap
         heap = list(heap) if not isinstance(heap, list) else heap
-        self.heap = heap
-        heapq.heapify(self.heap)
+        self.data = heap
+        heapq.heapify(self.data)
 
     def __bool__(self) -> bool:
         """
         Is this empty?
         """
-        return len(self.heap) > 0
+        return len(self.data) > 0
 
     def iter_ascending(self) -> tp.Iterator[HeapVar]:
         """
         Return an iterator returning all elements in this heap sorted ascending.
         State of the heap is not changed
         """
-        heap = copy.copy(self.heap)
+        heap = copy.copy(self.data)
         while heap:
             yield heapq.heappop(heap)
 
@@ -153,8 +154,11 @@ class Heap(tp.Generic[HeapVar]):
         """
         return reversed(list(self.iter_ascending()))
 
+    def __eq__(self, other: 'Heap') -> bool:
+        return self.data == other.data
+
     def __len__(self) -> int:
-        return len(self.heap)
+        return len(self.data)
 
     def __str__(self) -> str:
         return '<satella.coding.Heap: %s elements>' % (len(self, ))
@@ -163,7 +167,7 @@ class Heap(tp.Generic[HeapVar]):
         return u'<satella.coding.Heap>'
 
     def __contains__(self, item: HeapVar) -> bool:
-        return item in self.heap
+        return item in self.data
 
 
 class TimeBasedHeap(Heap):
@@ -192,21 +196,21 @@ class TimeBasedHeap(Heap):
         return '<satella.coding.TimeBasedHeap>'
 
     def __repr__(self):
-        return '<satella.coding.TimeBasedHeap with %s elements>' % (len(self.heap),)
+        return '<satella.coding.TimeBasedHeap with %s elements>' % (len(self.data),)
 
     def items(self) -> tp.Iterable[HeapVar]:
         """
         Return an iterator, but WITHOUT timestamps (only items), in
         unspecified order
         """
-        return (ob for ts, ob in self.heap)
+        return (ob for ts, ob in self.data)
 
     def __init__(self, default_clock_source: tp.Callable[[], int] = None):
         """
         Initialize an empty heap
         """
         self.default_clock_source = default_clock_source or time.monotonic
-        super(TimeBasedHeap, self).__init__(from_list=())
+        super().__init__(from_list=())
 
     def put(self, timestamp_or_value: tp.Union[tp.Tuple[tp.Union[float, int], HeapVar]],
             value: tp.Optional[HeapVar] = None) -> None:
@@ -239,7 +243,7 @@ class TimeBasedHeap(Heap):
         assert less is not None
 
         while self:
-            if self.heap[0][0] >= less:
+            if self.data[0][0] >= less:
                 return
             yield self.pop()
 

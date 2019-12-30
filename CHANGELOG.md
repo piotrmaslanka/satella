@@ -5,6 +5,7 @@
 * fixed the custom_hook for `MemoryErrorExceptionHandler`: it won't
   kill everything if the custom_hook returns True
 * added an unit test for `precondition` 
+* `Heap` now inherits from `UserList`
 
 # v2.2.1
 
