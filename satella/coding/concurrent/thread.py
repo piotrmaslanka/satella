@@ -63,6 +63,7 @@ class TerminableThread(threading.Thread):
         >>> time.sleep(1000000)
 
         :param force: Whether to force a quit
+        :return: self
         :raises RuntimeError: when something goes wrong with the underlying Python machinery
         """
         self._terminating = True
