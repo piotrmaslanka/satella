@@ -1,5 +1,9 @@
 import ctypes
+import logging
 import threading
+
+
+logger = logging.getLogger(__name__)
 
 
 class TerminableThread(threading.Thread):
@@ -58,6 +62,10 @@ class TerminableThread(threading.Thread):
         if force:
             ret = ctypes.pythonapi.PyThreadState_SetAsyncExc(self._ident, ctypes.py_object(SystemExit))
             if ret == 0:
+                ctypes.pythonapi.PyThreadState_SetAsyncExc(self._ident, 0)
                 raise ValueError('Invalid thread ID %s obtained for %s' % (self._ident, self))
+            elif ret > 1:
+                logger.warning('Multiple threads killed :(')
+                ctypes.pythonapi.PyThreadState_SetAsyncExc(self._ident, 0)
 
         return self
