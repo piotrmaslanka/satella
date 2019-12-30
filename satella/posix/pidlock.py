@@ -4,11 +4,7 @@ import os
 logger = logging.getLogger(__name__)
 
 
-class FailedToAcquire(Exception):
-    """Failed to acquire the process lock file"""
-
-
-class LockIsHeld(FailedToAcquire):
+class LockIsHeld(Exception):
     """
     Lock is held by someone
     """
@@ -36,10 +32,6 @@ class AcquirePIDLock:
     * AcquirePIDLock.LockIsHeld - lock is already held. This has two attributes - pid (int), the PID of holder,
                                   and is_alive (bool) - whether the holder is an alive process
     """
-
-    def __init__(self, pid, is_alive):
-        self.pid = pid
-        self.is_alive = is_alive
 
     def __init__(self, pid_file, base_dir=u'/var/run', delete_on_dead=False):
         """
@@ -75,11 +67,9 @@ class AcquirePIDLock:
                 raise LockIsHeld()
             else:
                 return self.acquire()
-            self.success = True
 
     def __enter__(self):
         self.acquire()
-
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.release()

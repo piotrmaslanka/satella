@@ -9,7 +9,7 @@ import unittest
 
 from mock import patch, Mock
 
-from satella.posix import AcquirePIDLock, FailedToAcquire, hang_until_sig
+from satella.posix import AcquirePIDLock, LockIsHeld, hang_until_sig
 
 
 def acquire_lock_file_and_wait_for_signal():
@@ -36,7 +36,7 @@ class TestPidlock(unittest.TestCase):
         process.start()
         time.sleep(1)
         n = AcquirePIDLock('lock', '.', delete_on_dead=True)
-        self.assertRaises(FailedToAcquire, lambda: n.acquire())
+        self.assertRaises(LockIsHeld, lambda: n.acquire())
         process.terminate()
         process.join()
 
