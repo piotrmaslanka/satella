@@ -23,3 +23,13 @@ Return if running as root
 
 .. autofunction:: satella.posix.is_running_as_root
 
+
+AcquirePIDLock
+--------------
+
+This is meant to acquire a lock on a file.
+
+.. autoclass:: satella.posix.AcquirePIDLock
+    :members:
+
+.. autoclass:: satella.posix.LockIsHeld
