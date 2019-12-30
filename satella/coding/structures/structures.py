@@ -208,18 +208,17 @@ class TimeBasedHeap(Heap):
         self.default_clock_source = default_clock_source or time.monotonic
         super(TimeBasedHeap, self).__init__(from_list=())
 
-    def put(self, *args):
+    def put(self, timestamp_or_value: tp.Union[tp.Tuple[tp.Union[float, int], HeapVar]],
+            value: tp.Optional[HeapVar] = None) -> None:
         """
         Put an item on heap.
 
         Pass timestamp, item or just an item for default time
         """
-        assert len(args) in (1, 2)
-
-        if len(args) == 1:
-            timestamp, item = self.default_clock_source(), args[0]
+        if value is None:
+            timestamp, item = self.default_clock_source(), timestamp_or_value
         else:
-            timestamp, item = args
+            timestamp, item = timestamp_or_value, value
 
         assert timestamp is not None
         self.push((timestamp, item))
