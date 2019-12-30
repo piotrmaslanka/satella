@@ -12,6 +12,7 @@ class AlternativeSource(BaseSource):
     """
     If first source of configuration fails with ConfigurationError, use the next one instead, ad nauseam.
     """
+
     def __init__(self, *sources: BaseSource):
         self.sources = sources
 
@@ -51,8 +52,8 @@ class MergingSource(BaseSource):
     Source that merges configuration from a bunch of sources
     """
 
-    RAISE = 0       # Raise ConfigurationError if one of sources fails
-    SILENT = 1      # Silently continue loading from next files if one fails
+    RAISE = 0  # Raise ConfigurationError if one of sources fails
+    SILENT = 1  # Silently continue loading from next files if one fails
 
     def __init__(self, *sources: BaseSource, on_fail: int = RAISE):
         self.sources = sources
@@ -70,7 +71,7 @@ class MergingSource(BaseSource):
                 elif self.on_fail == MergingSource.SILENT:
                     p = {}
                 else:
-                    raise ConfigurationError('Invalid on_fail parameter %s' % (self.on_fail, ))
+                    raise ConfigurationError('Invalid on_fail parameter %s' % (self.on_fail,))
             assert isinstance(p, dict), 'what was provided by the config was not a dict'
             cfg = merge_dicts(cfg, p)
             assert isinstance(cfg, dict), 'what merge_dicts returned wasn''t a dict'

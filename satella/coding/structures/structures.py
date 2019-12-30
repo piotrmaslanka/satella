@@ -2,9 +2,9 @@ import copy
 import functools
 import heapq
 import logging
-import typing as tp
 import operator
 import time
+import typing as tp
 
 logger = logging.getLogger(__name__)
 

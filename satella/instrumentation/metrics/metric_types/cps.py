@@ -1,7 +1,8 @@
-import typing as tp
-from .base import Metric
-import time
 import collections
+import time
+import typing as tp
+
+from .base import Metric
 
 
 class ClicksPerTimeUnitMetric(Metric):
@@ -31,7 +32,7 @@ class ClicksPerTimeUnitMetric(Metric):
     def to_json(self) -> tp.List[int]:
         count_map = [0] * len(self.time_unit_vectors)
         monotime = time.monotonic()
-        time_unit_vectors = [monotime-v for v in self.time_unit_vectors]
+        time_unit_vectors = [monotime - v for v in self.time_unit_vectors]
 
         for v in self.last_clicks:
             for index, cutoff in enumerate(time_unit_vectors):

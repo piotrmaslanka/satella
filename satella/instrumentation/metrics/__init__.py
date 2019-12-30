@@ -1,14 +1,13 @@
-import abc
-import logging
-import typing as tp
 import itertools
+import logging
 import threading
+import typing as tp
+
 logger = logging.getLogger(__name__)
 from .metric_types.base import RUNTIME, DISABLED, DEBUG, INHERIT, Metric
 from .metric_types import METRIC_NAMES_TO_CLASSES
 
 __all__ = ['getMetric', 'DISABLED', 'RUNTIME', 'DEBUG', 'INHERIT']
-
 
 metrics = {}
 metrics_lock = threading.Lock()
@@ -24,7 +23,7 @@ def getMetric(metric_name: str, metric_type: str = 'base', metric_level: tp.Opti
     name = metric_name.split('.')
     with metrics_lock:
         root_metric = None
-        for name_index, name_part in itertools.chain(enumerate(name), ((len(name), None), )):
+        for name_index, name_part in itertools.chain(enumerate(name), ((len(name), None),)):
             tentative_name = '.'.join(name[:name_index])
             if tentative_name not in metrics:
                 if tentative_name == '':

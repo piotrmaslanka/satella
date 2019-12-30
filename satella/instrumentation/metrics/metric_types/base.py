@@ -1,5 +1,5 @@
 import typing as tp
-import abc
+
 from satella.json import JSONAble
 
 DISABLED = 1
@@ -20,7 +20,7 @@ class Metric(JSONAble):
         if self.name == '':
             metrics.metrics = {}
         else:
-            metrics.metrics = {k: v for k, v in metrics.metrics.items() if not k.startswith(self.name+'.')}
+            metrics.metrics = {k: v for k, v in metrics.metrics.items() if not k.startswith(self.name + '.')}
             del metrics.metrics[self.name]
         self.children = []
 
@@ -51,7 +51,7 @@ class Metric(JSONAble):
 
     def to_json(self) -> tp.Union[list, dict, str, int, float, None]:
         return {
-            child.name[len(self.name)+1 if len(self.name) > 0 else 0:]: child.to_json() for child in self.children
+            child.name[len(self.name) + 1 if len(self.name) > 0 else 0:]: child.to_json() for child in self.children
         }
 
     def handle(self, level: int, *args, **kwargs) -> None:
@@ -63,4 +63,3 @@ class Metric(JSONAble):
 
     def runtime(self, *args, **kwargs):
         self.handle(RUNTIME, *args, **kwargs)
-

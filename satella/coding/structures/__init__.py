@@ -8,7 +8,7 @@ __all__ = [
     'apply_dict_object'
 ]
 
+from .dict_object import *
 from .singleton import Singleton
 from .structures import *
 from .typednamedtuple import *
-from .dict_object import *

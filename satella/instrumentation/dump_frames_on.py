@@ -1,9 +1,8 @@
 import logging
-import sys
 import signal
+import sys
 import types
 import typing as tp
-from satella.instrumentation import Traceback
 
 try:
     SIG_TYPE = signal._SIG
@@ -16,6 +15,8 @@ logger = logging.getLogger(__name__)
 # noinspection PyUnusedLocal
 # noinspection PyProtectedMember
 def dump_frames_on(sig_no: SIG_TYPE, stack_frame: types.FrameType, output: tp.TextIO):
+    from satella.instrumentation import Traceback
+
     sys.stderr.write("Stack frame dump requested\n")
     # noinspection PyProtectedMember
     for frame_no, frame in sys._current_frames().items():

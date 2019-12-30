@@ -1,7 +1,7 @@
+import functools
+import inspect
 import logging
 import threading
-import inspect
-import functools
 
 from ...exceptions import ResourceLocked, ResourceNotLocked
 
@@ -51,7 +51,9 @@ class LockedDataset:
             def in_ner(self, *args, **kwargs):
                 with self(blocking=blocking, timeout=timeout):
                     return f(self, *args, **kwargs)
+
             return in_ner
+
         return inner
 
     def __getattribute__(self, name):

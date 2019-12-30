@@ -28,7 +28,7 @@ class FileSource(BaseSource):
         """
         super(FileSource, self).__init__()
         from .. import sources
-        self.source_classes = [ # list of tp.Type[FormatSource]
+        self.source_classes = [  # list of tp.Type[FormatSource]
             (p if not isinstance(p, str) else getattr(sources, p)) for p in
             interpret_as]
         self.path = path
@@ -44,7 +44,7 @@ class FileSource(BaseSource):
             try:
                 s = source_class(data, encoding=self.encoding).provide()
                 if not isinstance(s, dict):
-                    raise ConfigurationError('%s is not a dict instance' % (s, ))
+                    raise ConfigurationError('%s is not a dict instance' % (s,))
                 return s
             except ConfigurationError:
                 pass
@@ -65,12 +65,12 @@ class DirectorySource(FileSource):
         :param filter: callable that tells whether to use this file (or subdirectory if scan_subdirectories is enabled)
         """
         super(DirectorySource, self).__init__(path, encoding, interpret_as)
-        self.filter = lambda files: filter(fname_filter, files) # tp.Callable[[tp.List[str]], tp.List[str]]
+        self.filter = lambda files: filter(fname_filter, files)  # tp.Callable[[tp.List[str]], tp.List[str]]
         self.scan_subdirectories = scan_subdirectories
 
     def get_sources_from_directory(self, directory: str) -> tb.List[FileSource]:
 
-        sources = [] # list of  FileSource
+        sources = []  # list of  FileSource
 
         try:
             files = self.filter(os.path.join(directory, x) for x in os.listdir(directory))
@@ -89,7 +89,7 @@ class DirectorySource(FileSource):
             elif os.path.isdir(fullname) and self.scan_subdirectories:
                 sources.extend(self.get_sources_from_directory(fullname))
             else:
-                pass # FIFOs or sockets or something else
+                pass  # FIFOs or sockets or something else
 
         return sources
 

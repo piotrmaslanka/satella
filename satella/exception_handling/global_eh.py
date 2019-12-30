@@ -36,7 +36,7 @@ class GlobalExcepthook:
         self.installed_hooks.remove(hook)
 
     def add_hook(self, new_hook: tp.Union[
-            tp.Callable, BaseExceptionHandler]) -> BaseExceptionHandler:
+        tp.Callable, BaseExceptionHandler]) -> BaseExceptionHandler:
         """
         Register a hook to fire in case of an exception.
 

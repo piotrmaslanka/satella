@@ -1,6 +1,6 @@
 import copy
-import typing as tp
 import re
+import typing as tp
 
 from satella.coding.concurrent import CallableGroup
 from ...exceptions import ConfigurationValidationError, ConfigurationSchemaError
@@ -57,8 +57,8 @@ class Descriptor(object):
     Base class for a descriptor
     """
     BASIC_MAKER = staticmethod(lambda v: v)
-    MY_EXCEPTIONS = [TypeError, ValueError] # a list of Exception classes
-    CHECKERS = []   # a list of CheckerCondition
+    MY_EXCEPTIONS = [TypeError, ValueError]  # a list of Exception classes
+    CHECKERS = []  # a list of CheckerCondition
 
     def __init__(self):
         self.pre_checkers = CallableGroup()
@@ -103,7 +103,7 @@ def _make_boolean(v: tp.Any) -> bool:
         elif v.upper() == 'FALSE':
             return False
         else:
-            raise ConfigurationValidationError('Unknown value of "%s" posing to be a bool' % (v, ))
+            raise ConfigurationValidationError('Unknown value of "%s" posing to be a bool' % (v,))
     else:
         return bool(v)
 
@@ -155,7 +155,7 @@ class Regexp(String):
 
         match = self.REGEXP.match(value)
         if not match:
-            raise ConfigurationValidationError('value does not match %s' % (self.REGEXP.pattern, ), value)
+            raise ConfigurationValidationError('value does not match %s' % (self.REGEXP.pattern,), value)
 
         return match.group(0)
 
@@ -220,17 +220,17 @@ class Dict(Descriptor):
                  unknown_key_mapper: UnknownKeyHandlerType = lambda str,
                                                                     data: data):
         super().__init__()
-        self.keys = {item.name: item for item in keys}  #  tp.Dict[str, DictDescriptorKey]
-        self.unknown_key_mapper = unknown_key_mapper    # Dict.UnknownKeyHandlerType
+        self.keys = {item.name: item for item in keys}  # tp.Dict[str, DictDescriptorKey]
+        self.unknown_key_mapper = unknown_key_mapper  # Dict.UnknownKeyHandlerType
 
     def __call__(self, value: ConfigDictValue) -> dict:
         value = copy.copy(value)
         if not isinstance(value, dict):
-            raise ConfigurationValidationError('value passed was not a dict: %s' % (value, ))
+            raise ConfigurationValidationError('value passed was not a dict: %s' % (value,))
         value = super().__call__(value)
 
         if not isinstance(value, dict):
-            raise ConfigurationValidationError('value received from descriptor was not a dict: %s' % (value, ))
+            raise ConfigurationValidationError('value received from descriptor was not a dict: %s' % (value,))
 
         output = {}
 
@@ -241,7 +241,7 @@ class Dict(Descriptor):
                 if key_descriptor.optional:
                     output[key] = key_descriptor.default
                 else:
-                    raise ConfigurationValidationError('required key %s not found' % (key, ))
+                    raise ConfigurationValidationError('required key %s not found' % (key,))
             else:
                 output[key] = key_descriptor(v)
 
@@ -259,6 +259,7 @@ class Union(Descriptor):
 
     then value can be either a list or a dict
     """
+
     def __init__(self, *descriptors: tp.List[Descriptor]):
         super().__init__()
         self.descriptors = descriptors
@@ -269,7 +270,7 @@ class Union(Descriptor):
                 return descriptor(value)
             except ConfigurationValidationError:
                 continue
-        raise ConfigurationValidationError('Could not match value %s to a descriptor' % (value, ))
+        raise ConfigurationValidationError('Could not match value %s to a descriptor' % (value,))
 
 
 BASE_LOOKUP_TABLE = {'int': Integer, 'float': Float, 'str': String, 'ipv4': IPv4, 'list': List, 'dict': Dict,
@@ -292,7 +293,7 @@ def _get_descriptor_for(key: str, value: tp.Any) -> Descriptor:
             type = value['type']
             if type == 'list':
                 of = _get_descriptor_for('', value.get('of', ''))
-                args = (of, )
+                args = (of,)
             elif type == 'union':
                 args = [_get_descriptor_for('', x) for x in value.get('of', [])]
             optional, default = False, None
@@ -303,7 +304,7 @@ def _get_descriptor_for(key: str, value: tp.Any) -> Descriptor:
             descriptor = BASE_LOOKUP_TABLE[type](*args)
             return create_key(descriptor, key, optional, default)
     else:
-        raise ConfigurationSchemaError('invalid schema, unrecognized config object %s' % (value, ))
+        raise ConfigurationSchemaError('invalid schema, unrecognized config object %s' % (value,))
 
 
 def register_custom_descriptor(name: str):
@@ -318,9 +319,11 @@ def register_custom_descriptor(name: str):
 
     :param name: under which it is supposed to be invokable
     """
+
     def inner(cls):
         BASE_LOOKUP_TABLE[name] = cls
         return cls
+
     return inner
 
 

@@ -6,7 +6,8 @@ All things related to:
 """
 from __future__ import print_function, absolute_import, division
 
-from .trace_back import Traceback, StoredVariableValue, StackFrame, GenerationPolicy
 from .dump_frames_on import install_dump_frames_on
+from .trace_back import Traceback, StoredVariableValue, StackFrame, GenerationPolicy
+
 __all__ = ['Traceback', 'StoredVariableValue', 'StackFrame', 'GenerationPolicy',
            'install_dump_frames_on']

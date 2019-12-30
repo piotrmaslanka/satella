@@ -55,4 +55,4 @@ def hang_until_sig(extra_signals: tp.Optional[tp.List] = None):
             except IOError:  # "Interrupted system call"
                 pass
 
-    end = False     # reset for next use
+    end = False  # reset for next use

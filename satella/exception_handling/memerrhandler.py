@@ -1,7 +1,7 @@
 import logging
 import sys
-import typing as tp
 import time
+import typing as tp
 
 from satella.posix import suicide
 from .exception_handlers import BaseExceptionHandler, ALWAYS_FIRST
@@ -10,8 +10,8 @@ logger = logging.getLogger(__name__)
 
 
 class MemoryErrorExceptionHandler(BaseExceptionHandler):
-    def __init__(self, custom_hook: tp.Callable=lambda type, value, traceback: None,
-                 kill_pg: bool=False):
+    def __init__(self, custom_hook: tp.Callable = lambda type, value, traceback: None,
+                 kill_pg: bool = False):
         """
         :param kill_pg: kill entire process group, if applicable
         """

@@ -20,11 +20,11 @@ Use in such a way:
 """
 import inspect
 import io
-import types
 import sys
 import traceback
-import zlib
+import types
 import typing as tp
+import zlib
 
 try:
     import cPickle as pickle
@@ -143,7 +143,7 @@ class StoredVariableValue:
                 self.pickle_type = 'pickle'
             except BaseException as e:
                 # yes, they all can happen!
-                self.pickle = repr((e,)+e.args).encode('utf8')
+                self.pickle = repr((e,) + e.args).encode('utf8')
                 self.pickle_type = "failed"
             else:
                 if policy.should_compress(self.pickle):
@@ -154,7 +154,7 @@ class StoredVariableValue:
                                 self.pickle))
                         self.pickle_type = "pickle/gzip"
                     except zlib.error as e:
-                        self.pickle = ('failed to gzip, reason is %s' % (repr(e), )).encode('utf8')
+                        self.pickle = ('failed to gzip, reason is %s' % (repr(e),)).encode('utf8')
                         self.pickle_type = "failed/gzip"
 
     def load_value(self):
@@ -177,7 +177,7 @@ class StoredVariableValue:
         elif self.pickle_type == 'pickle':
             pickle_ = self.pickle
         else:
-            raise ValueError('unknown pickle type of %s' % (self.pickle_type, ))
+            raise ValueError('unknown pickle type of %s' % (self.pickle_type,))
 
         try:
             return pickle.loads(pickle_)

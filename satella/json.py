@@ -1,5 +1,5 @@
-import typing as tp
 import json
+import typing as tp
 from abc import ABCMeta, abstractmethod
 
 __all__ = ['JSONEncoder', 'JSONAble', 'json_encode']

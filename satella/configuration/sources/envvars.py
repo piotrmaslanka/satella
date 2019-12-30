@@ -1,7 +1,7 @@
 import logging
 import os
-import typing as tp
 import sys
+import typing as tp
 
 from satella.coding import rethrow_as
 from satella.exceptions import ConfigurationError
@@ -41,6 +41,7 @@ class EnvVarsSource(JSONSource):
     """
     Return a dictionary that is the JSON encoded within a particular environment variable
     """
+
     def __init__(self, env_name: str):
         super(EnvVarsSource, self).__init__('',
                                             encoding=sys.getfilesystemencoding())

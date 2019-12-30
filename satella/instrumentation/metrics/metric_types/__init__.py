@@ -1,7 +1,6 @@
-import typing as tp
 from .base import Metric
-from .simple import StringMetric, IntegerMetric, FloatMetric
 from .cps import ClicksPerTimeUnitMetric
+from .simple import StringMetric, IntegerMetric, FloatMetric
 
 ALL_METRICS = [
     Metric,

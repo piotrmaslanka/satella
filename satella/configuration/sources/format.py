@@ -48,7 +48,7 @@ class FormatSource(BaseSource):
                         ConfigurationError):
             if isinstance(self.root, bytes):
                 self.root = codecs.decode(self.root, self.encoding)
-                if isinstance(self.root, bytes):    # probably base64 encoded
+                if isinstance(self.root, bytes):  # probably base64 encoded
                     self.root = self.root.decode('utf-8')
 
             ret_val = cls.TRANSFORM(self.root)

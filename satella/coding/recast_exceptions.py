@@ -1,7 +1,6 @@
 import functools
 import typing as tp
 
-
 __all__ = [
     'rethrow_as',
     'silence_excs'
@@ -42,8 +41,8 @@ class rethrow_as:
         """
 
         try:
-            a, b = pairs                        # throws ValueError
-            op = issubclass(b, BaseException)   # throws TypeError
+            a, b = pairs  # throws ValueError
+            op = issubclass(b, BaseException)  # throws TypeError
         except TypeError:
             op = b is None
         except ValueError:

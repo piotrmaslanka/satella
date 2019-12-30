@@ -1,9 +1,9 @@
 import typing as tp
+
 from .base import Metric
 
 
 class SimpleMetric(Metric):
-
     CLASS_NAME = 'string'
     CONSTRUCTOR = str
 

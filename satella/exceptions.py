@@ -1,16 +1,10 @@
-import logging
-import typing
-
-logger = logging.getLogger(__name__)
-
-
 class BaseSatellaException(Exception):
     def __init__(self, msg):
         super(BaseSatellaException, self).__init__()
         self.msg = msg
 
     def __str__(self):
-        return 'BaseSatellaException(%s)' % (repr(self.msg), )
+        return 'BaseSatellaException(%s)' % (repr(self.msg),)
 
 
 class ResourceLocked(BaseSatellaException):
@@ -37,6 +31,7 @@ class ConfigurationSchemaError(ConfigurationError):
 
 class ConfigurationValidationError(ConfigurationSchemaError):
     """A validator failed"""
+
     def __init__(self, msg, value=None):
         """
         :param value: value found

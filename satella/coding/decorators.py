@@ -5,7 +5,6 @@ from ..exceptions import PreconditionError
 
 __all__ = ['precondition', 'for_argument', 'PreconditionError']
 
-
 _NOP = lambda x: x
 _TRUE = lambda x: True
 
@@ -89,8 +88,8 @@ def for_argument(*t_ops, **t_kwops):
             # add extra 'None' argument if unbound method
             assert len(args) >= len(t_ops)
             a = fun(*((_NOP if op is None else op)(arg) for arg, op in
-                        itertools.zip_longest(args, t_ops, fillvalue=None)),
-                       **{k: t_kwops.get(k, _NOP)(v) for k, v in kwargs.items()})
+                      itertools.zip_longest(args, t_ops, fillvalue=None)),
+                    **{k: t_kwops.get(k, _NOP)(v) for k, v in kwargs.items()})
             return returns(a)
 
         return inner

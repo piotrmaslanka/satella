@@ -15,7 +15,9 @@ def static_var(var_name: str, starting_value):
     >>>     def count(self):
     >>>         MyClass.count.counter += 1
     """
+
     def decorate(func):
         setattr(func, var_name, starting_value)
         return func
+
     return decorate
