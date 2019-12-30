@@ -59,7 +59,7 @@ class AcquirePIDLock:
             self.fileno = os.open(self.path, os.O_CREAT | os.O_EXCL)
         except Exception as e:
             import sys
-            sys.stderr.write(str(e) + '\n')
+            sys.stderr.write(str(type(e)) + '\n')
             try:
                 os.unlink(self.path)
             except OSError:
