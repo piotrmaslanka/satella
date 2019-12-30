@@ -13,14 +13,14 @@ from satella.posix import AcquirePIDLock, LockIsHeld, hang_until_sig
 
 
 def acquire_lock_file_and_wait_for_signal():
-    with AcquirePIDLock('lock', '.', delete_on_dead=True):
+    with AcquirePIDLock('lock', '.'):
         hang_until_sig()
 
 
 class TestPidlock(unittest.TestCase):
 
     def test_pidlock(self):
-        with AcquirePIDLock('lock', '.', delete_on_dead=True):
+        with AcquirePIDLock('lock', '.'):
             self.assertTrue(os.path.exists('./lock'))
             r = open('./lock', 'rb').read()
             try:
@@ -35,10 +35,12 @@ class TestPidlock(unittest.TestCase):
         process = multiprocessing.Process(target=acquire_lock_file_and_wait_for_signal)
         process.start()
         time.sleep(1)
-        n = AcquirePIDLock('lock', '.', delete_on_dead=True)
-        self.assertRaises(LockIsHeld, lambda: n.acquire())
-        process.terminate()
-        process.join()
+        n = AcquirePIDLock('lock', '.')
+        try:
+            self.assertRaises(LockIsHeld, lambda: n.acquire())
+        finally:
+            process.terminate()
+            process.join()
 
 
 class TestDaemon(unittest.TestCase):

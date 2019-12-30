@@ -33,14 +33,13 @@ class AcquirePIDLock:
                                   and is_alive (bool) - whether the holder is an alive process
     """
 
-    def __init__(self, pid_file, base_dir=u'/var/run', delete_on_dead=False):
+    def __init__(self, pid_file, base_dir=u'/var/run'):
         """
         Initialize a PID lock file object
 
         :param pid_file: rest of path
         :param base_dir: base lock directory
         """
-        self.delete_on_dead = delete_on_dead
         self.path = os.path.join(base_dir, pid_file)
         self.fileno = None
 
