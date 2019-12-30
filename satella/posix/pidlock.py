@@ -10,18 +10,20 @@ class LockIsHeld(Exception):
     """
 
 
-class AcquirePIDLock:
+class FileLock:
     """
     Acquire a PID lock file.
 
+    Usable also on Windows
+
     Usage:
 
-    >>> with AcquirePIDLock('myservice.pid'):
+    >>> with FileLock('myservice.pid'):
     >>>     ... rest of code ..
 
     Or alternatively
 
-    >>> pid_lock = AcquirePIDLock('myservice.pid')
+    >>> pid_lock = FileLock('myservice.pid')
     >>> pid_lock.acquire()
     >>> ...
     >>> pid_lock.release()
@@ -44,6 +46,9 @@ class AcquirePIDLock:
         self.fileno = None
 
     def release(self):
+        """
+        Free the lock
+        """
         if self.fileno is not None:
             os.close(self.fileno)
             os.unlink(self.path)
@@ -53,14 +58,15 @@ class AcquirePIDLock:
         Acquire the PID lock
 
         :raises LockIsHeld: if lock if held
-        :raises FailedToAcquire: if for example a directory exists in that place
         """
         try:
             self.fileno = os.open(self.path, os.O_CREAT | os.O_EXCL)
         except (OSError, FileExistsError) as e:
             try:
                 os.unlink(self.path)
-            except OSError:
+            except Exception as e:
+                import sys
+                sys.stderr.write(str(type(e)) + '\n')
                 raise LockIsHeld()
             else:
                 return self.acquire()

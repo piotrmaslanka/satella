@@ -9,18 +9,18 @@ import unittest
 
 from mock import patch, Mock
 
-from satella.posix import AcquirePIDLock, LockIsHeld, hang_until_sig
+from satella.posix import FileLock, LockIsHeld, hang_until_sig
 
 
 def acquire_lock_file_and_wait_for_signal():
-    with AcquirePIDLock('lock', '.'):
+    with FileLock('lock', '.'):
         hang_until_sig()
 
 
 class TestPidlock(unittest.TestCase):
 
     def test_pidlock(self):
-        with AcquirePIDLock('lock', '.'):
+        with FileLock('lock', '.'):
             self.assertTrue(os.path.exists('./lock'))
             r = open('./lock', 'rb').read()
             try:
@@ -35,7 +35,7 @@ class TestPidlock(unittest.TestCase):
         process = multiprocessing.Process(target=acquire_lock_file_and_wait_for_signal)
         process.start()
         time.sleep(1)
-        n = AcquirePIDLock('lock', '.')
+        n = FileLock('lock', '.')
         try:
             self.assertRaises(LockIsHeld, lambda: n.acquire())
         finally:
