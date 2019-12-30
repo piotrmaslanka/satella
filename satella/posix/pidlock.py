@@ -57,8 +57,7 @@ class AcquirePIDLock:
         """
         try:
             self.fileno = os.open(self.path, os.O_CREAT | os.O_EXCL)
-        except Exception as e:
-            logger.warning(e)
+        except OSError as e:
             try:
                 os.unlink(self.path)
             except OSError:
