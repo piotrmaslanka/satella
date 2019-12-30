@@ -66,6 +66,9 @@ class FileLock:
                 self.file_no = os.open(self.path, os.O_EXCL)
             except OSError:
                 raise LockIsHeld()
+            except Exception as e:
+                import sys
+                sys.stderr.write(str(type(e)) + ' ' + str(e) + '\n')
 
     def __enter__(self):
         self.acquire()
