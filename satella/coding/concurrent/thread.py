@@ -1,6 +1,7 @@
 import ctypes
 import logging
 import threading
+import platform
 
 
 logger = logging.getLogger(__name__)
@@ -60,6 +61,8 @@ class TerminableThread(threading.Thread):
         """
         self._terminating = True
         if force:
+            if platform.python_implementation() == 'PyPy':
+                raise RuntimeError('force=True was made on PyPy')
             ret = ctypes.pythonapi.PyThreadState_SetAsyncExc(ctypes.c_long(self._ident), ctypes.py_object(SystemExit))
             if ret == 0:
                 ctypes.pythonapi.PyThreadState_SetAsyncExc(ctypes.c_long(self._ident), 0)
