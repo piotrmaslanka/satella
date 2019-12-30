@@ -26,9 +26,11 @@ class TestCallableGroup(unittest.TestCase):
                     time.sleep(0.5)
                     a += 1
 
-        mtt = MyTerminableThread()
+        mtt = MyTerminableThread(daemon=True)
         mtt.start()
-        mtt.terminate(force=True).join()
+        mtt.terminate(force=True)
+        mtt.join(3)
+        self.assertFalse(mtt.is_alive())
 
     def test_callable_group_some_raise(self):
         cg = CallableGroup(gather=True)
