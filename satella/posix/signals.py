@@ -14,10 +14,14 @@ def __sighandler(a, b):
     end = True
 
 
-def hang_until_sig(extra_signals: tp.Optional[tp.List] = None):
-    """Will hang until this process receives SIGTERM or SIGINT.
+def hang_until_sig(extra_signals: tp.Optional[tp.List[int]] = None):
+    """
+    Will hang until this process receives SIGTERM or SIGINT.
     If you pass extra signal IDs (signal.SIG*) with extra_signals,
-    then also on those signals this call will release."""
+    then also on those signals this call will release.
+
+    :param extra_signals: a list of extra signals to listen to
+    """
     extra_signals = extra_signals or []
     global end
 

@@ -20,6 +20,9 @@ logger = logging.getLogger(__name__)
 DEVNULL = '/dev/null'
 
 
+__all__ = ['daemonize']
+
+
 def daemonize(exit_via: tp.Callable = sys.exit,
               redirect_std_to_devnull: bool = True,
               uid: tp.Optional[int] = None,
@@ -58,10 +61,10 @@ def daemonize(exit_via: tp.Callable = sys.exit,
     _parse_ug(gid, grp, 'gr_gid', os.setegid)
 
 
-def _parse_ug(no, module, fieldname, osfun):
+def _parse_ug(no, module, field_name, osfun):
     if no is not None:
         if isinstance(no, str):
-            no = getattr(module.getpwnam(no), fieldname)
+            no = getattr(module.getpwnam(no), field_name)
         osfun(no)
 
 
