@@ -17,6 +17,13 @@ class TestTypecheck(unittest.TestCase):
         self.assertRaises(PreconditionError, lambda: return_double([1], 2, 5))
         return_double([1], 1, 'dupa')
 
+    def test_precondition_fail(self):
+        @precondition('len(x) == 1', lambda x: x == 1, None, None, None)
+        def return_double(x, y, z):
+            pass
+
+        self.assertRaises(AssertionError, lambda: return_double([1], 1, 5))
+
     def test_forarg_kwords(self):
         @for_argument(int, typed=bool)
         def check(v1, typed='True'):

@@ -3,7 +3,8 @@
 * more docs
 * fixed `MemoryErrorExceptionHandler` not being importable from `satella.exception_handling`
 * fixed the custom_hook for `MemoryErrorExceptionHandler`: it won't
-  kill everything if the custom_hook returns True 
+  kill everything if the custom_hook returns True
+* added an unit test for `precondition` 
 
 # v2.2.1
 
