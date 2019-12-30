@@ -21,8 +21,10 @@ class TestCallableGroup(unittest.TestCase):
 
         class MyTerminableThread(TerminableThread):
             def run(self):
+                a = 0
                 while True:
                     time.sleep(0.5)
+                    a += 1
 
         mtt = MyTerminableThread()
         mtt.start()
