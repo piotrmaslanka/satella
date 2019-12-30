@@ -20,8 +20,8 @@ class TerminableThread(threading.Thread):
     Flag whether to terminate is stored in self._terminating
     """
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self._terminating = False
 
     def loop(self) -> None:
@@ -56,16 +56,16 @@ class TerminableThread(threading.Thread):
         >>> time.sleep(1000000)
 
         :param force: Whether to force a quit
-        :raises ValueError: force was set to True, and the thread's TID could not be obtained
+        :raises RuntimeError: when something goes wrong with the underlying Python machinery
         """
         self._terminating = True
         if force:
             ret = ctypes.pythonapi.PyThreadState_SetAsyncExc(ctypes.c_long(self._ident), ctypes.py_object(SystemExit))
             if ret == 0:
                 ctypes.pythonapi.PyThreadState_SetAsyncExc(ctypes.c_long(self._ident), 0)
-                raise ValueError('Invalid thread ID %s obtained for %s' % (self._ident, self))
+                raise RuntimeError('Multiple threads killed!')
             elif ret > 1:
-                logger.warning('Multiple threads killed :(')
                 ctypes.pythonapi.PyThreadState_SetAsyncExc(ctypes.c_long(self._ident), 0)
+                raise RuntimeError('Multiple threads killed!')
 
         return self
