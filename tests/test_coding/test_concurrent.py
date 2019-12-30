@@ -1,11 +1,34 @@
 # coding=UTF-8
 from __future__ import print_function, absolute_import, division
 import unittest
+import time
 
 from satella.coding import CallableGroup
+from satella.coding.concurrent import TerminableThread
 
 
 class TestCallableGroup(unittest.TestCase):
+
+    def test_terminable_thread(self):
+        class MyTerminableThread(TerminableThread):
+            def loop(self):
+                time.sleep(0.5)
+
+        mtt = MyTerminableThread()
+        mtt.start()
+        mtt.terminate().join()
+
+    def test_terminable_thread_force(self):
+
+        class MyTerminableThread(TerminableThread):
+            def run(self):
+                while True:
+                    time.sleep(0.5)
+
+        mtt = MyTerminableThread()
+        mtt.start()
+        mtt.terminate(force=True).join()
+
     def test_callable_group_some_raise(self):
         cg = CallableGroup(gather=True)
         cg.add(lambda: dupa)
