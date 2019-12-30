@@ -60,12 +60,12 @@ class TerminableThread(threading.Thread):
         """
         self._terminating = True
         if force:
-            ret = ctypes.pythonapi.PyThreadState_SetAsyncExc(self._ident, ctypes.py_object(SystemExit))
+            ret = ctypes.pythonapi.PyThreadState_SetAsyncExc(ctypes.c_long(self._ident), ctypes.py_object(SystemExit))
             if ret == 0:
-                ctypes.pythonapi.PyThreadState_SetAsyncExc(self._ident, 0)
+                ctypes.pythonapi.PyThreadState_SetAsyncExc(ctypes.c_long(self._ident), 0)
                 raise ValueError('Invalid thread ID %s obtained for %s' % (self._ident, self))
             elif ret > 1:
                 logger.warning('Multiple threads killed :(')
-                ctypes.pythonapi.PyThreadState_SetAsyncExc(self._ident, 0)
+                ctypes.pythonapi.PyThreadState_SetAsyncExc(ctypes.c_long(self._ident), 0)
 
         return self
