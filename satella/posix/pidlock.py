@@ -72,7 +72,7 @@ class AcquirePIDLock:
         :raises FailedToAcquire: if for example a directory exists in that place
         """
         try:
-            self.fileno = os.open(self.path, os.O_CREAT | os.O_EXCL)
+            self.fileno = os.open(self.path, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
         except (FileExistsError, IOError, OSError):
             try:
                 with open(self.path, 'r') as flock:
