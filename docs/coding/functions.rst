@@ -1,6 +1,6 @@
-=========
-Functions
-=========
+========================
+Functions and decorators
+========================
 
 .. autofunction:: satella.coding.merge_dicts
 
