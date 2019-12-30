@@ -1,4 +1,3 @@
-# coding=UTF-8
 """
 Allows you to preserve entire stack frame along with all variables (even
  pickles them).
@@ -30,6 +29,9 @@ try:
     import cPickle as pickle
 except ImportError:
     import pickle
+
+
+__all__ = ['Traceback', 'StoredVariableValue', 'StackFrame', 'GenerationPolicy']
 
 
 class GenerationPolicy(object):

@@ -45,3 +45,12 @@ Alternatively, you can pass a `<frame>` object to Traceback, in order to seriali
 
 .. autoclass:: satella.instrumentation.Traceback
     :members:
+
+.. autoclass:: satella.instrumentation.StoredVariableValue
+    :members:
+
+.. autoclass:: satella.instrumentation.StackFrame
+    :members:
+
+.. autoclass:: satella.instrumentation.GenerationPolicy
+    :members:
