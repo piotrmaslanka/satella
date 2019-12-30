@@ -41,9 +41,7 @@ class AcquirePIDLock:
         :param base_dir: base lock directory
         """
         self.delete_on_dead = delete_on_dead
-
         self.path = os.path.join(base_dir, pid_file)
-
         self.fileno = None
 
     def release(self):
