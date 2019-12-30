@@ -3,7 +3,6 @@ POSIX things
 """
 
 import os
-import typing as tp
 
 from .daemon import daemonize
 from .pidlock import AcquirePIDLock

@@ -1,5 +1,5 @@
-import typing as tp
 import types
+import typing as tp
 from abc import abstractmethod
 
 __all__ = [
@@ -15,7 +15,6 @@ __all__ = [
 ALWAYS_FIRST = -1000
 NORMAL_PRIORITY = 0
 ALWAYS_LAST = 1000
-
 
 ExceptionHandlerCallable = tp.Callable[[type, BaseException, types.TracebackType], bool]
 
@@ -60,6 +59,7 @@ class FunctionExceptionHandler(BaseExceptionHandler):
 
     Your exception handler must return a bool, whether to intercept the exception and not propagate it.
     """
+
     def __init__(self, fun: ExceptionHandlerCallable, priority: int = NORMAL_PRIORITY):
         super(FunctionExceptionHandler, self).__init__(priority)
         self.fun = fun

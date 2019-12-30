@@ -30,7 +30,6 @@ try:
 except ImportError:
     import pickle
 
-
 __all__ = ['Traceback', 'StoredVariableValue', 'StackFrame', 'GenerationPolicy']
 
 

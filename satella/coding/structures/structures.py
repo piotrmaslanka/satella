@@ -34,15 +34,15 @@ class OmniHashableMixin:
     _HASH_FIELDS_TO_USE = []
 
     def __hash__(self):
-        return functools.reduce(operator.xor, (hash(getattr(self, fname)) \
-                                               for fname in self._HASH_FIELDS_TO_USE))
+        return functools.reduce(operator.xor, (hash(getattr(self, field_name)) \
+                                               for field_name in self._HASH_FIELDS_TO_USE))
 
     def __eq__(self, other: 'OmniHashableMixin') -> bool:
         """
         Note that this will only compare _HASH_FIELDS_TO_USE
         """
-        cons = lambda p: [getattr(p, fname) for fname in self._HASH_FIELDS_TO_USE]
-        if cons(self) == cons(other):
+        con = lambda p: [getattr(p, field_name) for field_name in self._HASH_FIELDS_TO_USE]
+        if con(self) == con(other):
             return True
 
         if not isinstance(other, OmniHashableMixin):
@@ -62,7 +62,10 @@ def _extras_to_one(fun):
     return inner
 
 
-class Heap(object):
+HeapVar = tp.TypeVar('T')
+
+
+class Heap(tp.Generic[HeapVar]):
     """
     Sane heap as object - not like heapq.
 
@@ -72,17 +75,16 @@ class Heap(object):
     Not thread-safe
     """
 
-    def __init__(self, from_list=()):
-        self.heap = list(from_list)
+    def __init__(self, from_list: tp.Optional[tp.Iterable[HeapVar]] = None):
+        self.heap = list(from_list or ())
         heapq.heapify(self.heap)
 
-    def push_many(self, items: tp.Iterable):
+    def push_many(self, items: tp.Iterable[HeapVar]) -> None:
         for item in items:
             self.push(item)
 
-    # TODO needs tests
     @_extras_to_one
-    def push(self, item):
+    def push(self, item: HeapVar):
         """
         Use it like:
 
@@ -94,21 +96,21 @@ class Heap(object):
         """
         heapq.heappush(self.heap, item)
 
-    def __copie(self, op):
+    def __copy(self, op) -> 'Heap':
         h = Heap()
         h.heap = op(self.heap)
         return h
 
-    def __deepcopy__(self, memo):
-        return self.__copie(copy.deepcopy)
+    def __deepcopy__(self, memo) -> 'Heap':
+        return self.__copy(copy.deepcopy)
 
-    def __copy__(self):
-        return self.__copie(copy.copy)
+    def __copy__(self) -> 'Heap':
+        return self.__copy(copy.copy)
 
-    def __iter__(self):
+    def __iter__(self) -> tp.Iterator[HeapVar]:
         return self.heap.__iter__()
 
-    def pop(self) -> tp.Any:
+    def pop(self) -> HeapVar:
         """
         Return smallest element of the heap.
 
@@ -116,8 +118,8 @@ class Heap(object):
         """
         return heapq.heappop(self.heap)
 
-    def filtermap(self, filter_fun: tp.Optional[tp.Callable] = None,
-                  map_fun: tp.Optional[tp.Callable] = None):
+    def filter_map(self, filter_fun: tp.Optional[tp.Callable[[HeapVar], bool]] = None,
+                   map_fun: tp.Optional[tp.Callable[[HeapVar], tp.Any]] = None):
         """
         Get only items that return True when condition(item) is True. Apply a
          transform: item' = item(condition) on
@@ -135,7 +137,7 @@ class Heap(object):
         """
         return len(self.heap) > 0
 
-    def iter_ascending(self) -> tp.Iterator:
+    def iter_ascending(self) -> tp.Iterator[HeapVar]:
         """
         Return an iterator returning all elements in this heap sorted ascending.
         State of the heap is not changed
@@ -144,7 +146,7 @@ class Heap(object):
         while heap:
             yield heapq.heappop(heap)
 
-    def iter_descending(self) -> tp.Iterator:
+    def iter_descending(self) -> tp.Iterator[HeapVar]:
         """
         Return an iterator returning all elements in this heap sorted descending.
         State of the heap is not changed
@@ -160,7 +162,7 @@ class Heap(object):
     def __repr__(self) -> str:
         return u'<satella.coding.Heap>'
 
-    def __contains__(self, item) -> bool:
+    def __contains__(self, item: HeapVar) -> bool:
         return item in self.heap
 
 
@@ -178,15 +180,21 @@ class TimeBasedHeap(Heap):
     Can use current time with put/pop_less_than.
     Use default_clock_source to pass a callable:
 
-      * time.time
+    * time.time
+    * time.monotonic
+
+    Default is time.monotonic
 
     #notthreadsafe
     """
 
     def __repr__(self):
-        return u'<satella.coding.TimeBasedHeap>'
+        return '<satella.coding.TimeBasedHeap>'
 
-    def items(self) -> tp.Iterable:
+    def __repr__(self):
+        return '<satella.coding.TimeBasedHeap with %s elements>' % (len(self.heap),)
+
+    def items(self) -> tp.Iterable[HeapVar]:
         """
         Return an iterator, but WITHOUT timestamps (only items), in
         unspecified order
@@ -197,12 +205,12 @@ class TimeBasedHeap(Heap):
         """
         Initialize an empty heap
         """
-        self.default_clock_source = default_clock_source or time.time
+        self.default_clock_source = default_clock_source or time.monotonic
         super(TimeBasedHeap, self).__init__(from_list=())
 
     def put(self, *args):
         """
-        Put an item of heap.
+        Put an item on heap.
 
         Pass timestamp, item or just an item for default time
         """
@@ -216,7 +224,7 @@ class TimeBasedHeap(Heap):
         assert timestamp is not None
         self.push((timestamp, item))
 
-    def pop_less_than(self, less: tp.Optional[tp.Union[int, float]] = None) -> tp.Iterator:
+    def pop_less_than(self, less: tp.Optional[tp.Union[int, float]] = None) -> tp.Iterator[HeapVar]:
         """
         Return all elements less (sharp inequality) than particular value.
 
@@ -236,8 +244,8 @@ class TimeBasedHeap(Heap):
                 return
             yield self.pop()
 
-    def remove(self, item):
+    def remove(self, item: HeapVar) -> None:
         """
         Remove all things equal to item
         """
-        self.filtermap(filter_fun=lambda i: i != item)
+        self.filter_map(filter_fun=lambda i: i != item)

@@ -29,17 +29,20 @@ class rethrow_as:
 
     >>> rethrow_as(NameError, ValueError)
 
+    You can also provide a pairwise translation, eg. from NameError to ValueError and from OSError to IOError
+
+    >>> rethrow_as((NameError, ValueError), (OSError, IOError))
+
     If the second value is a None, exception will be silenced.
     """
 
-    def __init__(self, *pairs, **kwargs):
+    def __init__(self, *pairs, exception_preprocessor: tp.Optional[tp.Callable[[Exception], str]] = None):
         """
         Pass tuples of (exception to catch - exception to transform to).
 
-        :param exception_preprocessor: other callable/1 to use instead od repr.
-            Should return a text
+        :param exception_preprocessor: other callable/1 to use instead of repr.
+            Should return a str, a text description of the exception
         """
-
         try:
             a, b = pairs  # throws ValueError
             op = issubclass(b, BaseException)  # throws TypeError
@@ -52,7 +55,7 @@ class rethrow_as:
             pairs = [pairs]
 
         self.mapping = list(pairs)
-        self.exception_preprocessor = kwargs.get('exception_preprocessor', repr)
+        self.exception_preprocessor = exception_preprocessor or repr
 
     def __call__(self, fun: tp.Callable) -> tp.Any:
         @functools.wraps(fun)

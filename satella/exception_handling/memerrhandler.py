@@ -13,6 +13,7 @@ class MemoryErrorExceptionHandler(BaseExceptionHandler):
     `custom_hook` is an exception callable to implement you own behavior. If it returns True,
     then MemoryErrorExceptionHandler won't kill anyone.
     """
+
     def __init__(self, custom_hook: ExceptionHandlerCallable = lambda type_, value, traceback: False,
                  kill_pg: bool = False):
         """

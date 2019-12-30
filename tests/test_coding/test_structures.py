@@ -17,6 +17,7 @@ class TestCallableGroup(unittest.TestCase):
 
 
 class TestTimeBasedHeap(unittest.TestCase):
+
     def test_omni(self):
         class Omni(OmniHashableMixin):
             _HASH_FIELDS_TO_USE = ['a']
@@ -149,8 +150,8 @@ class TestHeap(unittest.TestCase):
         self.assertIn((10, 'ala'), tbh)
         self.assertIn((20, 'ma'), tbh)
 
-        tbh.filtermap(filter_fun=lambda x: x[0] != 20,
-                      map_fun=lambda x: (x[0] + 10, 'azomg'))
+        tbh.filter_map(filter_fun=lambda x: x[0] != 20,
+                       map_fun=lambda x: (x[0] + 10, 'azomg'))
 
         self.assertIn((20, 'azomg'), tbh)
         self.assertNotIn((10, 'ala'), tbh)
