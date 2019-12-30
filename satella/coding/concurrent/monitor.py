@@ -14,19 +14,19 @@ class Monitor:
 
     Use it like that:
 
-        class MyProtectedObject(Monitor):
-            def __init__(self, *args, **kwargs):
-                Monitor.__init__(self)
-                ... do your job ..
+    >>> class MyProtectedObject(Monitor):
+    >>>     def __init__(self, *args, **kwargs):
+    >>>         Monitor.__init__(self)
+    >>>         ... do your job ..
 
-            @Monitor.synchronized
-            def function_that_needs_mutual_exclusion(self):
-                .. do your threadsafe jobs ..
+    >>>     @Monitor.synchronized
+    >>>     def function_that_needs_mutual_exclusion(self):
+    >>>         .. do your threadsafe jobs ..
 
-            def function_that_partially_needs_protection(self):
-                .. do your jobs ..
-                with Monitor.acquire(self):
-                    .. do your threadsafe jobs ..
+    >>>     def function_that_partially_needs_protection(self):
+    >>>         .. do your jobs ..
+    >>>         with Monitor.acquire(self):
+    >>>             .. do your threadsafe jobs ..
     """
 
     def __init__(self, obj=None):
@@ -60,16 +60,15 @@ class Monitor:
         but you feel that you can release it for a while as it would
         improve parallelism. You can use it as such:
 
-        @Monitor.synchronized
-        def protected_function(self):
-            .. do some stuff that needs mutual exclusion ..
-            with Monitor.release(self):
-                .. do some I/O that doesn't need mutual exclusion ..
-            .. back to protected stuff ..
-
+        >>> @Monitor.synchronized
+        >>> def protected_function(self):
+        >>>     .. do some stuff that needs mutual exclusion ..
+        >>>     with Monitor.release(self):
+        >>>         .. do some I/O that doesn't need mutual exclusion ..
+        >>>     .. back to protected stuff ..
         """
 
-        def __init__(self, foo):
+        def __init__(self, foo: 'Monitor'):
             self.foo = foo
 
         def __enter__(self):
@@ -89,11 +88,11 @@ class Monitor:
         Consider foo, which is a monitor. If you needed to lock it from
         outside, you would do:
 
-            with Monitor.acquire(foo):
-                .. do operations on foo that need mutual exclusion ..
+        >>> with Monitor.acquire(foo):
+        >>>     .. do operations on foo that need mutual exclusion ..
         """
 
-        def __init__(self, foo):
+        def __init__(self, foo: 'Monitor'):
             self.foo = foo
 
         def __enter__(self):

@@ -8,7 +8,6 @@ Welcome to satella's documentation!
            configuration/index
            configuration/schema
            configuration/sources
-           coding/monitor
            coding/functions
            coding/structures
            coding/concurrent
