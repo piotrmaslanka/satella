@@ -2,6 +2,7 @@
 from __future__ import print_function, absolute_import, division
 import unittest
 import time
+import platform
 
 from satella.coding.concurrent import TerminableThread, CallableGroup
 
@@ -17,16 +18,21 @@ class TestCallableGroup(unittest.TestCase):
         mtt.start()
         mtt.terminate().join()
 
+    @unittest.skipIf(platform.python_implementation() == 'PyPy', 'force=True doesn''t work on PyPy')
     def test_terminable_thread_force(self):
 
         class MyTerminableThread(TerminableThread):
             def run(self):
+                a = 0
                 while True:
                     time.sleep(0.5)
+                    a += 1
 
-        mtt = MyTerminableThread()
+        mtt = MyTerminableThread(daemon=True)
         mtt.start()
-        mtt.terminate(force=True).join()
+        mtt.terminate(force=True)
+        mtt.join(3)
+        self.assertFalse(mtt.is_alive())
 
     def test_callable_group_some_raise(self):
         cg = CallableGroup(gather=True)

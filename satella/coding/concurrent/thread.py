@@ -1,5 +1,10 @@
 import ctypes
+import logging
 import threading
+import platform
+
+
+logger = logging.getLogger(__name__)
 
 
 class TerminableThread(threading.Thread):
@@ -16,8 +21,8 @@ class TerminableThread(threading.Thread):
     Flag whether to terminate is stored in self._terminating
     """
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self._terminating = False
 
     def loop(self) -> None:
@@ -49,15 +54,23 @@ class TerminableThread(threading.Thread):
         Forcing, if requested, will be done by injecting a SystemExit exception into target
         thread, so the thread must acquire GIL. For example, following would not be interruptable:
 
+        Note that calling force=True on PyPy won't work, and RuntimeError will be raised instead.
+
         >>> time.sleep(1000000)
 
         :param force: Whether to force a quit
-        :raises ValueError: force was set to True, and the thread's TID could not be obtained
+        :raises RuntimeError: when something goes wrong with the underlying Python machinery
         """
         self._terminating = True
         if force:
-            ret = ctypes.pythonapi.PyThreadState_SetAsyncExc(self._ident, ctypes.py_object(SystemExit))
+            if platform.python_implementation() == 'PyPy':
+                raise RuntimeError('force=True was made on PyPy')
+            ret = ctypes.pythonapi.PyThreadState_SetAsyncExc(ctypes.c_long(self._ident), ctypes.py_object(SystemExit))
             if ret == 0:
-                raise ValueError('Invalid thread ID %s obtained for %s' % (self._ident, self))
+                ctypes.pythonapi.PyThreadState_SetAsyncExc(ctypes.c_long(self._ident), 0)
+                raise RuntimeError('Multiple threads killed!')
+            elif ret > 1:
+                ctypes.pythonapi.PyThreadState_SetAsyncExc(ctypes.c_long(self._ident), 0)
+                raise RuntimeError('Multiple threads killed!')
 
         return self
