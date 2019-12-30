@@ -76,9 +76,9 @@ class AcquirePIDLock:
         except (IOError, OSError):
             logger.warning('Acquire path')
             try:
-                with open(self.path, 'rb') as flock:
+                with open(self.path, 'r') as flock:
                     try:
-                        data = flock.read().strip().decode('utf8')
+                        data = flock.read().strip()
                         pid = int(data)
                     except ValueError:
                         raise FailedToAcquire(

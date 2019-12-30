@@ -1,13 +1,15 @@
 # coding=UTF-8
 from __future__ import print_function, absolute_import, division
 
+import multiprocessing
 import os
 import sys
-import multiprocessing
 import time
 import unittest
-from satella.posix import AcquirePIDLock, FailedToAcquire, hang_until_sig
+
 from mock import patch, Mock
+
+from satella.posix import AcquirePIDLock, FailedToAcquire, hang_until_sig
 
 
 def acquire_lock_file_and_wait_for_signal():
@@ -32,7 +34,7 @@ class TestPidlock(unittest.TestCase):
     def test_pidlock_multiacquire(self):
         process = multiprocessing.Process(target=acquire_lock_file_and_wait_for_signal)
         process.start()
-        time.sleep(0.5)
+        time.sleep(1)
         n = AcquirePIDLock('lock', '.', delete_on_dead=True)
         self.assertRaises(FailedToAcquire, lambda: n.acquire())
         process.terminate()
