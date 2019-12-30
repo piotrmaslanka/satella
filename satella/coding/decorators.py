@@ -3,7 +3,7 @@ import itertools
 
 from ..exceptions import PreconditionError
 
-__all__ = ['precondition', 'for_argument']
+__all__ = ['precondition', 'for_argument', 'PreconditionError']
 
 
 _NOP = lambda x: x
