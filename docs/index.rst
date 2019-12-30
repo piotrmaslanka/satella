@@ -16,7 +16,6 @@ Welcome to satella's documentation!
            exception_handling
            json
            posix
-           recipes
 
 
 Indices and tables
