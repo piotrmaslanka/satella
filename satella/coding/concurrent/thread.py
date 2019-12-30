@@ -17,7 +17,10 @@ class TerminableThread(threading.Thread):
     >>> a.start()
     >>> a.terminate().join()
 
-    Flag whether to terminate is stored in self._terminating
+    Flag whether to terminate is stored in self._terminating.
+
+    If you decide to override run(), you got to check periodically for self._terminating to become true.
+    If you decide to use the loop/cleanup interface, you don't need to do so.
     """
 
     def __init__(self, *args, **kwargs):
@@ -43,7 +46,9 @@ class TerminableThread(threading.Thread):
 
     def cleanup(self):
         """
-        Called after thread termination, in the thread's context. Override me!
+        Called after thread non-forced termination, in the thread's context.
+
+        The default implementation does nothing.
         """
 
     def terminate(self, force: bool = False) -> 'TerminableThread':
