@@ -1,11 +1,11 @@
+===================================
 Welcome to satella's documentation!
 ===================================
 
 .. toctree::
            :maxdepth: 2
-           :caption: Contents:
+           :caption: Contents
 
-           configuration/index
            configuration/schema
            configuration/sources
            coding/functions
