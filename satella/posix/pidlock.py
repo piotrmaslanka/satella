@@ -11,10 +11,6 @@ class FailedToAcquire(Exception):
 class LockIsHeld(FailedToAcquire):
     """
     Lock is held by someone
-
-    Has two attributes:
-        pid - integer - PID of the holder
-        is_alive - bool - whether the holder is an alive process
     """
 
 
@@ -51,7 +47,6 @@ class AcquirePIDLock:
 
         :param pid_file: rest of path
         :param base_dir: base lock directory
-        :param delete_on_dead: delete the lock file if holder is dead, and retry
         """
         self.delete_on_dead = delete_on_dead
 
@@ -72,42 +67,14 @@ class AcquirePIDLock:
         :raises FailedToAcquire: if for example a directory exists in that place
         """
         try:
-            self.fileno = os.open(self.path, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+            self.fileno = os.open(self.path, os.O_CREAT | os.O_EXCL)
         except (FileExistsError, IOError, OSError):
             try:
-                with open(self.path, 'r') as flock:
-                    try:
-                        data = flock.read().strip()
-                        pid = int(data)
-                    except ValueError:
-                        if self.delete_on_dead:
-                            try:
-                                os.unlink(self.path)
-                            except PermissionError:
-                                raise FailedToAcquire('Cannot unlink the lock file')
-                            else:
-                                return self.acquire()
-                        else:
-                            raise FailedToAcquire(
-                                'PID file found but doesn''t have an int (contains "%s") skipping' % (data,))
-                    else:
-                        # Is this process alive?
-                        try:
-                            os.kill(pid, 0)
-                        except OSError:  # dead
-                            if self.delete_on_dead:
-                                os.unlink(self.path)
-                                return self.acquire()  # retry acquisition
-                            else:
-                                raise LockIsHeld(pid, False)
-                        else:
-                            raise LockIsHeld(pid, True)
-            except PermissionError as e:
-                raise FailedToAcquire(repr(e))
-        else:
-            file = open(self.fileno)
-            file.write(str(os.getpid()))
-            file.flush()
+                os.unlink(self.path)
+            except OSError:
+                raise LockIsHeld()
+            else:
+                return self.acquire()
             self.success = True
 
     def __enter__(self):
