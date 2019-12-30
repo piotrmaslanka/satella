@@ -35,6 +35,12 @@ class TerminableThread(threading.Thread):
         """
         while not self._terminating:
             self.loop()
+        self.cleanup()
+
+    def cleanup(self):
+        """
+        Called after thread termination, in the thread's context. Override me!
+        """
 
     def terminate(self, force: bool = False) -> 'TerminableThread':
         """

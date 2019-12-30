@@ -2,7 +2,7 @@ import copy
 import typing as tp
 import re
 
-from satella.coding import rethrow_as, CallableGroup, for_argument
+from satella.coding.concurrent import CallableGroup
 from ...exceptions import ConfigurationValidationError, ConfigurationSchemaError
 
 __all__ = [

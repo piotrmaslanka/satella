@@ -3,7 +3,7 @@ import sys
 import threading
 import typing as tp
 
-from satella.coding import Singleton
+from satella.coding.structures import Singleton
 from satella.instrumentation import Traceback
 from .exception_handlers import BaseExceptionHandler, FunctionExceptionHandler, \
     exception_handler
