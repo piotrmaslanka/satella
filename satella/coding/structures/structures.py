@@ -150,7 +150,9 @@ class Heap(collections.UserList, tp.Generic[HeapVar]):
     def iter_descending(self) -> tp.Iterator[HeapVar]:
         """
         Return an iterator returning all elements in this heap sorted descending.
-        State of the heap is not changed
+        State of the heap is not changed.
+
+        This loads all elements of the heap into memory at once, so be careful.
         """
         return reversed(list(self.iter_ascending()))
 
