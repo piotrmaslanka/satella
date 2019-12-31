@@ -40,8 +40,7 @@ class OptionalSource(AlternativeSource):
 
      Use as
 
-         OptionalSource(SomeOtherSource1)
-
+     >>> OptionalSource(SomeOtherSource1)
      """
 
     def __init__(self, source: BaseSource):
