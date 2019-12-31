@@ -6,6 +6,7 @@ python:
   - "pypy3.5"
 cache: pip
 install:
+  - pip install -r requirements.txt
   - pip install pyyaml toml
   - pip install --force-reinstall "coverage>=4.0,<4.4" codeclimate-test-reporter # for codeclimate-test-reporter
 script:

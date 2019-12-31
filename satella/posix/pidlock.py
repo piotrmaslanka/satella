@@ -1,6 +1,8 @@
 import logging
 import os
 
+import psutil
+
 logger = logging.getLogger(__name__)
 
 
@@ -64,7 +66,7 @@ class PIDFileLock:
         :raises LockIsHeld: if lock if held
         """
         try:
-            self.file_no = os.open(self.path, os.O_CREAT | os.O_EXCL | os.O_RDWR)
+            self.file_no = os.open(self.path, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
         except (OSError, FileExistsError):
             with open(self.path, 'r') as fin:
                 data = fin.read().strip()
@@ -75,17 +77,20 @@ class PIDFileLock:
                 os.unlink(self.path)
                 return self.acquire()
 
-            try:
-                os.kill(pid, 0)
-            except OSError:
+            all_processes_pids = {x.pid for x in psutil.process_iter()}
+            import sys
+            sys.stderr.write(str(pid) + ' ' + str(all_processes_pids))
+
+            if pid in all_processes_pids:
+                raise LockIsHeld(pid)
+            else:
                 # does not exist
                 os.unlink(self.path)
                 return self.acquire()
-            else:
-                raise LockIsHeld()
 
-        os.fdopen(self.file_no, 'w').write(str(os.getpid()) + '\n')
-        os.close(self.file_no)
+        fd = os.fdopen(self.file_no, 'w')
+        fd.write(str(os.getpid()) + '\n')
+        fd.close()
 
     def __enter__(self):
         self.acquire()
