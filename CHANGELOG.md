@@ -1,3 +1,7 @@
+# v2.2.4
+
+* _TBA_
+
 # v2.2.3
 
 * renamed `AcquirePIDLock` to `PIDFileLock`
