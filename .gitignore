@@ -3,7 +3,7 @@
 #################
 
 satella.sublime*
-
+hs_err_pid*.log
 *.pydevproject
 .project
 .metadata

@@ -1,6 +1,8 @@
 # v2.2.3
 
-* _TBA_
+* renamed `AcquirePIDLock` to `PIDFileLock`
+* more unit tests for `PIDFileLock`
+    * it finally works
 
 # v2.2.2
 

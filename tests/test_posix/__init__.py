@@ -1,18 +1,26 @@
 # coding=UTF-8
 from __future__ import print_function, absolute_import, division
 
+import multiprocessing
 import os
 import sys
 import unittest
 
 from mock import patch, Mock
 
+from satella.posix import PIDFileLock, LockIsHeld
+
+
+def acquire_lock_file_and_wait_for_signal(q, p):
+    with PIDFileLock('lock', '.'):
+        p.put(None)
+        q.get()
+
 
 class TestPidlock(unittest.TestCase):
-    def test_pidlock(self):
-        from satella.posix.pidlock import AcquirePIDLock
 
-        with AcquirePIDLock('lock', '.', delete_on_dead=True):
+    def test_pidlock(self):
+        with PIDFileLock('lock', '.'):
             self.assertTrue(os.path.exists('./lock'))
             r = open('./lock', 'rb').read()
             try:
@@ -22,6 +30,19 @@ class TestPidlock(unittest.TestCase):
             self.assertEquals(int(r), os.getpid())
 
         self.assertTrue(not os.path.exists('./lock'))
+
+    def test_pidlock_multiacquire(self):
+        q, p = multiprocessing.Queue(), multiprocessing.Queue()
+        process = multiprocessing.Process(target=acquire_lock_file_and_wait_for_signal, args=(q, p))
+        process.start()
+        p.get()
+        n = PIDFileLock('lock', '.')
+        try:
+            self.assertRaises(LockIsHeld, lambda: n.acquire())
+        finally:
+            q.put(None)
+            process.terminate()
+            process.join()
 
 
 class TestDaemon(unittest.TestCase):
