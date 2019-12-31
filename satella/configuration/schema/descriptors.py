@@ -103,7 +103,8 @@ def _make_boolean(v: tp.Any) -> bool:
         elif v.upper() == 'FALSE':
             return False
         else:
-            raise ConfigurationValidationError('Unknown value of "%s" posing to be a bool' % (v,))
+            raise ConfigurationValidationError('Unknown value of "%s" posing to be a bool'
+                                               % (v,))
     else:
         return bool(v)
 
@@ -138,10 +139,11 @@ class String(Descriptor):
 
 class Regexp(String):
     """
-    Base class for declaring regexp-based descriptors. Overload it's attribute REGEXP. Use as following:
+    Base class for declaring regexp-based descriptors. Overload it's attribute REGEXP. Use as
+    following:
 
-        class IPv6(Regexp):
-            REGEXP = '(\A([0-9a-f]{1,4}:)' ...
+    >>> class IPv6(Regexp):
+    >>>     REGEXP = '(\A([0-9a-f]{1,4}:)' ...
     """
     REGEXP = r'.*'
 
@@ -155,7 +157,8 @@ class Regexp(String):
 
         match = self.REGEXP.match(value)
         if not match:
-            raise ConfigurationValidationError('value does not match %s' % (self.REGEXP.pattern,), value)
+            raise ConfigurationValidationError('value does not match %s' % (self.REGEXP.pattern,),
+                                               value)
 
         return match.group(0)
 
@@ -230,7 +233,8 @@ class Dict(Descriptor):
         value = super().__call__(value)
 
         if not isinstance(value, dict):
-            raise ConfigurationValidationError('value received from descriptor was not a dict: %s' % (value,))
+            raise ConfigurationValidationError('value received from descriptor was not a dict: %s'
+                                               % (value,))
 
         output = {}
 
@@ -273,8 +277,8 @@ class Union(Descriptor):
         raise ConfigurationValidationError('Could not match value %s to a descriptor' % (value,))
 
 
-BASE_LOOKUP_TABLE = {'int': Integer, 'float': Float, 'str': String, 'ipv4': IPv4, 'list': List, 'dict': Dict,
-                     'any': Descriptor, 'bool': Boolean, 'union': Union}
+BASE_LOOKUP_TABLE = {'int': Integer, 'float': Float, 'str': String, 'ipv4': IPv4, 'list': List,
+                     'dict': Dict, 'any': Descriptor, 'bool': Boolean, 'union': Union}
 
 
 def _get_descriptor_for(key: str, value: tp.Any) -> Descriptor:
@@ -309,7 +313,8 @@ def _get_descriptor_for(key: str, value: tp.Any) -> Descriptor:
 
 def register_custom_descriptor(name: str):
     """
-    A decorator used for registering custom descriptors in order to be loadable via descriptor_from_dict
+    A decorator used for registering custom descriptors in order to be loadable via
+    descriptor_from_dict
 
     Use like:
 
