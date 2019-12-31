@@ -1,7 +1,7 @@
 # v2.2.3
 
-* renamed `AcquirePIDLock` to `FileLock`
-* more unit tests for `FileLock`
+* renamed `AcquirePIDLock` to `PIDFileLock`
+* more unit tests for `PIDFileLock`
     * it finally works
 
 # v2.2.2

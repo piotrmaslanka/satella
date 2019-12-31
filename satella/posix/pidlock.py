@@ -7,10 +7,15 @@ logger = logging.getLogger(__name__)
 class LockIsHeld(Exception):
     """
     Lock is held by someone
+
+    pid -- PID of the holder, who is alive
     """
 
+    def __init__(self, pid):
+        self.pid = pid
 
-class FileLock:
+
+class PIDFileLock:
     """
     Acquire a PID lock file.
 
@@ -18,20 +23,19 @@ class FileLock:
 
     Usage:
 
-    >>> with FileLock('myservice.pid'):
+    >>> with PIDFileLock('myservice.pid'):
     >>>     ... rest of code ..
 
     Or alternatively
 
-    >>> pid_lock = FileLock('myservice.pid')
+    >>> pid_lock = PIDFileLock('myservice.pid')
     >>> pid_lock.acquire()
     >>> ...
     >>> pid_lock.release()
 
     The constructor doesn't throw, __enter__ or acquire() does, one of:
 
-    * AcquirePIDLock.FailedToAcquire - base class for errors. Thrown if can't read the file
-    * AcquirePIDLock.LockIsHeld - lock is already held. This has two attributes - pid (int), the PID of holder,
+   * LockIsHeld - lock is already held. This has two attributes - pid (int), the PID of holder,
                                   and is_alive (bool) - whether the holder is an alive process
     """
 
@@ -80,7 +84,7 @@ class FileLock:
             else:
                 raise LockIsHeld()
 
-        open(self.file_no).write(str(os.getpid()))
+        os.fdopen(self.file_no, 'w').write(str(os.getpid()) + '\n')
         os.close(self.file_no)
 
     def __enter__(self):

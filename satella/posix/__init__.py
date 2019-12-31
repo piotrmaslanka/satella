@@ -5,12 +5,12 @@ POSIX things
 import os
 
 from .daemon import daemonize
-from .pidlock import FileLock, LockIsHeld
+from .pidlock import PIDFileLock, LockIsHeld
 from .signals import hang_until_sig
 
 __all__ = [
     'daemonize',
-    'FileLock', 'LockIsHeld',
+    'PIDFileLock', 'LockIsHeld',
     'hang_until_sig',
     'is_running_as_root',
     'suicide'
