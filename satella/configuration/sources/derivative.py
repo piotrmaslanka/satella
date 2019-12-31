@@ -10,7 +10,8 @@ __all__ = [
 
 class AlternativeSource(BaseSource):
     """
-    If first source of configuration fails with ConfigurationError, use the next one instead, ad nauseam.
+    If first source of configuration fails with ConfigurationError, use the next one instead, ad
+    nauseam.
     """
 
     def __init__(self, *sources: BaseSource):
