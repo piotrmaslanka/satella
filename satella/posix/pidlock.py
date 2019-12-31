@@ -77,11 +77,7 @@ class PIDFileLock:
                 os.unlink(self.path)
                 return self.acquire()
 
-            all_processes_pids = {x.pid for x in psutil.process_iter()}
-            import sys
-            sys.stderr.write(str(pid) + ' ' + str(all_processes_pids))
-
-            if pid in all_processes_pids:
+            if pid in {x.pid for x in psutil.process_iter()}:
                 raise LockIsHeld(pid)
             else:
                 # does not exist
