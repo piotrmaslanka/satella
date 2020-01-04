@@ -48,7 +48,11 @@ def daemonize(exit_via: tp.Callable = sys.exit,
         can pass either user name as string or UID.
     :param gid: Same as UID, but for groups. These will be resolved too.
     :raises KeyError: uid/gid was passed as string, but getpwnam() failed
+    :raises OSError: platform is Windows
     """
+
+    if sys.platform.startswith('win'):
+        raise OSError('Cannot call daemonize on Windows!')
 
     _double_fork(exit_via=exit_via)
     _close_descriptors()

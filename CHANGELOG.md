@@ -1,6 +1,7 @@
 # v2.2.5
 
-* _TBA_
+* made most of [satella.posix](satella/posix) routines behave
+  themselves on Windows.
 
 # v2.2.4
 
