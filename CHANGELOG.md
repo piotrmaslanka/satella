@@ -2,6 +2,7 @@
 
 * made most of [satella.posix](satella/posix) routines behave
   themselves on Windows.
+* bugfix in MemoryErrorHandler
 
 # v2.2.4
 

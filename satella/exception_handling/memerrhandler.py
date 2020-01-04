@@ -43,7 +43,7 @@ class MemoryErrorExceptionHandler(BaseExceptionHandler):
         # noinspection PyBroadException
         try:
             if self.custom_hook(type_, value, traceback):
-                return
+                return True
         except Exception as e:
             pass
 
