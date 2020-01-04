@@ -21,8 +21,6 @@ class PIDFileLock:
     """
     Acquire a PID lock file.
 
-    Usable also on Windows
-
     Usage:
 
     >>> with PIDFileLock('myservice.pid'):
