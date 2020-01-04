@@ -1,3 +1,7 @@
+# v2.2.5
+
+* _TBA_
+
 # v2.2.4
 
 * *bugfix release*: `signal.pause()` returned frequently, which translated
