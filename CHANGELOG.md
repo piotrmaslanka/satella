@@ -1,6 +1,7 @@
 # v2.2.4
 
-* _TBA_
+* *bugfix release*: `signal.pause()` returned frequently, which translated
+  to high CPU usage in [hang_until_sig](satella/posix/signals.py).
 
 # v2.2.3
 

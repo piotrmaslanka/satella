@@ -15,6 +15,13 @@ Become a daemonized process
 
 .. autofunction:: satella.posix.daemonize
 
+hang_until_sig
+--------------
+
+Sleep until a signal is received
+
+.. autofunction:: satella.posix.hang_until_sig
+
 
 is_running_as_root
 ------------------
