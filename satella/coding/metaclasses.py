@@ -4,7 +4,7 @@ import types
 Taken from http://code.activestate.com/recipes/204197-solving-the-metaclass-conflict/
 """
 
-__all__ = ['metaclass_maker']
+__all__ = ['metaclass_maker_f']
 
 
 def skip_redundant(iterable, skipset=None):
@@ -17,7 +17,7 @@ def skip_redundant(iterable, skipset=None):
 
 
 def remove_redundant(metaclasses):
-    skipset = set([types.ClassType])
+    skipset = set([type])
     for meta in metaclasses: # determines the metaclasses to be skipped
         skipset.update(inspect.getmro(meta)[1:])
     return tuple(skip_redundant(metaclasses, skipset))
@@ -46,19 +46,24 @@ def get_noconflict_metaclass(bases, left_metas, right_metas):
         raise TypeError("Incompatible root metatypes", needed_metas)
     else: # gotta work ...
         metaname = '_' + ''.join([m.__name__ for m in needed_metas])
-        meta = metaclass_maker()(metaname, needed_metas, {})
+        meta = metaclass_maker_f()(metaname, needed_metas, {})
     memoized_metaclasses_map[needed_metas] = meta
     return meta
 
 
-def metaclass_maker(left_metas=(), right_metas=()):
-    """
-    Automatically construct a compatible meta-class like interface. Use like:
-
-    >>> class C(A, B):
-    >>>     __metaclass__ = metaclass_maker()
-    """
+def metaclass_maker_f(left_metas=(), right_metas=()):
     def make_class(name, bases, adict):
         metaclass = get_noconflict_metaclass(bases, left_metas, right_metas)
         return metaclass(name, bases, adict)
     return make_class
+
+
+def metaclass_maker(name, bases, adict):
+    """
+    Automatically construct a compatible meta-class like interface. Use like:
+
+    >>> class C(A, B, metaclass=metaclass_maker):
+    >>>     pass
+    """
+    metaclass = get_noconflict_metaclass(bases, (), ())
+    return metaclass(name, bases, adict)

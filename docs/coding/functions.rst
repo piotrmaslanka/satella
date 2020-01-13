@@ -26,11 +26,11 @@ Now, give the following type structure:
     class MetaB(type):
         pass
 
-    class A:
-        __metaclass__ = MetaA
+    class A(metaclass=MetaA):
+        pass
 
-    class B:
-        __metaclass__ = MetaB
+    class B(metaclass=MetaB):
+        pass
 
 You just can't construct the following class
 

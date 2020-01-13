@@ -1,5 +1,6 @@
 # v2.2.9
 
+* fixed `metaclass_maker`
 * `self.assertEquals` -> `self.assertEqual` due to deprecation
 
 # v2.2.8
