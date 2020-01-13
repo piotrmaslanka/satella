@@ -22,11 +22,10 @@ class OmniHashableMixin:
 
     Example of use:
 
-    class Point2D(OmniHashableMixin):
-        _HASH_FIELDS_TO_USE = ['x', 'y']
-
-        def __init__(self, x, y):
-            ...
+    >>> class Point2D(OmniHashableMixin):
+    >>>    _HASH_FIELDS_TO_USE = ['x', 'y']
+    >>>    def __init__(self, x, y):
+    >>>        ...
 
     and now class Point2D has defined __hash__ and __eq__ by these fields.
     Do everything in your power to make specified fields immutable, as mutating them will result
