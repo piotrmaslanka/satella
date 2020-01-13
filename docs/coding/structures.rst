@@ -62,7 +62,8 @@ You can use the following function to recursively turn every dict into a DictObj
 Immutable
 =========
 
-Make your classes immutable. Just don't forget to assign the following way in the constructor:
+Make your classes immutable. Normal assignment is only supported in the constructor,
+anywhere else it's a TypeError
 
 ::
 
@@ -71,4 +72,7 @@ Make your classes immutable. Just don't forget to assign the following way in th
         attr: str = None
 
         def __init__(self):
-            super().__setattr__('attr', 'value')
+            self.attr = 'value'
+
+        def illegal_op(self):
+            self.attr = 'test'  # this will TypeError
