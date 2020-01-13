@@ -1,3 +1,7 @@
+# v2.2.10
+
+* _TBA_
+
 # v2.2.9
 
 * fixed `metaclass_maker`
