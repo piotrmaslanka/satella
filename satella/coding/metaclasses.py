@@ -1,10 +1,10 @@
 import inspect
-import types
 """
-Taken from http://code.activestate.com/recipes/204197-solving-the-metaclass-conflict/
+Taken from http://code.activestate.com/recipes/204197-solving-the-metaclass-conflict/ and slightly
+modified
 """
 
-__all__ = ['metaclass_maker_f']
+__all__ = ['metaclass_maker']
 
 
 def skip_redundant(iterable, skipset=None):
