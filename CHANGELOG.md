@@ -1,3 +1,7 @@
+# v2.2.7
+
+* _TBA_
+
 # v2.2.6
 
 * added [Immutable](satella/coding/structures/immutable.py)
