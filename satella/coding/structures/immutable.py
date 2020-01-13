@@ -26,12 +26,14 @@ class Immutable(metaclass=ImmutableMetaType):
     # Following make this class immutable
     def __setattr__(self, attr, value):
         if self.__locked_for_writes:
-            raise TypeError('%s does not support attribute assignment' % (self.__class__.__qualname__,))
+            raise TypeError(
+                '%s does not support attribute assignment' % (self.__class__.__qualname__,))
         else:
             super().__setattr__(attr, value)
 
     def __delattr__(self, attr):
         if self.__locked_for_writes:
-            raise TypeError('%s does not support attribute deletion' % (self.__class__.__qualname__,))
+            raise TypeError(
+                '%s does not support attribute deletion' % (self.__class__.__qualname__,))
         else:
             super().__delattr__(attr)
