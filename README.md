@@ -18,6 +18,7 @@ Satella is a zero-requirements Python 3.5+ library for writing
 server applications, especially those dealing with mundane but
 useful things. It also runs on PyPy.
 
-See [LICENSE](LICENSE) for text of the license.
+See [LICENSE](LICENSE) for text of the license. This library may contain
+code taken from elsewhere on the internets, so this is copyright (c) respective authors.
 
 **satella 1.0 remains in [maintenance mode](https://github.com/piotrmaslanka/satella/tree/satella1.0)**
