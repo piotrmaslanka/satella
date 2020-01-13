@@ -21,7 +21,7 @@ class Immutable(metaclass=ImmutableMetaType):
     >>>         self.attribute = 'value'
     """
 
-    __locked_for_writes: bool = False
+    __locked_for_writes = False
 
     # Following make this class immutable
     def __setattr__(self, attr, value):
