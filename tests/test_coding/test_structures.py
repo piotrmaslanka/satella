@@ -3,7 +3,6 @@ import unittest
 
 import mock
 
-from satella.coding.concurrent import CallableGroup
 from satella.coding.structures import TimeBasedHeap, Heap, typednamedtuple, \
     OmniHashableMixin, DictObject, apply_dict_object, Immutable
 
@@ -150,3 +149,25 @@ class TestHeap(unittest.TestCase):
         self.assertIn((20, 'azomg'), tbh)
         self.assertNotIn((10, 'ala'), tbh)
         self.assertNotIn((20, 'ma'), tbh)
+
+
+class TestImmutable(unittest.TestCase):
+    def test_immutable(self):
+        class Point2D(Immutable):
+            def __init__(self, x: float, y: float):
+                self.x = x
+                self.y = y
+
+        a = Point2D(2.5, 2)
+        self.assertEqual(a.x, 2.5)
+        self.assertEqual(a.y, 2)
+
+        def change_x():
+            a.x = 2
+
+        self.assertRaises(TypeError, change_x)
+
+        def delete_x():
+            del a.x
+
+        self.assertRaises(TypeError, delete_x)
