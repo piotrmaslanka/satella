@@ -32,4 +32,5 @@ def install_dump_frames_on(signal_number: SIG_TYPE, output: tp.TextIO = sys.stde
     Instruct Python to dump all frames onto output, along with their local variables
     upon receiving given signal
     """
-    signal.signal(signal_number, lambda sig_no, stack_frame: dump_frames_on(sig_no, stack_frame, output))
+    signal.signal(signal_number,
+                  lambda sig_no, stack_frame: dump_frames_on(sig_no, stack_frame, output))

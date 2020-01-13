@@ -10,7 +10,7 @@ __all__ = [
 ]
 
 from .dict_object import *
+from .immutable import Immutable
 from .singleton import Singleton
 from .structures import *
 from .typednamedtuple import *
-from .immutable import Immutable

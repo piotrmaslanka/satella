@@ -45,7 +45,8 @@ class BaseExceptionHandler:
         GlobalExcepthook().remove_hook(self)
 
     @abstractmethod
-    def handle_exception(self, type_: tp.Callable[[type, BaseException, types.TracebackType], None], value,
+    def handle_exception(self, type_: tp.Callable[[type, BaseException, types.TracebackType], None],
+                         value,
                          traceback: types.TracebackType) -> tp.Optional[bool]:
         """
         Return True to intercept the exception, so that it won't be propagated to other handlers.

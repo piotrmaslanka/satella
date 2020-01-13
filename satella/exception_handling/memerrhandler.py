@@ -14,7 +14,8 @@ class MemoryErrorExceptionHandler(BaseExceptionHandler):
     then MemoryErrorExceptionHandler won't kill anyone.
     """
 
-    def __init__(self, custom_hook: ExceptionHandlerCallable = lambda type_, value, traceback: False,
+    def __init__(self,
+                 custom_hook: ExceptionHandlerCallable = lambda type_, value, traceback: False,
                  kill_pg: bool = False):
         """
         :param kill_pg: whether to kill entire process group, if applicable

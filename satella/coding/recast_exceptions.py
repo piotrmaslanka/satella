@@ -36,7 +36,8 @@ class rethrow_as:
     If the second value is a None, exception will be silenced.
     """
 
-    def __init__(self, *pairs, exception_preprocessor: tp.Optional[tp.Callable[[Exception], str]] = None):
+    def __init__(self, *pairs,
+                 exception_preprocessor: tp.Optional[tp.Callable[[Exception], str]] = None):
         """
         Pass tuples of (exception to catch - exception to transform to).
 

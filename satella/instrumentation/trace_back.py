@@ -296,4 +296,5 @@ class Traceback(object):
                 try:
                     output.write(u'*** %s: %s\n' % (name, value.repr))
                 except BaseException as e:
-                    output.write(u'*** %s: repr unavailable (due to locally raised %s)\n' % (name, repr(e)))
+                    output.write(
+                        u'*** %s: repr unavailable (due to locally raised %s)\n' % (name, repr(e)))

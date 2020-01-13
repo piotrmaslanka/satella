@@ -70,7 +70,8 @@ class TerminableThread(threading.Thread):
         if force:
             if platform.python_implementation() == 'PyPy':
                 raise RuntimeError('force=True was made on PyPy')
-            ret = ctypes.pythonapi.PyThreadState_SetAsyncExc(ctypes.c_long(self._ident), ctypes.py_object(SystemExit))
+            ret = ctypes.pythonapi.PyThreadState_SetAsyncExc(ctypes.c_long(self._ident),
+                                                             ctypes.py_object(SystemExit))
             if ret == 0:
                 ctypes.pythonapi.PyThreadState_SetAsyncExc(ctypes.c_long(self._ident), 0)
                 raise RuntimeError('Multiple threads killed!')

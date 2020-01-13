@@ -6,8 +6,8 @@ from .algos import merge_dicts
 from .concurrent import Monitor, RMonitor
 from .decorators import precondition, for_argument, PreconditionError
 from .fun_static import static_var
-from .recast_exceptions import rethrow_as, silence_excs
 from .metaclasses import metaclass_maker
+from .recast_exceptions import rethrow_as, silence_excs
 
 __all__ = [
     'Monitor', 'RMonitor', 'merge_dicts',

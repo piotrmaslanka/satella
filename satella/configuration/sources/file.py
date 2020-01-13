@@ -65,7 +65,8 @@ class DirectorySource(FileSource):
         :param filter: callable that tells whether to use this file (or subdirectory if scan_subdirectories is enabled)
         """
         super(DirectorySource, self).__init__(path, encoding, interpret_as)
-        self.filter = lambda files: filter(fname_filter, files)  # tp.Callable[[tp.List[str]], tp.List[str]]
+        self.filter = lambda files: filter(fname_filter,
+                                           files)  # tp.Callable[[tp.List[str]], tp.List[str]]
         self.scan_subdirectories = scan_subdirectories
 
     def get_sources_from_directory(self, directory: str) -> tb.List[FileSource]:

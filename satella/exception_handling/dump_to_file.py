@@ -97,7 +97,8 @@ class DumpToFileHandler(BaseExceptionHandler):
         """
         super(DumpToFileHandler, self).__init__()
         self.hr = [AsStream(x, True) if not isinstance(x, AsStream) else x for x in human_readables]
-        self.tb = [AsStream(x, False) if not isinstance(x, AsStream) else x for x in trace_pickles or []]
+        self.tb = [AsStream(x, False) if not isinstance(x, AsStream) else x for x in
+                   trace_pickles or []]
 
     def handle_exception(self, type_, value, traceback) -> bool:
         try:

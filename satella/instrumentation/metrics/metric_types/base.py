@@ -20,7 +20,8 @@ class Metric(JSONAble):
         if self.name == '':
             metrics.metrics = {}
         else:
-            metrics.metrics = {k: v for k, v in metrics.metrics.items() if not k.startswith(self.name + '.')}
+            metrics.metrics = {k: v for k, v in metrics.metrics.items() if
+                               not k.startswith(self.name + '.')}
             del metrics.metrics[self.name]
         self.children = []
 
@@ -29,7 +30,8 @@ class Metric(JSONAble):
         self.name = name
         self.root_metric = root_metric
         self.level = metric_level or RUNTIME
-        assert not (self.name == '' and self.level == INHERIT), 'Unable to set INHERIT for root metric!'
+        assert not (
+                self.name == '' and self.level == INHERIT), 'Unable to set INHERIT for root metric!'
         self.children = []
 
     def __str__(self) -> str:
@@ -51,7 +53,8 @@ class Metric(JSONAble):
 
     def to_json(self) -> tp.Union[list, dict, str, int, float, None]:
         return {
-            child.name[len(self.name) + 1 if len(self.name) > 0 else 0:]: child.to_json() for child in self.children
+            child.name[len(self.name) + 1 if len(self.name) > 0 else 0:]: child.to_json() for child
+            in self.children
         }
 
     def handle(self, level: int, *args, **kwargs) -> None:
