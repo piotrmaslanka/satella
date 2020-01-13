@@ -1,6 +1,6 @@
 # v2.2.9
 
-* _TBA_
+* `self.assertEquals` -> `self.assertEqual` due to deprecation
 
 # v2.2.8
 

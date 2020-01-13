@@ -12,7 +12,7 @@ class FunTestTest(unittest.TestCase):
 
         static_fun(2)
         static_fun(3)
-        self.assertEquals(static_fun.counter, 4)
+        self.assertEqual(static_fun.counter, 4)
 
     def test_fun_static_method(self):
         class MyClass(object):
@@ -24,4 +24,4 @@ class FunTestTest(unittest.TestCase):
         a = MyClass()
         a.my_method()
         a.my_method()
-        self.assertEquals(MyClass.my_method.counter, 4)
+        self.assertEqual(MyClass.my_method.counter, 4)

@@ -27,7 +27,7 @@ class TestTypecheck(unittest.TestCase):
             if typed:
                 return v1
 
-        self.assertEquals(check('5'), 5)
+        self.assertEqual(check('5'), 5)
 
     def test_forarg_shorter(self):
         @for_argument(int)
@@ -36,7 +36,7 @@ class TestTypecheck(unittest.TestCase):
                 raise ValueError()
             return v1
 
-        self.assertEquals(check('5', 'str'), 5)
+        self.assertEqual(check('5', 'str'), 5)
 
     def test_forarg_returns(self):
         @for_argument(returns=bool)

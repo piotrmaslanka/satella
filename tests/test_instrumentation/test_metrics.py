@@ -21,7 +21,7 @@ class TestMetric(unittest.TestCase):
 
         root_metric = getMetric('')
 
-        self.assertEquals(root_metric.to_json(), {
+        self.assertEqual(root_metric.to_json(), {
             'root': {
                 'test': {
                     'StringValue': 'data',
@@ -42,7 +42,7 @@ class TestMetric(unittest.TestCase):
 
         root_metric = getMetric('')
 
-        self.assertEquals(root_metric.to_json(), {
+        self.assertEqual(root_metric.to_json(), {
             'root': {
                 'test': {
                     'FloatValue': 1.0,
@@ -56,7 +56,7 @@ class TestMetric(unittest.TestCase):
         metric.runtime(2.0)
         metric_parent = getMetric('root.test')
 
-        self.assertEquals(getMetric('').to_json(), {
+        self.assertEqual(getMetric('').to_json(), {
             'root': {
                 'test': {
                     'FloatValue': 2.0,
@@ -67,7 +67,7 @@ class TestMetric(unittest.TestCase):
         metric_parent.switch_level(RUNTIME)
         metric.debug(3.0)
 
-        self.assertEquals(getMetric('').to_json(), {
+        self.assertEqual(getMetric('').to_json(), {
             'root': {
                 'test': {
                     'FloatValue': 2.0,
@@ -78,8 +78,8 @@ class TestMetric(unittest.TestCase):
     def test_cps(self):
         metric = getMetric('root.CPSValue', 'cps', time_unit_vectors=[1, 2])
         metric.runtime()
-        self.assertEquals(metric.to_json(), [1, 1])
+        self.assertEqual(metric.to_json(), [1, 1])
         metric.runtime()
-        self.assertEquals(metric.to_json(), [2, 2])
+        self.assertEqual(metric.to_json(), [2, 2])
         time.sleep(1.2)
-        self.assertEquals(metric.to_json(), [0, 2])
+        self.assertEqual(metric.to_json(), [0, 2])

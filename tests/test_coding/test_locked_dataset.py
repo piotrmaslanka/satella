@@ -24,6 +24,6 @@ class TestLockedDataset(unittest.TestCase):
 
         a.increment()
         with a:
-            self.assertEquals(a.counter, 1)
+            self.assertEqual(a.counter, 1)
 
         self.assertRaises(ResourceNotLocked, lambda: a.counter)

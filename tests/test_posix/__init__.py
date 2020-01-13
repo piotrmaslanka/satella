@@ -24,7 +24,7 @@ class TestPidlock(unittest.TestCase):
                 r = int(r)
             except ValueError:
                 return  # lol wut
-            self.assertEquals(int(r), os.getpid())
+            self.assertEqual(int(r), os.getpid())
 
         self.assertTrue(not os.path.exists('./lock'))
 

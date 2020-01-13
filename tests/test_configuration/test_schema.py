@@ -12,8 +12,8 @@ class TestSchema(unittest.TestCase):
     def test_union(self):
         ps = Union(List(), Dict(keys=[create_key(String(), 'a')]))
 
-        self.assertEquals(ps([1, 2, 3]), [1, 2, 3])
-        self.assertEquals(ps({'a': 'b'}), {'a': 'b'})
+        self.assertEqual(ps([1, 2, 3]), [1, 2, 3])
+        self.assertEqual(ps({'a': 'b'}), {'a': 'b'})
         self.assertRaises(ConfigurationValidationError, lambda: ps(3))
 
     def test_descriptor_from_schema(self):
@@ -61,7 +61,7 @@ class TestSchema(unittest.TestCase):
         }
 
         s = descriptor_from_dict(schema)
-        self.assertEquals(s({
+        self.assertEqual(s({
             'key_s': 'string',
             'key_i': '5',
             'key_f': '5.5',

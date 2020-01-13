@@ -25,4 +25,4 @@ class TestEnvVarsSource(SourceTestCase):
             EnvironmentSource('test', 'test'),
             on_fail=MergingSource.SILENT
         )
-        self.assertEquals(ds.provide(), {})
+        self.assertEqual(ds.provide(), {})

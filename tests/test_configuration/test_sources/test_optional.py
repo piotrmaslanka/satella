@@ -17,7 +17,7 @@ class TestMergingSource(SourceTestCase):
 
     def test_static(self):
         st = StaticSource({'a': 5})
-        self.assertEquals(st.provide(), {'a': 5})
+        self.assertEqual(st.provide(), {'a': 5})
 
 
 class TestAlternativeSource(SourceTestCase):

@@ -90,7 +90,7 @@ class TestDictObject(unittest.TestCase):
         a = {'a': {'b': 5}, 'c': [{'a': 5}]}
         b = DictObject({'a': DictObject({'b': 5}), 'c': [DictObject({'a': 5})]})
         a = apply_dict_object(a)
-        self.assertEquals(apply_dict_object(a), b)
+        self.assertEqual(apply_dict_object(a), b)
         self.assertIsInstance(a, DictObject)
         self.assertIsInstance(a.a, DictObject)
         self.assertIsInstance(a.c[0], DictObject)
@@ -100,13 +100,13 @@ class TestDictObject(unittest.TestCase):
 
         a = DictObject(a)
 
-        self.assertEquals(a.a, 1)
-        self.assertEquals(a.b, 2)
+        self.assertEqual(a.a, 1)
+        self.assertEqual(a.b, 2)
         self.assertRaises(AttributeError, lambda: a.c)
         del a.a
         self.assertRaises(AttributeError, lambda: a.a)
         a.a = 5
-        self.assertEquals(a.a, 5)
+        self.assertEqual(a.a, 5)
 
         def delete():
             del a.c
@@ -118,11 +118,11 @@ class TestHeap(unittest.TestCase):
     def test_push(self):
         tbh = Heap()
         tbh.push(10, 'A')
-        self.assertEquals((10, 'A'), tbh.pop())
+        self.assertEqual((10, 'A'), tbh.pop())
         tbh.push((10, 'A'))
-        self.assertEquals(tbh[0], (10, 'A'))
-        self.assertEquals((10, 'A'), tbh.pop())
-        self.assertEquals(tbh.data, [])
+        self.assertEqual(tbh[0], (10, 'A'))
+        self.assertEqual((10, 'A'), tbh.pop())
+        self.assertEqual(tbh.data, [])
 
     def test_tbh_iter(self):
         tbh = Heap()

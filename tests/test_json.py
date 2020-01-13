@@ -11,7 +11,7 @@ class TestJson(unittest.TestCase):
             def to_json(self) -> tp.Union[list, dict, str, int, float, None]:
                 return []
 
-        self.assertEquals(json_encode(MyClass()), '[]')
+        self.assertEqual(json_encode(MyClass()), '[]')
 
     def test_unjsonable_objects(self):
         class MyClass:

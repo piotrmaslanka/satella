@@ -47,7 +47,7 @@ class TestConcurrent(unittest.TestCase):
         cg = CallableGroup(gather=True, swallow_exceptions=True)
         cg.add(lambda: dupa)
         cg.add(lambda: 5)
-        self.assertEquals(cg()[1], 5)
+        self.assertEqual(cg()[1], 5)
         self.assertIsInstance(cg()[0], NameError)
 
     def test_callable_group(self):
