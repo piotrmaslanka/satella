@@ -184,12 +184,25 @@ class TestImmutable(unittest.TestCase):
         self._test_an_instance(Point2D(2.5, 2))
 
     def test_advanced_inheritance_hierarchy(self):
-        class BaseClass(abc.ABC):
+
+        class AnObject:
             pass
 
-        class Point2D(BaseClass, Immutable):
+        class BaseClass(metaclass=abc.ABCMeta):
+            pass
+
+        class AnotherBaseClass(metaclass=abc.ABCMeta):
+            pass
+
+        class TwinnedBaseClass(AnotherBaseClass, metaclass=abc.ABCMeta):
+            pass
+
+        class Point2D:
             def __init__(self, x: float, y: float):
                 self.x = x
                 self.y = y
 
-        self._test_an_instance(Point2D(2.5, 2))
+        class Point3D(Point2D, BaseClass, TwinnedBaseClass, AnObject, Immutable):
+            pass
+
+        self._test_an_instance(Point3D(2.5, 2))

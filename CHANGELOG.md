@@ -1,6 +1,6 @@
 # v2.2.8
 
-* _TBA_
+* added [metaclass_maker](satella/coding/metaclasses.py)
 
 # v2.2.7
 

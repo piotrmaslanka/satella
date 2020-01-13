@@ -10,7 +10,7 @@ class ImmutableMetaType(ABCMeta):
         return p
 
 
-class Immutable(metaclass=ImmutableMetaType):
+class Immutable:
     """
     A mix-in to make your classes immutable.
 
@@ -20,6 +20,7 @@ class Immutable(metaclass=ImmutableMetaType):
     >>>     def __init__(self):
     >>>         self.attribute = 'value'
     """
+    __metaclass__ = ImmutableMetaType
 
     __locked_for_writes = False
 

@@ -16,5 +16,34 @@ Functions and decorators
 .. autofunction:: satella.coding.for_argument
 
 
+Now, give the following type structure:
+
+::
+
+    class MetaA(type):
+        pass
+
+    class MetaB(type):
+        pass
+
+    class A:
+        __metaclass__ = MetaA
+
+    class B:
+        __metaclass__ = MetaB
+
+You just can't construct the following class
+
+::
+
+    class C(A,B):
+        pass
+
+Without running into `TypeError: metaclass conflict: the metaclass of a derived class must be a (non-strict) subclass of the metaclasses of all its bases`.
+
+Following function will help with that:
+
+.. autofunction:: satella.coding.metaclass_maker
+
 
 
