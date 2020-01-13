@@ -1,6 +1,6 @@
 # v2.2.7
 
-* _TBA_
+* added inheritance from `abc` to Immutable
 
 # v2.2.6
 

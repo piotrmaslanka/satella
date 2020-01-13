@@ -1,10 +1,12 @@
+from abc import ABCMeta
+
 __all__ = ['Immutable']
 
 
-class ImmutableMetaType(type):
+class ImmutableMetaType(ABCMeta):
     def __call__(cls, *args, **kwargs):
         p = type.__call__(cls, *args, **kwargs)
-        p.__class__ = LockedImmutable
+        p.__dict__['_Immutable__locked_for_writes'] = True
         return p
 
 
@@ -19,14 +21,17 @@ class Immutable(metaclass=ImmutableMetaType):
     >>>         self.attribute = 'value'
     """
 
-
-class LockedImmutable(Immutable):
-
-    __doc__ = Immutable.__doc__
+    __locked_for_writes: bool = False
 
     # Following make this class immutable
     def __setattr__(self, attr, value):
-        raise TypeError('%s does not support attribute assignment' % (self.__class__.__qualname__,))
+        if self.__locked_for_writes:
+            raise TypeError('%s does not support attribute assignment' % (self.__class__.__qualname__,))
+        else:
+            super().__setattr__(attr, value)
 
     def __delattr__(self, attr):
-        raise TypeError('%s does not support attribute deletion' % (self.__class__.__qualname__,))
+        if self.__locked_for_writes:
+            raise TypeError('%s does not support attribute deletion' % (self.__class__.__qualname__,))
+        else:
+            super().__delattr__(attr)

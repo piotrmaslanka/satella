@@ -1,4 +1,5 @@
 import copy
+import abc
 import unittest
 
 import mock
@@ -152,13 +153,7 @@ class TestHeap(unittest.TestCase):
 
 
 class TestImmutable(unittest.TestCase):
-    def test_immutable(self):
-        class Point2D(Immutable):
-            def __init__(self, x: float, y: float):
-                self.x = x
-                self.y = y
-
-        a = Point2D(2.5, 2)
+    def _test_an_instance(self, a):
         self.assertEqual(a.x, 2.5)
         self.assertEqual(a.y, 2)
 
@@ -171,3 +166,30 @@ class TestImmutable(unittest.TestCase):
             del a.x
 
         self.assertRaises(TypeError, delete_x)
+
+    def test_immutable(self):
+        class Point2D(Immutable):
+            def __init__(self, x: float, y: float):
+                self.x = x
+                self.y = y
+
+        self._test_an_instance(Point2D(2.5, 2))
+
+    def test_immutable_abc(self):
+        class Point2D(abc.ABC, Immutable):
+            def __init__(self, x: float, y: float):
+                self.x = x
+                self.y = y
+
+        self._test_an_instance(Point2D(2.5, 2))
+
+    def test_advanced_inheritance_hierarchy(self):
+        class BaseClass(abc.ABC):
+            pass
+
+        class Point2D(BaseClass, Immutable):
+            def __init__(self, x: float, y: float):
+                self.x = x
+                self.y = y
+
+        self._test_an_instance(Point2D(2.5, 2))

@@ -63,11 +63,13 @@ Immutable
 =========
 
 Make your classes immutable. Normal assignment is only supported in the constructor,
-anywhere else it's a TypeError
+anywhere else it's a TypeError.
+
+Immutable inherits from abc.ABCMeta, so it's safe to use abstract base classes here.
 
 ::
 
-    class Test(Immutable):
+    class Test(Immutable, metaclass=ABCMeta):
 
         attr: str = None
 
