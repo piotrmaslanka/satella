@@ -1,6 +1,3 @@
-# coding=UTF-8
-from __future__ import print_function, absolute_import, division
-
 import copy
 import unittest
 
@@ -8,12 +5,7 @@ import mock
 
 from satella.coding.concurrent import CallableGroup
 from satella.coding.structures import TimeBasedHeap, Heap, typednamedtuple, \
-    OmniHashableMixin, DictObject, apply_dict_object
-
-
-class TestCallableGroup(unittest.TestCase):
-    def test_cg_proforma(self):
-        cg = CallableGroup()
+    OmniHashableMixin, DictObject, apply_dict_object, Immutable
 
 
 class TestTimeBasedHeap(unittest.TestCase):

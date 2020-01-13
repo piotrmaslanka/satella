@@ -1,6 +1,3 @@
-# coding=UTF-8
-from __future__ import print_function, absolute_import, division
-
 import platform
 import time
 import unittest
@@ -8,7 +5,14 @@ import unittest
 from satella.coding.concurrent import TerminableThread, CallableGroup
 
 
-class TestCallableGroup(unittest.TestCase):
+class TestConcurrent(unittest.TestCase):
+
+    def test_cg_proforma(self):
+        cg = CallableGroup()
+        a = {}
+        cg.add(lambda: a.__setitem__('test', 'value'))
+        cg()
+        self.assertEqual(a['test'], 'value')
 
     def test_terminable_thread(self):
         class MyTerminableThread(TerminableThread):

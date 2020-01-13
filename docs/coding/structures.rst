@@ -59,3 +59,16 @@ You can use the following function to recursively turn every dict into a DictObj
 
 .. autofunction:: satella.coding.structures.apply_dict_object
 
+Immutable
+=========
+
+Make your classes immutable. Just don't forget to assign the following way in the constructor:
+
+::
+
+    class Test(Immutable):
+
+        attr: str = None
+
+        def __init__(self):
+            super().__setattr__('attr', 'value')

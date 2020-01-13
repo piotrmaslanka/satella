@@ -1,3 +1,7 @@
+# v2.2.6
+
+* added [Immutable](satella/coding/structures/immutable.py)
+
 # v2.2.5
 
 * made most of [satella.posix](satella/posix) routines behave
