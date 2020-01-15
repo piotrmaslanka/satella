@@ -40,8 +40,6 @@ def import_from(path: tp.List[str], package_prefix: str, all_: tp.List[str],
             if modname.startswith('_') and skip_single_underscores:
                 continue
             module = importlib.import_module(package_prefix + '.' + modname)
-            logger.warning(repr(package_prefix))
-            logger.warning(repr(modname))
             try:
                 mod_all = module.__all__
             except AttributeError:
