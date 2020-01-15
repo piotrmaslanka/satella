@@ -1,3 +1,7 @@
+# v2.2.11
+
+* _TBA_
+
 # v2.2.10
 
 * added [import_from](satella/imports.py)
