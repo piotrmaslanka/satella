@@ -8,7 +8,5 @@ __all__ = []
 
 
 def do_import():
-    logger.warning(repr(__path__))
-    logger.warning(repr(__name__))
     import_from(__path__, __name__, __all__, locals(), recursive=True, fail_on_attributerror=False,
                 create_all=True)
