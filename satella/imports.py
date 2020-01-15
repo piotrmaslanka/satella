@@ -52,7 +52,9 @@ def import_from(path: tp.List[str], package_prefix: str, all_: tp.List[str],
                     module.__all__ = mod_all
             import_from([os.path.join(path[0], modname)], package_prefix + '.' + modname, mod_all,
                         module.__dict__, recursive=recursive,
-                        fail_on_attributerror=fail_on_attributerror),
+                        fail_on_attributerror=fail_on_attributerror, create_all=create_all,
+                        skip_not_having_all=skip_not_having_all,
+                        skip_single_underscores=skip_single_underscores),
             locals[modname] = module
             if modname not in all_:
                 all_.append(modname)

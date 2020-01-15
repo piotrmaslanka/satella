@@ -1,6 +1,6 @@
 # v2.2.12
 
-* _TBA_
+* bugfix where import_from would not pass all parameters to child calls
 
 # v2.2.11
 
