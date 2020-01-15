@@ -11,7 +11,7 @@ class TestImports(unittest.TestCase):
 
         # this as well checks for the namespace's pollution
         self.assertEqual(set(tests.test_imports.importa.importb.__all__),
-                         {'logger', 'sub', 'logging', 'tp', 'add'})
+                         {'logger', 'sub', 'logging', 'add'})
 
         self.assertEqual(tests.test_imports.importa.importb.add(4, 5), 9)
         self.assertEqual(tests.test_imports.importa.importb.sub(4, 5), -1)
