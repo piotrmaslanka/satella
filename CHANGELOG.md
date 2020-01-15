@@ -1,6 +1,6 @@
 # v2.2.11
 
-* _TBA_
+* bugfix and extra features added to *import_from*
 
 # v2.2.10
 

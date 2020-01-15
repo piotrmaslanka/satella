@@ -9,7 +9,10 @@ class TestImports(unittest.TestCase):
         import tests.test_imports.importa
         tests.test_imports.importa.do_import()
 
-        tests.test_imports.importa.importb.__all__
+        # this as well checks for the namespace's pollution
+        self.assertEqual(set(tests.test_imports.importa.importb.__all__),
+                         {'logger', 'sub', 'logging', 'tp', 'add'})
 
         self.assertEqual(tests.test_imports.importa.importb.add(4, 5), 9)
         self.assertEqual(tests.test_imports.importa.importb.sub(4, 5), -1)
+        self.assertRaises(AttributeError, lambda: tests.test_imports.importa.importb.mul(1, 2))
