@@ -20,6 +20,7 @@ A heap with additional invariant that no two elements on the heap are the same.
 This is optimized for fast pushes() and membership checks.
 
 .. autoclass:: satella.coding.structures.SetHeap
+    :members:
 
 
 TimeBasedHeap
