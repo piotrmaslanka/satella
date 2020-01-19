@@ -45,6 +45,7 @@ class FileSource(BaseSource):
                 s = source_class(data, encoding=self.encoding).provide()
                 if not isinstance(s, dict):
                     raise ConfigurationError('%s is not a dict instance' % (s,))
+                logger.warning('Processed %s, returned %s', self.path, s)
                 return s
             except ConfigurationError:
                 pass
@@ -85,6 +86,7 @@ class DirectorySource(FileSource):
 
             fullname = os.path.join(directory, file_name)
             if os.path.isfile(fullname):
+                logger.warning('Appending file source %s', fullname)
                 sources.append(FileSource(fullname, encoding=self.encoding,
                                           interpret_as=self.source_classes))
             elif os.path.isdir(fullname) and self.scan_subdirectories:
