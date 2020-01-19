@@ -19,6 +19,7 @@ class AlternativeSource(BaseSource):
     """
 
     def __init__(self, *sources: BaseSource):
+        super().__init__()
         self.sources = sources
 
     def provide(self) -> dict:
@@ -48,7 +49,7 @@ class OptionalSource(AlternativeSource):
      """
 
     def __init__(self, source: BaseSource):
-        super(OptionalSource, self).__init__(source, BaseSource())
+        super().__init__(source, BaseSource())
 
 
 class MergingSource(BaseSource):
@@ -60,6 +61,7 @@ class MergingSource(BaseSource):
     SILENT = 1  # Silently continue loading from next files if one fails
 
     def __init__(self, *sources: BaseSource, on_fail: int = RAISE):
+        super().__init__()
         self.sources = sources
         self.on_fail = on_fail
 

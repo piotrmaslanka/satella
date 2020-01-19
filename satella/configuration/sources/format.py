@@ -37,7 +37,7 @@ class FormatSource(BaseSource):
         :param root: content
         :type root: if bytes, will be decoded with given encoding'
         """
-        super(FormatSource, self).__init__()
+        super().__init__()
         self.root = root
         self.encoding = encoding
 

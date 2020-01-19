@@ -26,7 +26,7 @@ class FileSource(BaseSource):
         """
         :param interpret_as: names or classes of format sources to parse with
         """
-        super(FileSource, self).__init__()
+        super().__init__()
         from .. import sources
         self.source_classes = [  # list of tp.Type[FormatSource]
             (p if not isinstance(p, str) else getattr(sources, p)) for p in
@@ -35,7 +35,7 @@ class FileSource(BaseSource):
         self.encoding = encoding
 
     def __repr__(self):
-        return 'satella.configuration.sources.FileSource(%s, %s)' % (repr(self.path), repr(self.encoding))
+        return '<FileSource %s, %s, ..>' % (repr(self.path), repr(self.encoding))
 
     @rethrow_as((IOError, OSError), ConfigurationError)
     def provide(self) -> dict:
@@ -68,10 +68,13 @@ class DirectorySource(FileSource):
         """
         :param filter: callable that tells whether to use this file (or subdirectory if scan_subdirectories is enabled)
         """
-        super(DirectorySource, self).__init__(path, encoding, interpret_as)
+        super().__init__(path, encoding, interpret_as)
         self.filter = lambda files: filter(fname_filter,
                                            files)  # tp.Callable[[tp.List[str]], tp.List[str]]
         self.scan_subdirectories = scan_subdirectories
+
+    def __repr__(self):
+        return '<DirectorySource %s, %s, ..>' % (repr(self.path), repr(self.encoding))
 
     def get_sources_from_directory(self, directory: str) -> tb.List[FileSource]:
 
