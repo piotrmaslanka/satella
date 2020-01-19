@@ -11,6 +11,7 @@ logger = logging.getLogger(__name__)
 
 __all__ = [
     'Heap',
+    'SetHeap',
     'TimeBasedHeap',
     'OmniHashableMixin'
 ]
@@ -171,6 +172,38 @@ class Heap(collections.UserList, tp.Generic[HeapVar]):
         return item in self.data
 
 
+class SetHeap(Heap, tp.Generic[HeapVar]):
+    """
+    A heap with additional invariant that no two elements are the same.
+
+    Optimized for fast insertions and fast __contains__
+
+    #notthreadsafe
+    """
+
+    def __init__(self, from_list: tp.Optional[tp.Iterable[HeapVar]] = None):
+        super().__init__(from_list=from_list)
+        self.set = set(self.data)
+
+    def push(self, item: HeapVar):
+        if item not in self.set:
+            super().push(item)
+            self.set.add(item)
+
+    def pop(self) -> HeapVar:
+        item = super().pop()
+        self.set.remove(item)
+        return item
+
+    def __contains__(self, item: HeapVar) -> bool:
+        return item in self.set
+
+    def filter_map(self, filter_fun: tp.Optional[tp.Callable[[HeapVar], bool]] = None,
+                   map_fun: tp.Optional[tp.Callable[[HeapVar], tp.Any]] = None):
+        super().filter_map(filter_fun=filter_fun, map_fun=map_fun)
+        self.set = set(self.data)
+
+
 class TimeBasedHeap(Heap):
     """
     A heap of items sorted by timestamps.
@@ -225,14 +258,15 @@ class TimeBasedHeap(Heap):
         assert timestamp is not None
         self.push((timestamp, item))
 
-    def pop_less_than(self, less: tp.Optional[tp.Union[int, float]] = None) -> tp.Iterator[HeapVar]:
+    def pop_less_than(self, less: tp.Optional[tp.Union[int, float]] = None) -> tp.Generator[
+        HeapVar, None, None]:
         """
         Return all elements less (sharp inequality) than particular value.
 
         This changes state of the heap
 
         :param less: value to compare against
-        :return: Iterator
+        :return: a Generator
         """
 
         if less is None:

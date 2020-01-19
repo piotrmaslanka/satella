@@ -13,6 +13,15 @@ behave like the `heapq <https://docs.python.org/2/library/heapq.html>` library.
 .. autoclass:: satella.coding.structures.Heap
     :members:
 
+SetHeap
+=======
+
+A heap with additional invariant that no two elements on the heap are the same.
+This is optimized for fast pushes() and membership checks.
+
+.. autoclass:: satella.coding.structures.SetHeap
+
+
 TimeBasedHeap
 =============
 

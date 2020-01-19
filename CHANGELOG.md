@@ -2,6 +2,7 @@
 
 * useless `print()`s removed in metrics
 * additional unit tests and doc fixes
+* added [SetHeap](satella/coding/structures/structures.py)
 
 # v2.2.12
 

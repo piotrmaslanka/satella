@@ -12,24 +12,23 @@ class LockedDataset:
     """
     A locked dataset. Subclass like
 
-    class MyDataset(LockedDataset):
-        def __init__(self):
-            super(MyDataset, self).__init__()
-            self.mydata: str = "lol wut"
+    >>> class MyDataset(LockedDataset):
+    >>>     def __init__(self):
+    >>>         super(MyDataset, self).__init__()
+    >>>         self.mydata: str = "lol wut"
+    >>>    @LockedDataset.locked
+    >>>    def protected(self):
+    >>>         self.mydata = "updated atomically"
 
-        @LockedDataset.locked
-        def protected(self):
-            self.mydata = "updated atomically"
+    >>> mds = MyDataset()
+    >>> with mds as md:
+    >>>     md.mydata = "modified atomically"
 
-    mds = MyDataset()
-    with mds as md:
-        md.mydata = "modified atomically"
-
-    try:
-        with mds(blocking=True, timeout=0.5) as md:
-            md.mydata = "modified atomically"
-    except ResourceLocked:
-        print('Could not update the resource')
+    >>> try:
+    >>>     with mds(blocking=True, timeout=0.5) as md:
+    >>>         md.mydata = "modified atomically"
+    >>> except ResourceLocked:
+    >>>     print('Could not update the resource')
 
     If no lock is held, this class that derives from such will raise ResourceNotLocked upon
     element access while a lock is not being held
