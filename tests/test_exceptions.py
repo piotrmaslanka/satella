@@ -10,5 +10,19 @@ class TestExceptions(unittest.TestCase):
         except BaseSatellaException as e:
             self.assertIn('arg1', str(e))
             self.assertIn('arg2', str(e))
+            self.assertIn('BaseSatellaException', str(e))
+        else:
+            self.fail()
+
+    def test_except_inherited(self):
+        class InheritedException(BaseSatellaException):
+            pass
+
+        try:
+            raise InheritedException('message', 'arg1', 'arg2')
+        except BaseSatellaException as e:
+            self.assertIn('arg1', str(e))
+            self.assertIn('arg2', str(e))
+            self.assertIn('InheritedException', str(e))
         else:
             self.fail()
