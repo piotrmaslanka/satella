@@ -5,6 +5,7 @@
 * far more extensive Python testing on Travis
 * fixed exception auto-str
 * DirectorySource has a new attribute *on_fail*
+* switched to nose2 for tests
 
 # v2.2.11
 
