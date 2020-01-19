@@ -70,7 +70,7 @@ class MergingSource(BaseSource):
             try:
                 p = source.provide()
             except ConfigurationError as e:
-                logger.warning('Raised %s while processing %p', e, p)
+                logger.warning('Raised %s while processing %s', e, p)
                 if self.on_fail == MergingSource.RAISE:
                     raise e
                 elif self.on_fail == MergingSource.SILENT:
