@@ -15,6 +15,9 @@ class BaseSource(object):
         """
         return {}
 
+    def __repr__(self):
+        return '<%s>' % (self.__class__.__qualname__, )
+
 
 class StaticSource(BaseSource):
     """

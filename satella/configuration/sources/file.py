@@ -50,7 +50,8 @@ class FileSource(BaseSource):
                     raise ConfigurationError('%s is not a dict instance' % (s,))
                 logger.warning('Processed %s, returned %s', self.path, s)
                 return s
-            except ConfigurationError:
+            except ConfigurationError as e:
+                logger.warning('Got %s while processing %s', e, repr(data))
                 pass
         else:
             raise ConfigurationError('no reader could parse the file')

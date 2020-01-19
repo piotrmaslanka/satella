@@ -22,6 +22,9 @@ class AlternativeSource(BaseSource):
         super().__init__()
         self.sources = sources
 
+    def __repr__(self):
+        return 'AlternativeSource(%s)' % (repr(self.sources), )
+
     def provide(self) -> dict:
         """
         :raises ConfigurationError: when backup fails too
@@ -51,6 +54,9 @@ class OptionalSource(AlternativeSource):
     def __init__(self, source: BaseSource):
         super().__init__(source, BaseSource())
 
+    def __repr__(self):
+        return 'OptionalSource(%s)' % (repr(self.sources[0], ))
+
 
 class MergingSource(BaseSource):
     """
@@ -72,7 +78,7 @@ class MergingSource(BaseSource):
             try:
                 p = source.provide()
             except ConfigurationError as e:
-                logger.warning('Raised %s while processing %s', e, p)
+                logger.warning('Raised %s while processing %s', e, source)
                 if self.on_fail == MergingSource.RAISE:
                     raise e
                 elif self.on_fail == MergingSource.SILENT:
@@ -86,3 +92,6 @@ class MergingSource(BaseSource):
             assert isinstance(cfg, dict), 'what merge_dicts returned wasn''t a dict'
 
         return cfg
+
+    def __repr__(self):
+        return '<MergingSource %s>' % (repr(self.sources), )
