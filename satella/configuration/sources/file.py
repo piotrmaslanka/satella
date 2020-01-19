@@ -48,10 +48,9 @@ class FileSource(BaseSource):
                 s = source_class(data, encoding=self.encoding).provide()
                 if not isinstance(s, dict):
                     raise ConfigurationError('%s is not a dict instance' % (s,))
-                logger.warning('Processed %s, returned %s', self.path, s)
                 return s
             except ConfigurationError as e:
-                logger.warning('Got %s while processing %s', e, repr(data))
+                logger.warning('Error processing source %s - %s', self.path, repr(e))
                 pass
         else:
             raise ConfigurationError('no reader could parse the file')
@@ -60,19 +59,26 @@ class FileSource(BaseSource):
 class DirectorySource(FileSource):
     """
     Load all files from given directory and merge them
+
+
+    :param filter: callable that tells whether to use this file (or subdirectory if scan_subdirectories is enabled)
+    :param on_fail: what to do in case a resource fails
     """
+
+    RAISE = MergingSource.RAISE     # in case a resource fails raise it
+    SILENT = MergingSource.SILENT   # in case a resource fails silently ignore it
 
     def __init__(self, path, encoding: str = 'utf-8',
                  interpret_as=FORMAT_SOURCES,
                  fname_filter: tb.Callable[[str], bool] = lambda fullpath: True,
-                 scan_subdirectories: bool = True):
-        """
-        :param filter: callable that tells whether to use this file (or subdirectory if scan_subdirectories is enabled)
-        """
+                 scan_subdirectories: bool = True,
+                 on_fail: int = RAISE):
+
         super().__init__(path, encoding, interpret_as)
         self.filter = lambda files: filter(fname_filter,
                                            files)  # tp.Callable[[tp.List[str]], tp.List[str]]
         self.scan_subdirectories = scan_subdirectories
+        self.on_fail = on_fail
 
     def __repr__(self):
         return '<DirectorySource %s, %s, ..>' % (repr(self.path), repr(self.encoding))
@@ -93,7 +99,6 @@ class DirectorySource(FileSource):
 
             fullname = os.path.join(directory, file_name)
             if os.path.isfile(fullname):
-                logger.warning('Appending file source %s', fullname)
                 sources.append(FileSource(fullname, encoding=self.encoding,
                                           interpret_as=self.source_classes))
             elif os.path.isdir(fullname) and self.scan_subdirectories:
@@ -105,7 +110,8 @@ class DirectorySource(FileSource):
 
     def provide(self) -> dict:
         return MergingSource(
-            *self.get_sources_from_directory(self.path)).provide()
+            *self.get_sources_from_directory(self.path),
+            on_fail=self.on_fail).provide()
 
 
 try:

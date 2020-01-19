@@ -4,6 +4,7 @@
 * removed debug logs from import_from
 * far more extensive Python testing on Travis
 * fixed exception auto-str
+* DirectorySource has a new attribute *on_fail*
 
 # v2.2.11
 

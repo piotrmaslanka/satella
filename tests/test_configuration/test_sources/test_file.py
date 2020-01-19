@@ -38,6 +38,21 @@ class TestFileSource(SourceTestCase):
 
 
 class TestDirectorySource(SourceTestCase):
+    def test_directory_invalids(self):
+        with tempfile.TemporaryDirectory() as outdir:
+            self.filename = outdir
+            self.makefile("valid-json.json", b'''{
+  "amqp": "amqp",
+  "logstash": {
+    "host": "localhost",
+    "port": 9600
+  }
+}
+''')
+            self.makefile("invalid-json.json", b'''{"CI": true''')
+            self.ds = DirectorySource(outdir, on_fail=DirectorySource.SILENT)
+            self.assertEqual(self.ds.provide(), {'amqp': 'amqp', 'logstash': {'host': 'localhost', 'port': 9600}})
+
     def test_directory_source(self):
         with tempfile.TemporaryDirectory() as outdir:
             self.filename = outdir
