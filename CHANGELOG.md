@@ -1,6 +1,6 @@
 # v2.2.13
 
-* _TBA_
+* useless `print()`s removed in metrics
 
 # v2.2.12
 

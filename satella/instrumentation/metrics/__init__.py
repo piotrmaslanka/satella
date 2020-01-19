@@ -35,7 +35,6 @@ def getMetric(metric_name: str, metric_type: str = 'base', metric_level: tp.Opti
                         metric_level_to_set_for_root = RUNTIME
                     else:
                         metric_level_to_set_for_root = metric_level_to_set_for_children
-                    print(metric_level_to_set_for_root)
                     metric = Metric('', None, metric_level_to_set_for_root)
                     metric.level = RUNTIME
                     root_metric = metric
