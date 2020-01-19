@@ -30,6 +30,7 @@ class TestTimeBasedHeap(unittest.TestCase):
         }
 
         self.assertEqual(a[e1], '1')
+        self.assertEqual(hash(e1), hash(2))
 
     def test_tbh(self):
         tbh = TimeBasedHeap()

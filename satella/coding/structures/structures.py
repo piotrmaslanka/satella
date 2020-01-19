@@ -79,7 +79,7 @@ class Heap(collections.UserList, tp.Generic[HeapVar]):
         super().__init__(from_list)
         heapq.heapify(self.data)
 
-    def push_many(self, items: tp.Iterator[HeapVar]) -> None:
+    def push_many(self, items: tp.Iterable[HeapVar]) -> None:
         for item in items:
             self.push(item)
 
@@ -88,11 +88,11 @@ class Heap(collections.UserList, tp.Generic[HeapVar]):
         """
         Use it like:
 
-            heap.push(3)
+        >>> heap.push(3)
 
         or:
 
-            heap.push(4, myobject)
+        >>> heap.push(4, myobject)
         """
         heapq.heappush(self.data, item)
 
@@ -137,7 +137,7 @@ class Heap(collections.UserList, tp.Generic[HeapVar]):
         """
         return len(self.data) > 0
 
-    def iter_ascending(self) -> tp.Iterator[HeapVar]:
+    def iter_ascending(self) -> tp.Iterable[HeapVar]:
         """
         Return an iterator returning all elements in this heap sorted ascending.
         State of the heap is not changed
@@ -146,7 +146,7 @@ class Heap(collections.UserList, tp.Generic[HeapVar]):
         while heap:
             yield heapq.heappop(heap)
 
-    def iter_descending(self) -> tp.Iterator[HeapVar]:
+    def iter_descending(self) -> tp.Iterable[HeapVar]:
         """
         Return an iterator returning all elements in this heap sorted descending.
         State of the heap is not changed.
@@ -194,14 +194,11 @@ class TimeBasedHeap(Heap):
     """
 
     def __repr__(self):
-        return '<satella.coding.TimeBasedHeap>'
-
-    def __repr__(self):
         return '<satella.coding.TimeBasedHeap with %s elements>' % (len(self.data),)
 
     def items(self) -> tp.Iterable[HeapVar]:
         """
-        Return an iterator, but WITHOUT timestamps (only items), in
+        Return an iterable, but WITHOUT timestamps (only items), in
         unspecified order
         """
         return (ob for ts, ob in self.data)

@@ -1,6 +1,7 @@
 # v2.2.13
 
 * useless `print()`s removed in metrics
+* additional unit tests and doc fixes
 
 # v2.2.12
 
