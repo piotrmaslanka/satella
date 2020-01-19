@@ -1,3 +1,5 @@
+import logging
+
 from satella.coding import merge_dicts
 
 from satella.exceptions import ConfigurationError
@@ -6,6 +8,8 @@ from .base import BaseSource
 __all__ = [
     'AlternativeSource', 'OptionalSource', 'MergingSource'
 ]
+
+logger = logging.getLogger(__name__)
 
 
 class AlternativeSource(BaseSource):
@@ -66,14 +70,17 @@ class MergingSource(BaseSource):
             try:
                 p = source.provide()
             except ConfigurationError as e:
+                logger.warning('Raised %s while processing %p', e, p)
                 if self.on_fail == MergingSource.RAISE:
                     raise e
                 elif self.on_fail == MergingSource.SILENT:
                     p = {}
                 else:
                     raise ConfigurationError('Invalid on_fail parameter %s' % (self.on_fail,))
+            logger.warning('So far have %s to link with %s', cfg, p)
             assert isinstance(p, dict), 'what was provided by the config was not a dict'
             cfg = merge_dicts(cfg, p)
+            logger.warning('merge_dicts returned %s', cfg)
             assert isinstance(cfg, dict), 'what merge_dicts returned wasn''t a dict'
 
         return cfg

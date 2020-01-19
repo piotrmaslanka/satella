@@ -34,6 +34,9 @@ class FileSource(BaseSource):
         self.path = path
         self.encoding = encoding
 
+    def __repr__(self):
+        return 'satella.configuration.sources.FileSource(%s, %s)' % (repr(self.path), repr(self.encoding))
+
     @rethrow_as((IOError, OSError), ConfigurationError)
     def provide(self) -> dict:
 
