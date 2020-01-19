@@ -14,7 +14,7 @@ install:
   - pip install --force-reinstall "coverage>=4.0,<4.4" codeclimate-test-reporter # for codeclimate-test-reporter
 script:
   - bash tests/test_posix/test_hang_until_sig.sh
-  - python setup.py nosetests
+  - python setup.py test
 after_success:
   - codeclimate-test-reporter
   - bash build.sh
