@@ -2,6 +2,8 @@
 
 * bugfix where import_from would not pass all parameters to child calls
 * removed debug logs from import_from
+* far more extensive Python testing on Travis
+* fixed exception auto-str
 
 # v2.2.11
 

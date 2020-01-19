@@ -2,8 +2,11 @@ language: python
 python:
   - "3.5"
   - "3.6"
-  - "3.7-dev"
+  - "3.7"
+  - "3.8"
+  - "nightly"
   - "pypy3.5"
+  - "pypy3.6"
 cache: pip
 install:
   - pip install -r requirements.txt
