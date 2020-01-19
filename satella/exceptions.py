@@ -4,7 +4,7 @@ class BaseSatellaException(Exception):
         self.msg = msg
 
     def __str__(self):
-        return '%s(%s)' % ((self.__class__.__qualname__,) + self.args)
+        return '%s(%s)' % (self.__class__.__qualname__, self.args)
 
 
 class ResourceLocked(BaseSatellaException):
