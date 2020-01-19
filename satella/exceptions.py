@@ -1,10 +1,10 @@
 class BaseSatellaException(Exception):
-    def __init__(self, msg):
-        super(BaseSatellaException, self).__init__()
+    def __init__(self, msg, *args, **kwargs):
+        super().__init__(*((msg, )+args))
         self.msg = msg
 
     def __str__(self):
-        return '%s(%s)' % (self.__class__.__qualname__, repr(self.msg),)
+        return '%s(%s)' % ((self.__class__.__qualname__,) + self.args)
 
 
 class ResourceLocked(BaseSatellaException):
