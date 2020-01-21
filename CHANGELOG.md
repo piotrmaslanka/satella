@@ -1,6 +1,6 @@
 # v2.2.16
 
-* _TBA_
+* `is_valid_schema` can be now passed in using kwargs
 
 # v2.2.15
 

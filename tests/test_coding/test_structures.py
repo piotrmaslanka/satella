@@ -13,6 +13,8 @@ class TestTimeBasedHeap(unittest.TestCase):
     def test_dict_object(self):
         self.assertTrue(DictObject({'a': 5, 'b': 'test'}).is_valid_schema({'a': int, 'b': str}))
         self.assertFalse(DictObject({'a': 5, 'b': 'test'}).is_valid_schema({'a': int, 'b': int}))
+        self.assertTrue(DictObject({'a': 5, 'b': 'test'}).is_valid_schema(a=int, b=str))
+        self.assertFalse(DictObject({'a': 5, 'b': 'test'}).is_valid_schema(a=int, b=int))
 
     def test_omni(self):
         class Omni(OmniHashableMixin):

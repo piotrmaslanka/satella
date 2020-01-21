@@ -27,15 +27,20 @@ class DictObject(dict):
         except KeyError as e:
             raise AttributeError(repr(e))
 
-    def is_valid_schema(self, schema: tp.Union[Descriptor, dict]) -> bool:
+    def is_valid_schema(self, schema: tp.Optional[tp.Union[Descriptor, dict]]=None, **kwarg_schema) -> bool:
         """
         Check if this dictionary conforms to particular schema.
 
         Schema is either a Descriptor, or a JSON-based schema. See satella.configuration.schema for details.
+        Schema can be passed as well using kwargs. It will be preferred to the one passed as schema.
 
         :param schema: schema to verify against
         :return: whether is conformant
         """
+
+        if kwarg_schema:
+            schema = kwarg_schema
+
         if isinstance(schema, Descriptor):
             descriptor = schema
         else:
