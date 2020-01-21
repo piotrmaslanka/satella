@@ -1,9 +1,22 @@
 import unittest
 
-from satella.coding import rethrow_as, silence_excs
+from satella.coding import rethrow_as, silence_excs, catch_exception
 
 
 class TestStuff(unittest.TestCase):
+
+    def test_catching(self):
+        def throw_value_error():
+            raise ValueError()
+
+        def nop():
+            return 4
+
+        self.assertRaises(TypeError, lambda: catch_exception(TypeError, throw_value_error))
+        self.assertIsInstance(catch_exception(ValueError, throw_value_error), ValueError)
+        self.assertRaises(ValueError, lambda: catch_exception(ValueError, nop))
+        self.assertEqual(4, catch_exception(TypeError, nop, return_value_on_no_exception=True))
+        self.assertEqual(5, catch_exception(TypeError, nop, return_instead=5))
 
     @silence_excs(ValueError)
     def test_silencer_2(self):

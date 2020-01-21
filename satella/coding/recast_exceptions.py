@@ -3,7 +3,8 @@ import typing as tp
 
 __all__ = [
     'rethrow_as',
-    'silence_excs'
+    'silence_excs',
+    'catch_exception'
 ]
 
 
@@ -77,3 +78,43 @@ class rethrow_as:
                         return True
                     else:
                         raise to(self.exception_preprocessor(exc_val))
+
+
+returning = tp.TypeVar('T')
+
+def catch_exception(exc_class: tp.Union[tp.Type[Exception], tp.Tuple[tp.Type[Exception]]],
+                    callable: tp.Callable[[], returning],
+                    return_instead: tp.Optional[returning] = None,
+                    return_value_on_no_exception: bool = False) -> tp.Union[Exception, returning]:
+    """
+    Catch exception of given type and return it. Functionally equivalent to:
+
+    >>> try:
+    >>>     callable()
+    >>> except exc_class as e:
+    >>>     result = e
+
+    :param exc_class: Exception classes to catch
+    :param callable: callable/0 to call to obtain it
+    :param return_instead: what to return instead of the function result if it didn't end in an exception
+    :param return_value_on_no_exception: whether to return the function result if exception didn't happen
+    :raises ValueError: an exception was not thrown
+    :raises TypeError: a different exception was thrown that the one we're catchin
+    """
+    if isinstance(exc_class, Exception):
+        exc_class = (exc_class,)
+
+    try:
+        result = callable()
+    except exc_class as e:
+        return e
+    except Exception as e:
+        raise TypeError('%s was thrown instead' % (e,))
+
+    if return_instead is not None:
+        return return_instead
+
+    if return_value_on_no_exception:
+        return result
+
+    raise ValueError('Callable executed without error')
