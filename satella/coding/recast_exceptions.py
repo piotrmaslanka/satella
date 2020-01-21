@@ -82,6 +82,7 @@ class rethrow_as:
 
 returning = tp.TypeVar('T')
 
+
 def catch_exception(exc_class: tp.Union[tp.Type[Exception], tp.Tuple[tp.Type[Exception]]],
                     callable: tp.Callable[[], returning],
                     return_instead: tp.Optional[returning] = None,
@@ -101,9 +102,6 @@ def catch_exception(exc_class: tp.Union[tp.Type[Exception], tp.Tuple[tp.Type[Exc
     :raises ValueError: an exception was not thrown
     :raises TypeError: a different exception was thrown that the one we're catchin
     """
-    if isinstance(exc_class, Exception):
-        exc_class = (exc_class,)
-
     try:
         result = callable()
     except exc_class as e:
