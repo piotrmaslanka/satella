@@ -1,3 +1,7 @@
+# v2.2.15
+
+* _TBA_
+
 # v2.2.14
 
 * added `catch_exception`
