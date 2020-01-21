@@ -294,19 +294,21 @@ def _get_descriptor_for(key: str, value: tp.Any) -> Descriptor:
                               key, False, None)
         else:
             args = ()
-            type = value['type']
-            if type == 'list':
+            type_ = value['type']
+            if type_ == 'list':
                 of = _get_descriptor_for('', value.get('of', ''))
                 args = (of,)
-            elif type == 'union':
+            elif type_ == 'union':
                 args = [_get_descriptor_for('', x) for x in value.get('of', [])]
             optional, default = False, None
             if 'default' in value:
                 optional = True
                 default = value['default']
             optional = value.get('optional', optional)
-            descriptor = BASE_LOOKUP_TABLE[type](*args)
+            descriptor = BASE_LOOKUP_TABLE[type_](*args)
             return create_key(descriptor, key, optional, default)
+    elif isinstance(value, type):
+        return _get_descriptor_for(key, value.__qualname__)
     else:
         raise ConfigurationSchemaError('invalid schema, unrecognized config object %s' % (value,))
 
@@ -350,6 +352,9 @@ def descriptor_from_dict(dct: dict) -> Descriptor:
             "b": "str"
         }
     }
+
+    although you can pass "int", "float" and "str" without enclosing quotes, that will work too
+
     :return: a Descriptor-based schema
     """
     fields = []

@@ -1,9 +1,17 @@
 import typing as tp
+from satella.configuration.schema import Descriptor, descriptor_from_dict
+from satella.exceptions import ConfigurationValidationError
 
 __all__ = ['DictObject', 'apply_dict_object']
 
 
 class DictObject(dict):
+    """
+    A dictionary wrapper that can be accessed by attributes. Eg:
+
+    >>> a = DictObject({'test': 5})
+    >>> self.assertEqual(a.test, 5)
+    """
     def __getattr__(self, item: str) -> tp.Any:
         try:
             return self[item]
@@ -18,6 +26,27 @@ class DictObject(dict):
             del self[key]
         except KeyError as e:
             raise AttributeError(repr(e))
+
+    def is_valid_schema(self, schema: tp.Union[Descriptor, dict]) -> bool:
+        """
+        Check if this dictionary conforms to particular schema.
+
+        Schema is either a Descriptor, or a JSON-based schema. See satella.configuration.schema for details.
+
+        :param schema: schema to verify against
+        :return: whether is conformant
+        """
+        if isinstance(schema, Descriptor):
+            descriptor = schema
+        else:
+            descriptor = descriptor_from_dict(schema)
+
+        try:
+            descriptor(self)
+        except ConfigurationValidationError:
+            return False
+        else:
+            return True
 
 
 def apply_dict_object(v: tp.Any) -> tp.Union[DictObject, tp.Any]:
