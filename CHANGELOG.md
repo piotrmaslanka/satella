@@ -1,3 +1,7 @@
+# v2.2.16
+
+* _TBA_
+
 # v2.2.15
 
 * added `DictObject.is_valid_schema`
