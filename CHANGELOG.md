@@ -1,6 +1,6 @@
 # v2.2.17
 
-* _TBA_
+* added [choose](satella/coding/sequences/choose.py)
 
 # v2.2.16
 

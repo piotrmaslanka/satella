@@ -11,6 +11,7 @@ Welcome to satella's documentation!
            coding/functions
            coding/structures
            coding/concurrent
+           coding/sequences
            instrumentation/traceback
            instrumentation/metrics
            exception_handling
