@@ -14,12 +14,13 @@ def choose(filter_fun: tp.Callable[[T], bool], iterable: tp.Iterable[T]) -> T:
     :return: single element in the iterable that matches given input
     :raises ValueError: on multiple elements matching, or none at all
     """
-    elem_candidate: T = None
-    found: bool = False
+    elem_candidate = None
+    found = False
     for elem in iterable:
         if filter_fun(elem):
             if found:
-                raise ValueError('Multiple values (%s, %s) seen' % (repr(elem_candidate), repr(elem)))
+                raise ValueError(
+                    'Multiple values (%s, %s) seen' % (repr(elem_candidate), repr(elem)))
             elem_candidate = elem
             found = True
 
