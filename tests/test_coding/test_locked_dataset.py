@@ -1,6 +1,7 @@
 import unittest
 
 from satella.coding.concurrent import LockedDataset
+from satella.coding.structures import Singleton
 from satella.exceptions import ResourceLocked, ResourceNotLocked
 
 
@@ -19,7 +20,8 @@ class TestLockedDataset(unittest.TestCase):
 
         a = MyDataset()
         with a:
-            self.assertRaises(ResourceLocked, lambda: a(blocking=False).__enter__())
+            self.assertRaises(ResourceLocked,
+                              lambda: a(blocking=False).__enter__())
             self.assertRaises(ResourceLocked, lambda: a.increment())
 
         a.increment()
@@ -27,3 +29,27 @@ class TestLockedDataset(unittest.TestCase):
             self.assertEqual(a.counter, 1)
 
         self.assertRaises(ResourceNotLocked, lambda: a.counter)
+
+    def test_locked_dataset_singleton(self):
+        @Singleton
+        class MyDataset(LockedDataset):
+
+            def __init__(self):
+                super(MyDataset, self).__init__()
+                with self:
+                    self.counter = 0
+
+            @LockedDataset.locked(blocking=False)
+            def increment(self):
+                self.counter += 1
+
+        with MyDataset():
+            self.assertRaises(ResourceLocked,
+                              lambda: MyDataset()(blocking=False).__enter__())
+            self.assertRaises(ResourceLocked, lambda: MyDataset().increment())
+
+        MyDataset().increment()
+        with MyDataset():
+            self.assertEqual(MyDataset().counter, 1)
+
+        self.assertRaises(ResourceNotLocked, lambda: MyDataset().counter)
