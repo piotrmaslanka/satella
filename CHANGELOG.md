@@ -1,3 +1,7 @@
+# v2.2.19
+
+* _TBA_
+
 # v2.2.18
 
 * added _SingletonWithRegardsTo_
