@@ -13,7 +13,7 @@ def Singleton(cls):
     Usage:
 
     >>> @Singleton
-    >>> class MyClass(object):
+    >>> class MyClass:
     >>>     ...
     """
 
@@ -45,7 +45,7 @@ def SingletonWithRegardsTo(num_args: int):
     Usage:
 
     >>> @SingletonWithRegardsTo(num_args=1)
-    >>> class MyClass(object):
+    >>> class MyClass:
     >>>     def __init__(self, device_id: str):
     >>>         ...
     """
@@ -62,11 +62,11 @@ def SingletonWithRegardsTo(num_args: int):
 
             key = args[:num_args]
             if key in it:
-                return it[args[:num_args]]
+                return it[key]
 
-            instance = it[key] = cls.__new_old__(cls)
-            instance.__init_old__(*args, **kw)
-            return instance
+            inst = it[key] = cls.__new_old__(cls)
+            inst.__init_old__(*args, **kw)
+            return inst
 
         cls.__new__ = singleton_new
         cls.__init_old__ = cls.__init__
