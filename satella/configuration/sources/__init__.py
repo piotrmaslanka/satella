@@ -11,4 +11,5 @@ from .file import *
 from .format import *
 from .from_dict import *
 
-__all__ = format.__all__ + envvars.__all__ + derivative.__all__ + file.__all__ + base.__all__ + from_dict.__all__
+__all__ = format.__all__ + envvars.__all__ + derivative.__all__ + file.__all__ + base.__all__ + \
+          from_dict.__all__
