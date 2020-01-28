@@ -17,6 +17,18 @@ class TestSingleton(unittest.TestCase):
 
         self.assertEqual(b.a, 6)
 
+    def test_singleton_taking_arguments(self):
+        @Singleton
+        class MyClass(object):
+            def __init__(self, a):
+                self.a = a
+
+        a = MyClass(5)
+        b = MyClass(6)
+
+        self.assertEqual(a.a, 5)
+        self.assertEqual(b.a, 5)
+
     def test_singleton_with_regards_to(self):
         @SingletonWithRegardsTo(num_args=1)
         class MyClass:
