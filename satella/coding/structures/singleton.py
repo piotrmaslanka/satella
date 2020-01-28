@@ -1,5 +1,4 @@
 import functools
-import platform
 
 __all__ = [
     'Singleton', 'SingletonWithRegardsTo'
@@ -27,14 +26,12 @@ def Singleton(cls):
             return it
 
         cls.__it__ = it = cls.__new_old__(cls)
-        if platform.python_implementation() != 'PyPy':
-            it.__init_old__(*args, **kw)
+        it.__init_old__(*args, **kw)
         return it
 
     cls.__new__ = singleton_new
-    if platform.python_implementation() != 'PyPy':
-        cls.__init_old__ = cls.__init__
-        cls.__init__ = object.__init__
+    cls.__init_old__ = cls.__init__
+    cls.__init__ = lambda self, *args, **kwargs: object.__init__(self)
 
     return cls
 
@@ -68,14 +65,12 @@ def SingletonWithRegardsTo(num_args: int):
                 return it[args[:num_args]]
 
             instance = it[key] = cls.__new_old__(cls)
-            if platform.python_implementation() != 'PyPy':
-                instance.__init_old__(*args, **kw)
+            instance.__init_old__(*args, **kw)
             return instance
 
         cls.__new__ = singleton_new
-        if platform.python_implementation() != 'PyPy':
-            cls.__init_old__ = cls.__init__
-            cls.__init__ = object.__init__
+        cls.__init_old__ = cls.__init__
+        cls.__init__ = lambda self, *args, **kwargs: object.__init__(self)
 
         return cls
     return inner
