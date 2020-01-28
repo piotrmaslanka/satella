@@ -1,6 +1,7 @@
 # v2.2.18
 
 * added _SingletonWithRegardsTo_
+* extra `functools.wraps()` on singleton's __init__
 
 # v2.2.17
 

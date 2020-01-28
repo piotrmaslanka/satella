@@ -42,7 +42,9 @@ def SingletonWithRegardsTo(num_args: int):
     """
     Make a memoized singletion depending on the arguments.
 
-    A dictionary is made (first N arguments => class instance) and such is returned
+    A dictionary is made (first N arguments => class instance) and such is returned.
+    Please take care to ensure that a tuple made out of first num_args can be used as a dictionary
+    key (ie. is both hashable and __eq__-able).
 
     Usage:
 
@@ -50,6 +52,11 @@ def SingletonWithRegardsTo(num_args: int):
     >>> class MyClass:
     >>>     def __init__(self, device_id: str):
     >>>         ...
+    >>> a = MyClass('dev1')
+    >>> b = MyClass('dev2')
+    >>> c = MyClass('dev1')
+    >>> assert a is c
+    >>> assert b is not c
     """
 
     def inner(cls):
