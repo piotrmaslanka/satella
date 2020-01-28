@@ -56,6 +56,17 @@ upon each instantiation.
 
 .. autofunction:: satella.coding.structures.Singleton
 
+SingletonWithRegardsTo
+======================
+
+Sometimes you just need an almost-singleton class, ie. class whose
+instance will depend on first *n* arguments. This function makes it easy:
+
+.. autofunction:: satella.coding.structures.SingletonWithRegardsTo
+
+It will remember instances already created and return you a previously
+created instance, keying on the first *n* arguments.
+
 DictObject
 ==========
 

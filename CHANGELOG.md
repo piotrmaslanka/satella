@@ -1,3 +1,7 @@
+# v2.2.18
+
+* added _SingletonWithRegardsTo_
+
 # v2.2.17
 
 * added [choose](satella/coding/sequences/choose.py)
