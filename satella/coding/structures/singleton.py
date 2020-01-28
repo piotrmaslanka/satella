@@ -5,7 +5,6 @@ __all__ = [
 ]
 
 
-# Taken from https://wiki.python.org/moin/PythonDecoratorLibrary
 def Singleton(cls):
     """
     Make a singleton out of decorated class.
@@ -31,7 +30,8 @@ def Singleton(cls):
 
     cls.__new__ = singleton_new
     cls.__init_old__ = cls.__init__
-    cls.__init__ = lambda self, *args, **kwargs: object.__init__(self)
+    cls.__init__ = functools.wraps(cls.__init__)(
+        lambda self, *args, **kwargs: object.__init__(self))
 
     return cls
 
@@ -70,7 +70,9 @@ def SingletonWithRegardsTo(num_args: int):
 
         cls.__new__ = singleton_new
         cls.__init_old__ = cls.__init__
-        cls.__init__ = lambda self, *args, **kwargs: object.__init__(self)
+        cls.__init__ = functools.wraps(cls.__init__)(
+            lambda self, *args, **kwargs: object.__init__(self))
 
         return cls
+
     return inner
