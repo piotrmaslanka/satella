@@ -1,4 +1,5 @@
 import typing as tp
+
 from satella.configuration.schema import Descriptor, descriptor_from_dict
 from satella.exceptions import ConfigurationValidationError
 
@@ -12,6 +13,7 @@ class DictObject(dict):
     >>> a = DictObject({'test': 5})
     >>> self.assertEqual(a.test, 5)
     """
+
     def __getattr__(self, item: str) -> tp.Any:
         try:
             return self[item]
@@ -27,7 +29,8 @@ class DictObject(dict):
         except KeyError as e:
             raise AttributeError(repr(e))
 
-    def is_valid_schema(self, schema: tp.Optional[tp.Union[Descriptor, dict]]=None, **kwarg_schema) -> bool:
+    def is_valid_schema(self, schema: tp.Optional[tp.Union[Descriptor, dict]] = None,
+                        **kwarg_schema) -> bool:
         """
         Check if this dictionary conforms to particular schema.
 

@@ -65,8 +65,8 @@ class DirectorySource(FileSource):
     :param on_fail: what to do in case a resource fails
     """
 
-    RAISE = MergingSource.RAISE     # in case a resource fails raise it
-    SILENT = MergingSource.SILENT   # in case a resource fails silently ignore it
+    RAISE = MergingSource.RAISE  # in case a resource fails raise it
+    SILENT = MergingSource.SILENT  # in case a resource fails silently ignore it
 
     def __init__(self, path, encoding: str = 'utf-8',
                  interpret_as=FORMAT_SOURCES,

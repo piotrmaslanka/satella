@@ -1,7 +1,6 @@
 import logging
 
 from satella.coding import merge_dicts
-
 from satella.exceptions import ConfigurationError
 from .base import BaseSource
 
@@ -23,7 +22,7 @@ class AlternativeSource(BaseSource):
         self.sources = sources
 
     def __repr__(self):
-        return 'AlternativeSource(%s)' % (repr(self.sources), )
+        return 'AlternativeSource(%s)' % (repr(self.sources),)
 
     def provide(self) -> dict:
         """
@@ -91,4 +90,4 @@ class MergingSource(BaseSource):
         return cfg
 
     def __repr__(self):
-        return '<MergingSource %s>' % (repr(self.sources), )
+        return '<MergingSource %s>' % (repr(self.sources),)

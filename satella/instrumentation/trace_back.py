@@ -26,6 +26,7 @@ import typing as tp
 import zlib
 
 try:
+    # noinspection PyPep8Naming
     import cPickle as pickle
 except ImportError:
     import pickle

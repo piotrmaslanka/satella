@@ -5,6 +5,7 @@ __all__ = [
 ]
 
 
+# noinspection PyPep8Naming
 def Singleton(cls):
     """
     Make a singleton out of decorated class.
@@ -36,6 +37,7 @@ def Singleton(cls):
     return cls
 
 
+# noinspection PyPep8Naming
 def SingletonWithRegardsTo(num_args: int):
     """
     Make a memoized singletion depending on the arguments.
