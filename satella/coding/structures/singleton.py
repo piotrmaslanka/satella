@@ -29,8 +29,6 @@ def Singleton(cls):
         cls.__it__ = it = cls.__new_old__(cls)
         if platform.python_implementation() != 'PyPy':
             it.__init_old__(*args, **kw)
-        else:
-            it.__init__(*args, **kw)
         return it
 
     cls.__new__ = singleton_new
@@ -72,8 +70,6 @@ def SingletonWithRegardsTo(num_args: int):
             instance = it[key] = cls.__new_old__(cls)
             if platform.python_implementation() != 'PyPy':
                 instance.__init_old__(*args, **kw)
-            else:
-                instance.__init__(*args, **kw)
             return instance
 
         cls.__new__ = singleton_new
