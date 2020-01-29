@@ -31,6 +31,13 @@ class OmniHashableMixin:
     and now class Point2D has defined __hash__ and __eq__ by these fields.
     Do everything in your power to make specified fields immutable, as mutating them will result
     in a different hash.
+
+    Note that if you're explicitly providing __eq__ in your child class, you will be required to
+    insert:
+
+    >>>     __hash__ = OmniHashableMixin.__hash__
+
+    for this to work in your class
     """
     _HASH_FIELDS_TO_USE = []
 

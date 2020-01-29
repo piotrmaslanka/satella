@@ -1,6 +1,6 @@
 # v2.2.19
 
-* _TBA_
+* doc fix in `OmniHashableMixin`
 
 # v2.2.18
 
