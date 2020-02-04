@@ -15,8 +15,8 @@ class TestMetric(unittest.TestCase):
             metric.runtime(10.0)
         metric.runtime(15.0)
 
-        self.assertEqual(metric.to_json(), [{'percentile': 0.5, '_': 10.0},
-                                            {'percentile': 0.95, '_': 12.749999999999995}])
+        self.assertEqual(metric.to_json(), [{'quantile': 0.5, '_': 10.0},
+                                            {'quantile': 0.95, '_': 12.749999999999995}])
 
     def test_labels(self):
         metric = getMetric('root.test.FloatValue', 'float')

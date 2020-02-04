@@ -67,9 +67,9 @@ class PercentileMetric(EmbeddedSubmetrics):
         for p_val in self.percentiles:
             k = super().to_json()
             if not sorted_calls:
-                k.update(percentile=p_val, _=0.0)
+                k.update(quantile=p_val, _=0.0)
             else:
-                k.update(percentile=p_val,
+                k.update(quantile=p_val,
                          _=percentile(sorted_calls, p_val))
             output.append(k)
         return output
