@@ -61,3 +61,25 @@ set to RUNTIME. Same if you specify INHERIT.
 
 If you specify any kwargs, they will be delivered to the last
 metric's in chain constructor.
+
+Since metrics in Satella are primarily though out to end up
+on a Prometheus, it is very important to understand
+Prometheus' data model_.
+
+.. _model: https://prometheus.io/docs/concepts/data_model/
+
+
+Root metric's ``to_json`` will output a tree based hierarchy,
+where keys are supposed to be concatenated with an underscore.
+The last object in the dictionary is the leaf node.
+
+The leaf node consists of a key `_` which maps the value,
+and remaining keys being labels, and their respective values
+being values.
+
+The direct parent of a leaf may be a list. This aggregates
+the labels and their values. These are generated only
+by `LeafMetrics`.
+
+.. autoclass:: satella.instrumentation.metrics.metric_types.LeafMetric
+    :members:

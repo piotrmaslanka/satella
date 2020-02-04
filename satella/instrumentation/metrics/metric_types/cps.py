@@ -2,10 +2,10 @@ import collections
 import time
 import typing as tp
 
-from .base import Metric
+from .base import LeafMetric
 
 
-class ClicksPerTimeUnitMetric(Metric):
+class ClicksPerTimeUnitMetric(LeafMetric):
     """
     This tracks the amount of calls to handle() during the last time periods, as specified by time_unit_vectors
     (in seconds). You may specify multiple time periods as consequent entries in the list.
@@ -39,4 +39,13 @@ class ClicksPerTimeUnitMetric(Metric):
                 if v >= cutoff:
                     count_map[index] += 1
 
-        return count_map
+        output = []
+        for time_unit, count in zip(self.time_unit_vectors, count_map):
+            k = {
+                'period': time_unit,
+                '_': count
+            }
+            k.update(super().to_json())
+            output.append(k)
+
+        return output

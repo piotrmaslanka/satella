@@ -1,9 +1,9 @@
 import typing as tp
 
-from .base import Metric
+from .base import LeafMetric
 
 
-class SimpleMetric(Metric):
+class SimpleMetric(LeafMetric):
     CLASS_NAME = 'string'
     CONSTRUCTOR = str
 
@@ -11,15 +11,14 @@ class SimpleMetric(Metric):
         super().__init__(*args, **kwargs)
         self.data = None
 
-    def append_child(self, metric: 'Metric'):
-        raise TypeError('This metric cannot contain children!')
-
     def handle(self, level, data):
         if self.can_process_this_level(level):
             self.data = self.CONSTRUCTOR(data)
 
     def to_json(self) -> tp.Union[list, dict, str, int, float, None]:
-        return self.data
+        p = {'_': self.data}
+        p.update(super().to_json())
+        return p
 
 
 class StringMetric(SimpleMetric):

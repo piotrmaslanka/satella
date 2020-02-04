@@ -2,6 +2,7 @@ import typing as tp
 
 from satella.json import JSONAble
 
+
 DISABLED = 1
 RUNTIME = 2
 DEBUG = 3
@@ -25,7 +26,8 @@ class Metric(JSONAble):
             del metrics.metrics[self.name]
         self.children = []
 
-    def __init__(self, name, root_metric: 'Metric' = None, metric_level: str = None, **kwargs):
+    def __init__(self, name, root_metric: 'Metric' = None, metric_level: str = None,
+                 **kwargs):
         """When reimplementing the method, remember to pass kwargs here!"""
         self.name = name
         self.root_metric = root_metric
@@ -54,7 +56,7 @@ class Metric(JSONAble):
     def to_json(self) -> tp.Union[list, dict, str, int, float, None]:
         return {
             child.name[len(self.name) + 1 if len(self.name) > 0 else 0:]: child.to_json() for child
-            in self.children
+            in self.children if self.can_process_this_level(child.level)
         }
 
     def handle(self, level: int, *args, **kwargs) -> None:
@@ -66,3 +68,21 @@ class Metric(JSONAble):
 
     def runtime(self, *args, **kwargs):
         self.handle(RUNTIME, *args, **kwargs)
+
+
+class LeafMetric(Metric):
+    """
+    A metric capable of generating only leaf entries.
+
+    You cannot hook up any children to a leaf metric.
+    """
+    def __init__(self, name, root_metric: 'Metric' = None, metric_level: str = None,
+                 labels: tp.Optional[dict] = None, **kwargs):
+        super().__init__(name, root_metric, metric_level, **kwargs)
+        self.labels = labels or {}
+
+    def to_json(self) -> dict:
+        return self.labels
+
+    def append_child(self, metric: 'Metric'):
+        raise TypeError('This metric cannot contain children!')
