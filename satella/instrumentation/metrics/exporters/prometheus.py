@@ -21,10 +21,9 @@ class RendererObject(io.StringIO):
             labels = []
             for key, value in tree.items():
                 value = repr(value).replace("'", '"')
-                labels.append(f'{key}={value}')
+                labels.append('%s=%s' % (key, value))
             self.write(', '.join(labels))
-            self.write('} ')
-            self.write(f'{repr(main_value)}\n')
+            self.write('} %s\n' % (repr(main_value), ))
 
         else:
             for k, v in tree.items():
