@@ -53,7 +53,7 @@ class PercentileMetric(EmbeddedSubmetrics):
 
     def _handle(self, time_taken: float, **labels) -> None:
         if labels or self.embedded_submetrics_enabled:
-            super()._handle(time_taken, **labels)
+            return super()._handle(time_taken, **labels)
         if len(self.calls_queue) == self.last_calls:
             self.calls_queue.pop()
         self.calls_queue.appendleft(time_taken)
