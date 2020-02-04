@@ -9,6 +9,22 @@ class TestMetric(unittest.TestCase):
     def tearDown(self):
         getMetric('').reset()
 
+    def test_percentile(self):
+        metric = getMetric('root.test.ExecutionTime', 'percentile', percentiles=[0.5, 0.95])
+        for i in range(9):
+            metric.runtime(10.0)
+        metric.runtime(15.0)
+
+        self.assertEqual(metric.to_json(), [{'quantile': 0.5, '_': 10.0},
+                                            {'quantile': 0.95, '_': 12.749999999999995}])
+
+    def test_labels(self):
+        metric = getMetric('root.test.FloatValue', 'float')
+        metric.runtime(2, label='value')
+        metric.runtime(3, label='key')
+
+        self.assertEqual(metric.to_json(), [{'label': 'value', '_': 2}, {'label': 'key', '_': 3}])
+
     def test_base_metric(self):
         metric = getMetric('root.test.StringValue', 'string')
         metric.runtime('data')
@@ -24,9 +40,9 @@ class TestMetric(unittest.TestCase):
         self.assertEqual(root_metric.to_json(), {
             'root': {
                 'test': {
-                    'StringValue': 'data',
-                    'FloatValue': 2.0,
-                    'IntValue': 3
+                    'StringValue': {'_': 'data'},
+                    'FloatValue': {'_': 2.0},
+                    'IntValue': {'_': 3}
                 }
             }
         })
@@ -45,8 +61,8 @@ class TestMetric(unittest.TestCase):
         self.assertEqual(root_metric.to_json(), {
             'root': {
                 'test': {
-                    'FloatValue': 1.0,
-                    'IntValue': 3
+                    'FloatValue': {'_': 1.0},
+                    'IntValue': {'_': 3}
                 }
             }
         })
@@ -59,7 +75,7 @@ class TestMetric(unittest.TestCase):
         self.assertEqual(getMetric('').to_json(), {
             'root': {
                 'test': {
-                    'FloatValue': 2.0,
+                    'FloatValue': {'_': 2.0},
                 }
             }
         })
@@ -70,16 +86,22 @@ class TestMetric(unittest.TestCase):
         self.assertEqual(getMetric('').to_json(), {
             'root': {
                 'test': {
-                    'FloatValue': 2.0,
+                    'FloatValue': {'_': 2.0},
                 }
             }
         })
 
+    def test_labels(self):
+        metric = getMetric('root.IntValue', 'int', labels={'k': 2})
+        metric.runtime(3)
+        self.assertEqual(metric.to_json(), {'k': 2, '_': 3})
+
     def test_cps(self):
         metric = getMetric('root.CPSValue', 'cps', time_unit_vectors=[1, 2])
         metric.runtime()
-        self.assertEqual(metric.to_json(), [1, 1])
+        self.assertEqual([1, 2], metric.time_unit_vectors)
+        self.assertEqual([{'period': 1, '_': 1}, {'period': 2, '_': 1}], metric.to_json())
         metric.runtime()
-        self.assertEqual(metric.to_json(), [2, 2])
+        self.assertEqual([{'period': 1, '_': 2}, {'period': 2, '_': 2}], metric.to_json())
         time.sleep(1.2)
-        self.assertEqual(metric.to_json(), [0, 2])
+        self.assertEqual([{'period': 1, '_': 0}, {'period': 2, '_': 2}], metric.to_json())

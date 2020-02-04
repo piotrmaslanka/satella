@@ -1,9 +1,9 @@
 import typing as tp
 
-from .base import Metric
+from .base import EmbeddedSubmetrics
 
 
-class SimpleMetric(Metric):
+class SimpleMetric(EmbeddedSubmetrics):
     CLASS_NAME = 'string'
     CONSTRUCTOR = str
 
@@ -11,15 +11,18 @@ class SimpleMetric(Metric):
         super().__init__(*args, **kwargs)
         self.data = None
 
-    def append_child(self, metric: 'Metric'):
-        raise TypeError('This metric cannot contain children!')
+    def _handle(self, *args, **kwargs) -> None:
+        if self.embedded_submetrics_enabled or kwargs:
+            return super()._handle(*args, **kwargs)
 
-    def handle(self, level, data):
-        if self.can_process_this_level(level):
-            self.data = self.CONSTRUCTOR(data)
+        self.data = self.CONSTRUCTOR(args[0])
 
     def to_json(self) -> tp.Union[list, dict, str, int, float, None]:
-        return self.data
+        if self.embedded_submetrics_enabled:
+            return super().to_json()
+        p = super().to_json()
+        p['_'] = self.data
+        return p
 
 
 class StringMetric(SimpleMetric):

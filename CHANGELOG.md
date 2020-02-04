@@ -1,3 +1,7 @@
+# v2.3.0
+
+* significant refactor of [metrics](satella/instrumentation/metrics).
+
 # v2.2.19
 
 * doc fix in `OmniHashableMixin`
