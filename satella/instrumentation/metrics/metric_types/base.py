@@ -1,5 +1,5 @@
 import typing as tp
-
+from abc import abstractmethod, ABCMeta
 from satella.json import JSONAble
 
 
@@ -56,12 +56,20 @@ class Metric(JSONAble):
     def to_json(self) -> tp.Union[list, dict, str, int, float, None]:
         return {
             child.name[len(self.name) + 1 if len(self.name) > 0 else 0:]: child.to_json() for child
-            in self.children if self.can_process_this_level(child.level)
+            in self.children
         }
 
     def handle(self, level: int, *args, **kwargs) -> None:
-        """Override me!"""
-        raise TypeError('A collection of metrics is not meant to get .handle() called!')
+        """
+        Override me!
+
+        This should look like the following:
+
+        >>> def handle(self, level: int, *args, **kwargs):
+        >>>     if self.can_process_this_level(level):
+        >>>         .. do actual work ..
+        """
+        raise NotImplementedError('This is an abstract method!')
 
     def debug(self, *args, **kwargs):
         self.handle(DEBUG, *args, **kwargs)

@@ -11,9 +11,9 @@ class SimpleMetric(LeafMetric):
         super().__init__(*args, **kwargs)
         self.data = None
 
-    def handle(self, level, data):
+    def handle(self, level: int, *args, **kwargs) -> None:
         if self.can_process_this_level(level):
-            self.data = self.CONSTRUCTOR(data)
+            self.data = self.CONSTRUCTOR(args[0])
 
     def to_json(self) -> tp.Union[list, dict, str, int, float, None]:
         p = {'_': self.data}

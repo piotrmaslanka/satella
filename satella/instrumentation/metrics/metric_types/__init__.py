@@ -1,6 +1,7 @@
 from .base import Metric, LeafMetric
 from .cps import ClicksPerTimeUnitMetric
 from .simple import StringMetric, IntegerMetric, FloatMetric
+from .percentile import PercentileMetric
 
 ALL_METRICS = [
     Metric,
@@ -8,7 +9,8 @@ ALL_METRICS = [
     StringMetric,
     IntegerMetric,
     FloatMetric,
-    ClicksPerTimeUnitMetric
+    ClicksPerTimeUnitMetric,
+    PercentileMetric
 ]
 
 METRIC_NAMES_TO_CLASSES = {

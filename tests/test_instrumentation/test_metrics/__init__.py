@@ -9,6 +9,15 @@ class TestMetric(unittest.TestCase):
     def tearDown(self):
         getMetric('').reset()
 
+    def test_percentile(self):
+        metric = getMetric('root.test.ExecutionTime', 'percentile', percentiles=[0.5, 0.95])
+        for i in range(9):
+            metric.runtime(10.0)
+        metric.runtime(15.0)
+
+        self.assertEqual(metric.to_json(), [{'percentile': 0.5, '_': 10.0},
+                                            {'percentile': 0.95, '_': 12.749999999999995}])
+
     def test_base_metric(self):
         metric = getMetric('root.test.StringValue', 'string')
         metric.runtime('data')

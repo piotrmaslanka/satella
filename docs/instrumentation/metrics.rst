@@ -43,7 +43,12 @@ are available:
 * cps - will count given amount of calls to handle() during last
   time period, as specified by user
 
-    .. autoclass :: satella.instrumentation.metrics.metric_types.cps.ClicksPerTimeUnitMetric
+    .. autoclass:: satella.instrumentation.metrics.metric_types.ClicksPerTimeUnitMetric
+
+* percentile - a metric that counts a rolling window of values,
+  and provides for a way to calculate percentiles
+
+    .. autoclass:: satella.instrumentation.metrics.metric_types.PercentileMetric
 
 Third parameter is optional. If set, all child metrics created 
 during this metric's instantiation will receive such metric level.
@@ -83,3 +88,8 @@ by `LeafMetrics`.
 
 .. autoclass:: satella.instrumentation.metrics.metric_types.LeafMetric
     :members:
+
+If you need to merge two JSONs returned by metrics (eg. for a
+metric exporter service) you can use the following function:
+
+.. autofunction:: satella.instrumentation.metrics.json.update
