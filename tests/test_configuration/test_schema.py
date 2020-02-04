@@ -130,7 +130,6 @@ class TestSchema(unittest.TestCase):
   }
 }""")
         ds = DirectorySource(dir)
-        print(ds.get_sources_from_directory(dir))
         source = ds.provide()
 
         schema = Dict([
