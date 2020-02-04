@@ -20,7 +20,7 @@ class RendererObject(io.StringIO):
             main_value = tree.pop('_')
             labels = []
             for key, value in tree.items():
-                value = repr(value).replace("'", '"')
+                value = repr(value).replace('\\', '\\\\').replace('"', '\"').replace("'", '"')
                 labels.append('%s=%s' % (key, value))
             self.write(', '.join(labels))
             self.write('} %s\n' % (repr(main_value), ))
