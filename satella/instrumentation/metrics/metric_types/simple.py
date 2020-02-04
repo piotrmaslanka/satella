@@ -1,9 +1,9 @@
 import typing as tp
 
-from .base import LeafMetric
+from .base import EmbeddedSubmetrics
 
 
-class SimpleMetric(LeafMetric):
+class SimpleMetric(EmbeddedSubmetrics):
     CLASS_NAME = 'string'
     CONSTRUCTOR = str
 
@@ -11,13 +11,17 @@ class SimpleMetric(LeafMetric):
         super().__init__(*args, **kwargs)
         self.data = None
 
-    def handle(self, level: int, *args, **kwargs) -> None:
-        if self.can_process_this_level(level):
-            self.data = self.CONSTRUCTOR(args[0])
+    def _handle(self, *args, **kwargs) -> None:
+        if self.embedded_submetrics_enabled or kwargs:
+            return super()._handle(*args, **kwargs)
+
+        self.data = self.CONSTRUCTOR(args[0])
 
     def to_json(self) -> tp.Union[list, dict, str, int, float, None]:
-        p = {'_': self.data}
-        p.update(super().to_json())
+        if self.embedded_submetrics_enabled:
+            return super().to_json()
+        p = super().to_json()
+        p['_'] = self.data
         return p
 
 

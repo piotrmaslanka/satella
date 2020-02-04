@@ -8,13 +8,15 @@ from satella.coding import for_argument
 
 logger = logging.getLogger(__name__)
 
+
 @for_argument(copy.copy, copy.copy)
 def are_equal(tree1, tree2) -> bool:
     tree1.pop('_', None)
     tree2.pop('_', None)
     return tree1 == tree2
 
-def is_leaf_node(tree) -> bool:
+
+def is_leaf_node(tree: dict) -> bool:
     for v in tree.values():
         if isinstance(v, (dict, list, tuple)):
             return False

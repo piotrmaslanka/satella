@@ -14,7 +14,7 @@ metrics_lock = threading.Lock()
 
 
 # noinspection PyPep8Naming
-def getMetric(metric_name: str, metric_type: str = 'base', metric_level: tp.Optional[str] = None,
+def getMetric(metric_name: str = '', metric_type: str = 'base', metric_level: tp.Optional[str] = None,
               **kwargs):
     """
     Obtain a metric of given name.
