@@ -3,7 +3,6 @@ Routines for manipulating the JSON emitted by the metrics
 """
 import copy
 import logging
-import typing as tp
 from satella.coding import for_argument
 
 logger = logging.getLogger(__name__)
@@ -21,6 +20,27 @@ def is_leaf_node(tree: dict) -> bool:
         if isinstance(v, (dict, list, tuple)):
             return False
     return True
+
+
+def annotate_every_leaf_node_with_labels(tree, labels):
+    """
+    Add given labels to every leaf node in the tree.
+
+    :param tree: tree to modify in-place
+    :param labels: dictionary of labels to add
+    :return: tree
+    """
+    if isinstance(tree, list):
+        return [annotate_every_leaf_node_with_labels(q, labels) for q in tree]
+
+    if is_leaf_node(tree):
+        tree.update(labels)
+        return tree
+
+    for k in tree.keys():
+        tree[k] = annotate_every_leaf_node_with_labels(tree[k], labels)
+
+    return tree
 
 
 @for_argument(copy.copy, copy.copy)

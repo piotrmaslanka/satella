@@ -93,11 +93,6 @@ by `LeafMetrics`.
 .. autoclass:: satella.instrumentation.metrics.metric_types.LeafMetric
     :members:
 
-If you need to merge two JSONs returned by metrics (eg. for a
-metric exporter service) you can use the following function:
-
-.. autofunction:: satella.instrumentation.metrics.json.update
-
 On most metrics you can specify additional labels. They will serve
 to create an independent "sub-metric" of sorts, eg.
 
@@ -112,6 +107,21 @@ This functionality is provided by the below class:
 
 .. autoclass:: satella.instrumentation.metrics.metric_types.base.EmbeddedSubmetrics
     :members:
+
+Modifying returned JSON
+=======================
+
+JSON returned by the root metric's ``to_json()`` can be further modified:
+
+If you need to insert some labels at every leaf node, use the following function:
+
+.. autofunction:: satella.instrumentation.metrics.json.annotate_every_leaf_node_with_labels
+
+If you need to merge two JSONs returned by metrics (eg. for a
+metric exporter service) you can use the following function:
+
+.. autofunction:: satella.instrumentation.metrics.json.update
+
 
 Exporting data
 ==============
