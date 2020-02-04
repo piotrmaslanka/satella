@@ -1,3 +1,7 @@
+# v2.3.1
+
+* _TBA_
+
 # v2.3.0
 
 * significant refactor of [metrics](satella/instrumentation/metrics).
