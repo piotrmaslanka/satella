@@ -5,7 +5,7 @@ import typing as tp
 
 logger = logging.getLogger(__name__)
 from .metric_types.base import RUNTIME, DISABLED, DEBUG, INHERIT, Metric
-from .metric_types import METRIC_NAMES_TO_CLASSES
+from .metric_types.registry import METRIC_NAMES_TO_CLASSES
 
 __all__ = ['getMetric', 'DISABLED', 'RUNTIME', 'DEBUG', 'INHERIT']
 
@@ -52,6 +52,6 @@ def getMetric(metric_name: str = '', metric_type: str = 'base', metric_level: tp
             root_metric = metric
 
         if metric_level is not None:
-            metric.switch_level(metric_level)
+            metric.level = metric_level
 
         return metric

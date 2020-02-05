@@ -8,6 +8,7 @@ import math
 
 from satella.coding import precondition
 from .base import EmbeddedSubmetrics, RUNTIME, DEBUG, LeafMetric
+from .registry import register_metric
 
 logger = logging.getLogger(__name__)
 
@@ -32,6 +33,7 @@ def percentile(n: tp.List[float], percent: float) -> float:
     return d0 + d1
 
 
+@register_metric
 class PercentileMetric(EmbeddedSubmetrics):
     """
     A metric that can register some values, sequentially, and then calculate percentiles from it

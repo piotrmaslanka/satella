@@ -68,6 +68,10 @@ an additional parameter passed to ``getMetric()``, ``metric_level``, if
 specified, will set given level upon returning the even existing
 metric.
 
+This will be set on all children **created by this call**. If you
+have any children from previous calls, they will remain
+unaffected.
+
 If you specify any kwargs, they will be delivered to the last
 metric's in chain constructor.
 
@@ -92,9 +96,6 @@ The direct parent of a leaf may be a list. This aggregates
 the labels and their values. These are generated only
 by `LeafMetrics`.
 
-.. autoclass:: satella.instrumentation.metrics.metric_types.LeafMetric
-    :members:
-
 On most metrics you can specify additional labels. They will serve
 to create an independent "sub-metric" of sorts, eg.
 
@@ -109,6 +110,29 @@ This functionality is provided by the below class:
 
 .. autoclass:: satella.instrumentation.metrics.metric_types.base.EmbeddedSubmetrics
     :members:
+
+Rolling your own metrics
+========================
+
+In order to roll your own metrics, you must first subclass Metric.
+
+
+.. autoclass:: satella.instrumentation.metrics.metric_types.Metric
+    :members:
+
+
+.. autoclass:: satella.instrumentation.metrics.metric_types.LeafMetric
+    :members:
+
+
+.. autoclass:: satella.instrumentation.metrics.metric_types.base.EmbeddedSubmetrics
+    :members:
+
+Remember to define a class attribute of CLASS_NAME, which is a string
+defining how to call your metric. After everything is done, register it
+by using the following decorator on your metric class
+
+.. autofunction:: satella.instrumentation.metrics.metric_types.register_metric
 
 Modifying returned JSON
 =======================
@@ -139,3 +163,5 @@ For example in such a way:
     def export_to_prometheus():
         metric = getMetric()
         return json_to_prometheus(metric.to_json())
+
+Dots in metric names will be replaced with underscores.

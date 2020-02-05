@@ -65,20 +65,21 @@ class TestMetric(unittest.TestCase):
         metric2.runtime(2.0)
         metric2.debug(1.0)
 
-        metric3 = getMetric('root.test.IntValue', 'int')
+        metric3 = getMetric('root.test.IntValue', 'int', RUNTIME)
+
         metric3.runtime(3)
         metric3.debug(2)
 
         root_metric = getMetric('')
 
-        self.assertEqual(root_metric.to_json(), {
+        self.assertEqual({
             'root': {
                 'test': {
                     'FloatValue': {'_': 1.0},
                     'IntValue': {'_': 3}
                 }
             }
-        })
+        }, root_metric.to_json())
 
     def testInheritance(self):
         metric = getMetric('root.test.FloatValue', 'float', INHERIT)
@@ -93,7 +94,7 @@ class TestMetric(unittest.TestCase):
             }
         })
 
-        metric_parent.switch_level(RUNTIME)
+        metric_parent.level = RUNTIME
         metric.debug(3.0)
 
         self.assertEqual(getMetric('').to_json(), {

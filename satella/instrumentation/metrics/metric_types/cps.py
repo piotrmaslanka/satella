@@ -4,11 +4,12 @@ import typing as tp
 import logging
 
 from .base import EmbeddedSubmetrics
-
+from .registry import register_metric
 
 logger = logging.getLogger(__name__)
 
 
+@register_metric
 class ClicksPerTimeUnitMetric(EmbeddedSubmetrics):
     """
     This tracks the amount of calls to handle() during the last time periods, as specified by time_unit_vectors

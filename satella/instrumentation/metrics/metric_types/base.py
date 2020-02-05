@@ -1,9 +1,12 @@
 import typing as tp
+import logging
 import copy
 from abc import abstractmethod, ABCMeta
 from satella.json import JSONAble
 from satella.coding import for_argument
 
+
+logger = logging.getLogger(__name__)
 
 DISABLED = 1
 RUNTIME = 2
@@ -12,14 +15,23 @@ INHERIT = 4
 
 
 class Metric(JSONAble):
-    """Container for child metrics. A base metric class, as well as the default metric."""
+    """
+    Container for child metrics. A base metric class, as well as the default metric.
+
+    Switch levels by setting metric.level to a proper value
+    """
     CLASS_NAME = 'base'
 
     def reset(self) -> None:
-        """Delete all child metrics that this metric contains"""
+        """
+        Delete all child metrics that this metric contains.
+
+        Also, if called on root metric, sets the runlevel to RUNTIME
+        """
         from satella.instrumentation import metrics
         if self.name == '':
             metrics.metrics = {}
+            metrics.level = RUNTIME
         else:
             metrics.metrics = {k: v for k, v in metrics.metrics.items() if
                                not k.startswith(self.name + '.')}
@@ -35,7 +47,7 @@ class Metric(JSONAble):
                 metric_level = RUNTIME
             else:
                 metric_level = INHERIT
-        self.level = metric_level
+        self._level = metric_level
 
         assert not (
                 self.name == '' and self.level == INHERIT), 'Unable to set INHERIT for root metric!'
@@ -44,19 +56,24 @@ class Metric(JSONAble):
     def __str__(self) -> str:
         return self.name
 
+    @property
+    def level(self) -> int:
+        metric = self
+        while metric._level == INHERIT:
+            metric = metric.root_metric
+        return metric._level
+
+    @level.setter
+    def level(self, value: int) -> None:
+        assert not (value == INHERIT and self.name == ''), 'Cannot set INHERIT for the root metric!'
+        self._level = value
+
     def append_child(self, metric: 'Metric'):
         self.children.append(metric)
 
     def can_process_this_level(self, target_level: int) -> bool:
-        metric = self
-        while metric.level == INHERIT:
-            # this is bound to terminate, since it is not possible to set metric_level of INHERIT on root
-            metric = metric.root_metric
-        return metric.level >= target_level
-
-    def switch_level(self, level: int) -> None:
-        assert not (self.name == '' and level == INHERIT), 'Unable to set INHERIT for root metric!'
-        self.level = level
+        logger.warning(f'Processing {target_level} having {self.level}')
+        return self.level >= target_level
 
     def to_json(self) -> tp.Union[list, dict, str, int, float, None]:
         return {
@@ -73,6 +90,8 @@ class Metric(JSONAble):
     def handle(self, level: int, *args, **kwargs) -> None:
         if self.can_process_this_level(level):
             return self._handle(*args, **kwargs)
+        else:
+            logger.warning(f'Refusing to process level {level}')
 
     def debug(self, *args, **kwargs):
         self.handle(DEBUG, *args, **kwargs)

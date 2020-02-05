@@ -1,6 +1,7 @@
 import typing as tp
 
 from .base import EmbeddedSubmetrics
+from .registry import register_metric
 
 
 class SimpleMetric(EmbeddedSubmetrics):
@@ -25,11 +26,13 @@ class SimpleMetric(EmbeddedSubmetrics):
         return p
 
 
+@register_metric
 class IntegerMetric(SimpleMetric):
     CLASS_NAME = 'int'
     CONSTRUCTOR = int
 
 
+@register_metric
 class FloatMetric(SimpleMetric):
     CLASS_NAME = 'float'
     CONSTRUCTOR = float
