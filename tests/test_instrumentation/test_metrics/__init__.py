@@ -89,7 +89,6 @@ class TestMetric(unittest.TestCase):
         self.assertEqual({'_': [{'service': 'user', '_': {'_': 2, 'service': 'user'}, 'count': {'_': 2, 'service': 'user'}},
                                 {'service': 'session', '_': {'_': 2, 'service': 'session'}, 'count': {'_': 1, 'service': 'session'}}],
                           'sum': {'_': 4}, 'count': {'_': 3}}, counter.to_json())
-        logger.warning(json_to_prometheus(counter.to_json()))
 
     def test_base_metric(self):
         metric2 = getMetric('root.test.FloatValue', 'float', DEBUG, enable_timestamp=False)
