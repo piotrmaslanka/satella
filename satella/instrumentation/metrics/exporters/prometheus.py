@@ -50,14 +50,21 @@ class RendererObject(io.StringIO):
 
         else:
             labels = get_labels_for_node(tree)
+            for k in labels:
+                del tree[k]
+
             for k, v in tree.items():
                 if k == '_' and isinstance(v, list):
                     for elem in v:
                         self.render_node(elem, prefixes, labels)
                     continue
-                if k == '_timestamp':
+                elif k == '_timestamp':
                     continue
-                self.render_node(v, prefixes + [k], labels)
+                elif k != '_':
+                    new_prefixes = prefixes + [k]
+                else:
+                    new_prefixes = prefixes
+                self.render_node(v, new_prefixes, labels)
 
 
 def json_to_prometheus(tree) -> str:

@@ -3,6 +3,7 @@ import unittest
 import logging
 
 from satella.instrumentation.metrics import getMetric, DEBUG, RUNTIME, INHERIT
+from satella.instrumentation.metrics.exporters import json_to_prometheus
 
 logger = logging.getLogger(__name__)
 
@@ -71,6 +72,24 @@ class TestMetric(unittest.TestCase):
         wait()
         self.assertRaises(ValueError, lambda: wait(throw=True))
         self.assertGreaterEqual(metric.to_json()['_'][0]['_'], 1)
+
+    def test_counter(self):
+        counter = getMetric('counter', 'counter', enable_timestamp=False)
+        counter.runtime(1, service='user')
+        counter.runtime(2, service='session')
+        counter.runtime(1, service='user')
+        self.assertEqual({'_': [{'service': 'user', '_': 2}, {'service': 'session', '_': 2}],
+                          'sum': {'_': 4}}, counter.to_json())
+
+    def test_counter_count_calls(self):
+        counter = getMetric('counter', 'counter', enable_timestamp=False, count_calls=True)
+        counter.runtime(1, service='user')
+        counter.runtime(2, service='session')
+        counter.runtime(1, service='user')
+        self.assertEqual({'_': [{'service': 'user', '_': {'_': 2, 'service': 'user'}, 'count': {'_': 2, 'service': 'user'}},
+                                {'service': 'session', '_': {'_': 2, 'service': 'session'}, 'count': {'_': 1, 'service': 'session'}}],
+                          'sum': {'_': 4}, 'count': {'_': 3}}, counter.to_json())
+        logger.warning(json_to_prometheus(counter.to_json()))
 
     def test_base_metric(self):
         metric2 = getMetric('root.test.FloatValue', 'float', DEBUG, enable_timestamp=False)

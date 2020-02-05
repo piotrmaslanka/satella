@@ -1,6 +1,6 @@
 # v2.3.9
 
-* _TBA_
+* added `CounterMetric`
 
 # v2.3.8
 

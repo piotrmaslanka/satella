@@ -47,6 +47,11 @@ are available:
 * base - for just a container metric
 * int - for int values
 * float - for float values
+* counter - starts from zero, increments or decrements the counter value. Also optionally
+  can register the amount of calls
+
+.. autoclass:: satella.instrumentation.metrics.metric_types.CounterMetric
+
 * cps - will count given amount of calls to handle() during last
   time period, as specified by user
 
