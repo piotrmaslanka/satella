@@ -118,6 +118,8 @@ Rolling your own metrics
 ========================
 
 In order to roll your own metrics, you must first subclass Metric.
+You can subclass one of the following classes, to the best of your liking.
+Please also refer to existing metric implementations on how to best subclass them.
 
 
 .. autoclass:: satella.instrumentation.metrics.metric_types.Metric
