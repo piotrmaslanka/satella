@@ -1,6 +1,7 @@
 import typing as tp
 import logging
 import copy
+import time
 from abc import abstractmethod, ABCMeta
 from satella.json import JSONAble
 from satella.coding import for_argument
@@ -19,6 +20,8 @@ class Metric(JSONAble):
     Container for child metrics. A base metric class, as well as the default metric.
 
     Switch levels by setting metric.level to a proper value
+
+    :param enable_timestamp: append timestamp of last update to the metric
     """
     CLASS_NAME = 'base'
 
@@ -38,8 +41,10 @@ class Metric(JSONAble):
             del metrics.metrics[self.name]
         self.children = []
 
-    def __init__(self, name, root_metric: 'Metric' = None, metric_level: str = None):
+    def __init__(self, name, root_metric: 'Metric' = None, metric_level: str = None,
+                 **kwargs):
         """When reimplementing the method, remember to pass kwargs here!"""
+        logger.warning(f'Creating {self.__class__.__qualname__}')
         self.name = name
         self.root_metric = root_metric
         if metric_level is None:
@@ -48,6 +53,10 @@ class Metric(JSONAble):
             else:
                 metric_level = INHERIT
         self._level = metric_level
+        self.enable_timestamp = kwargs.get('enable_timestamp', True)
+        logger.warning(f'enable timestamp is {self.enable_timestamp}')
+        if self.enable_timestamp:
+            self.last_updated = time.time()
 
         assert not (
                 self.name == '' and self.level == INHERIT), 'Unable to set INHERIT for root metric!'
@@ -75,10 +84,13 @@ class Metric(JSONAble):
         return self.level >= target_level
 
     def to_json(self) -> tp.Union[list, dict, str, int, float, None]:
-        return {
+        k = {
             child.name[len(self.name) + 1 if len(self.name) > 0 else 0:]: child.to_json() for child
             in self.children
         }
+        if self.enable_timestamp:
+            k['_timestamp'] = self.last_updated
+        return k
 
     def _handle(self, *args, **kwargs) -> None:
         """
@@ -88,6 +100,8 @@ class Metric(JSONAble):
 
     def handle(self, level: int, *args, **kwargs) -> None:
         if self.can_process_this_level(level):
+            if self.enable_timestamp:
+                self.last_updated = time.time()
             return self._handle(*args, **kwargs)
 
     def debug(self, *args, **kwargs):
@@ -104,12 +118,16 @@ class LeafMetric(Metric):
     You cannot hook up any children to a leaf metric.
     """
     def __init__(self, name, root_metric: 'Metric' = None, metric_level: str = None,
-                 labels: tp.Optional[dict] = None):
-        super().__init__(name, root_metric, metric_level)
+                 labels: tp.Optional[dict] = None, *args, **kwargs):
+        super().__init__(name, root_metric, metric_level, *args, **kwargs)
         self.labels = labels or {}
+        assert '_timestamp' not in self.labels, 'Cannot make a label called _timestamp!'
 
     def to_json(self) -> dict:
-        return copy.copy(self.labels)
+        k = copy.copy(self.labels)
+        if self.enable_timestamp:
+            k['_timestamp'] = self.last_updated
+        return k
 
     def append_child(self, metric: 'Metric'):
         raise TypeError('This metric cannot contain children!')
@@ -133,13 +151,17 @@ class EmbeddedSubmetrics(LeafMetric):
     """
     def __init__(self, name, root_metric: 'Metric' = None, metric_level: str = None,
                  labels: tp.Optional[dict] = None, *args, **kwargs):
-        super().__init__(name, root_metric, metric_level, labels)
+        super().__init__(name, root_metric, metric_level, labels, *args, **kwargs)
         self.args = args
         self.kwargs = kwargs
         self.embedded_submetrics_enabled = False        # to check for in children
         self.children_mapping = {}
+        self.last_updated = time.time()
 
     def _handle(self, value, **labels):
+        if self.enable_timestamp:
+            self.last_updated = time.time()
+
         key = tuple(sorted(labels.items()))
         if key:
             self.embedded_submetrics_enabled = True

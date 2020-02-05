@@ -82,6 +82,9 @@ class QuantileMetric(EmbeddedSubmetrics):
             else:
                 k['count'] = {'_': self.tot_calls}
                 k['total'] = {'_': self.tot_time}
+                if self.enable_timestamp:
+                    k['total']['_timestamp'] = k['count']['_timestamp'] = self.last_updated
+
                 return k
         return k
 
@@ -94,10 +97,13 @@ class QuantileMetric(EmbeddedSubmetrics):
             for child in self.children:
                 total_calls.extend(child.calls_queue)
             total_calls.sort()
-            return {
+            k = {
                 '_': k,
                 'sum': self.calculate_quantiles(total_calls)
             }
+            if self.enable_timestamp:
+                k['_timestamp'] = self.last_updated
+            return k
         else:
             return self.calculate_quantiles(self.calls_queue)
 
@@ -111,6 +117,8 @@ class QuantileMetric(EmbeddedSubmetrics):
             else:
                 k.update(quantile=p_val,
                          _=percentile(sorted_calls, p_val))
+            if self.enable_timestamp:
+                k['_timestamp'] = self.last_updated
             output.append(k)
         return output
 

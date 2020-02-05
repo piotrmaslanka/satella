@@ -92,6 +92,9 @@ being values.
 The key `_` might map to a list, though. However, elements
 of those are required to be leaf nodes.
 
+If key `_timestamp` exists, it is stated to be the metric acquisition timestamp,
+expressed as a float in seconds since the epoch.
+
 The direct parent of a leaf may be a list. This aggregates
 the labels and their values. These are generated only
 by `LeafMetrics`.

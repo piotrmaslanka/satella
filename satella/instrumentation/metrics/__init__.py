@@ -13,7 +13,9 @@ metrics_lock = threading.Lock()
 
 
 # noinspection PyPep8Naming
-def getMetric(metric_name: str = '', metric_type: str = 'base', metric_level: tp.Optional[str] = None,
+def getMetric(metric_name: str = '',
+              metric_type: str = 'base',
+              metric_level: tp.Optional[str] = None,
               **kwargs):
     """
     Obtain a metric of given name.
@@ -35,14 +37,15 @@ def getMetric(metric_name: str = '', metric_type: str = 'base', metric_level: tp
                         metric_level_to_set_for_root = RUNTIME
                     else:
                         metric_level_to_set_for_root = metric_level_to_set_for_children
-                    metric = Metric('', None, metric_level_to_set_for_root)
+                    metric = Metric('', None, metric_level_to_set_for_root, **kwargs)
                     metric.level = RUNTIME
                     root_metric = metric
                 elif metric_name == tentative_name:
                     metric = METRIC_NAMES_TO_CLASSES[metric_type](tentative_name, root_metric,
                                                                   metric_level, **kwargs)
                 else:
-                    metric = Metric(tentative_name, root_metric, metric_level_to_set_for_children)
+                    metric = Metric(tentative_name, root_metric, metric_level_to_set_for_children,
+                                    **kwargs)
                 metrics[tentative_name] = metric
                 if metric != root_metric:  # prevent infinite recursion errors
                     root_metric.append_child(metric)

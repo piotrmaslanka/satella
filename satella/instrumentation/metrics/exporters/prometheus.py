@@ -24,6 +24,7 @@ class RendererObject(io.StringIO):
             if curly_braces_used:
                 self.write('{')
             main_value = tree.pop('_')
+            ts = tree.pop('_timestamp', None)
             if curly_braces_used:
                 labels = []
                 for key, value in tree.items():
@@ -31,13 +32,18 @@ class RendererObject(io.StringIO):
                     labels.append('%s=%s' % (key, value))
                 self.write(','.join(labels))
                 self.write('}')
-            self.write(' %s\n' % (repr(main_value), ))
+            self.write(' %s' % (repr(main_value), ))
+            if ts is not None:
+                self.write(' %s' % (int(ts*1000), ))
+            self.write('\n')
 
         else:
             for k, v in tree.items():
                 if k == '_' and isinstance(v, list):
                     for elem in v:
                         self.render_node(elem, prefixes=prefixes)
+                    continue
+                if k == '_timestamp':
                     continue
                 self.render_node(v, prefixes=prefixes + [k])
 

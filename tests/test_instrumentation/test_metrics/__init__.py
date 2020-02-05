@@ -20,10 +20,11 @@ class TestMetric(unittest.TestCase):
         self.assertEqual(metr['sum'][0]['_'], 15.0)
         self.assertEqual(metr['count']['_'], 2)
         self.assertEqual(metr['total']['_'], 30.0)
+        self.assertIn('_timestamp', metr['total'])
 
     def test_quantile(self):
         metric = getMetric('root.test.ExecutionTime', 'quantile', quantiles=[0.5, 0.95],
-                           count_calls=False)
+                           count_calls=False, enable_timestamp=False)
         for i in range(9):
             metric.runtime(10.0)
         metric.runtime(15.0)
@@ -32,23 +33,23 @@ class TestMetric(unittest.TestCase):
                                             {'quantile': 0.95, '_': 12.749999999999995}])
 
     def test_labels(self):
-        metric = getMetric('root.test.FloatValue', 'float')
+        metric = getMetric('root.test.FloatValue', 'float', enable_timestamp=False)
         metric.runtime(2, label='value')
         metric.runtime(3, label='key')
 
         self.assertEqual(metric.to_json(), [{'label': 'value', '_': 2}, {'label': 'key', '_': 3}])
 
     def test_base_metric(self):
-        metric = getMetric('root.test.StringValue', 'string')
+        metric = getMetric('root.test.StringValue', 'string', enable_timestamp=False)
         metric.runtime('data')
 
-        metric2 = getMetric('root.test.FloatValue', 'float')
+        metric2 = getMetric('root.test.FloatValue', 'float', enable_timestamp=False)
         metric2.runtime(2.0)
 
-        metric3 = getMetric('root.test.IntValue', 'int')
+        metric3 = getMetric('root.test.IntValue', 'int', enable_timestamp=False)
         metric3.runtime(3)
 
-        root_metric = getMetric('')
+        root_metric = getMetric('', enable_timestamp=False)
 
         self.assertEqual(root_metric.to_json(), {
             'root': {
@@ -61,11 +62,11 @@ class TestMetric(unittest.TestCase):
         })
 
     def test_base_metric(self):
-        metric2 = getMetric('root.test.FloatValue', 'float', DEBUG)
+        metric2 = getMetric('root.test.FloatValue', 'float', DEBUG, enable_timestamp=False)
         metric2.runtime(2.0)
         metric2.debug(1.0)
 
-        metric3 = getMetric('root.test.IntValue', 'int', RUNTIME)
+        metric3 = getMetric('root.test.IntValue', 'int', RUNTIME, enable_timestamp=False)
 
         metric3.runtime(3)
         metric3.debug(2)
@@ -82,11 +83,12 @@ class TestMetric(unittest.TestCase):
         }, root_metric.to_json())
 
     def testInheritance(self):
-        metric = getMetric('root.test.FloatValue', 'float', INHERIT)
+        metric = getMetric('root.test.FloatValue', 'float', INHERIT, enable_timestamp=False)
+        logger.warning('After')
         metric.runtime(2.0)
-        metric_parent = getMetric('root.test')
+        metric_parent = getMetric('root.test', enable_timestamp=False)
 
-        self.assertEqual(getMetric('').to_json(), {
+        self.assertEqual(getMetric('', enable_timestamp=False).to_json(), {
             'root': {
                 'test': {
                     'FloatValue': {'_': 2.0},
@@ -106,12 +108,12 @@ class TestMetric(unittest.TestCase):
         })
 
     def test_labels(self):
-        metric = getMetric('root.IntValue', 'int', labels={'k': 2})
+        metric = getMetric('root.IntValue', 'int', labels={'k': 2}, enable_timestamp=False)
         metric.runtime(3)
         self.assertEqual(metric.to_json(), {'k': 2, '_': 3})
 
     def test_cps(self):
-        metric = getMetric('root.CPSValue', 'cps', time_unit_vectors=[1, 2])
+        metric = getMetric('root.CPSValue', 'cps', time_unit_vectors=[1, 2], enable_timestamp=False)
         metric.runtime()
         self.assertEqual([1, 2], metric.time_unit_vectors)
         self.assertEqual([{'period': 1, '_': 1}, {'period': 2, '_': 1}], metric.to_json())

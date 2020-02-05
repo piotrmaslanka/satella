@@ -58,4 +58,7 @@ class ClicksPerTimeUnitMetric(EmbeddedSubmetrics):
             k['_'] = count
             output.append(k)
 
+        if self.enable_timestamp:
+            k['_timestamp'] = self.last_updated
+
         return output

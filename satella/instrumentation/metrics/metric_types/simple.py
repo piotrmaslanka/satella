@@ -1,3 +1,4 @@
+import time
 import typing as tp
 
 from .base import EmbeddedSubmetrics
@@ -23,6 +24,8 @@ class SimpleMetric(EmbeddedSubmetrics):
             return super().to_json()
         p = super().to_json()
         p['_'] = self.data
+        if self.enable_timestamp:
+            p['_timestamp'] = self.last_updated
         return p
 
 

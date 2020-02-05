@@ -1,6 +1,6 @@
 # v2.3.5
 
-* _TBA_
+* added capability to export metric timestamp
 
 # v2.3.4
 
