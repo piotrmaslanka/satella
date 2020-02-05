@@ -1,3 +1,7 @@
+# v2.3.9
+
+* _TBA_
+
 # v2.3.8
 
 * bugfix release: made it possible to use measure
