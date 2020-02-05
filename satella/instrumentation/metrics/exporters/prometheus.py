@@ -19,7 +19,7 @@ class RendererObject(io.StringIO):
             return
 
         if is_leaf_node(tree):
-            self.write('_'.join(prefixes))
+            self.write('_'.join(prefix for prefix in prefixes if prefix != ''))
             curly_braces_used = len(tree) > 1
             if curly_braces_used:
                 self.write('{')
@@ -27,9 +27,12 @@ class RendererObject(io.StringIO):
             if curly_braces_used:
                 labels = []
                 for key, value in tree.items():
-                    value = repr(value).replace('\\', '\\\\').replace('"', '\"').replace("'", '"')
+                    value = repr(value)
+                    logger.warning(f'value before {value}')
+                    value = value.replace('\\', '\\\\').replace('"', '\\"').replace("'", '"')
+                    logger.warning(f'value after {value}')
                     labels.append('%s=%s' % (key, value))
-                self.write(', '.join(labels))
+                self.write(','.join(labels))
                 self.write('}')
             self.write(' %s\n' % (repr(main_value), ))
 
@@ -38,6 +41,7 @@ class RendererObject(io.StringIO):
                 if k == '_' and isinstance(v, list):
                     for elem in v:
                         self.render_node(elem, prefixes=prefixes)
+                    continue
                 self.render_node(v, prefixes=prefixes + [k])
 
 
@@ -48,6 +52,8 @@ def json_to_prometheus(tree) -> str:
     :param tree: JSON returned by the root metric (or any metric for that instance).
     :return: a string output to present to Prometheus
     """
+    if not tree:
+        return '\n'
     obj = RendererObject()
     obj.render_node(tree, [])
-    return obj.getvalue()
+    return obj.getvalue().replace('\r\n', '\n')
