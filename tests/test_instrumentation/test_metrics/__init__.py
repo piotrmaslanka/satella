@@ -61,6 +61,17 @@ class TestMetric(unittest.TestCase):
             }
         })
 
+    def test_wait(self):
+        metric = getMetric('test', 'quantile', quantiles=[0.5])
+        @metric.measure()
+        def wait(throw=False):
+            time.sleep(1)
+            if throw:
+                raise ValueError('sample exception')
+        wait()
+        self.assertRaises(ValueError, lambda: wait(throw=True))
+        self.assertGreaterEqual(metric.to_json()['_'][0]['_'], 1)
+
     def test_base_metric(self):
         metric2 = getMetric('root.test.FloatValue', 'float', DEBUG, enable_timestamp=False)
         metric2.runtime(2.0)

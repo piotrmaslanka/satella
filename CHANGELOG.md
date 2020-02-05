@@ -1,6 +1,6 @@
 # v2.3.8
 
-* _TBA_
+* bugfix release: made it possible to use measure
 
 # v2.3.7
 

@@ -6,8 +6,7 @@ import typing as tp
 
 import math
 
-from satella.coding import precondition
-from .base import EmbeddedSubmetrics, RUNTIME, DEBUG, LeafMetric
+from .base import EmbeddedSubmetrics, RUNTIME, LeafMetric
 from .registry import register_metric
 
 logger = logging.getLogger(__name__)
@@ -36,10 +35,10 @@ def percentile(n: tp.List[float], percent: float) -> float:
 @register_metric
 class QuantileMetric(EmbeddedSubmetrics):
     """
-    A metric that can register some values, sequentially, and then calculate percentiles from it
+    A metric that can register some values, sequentially, and then calculate quantiles from it
 
     :param last_calls: last calls to handle() to take into account
-    :param percentiles: a sequence of percentiles to return in to_json
+    :param quantiles: a sequence of quantiles to return in to_json
     :param aggregate_children: whether to sum up children values (if present)
     :param count_calls: whether to count total amount of calls and total time
     """
@@ -47,17 +46,17 @@ class QuantileMetric(EmbeddedSubmetrics):
     CLASS_NAME = 'quantile'
 
     def __init__(self, name, root_metric: 'Metric' = None, metric_level: str = None,
-                 last_calls: int = 100, percentiles: tp.Sequence[float] = (0.5, 0.95),
+                 last_calls: int = 100, quantiles: tp.Sequence[float] = (0.5, 0.95),
                  aggregate_children: bool = True,
                  count_calls: bool = True, *args,
                  **kwargs):
         super().__init__(name, root_metric, metric_level, *args, last_calls=last_calls,
-                         percentiles=percentiles, aggregate_children=aggregate_children,
+                         quantiles=quantiles, aggregate_children=aggregate_children,
                          count_calls=count_calls,
                          **kwargs)
         self.last_calls = last_calls
         self.calls_queue = collections.deque()
-        self.percentiles = percentiles
+        self.quantiles = quantiles
         self.aggregate_children = aggregate_children
         self.count_calls = count_calls
         self.tot_calls = 0
@@ -110,7 +109,7 @@ class QuantileMetric(EmbeddedSubmetrics):
     def calculate_quantiles(self, calls_queue):
         output = []
         sorted_calls = sorted(calls_queue)
-        for p_val in self.percentiles:
+        for p_val in self.quantiles:
             k = LeafMetric.to_json(self)
             if not sorted_calls:
                 k.update(quantile=p_val, _=0.0)
@@ -122,7 +121,6 @@ class QuantileMetric(EmbeddedSubmetrics):
             output.append(k)
         return output
 
-    @precondition(None, None, lambda x: x in (RUNTIME, DEBUG))
     def measure(self, include_exceptions: bool = True, logging_level: int = RUNTIME,
                 value_getter: tp.Callable[[], float] = time.monotonic, **labels):
         """
@@ -157,12 +155,12 @@ class QuantileMetric(EmbeddedSubmetrics):
                 finally:
                     value_taken = value_getter() - start_value
                     if excepted is not None and not include_exceptions:
-                        raise e
+                        raise excepted
 
                     self.handle(logging_level, value_taken, **labels)
 
-                    if e is not None:
-                        raise e
+                    if excepted is not None:
+                        raise excepted
 
             return inner
 
