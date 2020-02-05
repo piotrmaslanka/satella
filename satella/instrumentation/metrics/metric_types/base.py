@@ -72,7 +72,6 @@ class Metric(JSONAble):
         self.children.append(metric)
 
     def can_process_this_level(self, target_level: int) -> bool:
-        logger.warning(f'Processing {target_level} having {self.level}')
         return self.level >= target_level
 
     def to_json(self) -> tp.Union[list, dict, str, int, float, None]:
@@ -90,8 +89,6 @@ class Metric(JSONAble):
     def handle(self, level: int, *args, **kwargs) -> None:
         if self.can_process_this_level(level):
             return self._handle(*args, **kwargs)
-        else:
-            logger.warning(f'Refusing to process level {level}')
 
     def debug(self, *args, **kwargs):
         self.handle(DEBUG, *args, **kwargs)
