@@ -48,7 +48,6 @@ class ClicksPerTimeUnitMetric(EmbeddedSubmetrics):
                 return k
             else:
                 k = {'_': k}
-                logger.warning(f'{k}')
                 last_clicks = []
                 for child in self.children:
                     last_clicks.extend(child.last_clicks)
@@ -74,5 +73,4 @@ class ClicksPerTimeUnitMetric(EmbeddedSubmetrics):
             k['_'] = count
             output.append(k)
 
-        logger.warning(f'Returning {output}')
         return output

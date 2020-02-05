@@ -44,7 +44,6 @@ class Metric(JSONAble):
     def __init__(self, name, root_metric: 'Metric' = None, metric_level: str = None,
                  **kwargs):
         """When reimplementing the method, remember to pass kwargs here!"""
-        logger.warning(f'Creating {self.__class__.__qualname__}')
         self.name = name
         self.root_metric = root_metric
         if metric_level is None:
