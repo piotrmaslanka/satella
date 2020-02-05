@@ -1,5 +1,8 @@
 import logging
 import io
+import copy
+from satella.coding import for_argument
+
 
 from ..json import is_leaf_node
 
@@ -8,6 +11,7 @@ logger = logging.getLogger(__name__)
 
 class RendererObject(io.StringIO):
 
+    @for_argument(None, copy.copy)
     def render_node(self, tree, prefixes):
         if isinstance(tree, list):
             for elem in tree:
@@ -16,17 +20,24 @@ class RendererObject(io.StringIO):
 
         if is_leaf_node(tree):
             self.write('_'.join(prefixes))
-            self.write('{')
+            curly_braces_used = len(tree) > 1
+            if curly_braces_used:
+                self.write('{')
             main_value = tree.pop('_')
-            labels = []
-            for key, value in tree.items():
-                value = repr(value).replace('\\', '\\\\').replace('"', '\"').replace("'", '"')
-                labels.append('%s=%s' % (key, value))
-            self.write(', '.join(labels))
-            self.write('} %s\n' % (repr(main_value), ))
+            if curly_braces_used:
+                labels = []
+                for key, value in tree.items():
+                    value = repr(value).replace('\\', '\\\\').replace('"', '\"').replace("'", '"')
+                    labels.append('%s=%s' % (key, value))
+                self.write(', '.join(labels))
+                self.write('}')
+            self.write(' %s\n' % (repr(main_value), ))
 
         else:
             for k, v in tree.items():
+                if k == '_' and isinstance(v, list):
+                    for elem in v:
+                        self.render_node(elem, prefixes=prefixes)
                 self.render_node(v, prefixes=prefixes + [k])
 
 

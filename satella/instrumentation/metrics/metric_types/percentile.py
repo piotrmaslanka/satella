@@ -7,7 +7,7 @@ import typing as tp
 import math
 
 from satella.coding import precondition
-from .base import EmbeddedSubmetrics, RUNTIME, DEBUG
+from .base import EmbeddedSubmetrics, RUNTIME, DEBUG, LeafMetric
 
 logger = logging.getLogger(__name__)
 
@@ -38,18 +38,22 @@ class PercentileMetric(EmbeddedSubmetrics):
 
     :param last_calls: last calls to handle() to take into account
     :param percentiles: a sequence of percentiles to return in to_json
+    :param aggregate_children: whether to sum up children values (if present)
     """
 
     CLASS_NAME = 'percentile'
 
     def __init__(self, name, root_metric: 'Metric' = None, metric_level: str = None,
-                 last_calls: int = 100, percentiles: tp.Sequence[float] = (0.5, 0.95), *args,
+                 last_calls: int = 100, percentiles: tp.Sequence[float] = (0.5, 0.95),
+                 aggregate_children: bool = True, *args,
                  **kwargs):
         super().__init__(name, root_metric, metric_level, *args, last_calls=last_calls,
-                         percentiles=percentiles, **kwargs)
+                         percentiles=percentiles, aggregate_children=aggregate_children,
+                         **kwargs)
         self.last_calls = last_calls
         self.calls_queue = collections.deque()
         self.percentiles = percentiles
+        self.aggregate_children = aggregate_children
 
     def _handle(self, time_taken: float, **labels) -> None:
         if labels or self.embedded_submetrics_enabled:
@@ -60,12 +64,25 @@ class PercentileMetric(EmbeddedSubmetrics):
 
     def to_json(self) -> dict:
         if self.embedded_submetrics_enabled:
-            return super().to_json()
-
-        output = []
-        sorted_calls = sorted(self.calls_queue)
-        for p_val in self.percentiles:
             k = super().to_json()
+            if not self.aggregate_children:
+                return k
+            total_calls = []
+            for child in self.children:
+                total_calls.extend(child.calls_queue)
+            total_calls.sort()
+            return {
+                '_': k,
+                'sum': self.calculate_quantiles(total_calls)
+            }
+        else:
+            return self.calculate_quantiles(self.calls_queue)
+
+    def calculate_quantiles(self, calls_queue):
+        output = []
+        sorted_calls = sorted(calls_queue)
+        for p_val in self.percentiles:
+            k = LeafMetric.to_json(self)
             if not sorted_calls:
                 k.update(quantile=p_val, _=0.0)
             else:

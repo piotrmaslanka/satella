@@ -86,6 +86,9 @@ The leaf node consists of a key `_` which maps the value,
 and remaining keys being labels, and their respective values
 being values.
 
+The key `_` might map to a list, though. However, elements
+of those are required to be leaf nodes.
+
 The direct parent of a leaf may be a list. This aggregates
 the labels and their values. These are generated only
 by `LeafMetrics`.

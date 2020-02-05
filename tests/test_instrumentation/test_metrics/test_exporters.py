@@ -14,3 +14,9 @@ root_metric{k=4} 6
 root_metric{k=4} 6
 """)
 
+    def test_prometheus_2(self):
+        a = {'root': {'_': [{'k': 2, '_': 3}], 'sum': {'_': 4}}}
+        b = json_to_prometheus(a)
+        self.assertTrue("""root{k=2} 3
+root_sum 4
+""", b)

@@ -1,13 +1,23 @@
 import time
 import unittest
+import logging
 
 from satella.instrumentation.metrics import getMetric, DEBUG, RUNTIME, INHERIT
+
+logger = logging.getLogger(__name__)
 
 
 class TestMetric(unittest.TestCase):
 
     def tearDown(self):
         getMetric('').reset()
+
+    def test_percentile_children(self):
+        metric = getMetric('my_metric', 'percentile', percentiles=[0.5])
+        metric.runtime(10.0, label='value')
+        metric.runtime(20.0, label='wtf')
+        metr = metric.to_json()
+        self.assertEqual(metr['sum'][0]['_'], 15.0)
 
     def test_percentile(self):
         metric = getMetric('root.test.ExecutionTime', 'percentile', percentiles=[0.5, 0.95])
