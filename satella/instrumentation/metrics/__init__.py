@@ -4,8 +4,7 @@ import threading
 import typing as tp
 
 logger = logging.getLogger(__name__)
-from .metric_types.base import RUNTIME, DISABLED, DEBUG, INHERIT, Metric
-from .metric_types.registry import METRIC_NAMES_TO_CLASSES
+from .metric_types import METRIC_NAMES_TO_CLASSES, RUNTIME, DISABLED, DEBUG, INHERIT, Metric
 
 __all__ = ['getMetric', 'DISABLED', 'RUNTIME', 'DEBUG', 'INHERIT']
 

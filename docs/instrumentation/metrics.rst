@@ -108,7 +108,7 @@ to create an independent "sub-metric" of sorts, eg.
 
 This functionality is provided by the below class:
 
-.. autoclass:: satella.instrumentation.metrics.metric_types.base.EmbeddedSubmetrics
+.. autoclass:: satella.instrumentation.metrics.metric_types.EmbeddedSubmetrics
     :members:
 
 Rolling your own metrics
