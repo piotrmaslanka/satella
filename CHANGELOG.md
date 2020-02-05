@@ -1,6 +1,7 @@
 # v2.3.3
 
-* _TBA_
+* a bug fixed in `satella.instrumentation.metrics.json`
+* added counting total amount of calls and total time
 
 # v2.3.2
 

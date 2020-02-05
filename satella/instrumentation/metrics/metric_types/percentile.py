@@ -39,30 +39,51 @@ class PercentileMetric(EmbeddedSubmetrics):
     :param last_calls: last calls to handle() to take into account
     :param percentiles: a sequence of percentiles to return in to_json
     :param aggregate_children: whether to sum up children values (if present)
+    :param count_calls: whether to count total amount of calls and total time
     """
 
     CLASS_NAME = 'percentile'
 
     def __init__(self, name, root_metric: 'Metric' = None, metric_level: str = None,
                  last_calls: int = 100, percentiles: tp.Sequence[float] = (0.5, 0.95),
-                 aggregate_children: bool = True, *args,
+                 aggregate_children: bool = True,
+                 count_calls: bool = True, *args,
                  **kwargs):
         super().__init__(name, root_metric, metric_level, *args, last_calls=last_calls,
                          percentiles=percentiles, aggregate_children=aggregate_children,
+                         count_calls=count_calls,
                          **kwargs)
         self.last_calls = last_calls
         self.calls_queue = collections.deque()
         self.percentiles = percentiles
         self.aggregate_children = aggregate_children
+        self.count_calls = count_calls
+        self.tot_calls = 0
+        self.tot_time = 0
 
     def _handle(self, time_taken: float, **labels) -> None:
+        if self.count_calls:
+            self.tot_calls += 1
+            self.tot_time += time_taken
+
         if labels or self.embedded_submetrics_enabled:
             return super()._handle(time_taken, **labels)
         if len(self.calls_queue) == self.last_calls:
             self.calls_queue.pop()
         self.calls_queue.appendleft(time_taken)
 
-    def to_json(self) -> dict:
+    def to_json(self):
+        k = self._to_json()
+        if self.count_calls:
+            if isinstance(k, list):
+                return {'count': {'_': self.tot_calls}, 'total': {'_': self.tot_time}, '_': k}
+            else:
+                k['count'] = {'_': self.tot_calls}
+                k['total'] = {'_': self.tot_time}
+                return k
+        return k
+
+    def _to_json(self) -> dict:
         if self.embedded_submetrics_enabled:
             k = super().to_json()
             if not self.aggregate_children:

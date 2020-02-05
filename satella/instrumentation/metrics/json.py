@@ -62,12 +62,14 @@ def update(tree1, tree2):
 
     if isinstance(tree1, list) and isinstance(tree2, list):
         output_list = tree1
-        for v_b in copy.copy(tree2):
+        for v_b in tree2:
             tree2.remove(v_b)
-            for i, v_a in enumerate(tree1):
+            for i, v_a in enumerate(output_list):
                 if are_equal(v_b, v_a):
                     output_list[i] = v_b
                     break
+                else:
+                    output_list.append(v_b)
         output_list.extend(tree2)
         return output_list
 

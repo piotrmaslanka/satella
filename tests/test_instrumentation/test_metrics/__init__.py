@@ -18,9 +18,12 @@ class TestMetric(unittest.TestCase):
         metric.runtime(20.0, label='wtf')
         metr = metric.to_json()
         self.assertEqual(metr['sum'][0]['_'], 15.0)
+        self.assertEqual(metr['count']['_'], 2)
+        self.assertEqual(metr['total']['_'], 30.0)
 
     def test_percentile(self):
-        metric = getMetric('root.test.ExecutionTime', 'percentile', percentiles=[0.5, 0.95])
+        metric = getMetric('root.test.ExecutionTime', 'percentile', percentiles=[0.5, 0.95],
+                           count_calls=False)
         for i in range(9):
             metric.runtime(10.0)
         metric.runtime(15.0)

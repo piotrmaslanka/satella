@@ -12,9 +12,7 @@ INHERIT = 4
 
 
 class Metric(JSONAble):
-    """
-    A base metric class
-    """
+    """Container for child metrics. A base metric class, as well as the default metric."""
     CLASS_NAME = 'base'
 
     def reset(self) -> None:
