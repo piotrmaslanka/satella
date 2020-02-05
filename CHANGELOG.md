@@ -1,3 +1,7 @@
+# v2.3.7
+
+* _TBA_
+
 # v2.3.6
 
 * bugfix release - wrong annotation mechanics

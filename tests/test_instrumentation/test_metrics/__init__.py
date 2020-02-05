@@ -84,7 +84,6 @@ class TestMetric(unittest.TestCase):
 
     def testInheritance(self):
         metric = getMetric('root.test.FloatValue', 'float', INHERIT, enable_timestamp=False)
-        logger.warning('After')
         metric.runtime(2.0)
         metric_parent = getMetric('root.test', enable_timestamp=False)
 

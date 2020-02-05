@@ -1,4 +1,3 @@
-# coding=UTF-8
 from setuptools import setup, find_packages
 
 from satella import __version__
