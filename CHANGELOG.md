@@ -1,6 +1,6 @@
 # v2.3.1
 
-* _TBA_
+* more descriptive exceptions in descriptors
 
 # v2.3.0
 

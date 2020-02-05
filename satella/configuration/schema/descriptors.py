@@ -72,6 +72,9 @@ class Descriptor(object):
 
         self.MY_EXCEPTIONS = tuple(self.MY_EXCEPTIONS)
 
+    def __str__(self):
+        return '%s()' % (self.__class__.__qualname__, )
+
     def __call__(self, value: ConfigDictValue) -> tp.Any:
         """
         raises ConfigurationSchemaError: on invalid schema
@@ -80,8 +83,8 @@ class Descriptor(object):
 
         try:
             value = self.BASIC_MAKER(value)
-        except self.MY_EXCEPTIONS:
-            raise ConfigurationValidationError('could not pass to maker', value)
+        except self.MY_EXCEPTIONS as e:
+            raise ConfigurationValidationError('could not pass to maker due to %s' % (e, ), value)
 
         self.post_checkers(value)
 
@@ -162,6 +165,9 @@ class Regexp(String):
 
         return match.group(0)
 
+    def __str__(self):
+        return 'Regexp(%s)' % (self.REGEXP.pattern, )
+
 
 class IPv4(Regexp):
     """
@@ -185,6 +191,9 @@ class List(Descriptor):
         value = super().__call__(value)
 
         return [self.type_descriptor(p) for p in value]
+
+    def __str__(self):
+        return 'List(%s)' % (self.type_descriptor, )
 
 
 DictDescriptorKey = tp.NewType('DictDescriptorKey', Descriptor)
@@ -225,6 +234,9 @@ class Dict(Descriptor):
         super().__init__()
         self.keys = {item.name: item for item in keys}  # tp.Dict[str, DictDescriptorKey]
         self.unknown_key_mapper = unknown_key_mapper  # Dict.UnknownKeyHandlerType
+
+    def __str__(self):
+        return 'Dict(%s)' % (self.keys, )
 
     def __call__(self, value: ConfigDictValue) -> dict:
         value = copy.copy(value)
