@@ -1,3 +1,7 @@
+# v2.3.3
+
+* _TBA_
+
 # v2.3.2
 
 * added aggregation to `PercentileMetric`
