@@ -121,3 +121,9 @@ class TestMetric(unittest.TestCase):
         self.assertEqual([{'period': 1, '_': 2}, {'period': 2, '_': 2}], metric.to_json())
         time.sleep(1.2)
         self.assertEqual([{'period': 1, '_': 0}, {'period': 2, '_': 2}], metric.to_json())
+
+    def test_cps_labels(self):
+        metric = getMetric('root.CPSValue', 'cps', time_unit_vectors=[1], enable_timestamp=False)
+        metric.runtime(key='value')
+        self.assertEqual({'_': [{'period': 1, '_': 1, 'key': 'value'}],
+                          'sum': [{'period': 1, '_': 1}]}, metric.to_json())

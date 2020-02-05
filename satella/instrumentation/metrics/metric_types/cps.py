@@ -1,9 +1,10 @@
 import collections
 import time
 import typing as tp
+import copy
 import logging
 
-from .base import EmbeddedSubmetrics
+from .base import EmbeddedSubmetrics, LeafMetric
 from .registry import register_metric
 
 logger = logging.getLogger(__name__)
@@ -19,10 +20,12 @@ class ClicksPerTimeUnitMetric(EmbeddedSubmetrics):
     """
     CLASS_NAME = 'cps'
 
-    def __init__(self, *args, time_unit_vectors: tp.Optional[tp.List[float]] = None, **kwargs):
+    def __init__(self, *args, time_unit_vectors: tp.Optional[tp.List[float]] = None,
+                 aggregate_children: bool = True, **kwargs):
         super().__init__(*args, time_unit_vectors=time_unit_vectors, **kwargs)
         time_unit_vectors = time_unit_vectors or [1]
         self.last_clicks = collections.deque()
+        self.aggregate_children = aggregate_children
         self.cutoff_period = max(time_unit_vectors)
         self.time_unit_vectors = time_unit_vectors
 
@@ -40,25 +43,36 @@ class ClicksPerTimeUnitMetric(EmbeddedSubmetrics):
 
     def to_json(self) -> tp.List[int]:
         if self.embedded_submetrics_enabled:
-            return super().to_json()
+            k = super().to_json()
+            if not self.aggregate_children:
+                return k
+            else:
+                k = {'_': k}
+                logger.warning(f'{k}')
+                last_clicks = []
+                for child in self.children:
+                    last_clicks.extend(child.last_clicks)
+                k['sum'] = self.count_vectors(last_clicks)
+                return k
 
+        return self.count_vectors(self.last_clicks)
+
+    def count_vectors(self, last_clicks):
         count_map = [0] * len(self.time_unit_vectors)
         mono_time = time.monotonic()
         time_unit_vectors = [mono_time - v for v in self.time_unit_vectors]
 
-        for v in self.last_clicks:
+        for v in last_clicks:
             for index, cutoff in enumerate(time_unit_vectors):
                 if v >= cutoff:
                     count_map[index] += 1
 
         output = []
         for time_unit, count in zip(self.time_unit_vectors, count_map):
-            k = super().to_json()
+            k = LeafMetric.to_json(self)
             k['period'] = time_unit
             k['_'] = count
             output.append(k)
 
-        if self.enable_timestamp:
-            k['_timestamp'] = self.last_updated
-
+        logger.warning(f'Returning {output}')
         return output

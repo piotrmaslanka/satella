@@ -138,7 +138,7 @@ class EmbeddedSubmetrics(LeafMetric):
     separate metric.
     For example:
 
-    >>> metric = getMetric('root.test.IntValue', 'int')
+    >>> metric = getMetric('root.test.IntValue', 'int', enable_timestamp=False)
     >>> metric.handle(2, label='key')
     >>> metric.handle(3, label='value')
     >>> assert metric.to_json() == [{'label': 'key', '_': 2}, {'label': 'value', '_': 3}]
@@ -157,7 +157,7 @@ class EmbeddedSubmetrics(LeafMetric):
         self.children_mapping = {}
         self.last_updated = time.time()
 
-    def _handle(self, value, **labels):
+    def _handle(self, *args, **labels):
         if self.enable_timestamp:
             self.last_updated = time.time()
 
@@ -169,17 +169,24 @@ class EmbeddedSubmetrics(LeafMetric):
 
         if key in self.children_mapping:
             # noinspection PyProtectedMember
-            self.children_mapping[key]._handle(value)
+            self.children_mapping[key]._handle(*args)
         else:
             clone = self.clone(labels)
             self.children_mapping[key] = clone
             self.children.append(clone)
             # noinspection PyProtectedMember
-            self.children_mapping[key]._handle(value)
+            self.children_mapping[key]._handle(*args)
 
     def to_json(self) -> list:
         if self.embedded_submetrics_enabled:
-            return [child.to_json() for child in self.children]
+            v = []
+            for child in self.children:
+                p = child.to_json()
+                if isinstance(p, list):
+                    v.extend(p)
+                else:
+                    v.append(p)
+            return v
         else:
             return super().to_json()
 

@@ -1,6 +1,7 @@
 # v2.3.5
 
 * added capability to export metric timestamp
+* added counting total amount of calls in `cps` metric
 
 # v2.3.4
 
