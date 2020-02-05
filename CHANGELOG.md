@@ -1,3 +1,7 @@
+# v2.3.5
+
+* _TBA_
+
 # v2.3.4
 
 * bugfix in Prometheus exporter

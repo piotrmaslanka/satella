@@ -21,6 +21,8 @@ root_metric{k=4} 6
     def test_prometheus_2(self):
         a = {'root': {'_': [{'k': 2, '_': 3}], 'sum': {'_': 4}}}
         b = json_to_prometheus(a)
-        self.assertEqual("""root{k=2} 3
+        self.assertTrue(b == """root{k=2} 3
 root_sum 4
-""".replace('\r\n', '\n'), b)
+""".replace('\r\n', '\n') or b == """root_sum 4
+root{k=2} 3
+""".replace('\r\n', '\n'))
