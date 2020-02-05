@@ -22,8 +22,16 @@ DEBUG, which will cause more data to be registered. If a metric
 is in state INHERIT, it will inherit the metric level from it's
 parent, traversing the tree if required.
 
+INHERIT is the default state for all other metrics than root,
+for root the default is RUNTIME.
+
 You can switch the metric anytime by calling it's ``switch_level``
 method, or by specifying it's metric level during a call to ``getMetric()``.
+
+Note that a decision to accept/reject a ``handle()``-provided value happens
+when ``handle()`` is called, based on current level. If you change
+the level, it may take some time for the metric to return correct
+values.
 
 The call to ``getMetric()`` is specified as follows
 
@@ -37,7 +45,6 @@ Where the second argument is a metric type. Following metric types
 are available:
 
 * base - for just a container metric
-* string - for string values
 * int - for int values
 * float - for float values
 * cps - will count given amount of calls to handle() during last
@@ -60,14 +67,6 @@ with the value that you just passed. In order to keep them in order,
 an additional parameter passed to ``getMetric()``, ``metric_level``, if
 specified, will set given level upon returning the even existing
 metric.
-
-If you don't specify it, the metric level for root metric will be
-set to RUNTIME. Same if you specify INHERIT.
-
-Note that a decision to accept/reject a ``handle()``-provided value happens
-when ``handle()`` is called, based on current level. If you change
-the level, it may take some time for the metric to return correct
-values.
 
 If you specify any kwargs, they will be delivered to the last
 metric's in chain constructor.

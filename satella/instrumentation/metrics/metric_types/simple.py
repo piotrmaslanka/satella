@@ -25,10 +25,6 @@ class SimpleMetric(EmbeddedSubmetrics):
         return p
 
 
-class StringMetric(SimpleMetric):
-    pass
-
-
 class IntegerMetric(SimpleMetric):
     CLASS_NAME = 'int'
     CONSTRUCTOR = int

@@ -30,7 +30,13 @@ class Metric(JSONAble):
         """When reimplementing the method, remember to pass kwargs here!"""
         self.name = name
         self.root_metric = root_metric
-        self.level = metric_level or RUNTIME
+        if metric_level is None:
+            if self.name == '':
+                metric_level = RUNTIME
+            else:
+                metric_level = INHERIT
+        self.level = metric_level
+
         assert not (
                 self.name == '' and self.level == INHERIT), 'Unable to set INHERIT for root metric!'
         self.children = []
