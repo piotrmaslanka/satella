@@ -54,7 +54,6 @@ class Metric(JSONAble):
                 metric_level = INHERIT
         self._level = metric_level
         self.enable_timestamp = kwargs.get('enable_timestamp', True)
-        logger.warning(f'enable timestamp is {self.enable_timestamp}')
         if self.enable_timestamp:
             self.last_updated = time.time()
 
