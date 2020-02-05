@@ -9,13 +9,23 @@ from ..json import is_leaf_node
 logger = logging.getLogger(__name__)
 
 
+def get_labels_for_node(tree):
+    output = {}
+    for k, v in tree.items():
+        if k in ('_', '_timestamp'):
+            continue
+        if not isinstance(v, (list, dict, tuple)):
+            output[k] = v
+    return output
+
+
 class RendererObject(io.StringIO):
 
-    @for_argument(None, copy.copy)
-    def render_node(self, tree, prefixes):
+    @for_argument(None, copy.copy, None, copy.copy)
+    def render_node(self, tree, prefixes, labels):
         if isinstance(tree, list):
             for elem in tree:
-                self.render_node(elem, prefixes=prefixes)
+                self.render_node(elem, prefixes, labels)
             return
 
         if is_leaf_node(tree):
@@ -27,6 +37,7 @@ class RendererObject(io.StringIO):
                 self.write('{')
             if curly_braces_used:
                 labels = []
+                tree.update(labels)
                 for key, value in tree.items():
                     value = repr(value).replace('\\', '\\\\').replace('"', '\\"').replace("'", '"')
                     labels.append('%s=%s' % (key, value))
@@ -38,14 +49,15 @@ class RendererObject(io.StringIO):
             self.write('\n')
 
         else:
+            labels = get_labels_for_node(tree)
             for k, v in tree.items():
                 if k == '_' and isinstance(v, list):
                     for elem in v:
-                        self.render_node(elem, prefixes=prefixes)
+                        self.render_node(elem, prefixes, labels)
                     continue
                 if k == '_timestamp':
                     continue
-                self.render_node(v, prefixes=prefixes + [k])
+                self.render_node(v, prefixes + [k], labels)
 
 
 def json_to_prometheus(tree) -> str:
@@ -58,5 +70,5 @@ def json_to_prometheus(tree) -> str:
     if not tree:
         return '\n'
     obj = RendererObject()
-    obj.render_node(tree, [])
+    obj.render_node(tree, [], {})
     return obj.getvalue().replace('\r\n', '\n')

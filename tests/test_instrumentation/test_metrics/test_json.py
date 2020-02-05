@@ -27,3 +27,10 @@ class TestJson(unittest.TestCase):
         self.assertEqual({'root': {'metric': [{'period': 1, '_': 25.0,
                                                'key': 'value'}, {'period': 2, '_': 50.0,
                                                                  'key': 'value'}]}}, b)
+
+    def test_annotate_timestamp(self):
+        a = {'_timestamp': 2342342342.25, '_': [{'_': 5}, {'_': 6}], 'k': 3}
+        b = annotate_every_leaf_node_with_labels(a, {'key': 'value'})
+        self.assertEqual({'_timestamp': 2342342342.25, '_': [{'_': 5, 'key': 'value'},
+                                                             {'_': 6, 'key': 'value'}],
+                          'k': 3}, b)

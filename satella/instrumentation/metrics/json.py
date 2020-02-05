@@ -32,7 +32,6 @@ def annotate_every_leaf_node_with_labels(tree, labels):
     :param labels: dictionary of labels to add
     :return: tree
     """
-    logger.warning(f'annotating {tree} with {labels}')
     if isinstance(tree, list):
         return [annotate_every_leaf_node_with_labels(q, labels) for q in tree]
 
@@ -41,6 +40,10 @@ def annotate_every_leaf_node_with_labels(tree, labels):
         return tree
 
     for k in tree.keys():
+        if k == '_timestamp':
+            continue
+        if not isinstance(tree[k], (list, dict)):
+            continue
         tree[k] = annotate_every_leaf_node_with_labels(tree[k], labels)
 
     return tree
