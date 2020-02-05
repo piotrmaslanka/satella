@@ -12,6 +12,8 @@ logger = logging.getLogger(__name__)
 def are_equal(tree1, tree2) -> bool:
     tree1.pop('_', None)
     tree2.pop('_', None)
+    tree1.pop('_timestamp', None)
+    tree2.pop('_timestamp', None)
     return tree1 == tree2
 
 
@@ -30,6 +32,7 @@ def annotate_every_leaf_node_with_labels(tree, labels):
     :param labels: dictionary of labels to add
     :return: tree
     """
+    logger.warning(f'annotating {tree} with {labels}')
     if isinstance(tree, list):
         return [annotate_every_leaf_node_with_labels(q, labels) for q in tree]
 
