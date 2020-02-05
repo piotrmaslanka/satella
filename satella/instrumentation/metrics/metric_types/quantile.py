@@ -34,7 +34,7 @@ def percentile(n: tp.List[float], percent: float) -> float:
 
 
 @register_metric
-class PercentileMetric(EmbeddedSubmetrics):
+class QuantileMetric(EmbeddedSubmetrics):
     """
     A metric that can register some values, sequentially, and then calculate percentiles from it
 
@@ -44,7 +44,7 @@ class PercentileMetric(EmbeddedSubmetrics):
     :param count_calls: whether to count total amount of calls and total time
     """
 
-    CLASS_NAME = 'percentile'
+    CLASS_NAME = 'quantile'
 
     def __init__(self, name, root_metric: 'Metric' = None, metric_level: str = None,
                  last_calls: int = 100, percentiles: tp.Sequence[float] = (0.5, 0.95),

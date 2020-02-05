@@ -12,8 +12,8 @@ class TestMetric(unittest.TestCase):
     def tearDown(self):
         getMetric('').reset()
 
-    def test_percentile_children(self):
-        metric = getMetric('my_metric', 'percentile', percentiles=[0.5])
+    def test_quantile_children(self):
+        metric = getMetric('my_metric', 'quantile', quantiles=[0.5])
         metric.runtime(10.0, label='value')
         metric.runtime(20.0, label='wtf')
         metr = metric.to_json()
@@ -21,8 +21,8 @@ class TestMetric(unittest.TestCase):
         self.assertEqual(metr['count']['_'], 2)
         self.assertEqual(metr['total']['_'], 30.0)
 
-    def test_percentile(self):
-        metric = getMetric('root.test.ExecutionTime', 'percentile', percentiles=[0.5, 0.95],
+    def test_quantile(self):
+        metric = getMetric('root.test.ExecutionTime', 'quantile', quantiles=[0.5, 0.95],
                            count_calls=False)
         for i in range(9):
             metric.runtime(10.0)

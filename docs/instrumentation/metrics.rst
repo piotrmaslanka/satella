@@ -14,7 +14,7 @@ modules or classes. It can be in one of 3 states:
 * DEBUG
 * INHERIT
 
-By default, it runs in _runtime_ mode. This means that statistics
+By default, it runs in *RUNTIME* mode. This means that statistics
 are collected only from metrics of this
 instrument that are set to at least RUNTIME. If a user wants to
 dig deeper, it can switch the instrument to 
@@ -25,8 +25,8 @@ parent, traversing the tree if required.
 INHERIT is the default state for all other metrics than root,
 for root the default is RUNTIME.
 
-You can switch the metric anytime by calling it's ``switch_level``
-method, or by specifying it's metric level during a call to ``getMetric()``.
+You can switch the metric anytime by assigning a correct value to
+it's ``level`` property, or by specifying it's metric level during a call to ``getMetric()``.
 
 Note that a decision to accept/reject a ``handle()``-provided value happens
 when ``handle()`` is called, based on current level. If you change
@@ -52,10 +52,10 @@ are available:
 
     .. autoclass:: satella.instrumentation.metrics.metric_types.ClicksPerTimeUnitMetric
 
-* percentile - a metric that counts a rolling window of values,
+* quantile - a metric that counts a rolling window of values,
   and provides for a way to calculate percentiles
 
-    .. autoclass:: satella.instrumentation.metrics.metric_types.PercentileMetric
+    .. autoclass:: satella.instrumentation.metrics.metric_types.QuantileMetric
 
 Third parameter is optional. If set, all child metrics created 
 during this metric's instantiation will receive such metric level.

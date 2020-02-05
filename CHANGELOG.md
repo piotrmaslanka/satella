@@ -3,6 +3,7 @@
 * a bug fixed in `satella.instrumentation.metrics.json`
 * added counting total amount of calls and total time
 * removed `StringMetric`, as it is not readily Prometheus-exportable
+* `PercentileMetric` renamed to `QuantileMetric`
 
 # v2.3.2
 
