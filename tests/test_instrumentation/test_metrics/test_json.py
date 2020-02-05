@@ -11,7 +11,6 @@ class TestJson(unittest.TestCase):
         a1 = {'root': {'metric': [{'period': 1, '_': 25.0}, {'period': 2, '_': 50.0}]}}
         a2 = {'root': {'metric': [{'period': 1, '_': 20.0}]}}
         a3 = update(a1, a2)
-        logger.warning(a3)
         a4 = {'root': {'metric': [{'period': 1, '_': 20.0}, {'period': 2, '_': 50.0}]}}
         self.assertEqual(a3, a4)
 
