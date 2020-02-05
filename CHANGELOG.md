@@ -1,3 +1,7 @@
+# v2.3.4
+
+* _TBA_
+
 # v2.3.3
 
 * a bug fixed in `satella.instrumentation.metrics.json`
