@@ -1,6 +1,6 @@
 # v2.3.7
 
-* _TBA_
+* finally got Prometheus exporter right
 
 # v2.3.6
 
