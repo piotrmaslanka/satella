@@ -31,13 +31,13 @@ class RendererObject(io.StringIO):
         if is_leaf_node(tree):
             self.write('_'.join(prefix for prefix in prefixes if prefix != ''))
             main_value = tree.pop('_')
+            tree.update(labels)
             ts = tree.pop('_timestamp', None)
             curly_braces_used = len(tree) > 0
             if curly_braces_used:
                 self.write('{')
             if curly_braces_used:
                 labels = []
-                tree.update(labels)
                 for key, value in tree.items():
                     value = repr(value).replace('\\', '\\\\').replace('"', '\\"').replace("'", '"')
                     labels.append('%s=%s' % (key, value))
