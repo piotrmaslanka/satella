@@ -7,6 +7,10 @@ logger = logging.getLogger(__name__)
 
 
 class TestExporters(unittest.TestCase):
+    def test_prometheus_timestamps(self):
+        a = {'root': {'_': 5, '_timestamp': 10}}
+        self.assertEqual("""root 5 10000\n""", json_to_prometheus(a))
+
     def test_prometheus(self):
 
         a = {'root': {'metric': [{'k': 2, '_': 3, 'm': '"'}, {'k': 4, '_': 6}]}}

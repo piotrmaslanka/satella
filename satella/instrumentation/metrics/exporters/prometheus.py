@@ -20,11 +20,11 @@ class RendererObject(io.StringIO):
 
         if is_leaf_node(tree):
             self.write('_'.join(prefix for prefix in prefixes if prefix != ''))
-            curly_braces_used = len(tree) > 1
-            if curly_braces_used:
-                self.write('{')
             main_value = tree.pop('_')
             ts = tree.pop('_timestamp', None)
+            curly_braces_used = len(tree) > 0
+            if curly_braces_used:
+                self.write('{')
             if curly_braces_used:
                 labels = []
                 for key, value in tree.items():
