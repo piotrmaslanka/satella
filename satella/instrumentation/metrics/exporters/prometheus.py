@@ -27,10 +27,7 @@ class RendererObject(io.StringIO):
             if curly_braces_used:
                 labels = []
                 for key, value in tree.items():
-                    value = repr(value)
-                    logger.warning(f'value before {value}')
-                    value = value.replace('\\', '\\\\').replace('"', '\\"').replace("'", '"')
-                    logger.warning(f'value after {value}')
+                    value = repr(value).replace('\\', '\\\\').replace('"', '\\"').replace("'", '"')
                     labels.append('%s=%s' % (key, value))
                 self.write(','.join(labels))
                 self.write('}')
