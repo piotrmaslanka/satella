@@ -8,15 +8,18 @@ from satella.coding import for_argument
 logger = logging.getLogger(__name__)
 
 
-@for_argument(copy.copy, copy.copy)
-def are_equal(tree1, tree2) -> bool:
-    tree1.pop('_', None)
-    tree2.pop('_', None)
-    tree1.pop('_timestamp', None)
-    tree2.pop('_timestamp', None)
+def get_labels_for_node(tree):
+    output = {}
+    for k, v in tree.items():
+        if k in ('_', '_timestamp'):
+            continue
+        if not isinstance(v, (list, dict, tuple)):
+            output[k] = v
+    return output
 
-    tree1 = get_labels_for_node(tree1)
-    tree2 = get_labels_for_node(tree2)
+
+@for_argument(get_labels_for_node, get_labels_for_node)
+def are_equal(tree1, tree2) -> bool:
     return tree1 == tree2
 
 
@@ -94,12 +97,3 @@ def update(tree1, tree2):
 
     return return_tree
 
-
-def get_labels_for_node(tree):
-    output = {}
-    for k, v in tree.items():
-        if k in ('_', '_timestamp'):
-            continue
-        if not isinstance(v, (list, dict, tuple)):
-            output[k] = v
-    return output
