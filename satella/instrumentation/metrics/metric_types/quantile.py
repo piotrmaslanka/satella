@@ -149,15 +149,11 @@ class QuantileMetric(EmbeddedSubmetrics):
 
         def outer(fun):
             @functools.wraps(fun)
-            def inner(*args, **kwargs):
+            def inner_normal(*args, **kwargs):
                 start_value = value_getter()
                 excepted = None
                 try:
-                    if inspect.isgeneratorfunction(fun):
-                        for v in fun(*args, **kwargs):
-                            yield v
-                    else:
-                        return fun(*args, **kwargs)
+                    return fun(*args, **kwargs)
                 except Exception as e:
                     excepted = e
                 finally:
@@ -170,6 +166,28 @@ class QuantileMetric(EmbeddedSubmetrics):
                     if excepted is not None:
                         raise excepted
 
-            return inner
+            @functools.wraps(fun)
+            def inner_generator(*args, **kwargs):
+                start_value = value_getter()
+                excepted = None
+                try:
+                    for v in fun(*args, **kwargs):
+                        yield v
+                except Exception as e:
+                    excepted = e
+                finally:
+                    value_taken = value_getter() - start_value
+                    if excepted is not None and not include_exceptions:
+                        raise excepted
+
+                    self.handle(logging_level, value_taken, **labels)
+
+                    if excepted is not None:
+                        raise excepted
+
+            if inspect.isgeneratorfunction(fun):
+                return inner_generator
+            else:
+                return inner_normal
 
         return outer

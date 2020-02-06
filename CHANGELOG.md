@@ -1,6 +1,7 @@
 # v2.3.16
 
-* _TBA_
+* bugfix release, previous call would transform normal functions into generators and 
+  we want to avoid that
 
 # v2.3.15
 
