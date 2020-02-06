@@ -13,6 +13,17 @@ class TestMetric(unittest.TestCase):
     def tearDown(self):
         getMetric('').reset()
 
+    def test_quantile_measure_generator(self):
+        metric = getMetric('my_metric', 'quantile', quantiles=[0.5])
+        @metric.measure()
+        def generator():
+            yield 2
+            time.sleep(1)
+            yield 3
+        for v in generator():
+            pass
+        self.assertGreaterEqual(metric.to_json()['_'][0]['_'], 1)
+
     def test_quantile_children(self):
         metric = getMetric('my_metric', 'quantile', quantiles=[0.5], enable_timestamp=True)
         metric.runtime(10.0, label='value')

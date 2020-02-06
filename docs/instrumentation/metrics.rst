@@ -62,6 +62,11 @@ are available:
 
     .. autoclass:: satella.instrumentation.metrics.metric_types.QuantileMetric
 
+Note that ``quantile.measure()`` will include time spent
+processing the generator's content by the client, so you might
+want to avoid measuring generators. However,
+if this is the behaviour that you want, you get it.
+
 Third parameter is optional. If set, all child metrics created 
 during this metric's instantiation will receive such metric level.
 If the metric already exists, it's level will be set to provided

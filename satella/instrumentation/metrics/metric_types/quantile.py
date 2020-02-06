@@ -1,5 +1,6 @@
 import collections
 import functools
+import inspect
 import logging
 import time
 import typing as tp
@@ -136,6 +137,9 @@ class QuantileMetric(EmbeddedSubmetrics):
         >>> def measure_my_execution(args):
         >>>     ...
 
+        If wrapped around generator, it will time it from the first element to the last,
+        so beware that it will depend on the speed of the consumer.
+
         :param include_exceptions: whether to include exceptions
         :param logging_level: one of RUNTIME or DEBUG
         :param value_getter: a callable that takes no arguments and returns a float, which is
@@ -149,7 +153,11 @@ class QuantileMetric(EmbeddedSubmetrics):
                 start_value = value_getter()
                 excepted = None
                 try:
-                    return fun(*args, **kwargs)
+                    if inspect.isgeneratorfunction(fun):
+                        for v in fun(*args, **kwargs):
+                            yield v
+                    else:
+                        return fun(*args, **kwargs)
                 except Exception as e:
                     excepted = e
                 finally:
