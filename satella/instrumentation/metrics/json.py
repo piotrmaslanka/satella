@@ -14,6 +14,9 @@ def are_equal(tree1, tree2) -> bool:
     tree2.pop('_', None)
     tree1.pop('_timestamp', None)
     tree2.pop('_timestamp', None)
+
+    tree1 = get_labels_for_node(tree1)
+    tree2 = get_labels_for_node(tree2)
     return tree1 == tree2
 
 
@@ -91,3 +94,12 @@ def update(tree1, tree2):
 
     return return_tree
 
+
+def get_labels_for_node(tree):
+    output = {}
+    for k, v in tree.items():
+        if k in ('_', '_timestamp'):
+            continue
+        if not isinstance(v, (list, dict, tuple)):
+            output[k] = v
+    return output

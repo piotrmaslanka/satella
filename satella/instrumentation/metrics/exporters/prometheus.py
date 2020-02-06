@@ -2,21 +2,11 @@ import logging
 import io
 import copy
 from satella.coding import for_argument
-
+from satella.instrumentation.metrics.json import get_labels_for_node
 
 from ..json import is_leaf_node
 
 logger = logging.getLogger(__name__)
-
-
-def get_labels_for_node(tree):
-    output = {}
-    for k, v in tree.items():
-        if k in ('_', '_timestamp'):
-            continue
-        if not isinstance(v, (list, dict, tuple)):
-            output[k] = v
-    return output
 
 
 class RendererObject(io.StringIO):
