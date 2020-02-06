@@ -1,3 +1,7 @@
+# v2.3.15
+
+* _TBA_
+
 # v2.3.14
 
 * set default `enable_timestamp` to False
