@@ -1,6 +1,6 @@
 # v2.3.12
 
-* _TBA_
+* a bugfix release - massive iterator lossage in `update`
 
 # v2.3.11
 

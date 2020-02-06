@@ -16,9 +16,48 @@ class TestJson(unittest.TestCase):
         self.assertEqual(a3, a4)
 
     def test_are_equal(self):
-        a = {'root': {'_': {'_': 5, 'sum': {'_': 5}}}}
-        b = {'root': {'_': {'_': 6, 'sum': {'_': 7}}}}
-        self.assertEqual({'root': {'_': {'_': 6, 'sum': {'_': 7}}}}, update(a, b))
+        a = {'root': {'_': {'_': 5, 'sum': {'_': 5, '_timestamp': 10}}}}
+        b = {'root': {'_': {'_': 6, 'sum': {'_': 7, '_timestamp': 12}}}}
+        self.assertEqual({'root': {'_': {'_': 6, 'sum': {'_': 7, '_timestamp': 12}}}}, update(a, b))
+
+    def test_update_3(self):
+        a = { 'mhc': {   '_timestamp': 1580953411.8270154,
+               'submissions_per_second': [   {   '_': 0,
+                                                 '_timestamp': 1580953523.7159278,
+                                                 'period': 1,
+                                                 'service': 'mhc',
+                                                 'slot': 1},
+                                             {   '_': 0,
+                                                 '_timestamp': 1580953411.8270352,
+                                                 'period': 20,
+                                                 'service': 'mhc',
+                                                 'slot': 1},
+                                             {   '_': 7,
+                                                 '_timestamp': 1580953523.7159278,
+                                                 'period': 60,
+                                                 'service': 'mhc',
+                                                 'slot': 1},
+                                             ]}}
+
+        b = { 'mhc': {   '_timestamp': 1580953411.8270154,
+               'submissions_per_second': [  {
+                                                '_': 3,
+                                                 '_timestamp': 1580953463.6468315,
+                                                 'period': 1,
+                                                 'service': 'mhc',
+                                                 'slot': 1},
+                                             {   '_': 5,
+                                                 '_timestamp': 1580953463.6468315,
+                                                 'period': 20,
+                                                 'service': 'mhc',
+                                                 'slot': 1},
+                                               {'_': 4,
+                                                '_timestamp': 1580953463.6468315,
+                                                'period': 60,
+                                                'service': 'mhc',
+                                                'slot': 1},
+                                           ]}}
+        self.assertEqual(b, update(a, b))
 
     def test_update_2(self):
         a = {'root': {'_': [{'a': 5, "_": 3}], 'sum': [{"a": 5, "_": 3}]}}
