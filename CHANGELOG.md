@@ -1,3 +1,7 @@
+# v2.3.17
+
+* _TBA_
+
 # v2.3.16
 
 * bugfix release, previous call would transform normal functions into generators and 
