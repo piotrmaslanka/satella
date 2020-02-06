@@ -52,7 +52,7 @@ class Metric(JSONAble):
             else:
                 metric_level = INHERIT
         self._level = metric_level
-        self.enable_timestamp = kwargs.get('enable_timestamp', True)
+        self.enable_timestamp = kwargs.get('enable_timestamp', False)
         if self.enable_timestamp:
             self.last_updated = time.time()
 
