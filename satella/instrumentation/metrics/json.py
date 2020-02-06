@@ -75,11 +75,8 @@ def update(tree1, tree2):
     if isinstance(tree1, list) and isinstance(tree2, list):
         output_list = tree1
         for v_b in tree2:
-            logger.warning(f'Processing {v_b}')
             for i, v_a in enumerate(output_list):
-                logger.warning(f'Comparing {v_b} against {v_a}')
                 if are_equal(v_b, v_a):
-                    logger.warning(f'They be equal')
                     output_list[i] = v_b
                     break
             else:
