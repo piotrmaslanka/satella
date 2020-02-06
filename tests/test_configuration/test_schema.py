@@ -94,6 +94,20 @@ class TestSchema(unittest.TestCase):
             'default_five': 5
         })
 
+    def test_optional_list(self):
+        d1 = {
+            'files': {
+                'type': 'list',
+                'of': {
+                    'name': 'str',
+                    'content': 'str'
+                },
+                'default': []
+            }
+        }
+        d = descriptor_from_dict(d1)({})
+        self.assertIn('files', d)
+
     def test_schema(self):
         D1 = {
             'key_s': 'value',

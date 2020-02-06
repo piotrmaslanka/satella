@@ -18,7 +18,7 @@ class CounterMetric(EmbeddedSubmetrics):
     def __init__(self, name, root_metric: 'Metric' = None, metric_level: str = None,
                  sum_children: bool = True,
                  count_calls: bool = False, *args, **kwargs):
-        super().__init__(name, root_metric, metric_level, sum_childen=sum_children,
+        super().__init__(name, root_metric, metric_level, sum_children=sum_children,
                          count_calls=count_calls, *args, **kwargs)
         self.sum_children = sum_children
         self.count_calls = count_calls

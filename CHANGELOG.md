@@ -1,6 +1,6 @@
 # v2.3.10
 
-* _TBA_
+* a bugfix release - children naming
 
 # v2.3.9
 
