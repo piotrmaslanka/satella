@@ -14,7 +14,7 @@ class TestMetric(unittest.TestCase):
         getMetric('').reset()
 
     def test_quantile_children(self):
-        metric = getMetric('my_metric', 'quantile', quantiles=[0.5])
+        metric = getMetric('my_metric', 'quantile', quantiles=[0.5], enable_timestamp=True)
         metric.runtime(10.0, label='value')
         metric.runtime(20.0, label='wtf')
         metr = metric.to_json()
