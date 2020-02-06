@@ -1,3 +1,7 @@
+# v2.3.16
+
+* _TBA_
+
 # v2.3.15
 
 * `QuantileMetric.measure` will properly measure generators now
