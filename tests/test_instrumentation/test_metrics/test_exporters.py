@@ -2,6 +2,7 @@ import unittest
 import typing as tp
 import logging
 import requests
+import time
 from satella.instrumentation.metrics import getMetric
 from satella.instrumentation.metrics.exporters import metric_data_collection_to_prometheus, \
     PrometheusHTTPExporterThread
@@ -25,6 +26,7 @@ class TestExporters(unittest.TestCase):
         phet.start()
         metr = getMetric('test.metric', 'int')
         metr.runtime(5)
+        time.sleep(0.5)
         data = requests.get('http://localhost:1025/metrics')
         self.assertIn('test_metric 5', data.text)
         phet.terminate().join()
