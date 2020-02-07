@@ -1,3 +1,7 @@
+# v2.4.4
+
+* _TBA_
+
 # v2.4.3
 
 * better test coverage
