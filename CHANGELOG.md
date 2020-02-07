@@ -1,6 +1,7 @@
-# v2.3.17
+# v2.4.0
 
-* _TBA_
+* major refactor for metrics
+* added `frozendict`
 
 # v2.3.16
 
