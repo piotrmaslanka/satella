@@ -40,8 +40,8 @@ class PrometheusHTTPExporterThread(threading.Thread):
         self.port = port
 
     def run(self):
-        with http.server.HTTPServer((self.interface, self.port), PrometheusHandler) as httpd:
-            httpd.serve_forever()
+        httpd = http.server.HTTPServer((self.interface, self.port), PrometheusHandler)
+        httpd.serve_forever()
 
 
 class RendererObject(io.StringIO):
