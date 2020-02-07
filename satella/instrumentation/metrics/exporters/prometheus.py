@@ -1,5 +1,6 @@
 import logging
 import io
+import typing as tp
 from satella.coding.concurrent import TerminableThread
 import http.server
 from .. import getMetric
@@ -11,15 +12,18 @@ __all__ = ['metric_data_collection_to_prometheus', 'PrometheusHTTPExporterThread
 
 
 class PrometheusHandler(http.server.BaseHTTPRequestHandler):
+    """A request handler for the PrometheusHTTPExporterThread HTTP server"""
 
     def do_GET(self):
+        """only GETs are supported"""
         if self.path != '/metrics':
             self.send_error(404, 'Unknown path. Only /metrics is supported.')
             return
 
         root_metric = getMetric()
-
-        metric_data = metric_data_collection_to_prometheus(root_metric.to_metric_data())
+        metric_data = root_metric.to_metric_data()
+        metric_data.add_labels(self.server.extra_labels)
+        metric_data = metric_data_collection_to_prometheus(metric_data)
         self.send_response(200)
         self.send_header('Content-Type', 'text/plain; charset=utf-8')
         self.end_headers()
@@ -33,11 +37,14 @@ class PrometheusHTTPExporterThread(TerminableThread):
 
     :param interface: a interface to bind to
     :param port: a port to bind to
+    :param extra_labels: extra labels to add to each metric data point, such as the name of the
+        service or the hostname
     """
-    def __init__(self, interface: str, port: int):
+    def __init__(self, interface: str, port: int, extra_labels: tp.Optional[dict] = None):
         super().__init__(daemon=True)
         self.interface = interface
         self.port = port
+        self.extra_labels = extra_labels or {}
         self.httpd = http.server.HTTPServer((self.interface, self.port), PrometheusHandler,
                                             bind_and_activate=False)
 
@@ -47,7 +54,14 @@ class PrometheusHTTPExporterThread(TerminableThread):
         self.httpd.serve_forever()
         self.httpd.server_close()
 
-    def terminate(self, force: bool = False):
+    def terminate(self, force: bool = False) -> 'PrometheusHTTPExporterThread':
+        """
+        Order this thread to terminate and return self.
+
+        You will need to .join() on this thread to ensure that it has quit.
+
+        :param force: whether to terminate this thread by injecting an exception into it
+        """
         self.httpd.shutdown()
         return super().terminate(force=force)
 

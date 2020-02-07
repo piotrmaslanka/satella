@@ -22,11 +22,12 @@ class TestExporters(unittest.TestCase):
         self.assertIn("""root_metric{k="4"} 6""", b)
 
     def test_exporter_http_server(self):
-        phet = PrometheusHTTPExporterThread('localhost', 1025)
-        phet.start()
-        metr = getMetric('test.metric', 'int')
-        metr.runtime(5)
-        time.sleep(0.5)
-        data = requests.get('http://localhost:1025/metrics')
-        self.assertIn('test_metric 5', data.text)
-        phet.terminate().join()
+        with PrometheusHTTPExporterThread('localhost', 1025):
+            metr = getMetric('test.metric', 'int')
+            metr.runtime(5)
+            time.sleep(0.5)
+            data = requests.get('http://localhost:1025/metrics')
+            self.assertEqual(200, data.status_code)
+            self.assertIn('test_metric 5', data.text)
+            data2 = requests.get('http://localhost:1025/404')
+            self.assertEqual(404, data2.status_code)

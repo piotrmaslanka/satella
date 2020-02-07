@@ -21,6 +21,14 @@ class TerminableThread(threading.Thread):
 
     If you decide to override run(), you got to check periodically for self._terminating to become true.
     If you decide to use the loop/cleanup interface, you don't need to do so.
+
+    You may also use it as a context manager. Entering the context will start the thread, and exiting
+    it will .terminate().join() it, in the following way:
+
+    >>> a = MeGrimlock()
+    >>> with a:
+    >>>     ...
+    >>> self.assertFalse(a.is_alive())
     """
 
     def __init__(self, *args, **kwargs):
@@ -50,6 +58,15 @@ class TerminableThread(threading.Thread):
 
         The default implementation does nothing.
         """
+
+    def __enter__(self):
+        """Returns self"""
+        self.start()
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.terminate().join()
+        return False
 
     def terminate(self, force: bool = False) -> 'TerminableThread':
         """
