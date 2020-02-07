@@ -20,6 +20,11 @@ class MetricData(JSONAble):
         self.labels = frozendict(labels) if labels is not None else frozendict()
         self.timestamp = timestamp
 
+    def add_labels(self, labels: dict) -> None:
+        labels_current = dict(self.labels)
+        labels_current.update(labels)
+        self.labels = frozendict(labels_current)
+
     def __eq__(self, other: 'MetricData') -> bool:
         return self.labels == other.labels and self.name == other.name
 
@@ -57,6 +62,13 @@ class MetricData(JSONAble):
 
 
 class MetricDataCollection(JSONAble):
+    def add_labels(self, labels: dict) -> None:
+        for child in self.values:
+            child.add_labels(labels)
+
+    def __repr__(self):
+        return 'MetricDataCollection(%s)' % (repr(self.values, ))
+
     def __init__(self, *values: tp.Union[MetricData, 'MetricDataCollection']):
         if len(values) == 1:
             if isinstance(values[0], MetricData):

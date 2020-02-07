@@ -6,6 +6,17 @@ logger = logging.getLogger(__name__)
 
 
 class TestMetricData(unittest.TestCase):
+
+    def test_update_labels_2(self):
+        a = MetricDataCollection(MetricData('root', 2, {'labels': 'key'}))
+        a.add_labels({'service': 'wtf'})
+        self.assertEqual(next(iter(a.values)).labels, {'labels': 'key', 'service': 'wtf'})
+
+    def test_update_labels(self):
+        a = MetricData('root', 2, {'labels': 'key'})
+        a.add_labels({'service': 'wtf'})
+        self.assertEqual(a.labels, {'labels': 'key', 'service': 'wtf'})
+
     def test_update(self):
         a1 = MetricDataCollection(MetricData('root.metric', 25.0, {'period': 1}),
                                   MetricData('root.metric', 50.0, {'period': 2}))
