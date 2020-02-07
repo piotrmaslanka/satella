@@ -1,6 +1,7 @@
 import logging
 import typing as tp
 from .base import EmbeddedSubmetrics, LeafMetric
+from ..data import  MetricData, MetricDataCollection
 from .registry import register_metric
 logger = logging.getLogger(__name__)
 
@@ -25,35 +26,30 @@ class CounterMetric(EmbeddedSubmetrics):
         self.calls = 0
         self.value = 0
 
-    def to_json(self) -> list:
+    def to_metric_data(self) -> MetricDataCollection:
         if self.embedded_submetrics_enabled:
-            k = super().to_json()
+            k = super().to_metric_data()
             if self.sum_children:
-                r = LeafMetric.to_json(self)
-                r['_'] = self.value
-                k = {'_': k, 'sum': r}
-                if self.count_calls:
-                    q = LeafMetric.to_json(self)
-                    q['_'] = self.calls
-                    k['count'] = q
+                k += MetricData(self.name+'.sum', self.value, self.labels, self.get_timestamp())
+            if self.count_calls:
+                k += MetricData(self.name+'.count', self.calls, self.labels, self.get_timestamp())
             return k
 
-        p = super().to_json()
-        p['_'] = self.value
+        p = super().to_metric_data()
+        p.set_value(self.value)
         if self.count_calls:
-            r, q = super().to_json(), super().to_json()
-            r['_'] = self.value
-            p['_'] = r
-            q['_'] = self.calls
-            p['count'] = q
+            p += MetricData(self.name+'.count', self.calls, self.labels, self.get_timestamp())
+        logger.warning(f'{id(self)} returning {p}')
         return p
 
     def _handle(self, delta: float = 0, **labels):
+        logger.warning(f'{id(self)} Processing {labels}')
         if self.embedded_submetrics_enabled or labels:
             if self.sum_children:
                 self.value += delta
             self.calls += 1
             return super()._handle(delta, **labels)
+        logger.warning(f'{id(self)} Standard call')
 
         self.value += delta
         self.calls += 1

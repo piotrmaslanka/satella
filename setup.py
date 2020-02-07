@@ -6,7 +6,7 @@ setup(keywords=['ha', 'high availability', 'scalable', 'scalability', 'server'],
       packages=find_packages(include=['satella', 'satella.*']),
       version=__version__,
       install_requires=[
-            'psutil'
+            'psutil', 'frozendict'
       ],
       tests_require=[
           "nose2", "mock", "coverage", "nose2[coverage_plugin]"

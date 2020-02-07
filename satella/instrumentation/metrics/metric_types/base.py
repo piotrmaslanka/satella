@@ -2,9 +2,7 @@ import typing as tp
 import logging
 import copy
 import time
-from abc import abstractmethod, ABCMeta
-from satella.json import JSONAble
-from satella.coding import for_argument
+from ..data import MetricData, MetricDataCollection
 
 
 logger = logging.getLogger(__name__)
@@ -15,7 +13,7 @@ DEBUG = 3
 INHERIT = 4
 
 
-class Metric(JSONAble):
+class Metric:
     """
     Container for child metrics. A base metric class, as well as the default metric.
 
@@ -25,6 +23,14 @@ class Metric(JSONAble):
     """
     CLASS_NAME = 'base'
 
+    def get_fully_qualified_name(self):
+        data = []
+        metric = self
+        while metric.root_metric is not None:
+            data.append(metric.name)
+            metric = metric.root_metric
+        return '.'.join(reversed(data))
+
     def reset(self) -> None:
         """
         Delete all child metrics that this metric contains.
@@ -33,12 +39,14 @@ class Metric(JSONAble):
         """
         from satella.instrumentation import metrics
         if self.name == '':
-            metrics.metrics = {}
-            metrics.level = RUNTIME
+            with metrics.metrics_lock:
+                metrics.metrics = {}
+                metrics.level = RUNTIME
         else:
-            metrics.metrics = {k: v for k, v in metrics.metrics.items() if
-                               not k.startswith(self.name + '.')}
-            del metrics.metrics[self.name]
+            with metrics.metrics_lock:
+                metrics.metrics = {k: v for k, v in metrics.metrics.items() if
+                                   not k.startswith(self.get_fully_qualified_name() + '.')}
+            del metrics.metrics[self.get_fully_qualified_name()]
         self.children = []
 
     def __init__(self, name, root_metric: 'Metric' = None, metric_level: str = None,
@@ -59,6 +67,10 @@ class Metric(JSONAble):
         assert not (
                 self.name == '' and self.level == INHERIT), 'Unable to set INHERIT for root metric!'
         self.children = []
+
+    def get_timestamp(self) -> tp.Optional[float]:
+        """Return this timestamp, or None if no timestamp support is enabled"""
+        return self.last_updated if self.enable_timestamp else None
 
     def __str__(self) -> str:
         return self.name
@@ -81,14 +93,16 @@ class Metric(JSONAble):
     def can_process_this_level(self, target_level: int) -> bool:
         return self.level >= target_level
 
-    def to_json(self) -> tp.Union[list, dict, str, int, float, None]:
-        k = {
-            child.name[len(self.name) + 1 if len(self.name) > 0 else 0:]: child.to_json() for child
-            in self.children
-        }
+    def to_metric_data(self) -> MetricDataCollection:
+        output = MetricDataCollection()
+        for child in self.children:
+            output += child.to_metric_data()
+        output.prefix_with(self.name)
+
         if self.enable_timestamp:
-            k['_timestamp'] = self.last_updated
-        return k
+            output.set_timestamp(self.last_updated)
+
+        return output
 
     def _handle(self, *args, **kwargs) -> None:
         """
@@ -121,11 +135,8 @@ class LeafMetric(Metric):
         self.labels = labels or {}
         assert '_timestamp' not in self.labels, 'Cannot make a label called _timestamp!'
 
-    def to_json(self) -> dict:
-        k = copy.copy(self.labels)
-        if self.enable_timestamp:
-            k['_timestamp'] = self.last_updated
-        return k
+    def to_json(self) -> MetricDataCollection:
+        return MetricDataCollection(MetricData(self.name, None, self.labels))
 
     def append_child(self, metric: 'Metric'):
         raise TypeError('This metric cannot contain children!')
@@ -176,15 +187,11 @@ class EmbeddedSubmetrics(LeafMetric):
             # noinspection PyProtectedMember
             self.children_mapping[key]._handle(*args)
 
-    def to_json(self) -> list:
+    def to_metric_data(self) -> MetricDataCollection:
         if self.embedded_submetrics_enabled:
-            v = []
+            v = MetricDataCollection()
             for child in self.children:
-                p = child.to_json()
-                if isinstance(p, list):
-                    v.extend(p)
-                else:
-                    v.append(p)
+                v = v + child.to_metric_data()
             return v
         else:
             return super().to_json()

@@ -9,6 +9,8 @@ import math
 
 from .base import EmbeddedSubmetrics, RUNTIME, LeafMetric
 from .registry import register_metric
+from ..data import MetricData, MetricDataCollection
+
 
 logger = logging.getLogger(__name__)
 
@@ -70,56 +72,49 @@ class QuantileMetric(EmbeddedSubmetrics):
 
         if labels or self.embedded_submetrics_enabled:
             return super()._handle(time_taken, **labels)
+
         if len(self.calls_queue) == self.last_calls:
             self.calls_queue.pop()
+
         self.calls_queue.appendleft(time_taken)
 
-    def to_json(self):
-        k = self._to_json()
+    def to_metric_data(self) -> MetricDataCollection:
+        k = self._to_metric_data()
         if self.count_calls:
-            if isinstance(k, list):
-                return {'count': {'_': self.tot_calls}, 'total': {'_': self.tot_time}, '_': k}
-            else:
-                k['count'] = {'_': self.tot_calls}
-                k['total'] = {'_': self.tot_time}
-                if self.enable_timestamp:
-                    k['total']['_timestamp'] = k['count']['_timestamp'] = self.last_updated
-
-                return k
+            k += MetricData(self.name+'.count', self.tot_calls, self.labels, self.get_timestamp())
+            k += MetricData(self.name+'.sum', self.tot_time, self.labels, self.get_timestamp())
         return k
 
-    def _to_json(self) -> dict:
+    def _to_metric_data(self) -> MetricDataCollection:
         if self.embedded_submetrics_enabled:
-            k = super().to_json()
-            if not self.aggregate_children:
-                return k
-            total_calls = []
-            for child in self.children:
-                total_calls.extend(child.calls_queue)
-            total_calls.sort()
-            k = {
-                '_': k,
-                'sum': self.calculate_quantiles(total_calls)
-            }
-            if self.enable_timestamp:
-                k['_timestamp'] = self.last_updated
+            k = super().to_metric_data()
+            if self.aggregate_children:
+                total_calls = []
+                for child in self.children:
+                    total_calls.extend(child.calls_queue)
+                total_calls.sort()
+
+                q = self.calculate_quantiles(total_calls)
+                q.postfix_with('total')
+                k += q
+
+            if self.count_calls:
+                k += MetricData(self.name+'.count', self.tot_calls, self.labels, self.get_timestamp())
+                k += MetricData(self.name+'.sum', self.tot_time, self.labels, self.get_timestamp())
+
             return k
         else:
             return self.calculate_quantiles(self.calls_queue)
 
-    def calculate_quantiles(self, calls_queue):
-        output = []
+    def calculate_quantiles(self, calls_queue) -> MetricDataCollection:
+        output = MetricDataCollection()
         sorted_calls = sorted(calls_queue)
         for p_val in self.quantiles:
-            k = LeafMetric.to_json(self)
             if not sorted_calls:
-                k.update(quantile=p_val, _=0.0)
+                output += MetricData(self.name, 0.0, {'quantile': p_val, **self.labels}, self.get_timestamp())
             else:
-                k.update(quantile=p_val,
-                         _=percentile(sorted_calls, p_val))
-            if self.enable_timestamp:
-                k['_timestamp'] = self.last_updated
-            output.append(k)
+                output += MetricData(self.name, percentile(sorted_calls, p_val),
+                                     {'quantile': p_val, **self.labels}, self.get_timestamp())
         return output
 
     def measure(self, include_exceptions: bool = True, logging_level: int = RUNTIME,
