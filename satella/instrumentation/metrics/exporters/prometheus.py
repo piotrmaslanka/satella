@@ -38,9 +38,12 @@ class PrometheusHTTPExporterThread(TerminableThread):
         super().__init__(daemon=True)
         self.interface = interface
         self.port = port
+        self.httpd = http.server.HTTPServer((self.interface, self.port), PrometheusHandler,
+                                            bind_and_activate=False)
 
     def run(self):
-        self.httpd = http.server.HTTPServer((self.interface, self.port), PrometheusHandler)
+        self.httpd.server_bind()
+        self.httpd.server_activate()
         self.httpd.serve_forever()
         self.httpd.server_close()
 
