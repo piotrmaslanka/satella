@@ -53,7 +53,7 @@ class ClicksPerTimeUnitMetric(EmbeddedSubmetrics):
                     last_clicks.extend(child.last_clicks)
 
                 sum_data = self.count_vectors(last_clicks)
-                sum_data.postfix_with('sum')
+                sum_data.postfix_with('total')
 
                 return k + sum_data
 

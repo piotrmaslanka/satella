@@ -2,7 +2,6 @@ import time
 import unittest
 import logging
 import inspect
-from satella.coding.structures import frozendict
 
 from satella.instrumentation.metrics import getMetric, DEBUG, RUNTIME, INHERIT, MetricData, \
     MetricDataCollection
@@ -158,4 +157,4 @@ class TestMetric(unittest.TestCase):
         metric = getMetric('root.CPSValue', 'cps', time_unit_vectors=[1], enable_timestamp=False)
         metric.runtime(key='value')
         self.assertTrue(MetricDataCollection(MetricData('CPSValue', 1, {'period': 1, 'key': 'value'}),
-                                             MetricData('CPSValue.sum', 1, {'period': 1})).strict_eq(metric.to_metric_data()))
+                                             MetricData('CPSValue.total', 1, {'period': 1})).strict_eq(metric.to_metric_data()))
