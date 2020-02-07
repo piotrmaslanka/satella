@@ -26,9 +26,9 @@ class RendererObject(io.StringIO):
 
 def metric_data_collection_to_prometheus(mdc: MetricDataCollection) -> str:
     """
-    Render the JSON in the form understandable by Prometheus
+    Render the data in the form understandable by Prometheus
 
-    :param tree: JSON returned by the root metric (or any metric for that instance).
+    :param tree: MetricDataCollection returned by the root metric (or any metric for that instance).
     :return: a string output to present to Prometheus
     """
     if not mdc.values:
