@@ -27,3 +27,4 @@ class TestExporters(unittest.TestCase):
         metr.runtime(5)
         data = requests.get('http://localhost:1025/metrics')
         self.assertIn('test_metric 5', data.text)
+        phet.terminate().join()

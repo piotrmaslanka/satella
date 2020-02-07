@@ -1,6 +1,6 @@
 import logging
 import io
-import threading
+from satella.coding.concurrent import TerminableThread
 import http.server
 from .. import getMetric
 from ..data import MetricData, MetricDataCollection
@@ -26,7 +26,7 @@ class PrometheusHandler(http.server.BaseHTTPRequestHandler):
         self.wfile.write(metric_data.encode('utf8'))
 
 
-class PrometheusHTTPExporterThread(threading.Thread):
+class PrometheusHTTPExporterThread(TerminableThread):
     """
     A daemon thread that listens on given interface as a HTTP server, ready to serve as a connection
     point for Prometheus to scrape metrics off this service.
@@ -40,8 +40,13 @@ class PrometheusHTTPExporterThread(threading.Thread):
         self.port = port
 
     def run(self):
-        httpd = http.server.HTTPServer((self.interface, self.port), PrometheusHandler)
-        httpd.serve_forever()
+        self.httpd = http.server.HTTPServer((self.interface, self.port), PrometheusHandler)
+        self.httpd.serve_forever()
+        self.httpd.server_close()
+
+    def terminate(self, force: bool = False):
+        self.httpd.shutdown()
+        return super().terminate(force=force)
 
 
 class RendererObject(io.StringIO):
