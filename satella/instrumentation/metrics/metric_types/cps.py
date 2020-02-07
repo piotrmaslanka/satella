@@ -6,6 +6,7 @@ import logging
 
 from .base import EmbeddedSubmetrics, LeafMetric
 from .registry import register_metric
+from ..data import MetricData, MetricDataCollection
 
 logger = logging.getLogger(__name__)
 
@@ -41,22 +42,24 @@ class ClicksPerTimeUnitMetric(EmbeddedSubmetrics):
         except IndexError:
             pass
 
-    def to_json(self) -> tp.List[int]:
+    def to_metric_data(self) -> tp.List[int]:
         if self.embedded_submetrics_enabled:
-            k = super().to_json()
+            k = super().to_metric_data()
             if not self.aggregate_children:
                 return k
             else:
-                k = {'_': k}
                 last_clicks = []
                 for child in self.children:
                     last_clicks.extend(child.last_clicks)
-                k['sum'] = self.count_vectors(last_clicks)
-                return k
+
+                sum_data = self.count_vectors(last_clicks)
+                sum_data.postfix_with('total')
+
+                return k + sum_data
 
         return self.count_vectors(self.last_clicks)
 
-    def count_vectors(self, last_clicks):
+    def count_vectors(self, last_clicks) -> MetricDataCollection:
         count_map = [0] * len(self.time_unit_vectors)
         mono_time = time.monotonic()
         time_unit_vectors = [mono_time - v for v in self.time_unit_vectors]
@@ -68,9 +71,7 @@ class ClicksPerTimeUnitMetric(EmbeddedSubmetrics):
 
         output = []
         for time_unit, count in zip(self.time_unit_vectors, count_map):
-            k = LeafMetric.to_json(self)
-            k['period'] = time_unit
-            k['_'] = count
-            output.append(k)
+            output.append(MetricData(self.name, count, {'period': time_unit, **self.labels},
+                                     self.get_timestamp()))
 
-        return output
+        return MetricDataCollection(output)

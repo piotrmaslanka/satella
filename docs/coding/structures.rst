@@ -99,3 +99,13 @@ Immutable inherits from abc.ABCMeta, so it's safe to use abstract base classes h
 
         def illegal_op(self):
             self.attr = 'test'  # this will TypeError
+
+frozendict
+==========
+
+A dictionary that can't be modified. Imported from the fine frozendict_ package.
+It is additionally hashable and __eq__-able
+
+.. _frozendict: https://pypi.org/project/frozendict/
+
+.. autoclass:: satella.coding.structures.frozendict

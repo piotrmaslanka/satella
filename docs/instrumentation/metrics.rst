@@ -91,23 +91,16 @@ Prometheus' data model_.
 
 .. _model: https://prometheus.io/docs/concepts/data_model/
 
-Root metric's ``to_json`` will output a tree based hierarchy,
-where keys are supposed to be concatenated with an underscore.
-The last object in the dictionary is the leaf node.
+Root metric's ``to_metric_data`` will output a flat set, called
+MetricDataCollection:
 
-The leaf node consists of a key `_` which maps the value,
-and remaining keys being labels, and their respective values
-being values.
+.. autoclass:: satella.instrumentation.metrics.MetricDataCollection
+    :members:
 
-The key `_` might map to a list, though. However, elements
-of those are required to be leaf nodes.
+which consists of MetricData:
 
-If key `_timestamp` exists, it is stated to be the metric acquisition timestamp,
-expressed as a float in seconds since the epoch.
-
-The direct parent of a leaf may be a list. This aggregates
-the labels and their values. These are generated only
-by `LeafMetrics`.
+.. autoclass:: satella.instrumentation.metrics.MetricData
+    :members:
 
 On most metrics you can specify additional labels. They will serve
 to create an independent "sub-metric" of sorts, eg.
@@ -117,7 +110,8 @@ to create an independent "sub-metric" of sorts, eg.
     metric = getMetric('root', 'int')
     metric.runtime(2, label='value')
     metric.runtime(3, label='key')
-    assert metric.to_json() == [{'label': 'value', '_': 2}, {'label': 'key', '_': 3}]
+    assert metric.to_metric_data() == MetricDataCollection(MetricData('root', 2, {'label': value}),
+                                                           MetricData('root', 3, {'label': 'key}))
 
 This functionality is provided by the below class:
 
@@ -149,27 +143,13 @@ by using the following decorator on your metric class
 
 .. autofunction:: satella.instrumentation.metrics.metric_types.register_metric
 
-Modifying returned JSON
-=======================
-
-JSON returned by the root metric's ``to_json()`` can be further modified:
-
-If you need to insert some labels at every leaf node, use the following function:
-
-.. autofunction:: satella.instrumentation.metrics.json.annotate_every_leaf_node_with_labels
-
-If you need to merge two JSONs returned by metrics (eg. for a
-metric exporter service) you can use the following function:
-
-.. autofunction:: satella.instrumentation.metrics.json.update
-
 
 Exporting data
 ==============
 
 In order to export data to Prometheus, you can use the following function:
 
-.. autofunction:: satella.instrumentation.metrics.exporters.json_to_prometheus
+.. autofunction:: satella.instrumentation.metrics.exporters.metric_data_collection_to_prometheus
 
 For example in such a way:
 
@@ -177,6 +157,6 @@ For example in such a way:
 
     def export_to_prometheus():
         metric = getMetric()
-        return json_to_prometheus(metric.to_json())
+        return metric_data_collection_to_prometheus(metric.to_metric_data())
 
 Dots in metric names will be replaced with underscores.

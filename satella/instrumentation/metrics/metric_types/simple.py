@@ -1,8 +1,13 @@
 import time
+import logging
 import typing as tp
 
 from .base import EmbeddedSubmetrics
 from .registry import register_metric
+from ..data import MetricData, MetricDataCollection
+
+
+logger = logging.getLogger(__name__)
 
 
 class SimpleMetric(EmbeddedSubmetrics):
@@ -16,17 +21,14 @@ class SimpleMetric(EmbeddedSubmetrics):
     def _handle(self, *args, **kwargs) -> None:
         if self.embedded_submetrics_enabled or kwargs:
             return super()._handle(*args, **kwargs)
-
         self.data = self.CONSTRUCTOR(args[0])
 
-    def to_json(self) -> tp.Union[list, dict, str, int, float, None]:
+    def to_metric_data(self) -> tp.Union[list, dict, str, int, float, None]:
         if self.embedded_submetrics_enabled:
             return super().to_json()
-        p = super().to_json()
-        p['_'] = self.data
-        if self.enable_timestamp:
-            p['_timestamp'] = self.last_updated
-        return p
+        return MetricDataCollection(
+            MetricData(self.name, self.data, self.labels, self.get_timestamp())
+        )
 
 
 @register_metric
