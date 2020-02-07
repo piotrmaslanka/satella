@@ -87,15 +87,17 @@ class MetricDataCollection(JSONAble):
         """
         Do values in other MetricDataCollection match also?
         """
+        values_found = 0
         for value in self.values:
             for value_2 in other.values:
                 if value == value_2:
+                    values_found += 1
                     if value.value != value_2.value:
                         return False
                     break
             else:
                 return False
-        return True
+        return values_found == len(other.values)
 
     @classmethod
     def from_json(cls, x: tp.List[dict]) -> 'MetricDataCollection':

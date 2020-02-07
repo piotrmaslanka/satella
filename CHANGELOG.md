@@ -1,3 +1,7 @@
+# v2.4.3
+
+* better test coverage
+
 # v2.4.2
 
 * bugfix release

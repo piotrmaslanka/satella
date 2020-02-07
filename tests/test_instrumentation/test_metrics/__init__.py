@@ -90,16 +90,21 @@ class TestMetric(unittest.TestCase):
         counter.runtime(1, service='user')
         counter.runtime(2, service='session')
         counter.runtime(1, service='user')
+        logger.warning(f'{counter.to_metric_data().values}')
         self.assertTrue(MetricDataCollection(MetricData('counter', 2, {'service': 'user'}),
-                                             MetricData('counter', 2, {'service': 'session'})).strict_eq(counter.to_metric_data()))
+                                             MetricData('counter', 2, {'service': 'session'}),
+                                             MetricData('counter.sum', 4)).strict_eq(counter.to_metric_data()))
 
     def test_counter_count_calls(self):
         counter = getMetric('counter', 'counter', enable_timestamp=False, count_calls=True)
         counter.runtime(1, service='user')
         counter.runtime(2, service='session')
         counter.runtime(1, service='user')
+        logger.warning(f'{counter.to_metric_data().values}')
         self.assertTrue(MetricDataCollection(MetricData('counter', 2, {'service': 'user'}),
+                                             MetricData('counter.count', 2, {'service': 'user'}),
                                              MetricData('counter', 2, {'service': 'session'}),
+                                             MetricData('counter.count', 1, {'service': 'session'}),
                                              MetricData('counter.sum', 4),
                                              MetricData('counter.count', 3)).strict_eq(counter.to_metric_data()))
 
