@@ -53,7 +53,7 @@ class MetricData(JSONAble):
     @classmethod
     def from_json(cls, x: dict) -> 'MetricData':
         name = x.pop('_name')
-        value = x.pop('_value')
+        value = x.pop('_')
         timestamp = x.pop('_timestamp', None)
         return MetricData(name, value, x, timestamp)
 
@@ -99,7 +99,7 @@ class MetricDataCollection(JSONAble):
 
     @classmethod
     def from_json(cls, x: tp.List[dict]) -> 'MetricDataCollection':
-        return MetricDataCollection([MetricData.from_json(y) for y in x])
+        return MetricDataCollection(MetricData.from_json(y) for y in x)
 
     def __add__(self, other):
         if isinstance(other, MetricDataCollection):

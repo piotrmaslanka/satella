@@ -1,3 +1,7 @@
+# v2.4.2
+
+* bugfix release
+
 # v2.4.1
 
 * add `add_labels` for MetricData and MetricDataCollection

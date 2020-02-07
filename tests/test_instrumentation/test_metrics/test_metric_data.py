@@ -12,6 +12,11 @@ class TestMetricData(unittest.TestCase):
         a.add_labels({'service': 'wtf'})
         self.assertEqual(next(iter(a.values)).labels, {'labels': 'key', 'service': 'wtf'})
 
+    def test_json_serialization(self):
+        a = MetricDataCollection(MetricData('root', 2, {'labels': 'key'}))
+        b = a.to_json()
+        self.assertTrue(a.strict_eq(MetricDataCollection.from_json(b)))
+
     def test_update_labels(self):
         a = MetricData('root', 2, {'labels': 'key'})
         a.add_labels({'service': 'wtf'})
