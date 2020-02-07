@@ -38,7 +38,6 @@ class TestMetric(unittest.TestCase):
         metric.runtime(10.0, label='value')
         metric.runtime(20.0, label='wtf')
         metr = metric.to_metric_data()
-        logger.warning(f'{metr.values}')
         self.assertEqual(choose('sum', metr).value, 30.0)
         self.assertEqual(choose('count', metr).value, 2)
         self.assertEqual(choose('total', metr, {'quantile': 0.5}).value, 15.0)

@@ -41,9 +41,13 @@ class Immutable(metaclass=ImmutableMetaType):
 
 class frozendict(dict):
     """
+    A hashable dict with express forbid to change it's values
     Both keys and values must be hashable in order for this dict to be hashable.
     """
     def __setitem__(self, key, value):
+        raise TypeError('Cannot update a frozen dict!')
+
+    def update(self, *args, **kwargs):
         raise TypeError('Cannot update a frozen dict!')
 
     def __hash__(self):

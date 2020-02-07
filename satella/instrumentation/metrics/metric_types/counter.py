@@ -39,17 +39,15 @@ class CounterMetric(EmbeddedSubmetrics):
         p.set_value(self.value)
         if self.count_calls:
             p += MetricData(self.name+'.count', self.calls, self.labels, self.get_timestamp())
-        logger.warning(f'{id(self)} returning {p}')
+
         return p
 
     def _handle(self, delta: float = 0, **labels):
-        logger.warning(f'{id(self)} Processing {labels}')
         if self.embedded_submetrics_enabled or labels:
             if self.sum_children:
                 self.value += delta
             self.calls += 1
             return super()._handle(delta, **labels)
-        logger.warning(f'{id(self)} Standard call')
 
         self.value += delta
         self.calls += 1
