@@ -20,14 +20,14 @@ class PrometheusHandler(http.server.BaseHTTPRequestHandler):
             self.send_error(404, 'Unknown path. Only /metrics is supported.')
             return
 
-        root_metric = getMetric()
-        metric_data = root_metric.to_metric_data()
+        metric_data = getMetric().to_metric_data()
         metric_data.add_labels(self.server.extra_labels)
         metric_data = metric_data_collection_to_prometheus(metric_data)
         self.send_response(200)
         self.send_header('Content-Type', 'text/plain; charset=utf-8')
         self.end_headers()
         self.wfile.write(metric_data.encode('utf8'))
+        self.server.metric.runtime()
 
 
 class PrometheusHTTPExporterThread(TerminableThread):
@@ -35,18 +35,27 @@ class PrometheusHTTPExporterThread(TerminableThread):
     A daemon thread that listens on given interface as a HTTP server, ready to serve as a connection
     point for Prometheus to scrape metrics off this service.
 
+    This additionally (if user requests so) may export a metric called prometheus.exports_per_time
+    which is a cps with time_unit_vectors=[1, 20, 60] counting the amount of exports in given time
+    period.
+
     :param interface: a interface to bind to
     :param port: a port to bind to
     :param extra_labels: extra labels to add to each metric data point, such as the name of the
         service or the hostname
+    :param enable_metric: whether to enable the metric
     """
-    def __init__(self, interface: str, port: int, extra_labels: tp.Optional[dict] = None):
+    def __init__(self, interface: str, port: int, extra_labels: tp.Optional[dict] = None,
+                 enable_metric: bool = False):
         super().__init__(daemon=True)
         self.interface = interface
         self.port = port
         self.httpd = http.server.HTTPServer((self.interface, self.port), PrometheusHandler,
                                             bind_and_activate=False)
         self.httpd.extra_labels = extra_labels or {}
+        self.httpd.metric = getMetric('prometheus.exports_per_time',
+                                      'cps' if enable_metric else 'empty',
+                                      time_unit_vector=[1, 20, 60])
 
     def run(self):
         self.httpd.server_bind()

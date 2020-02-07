@@ -3,7 +3,7 @@ import logging
 import copy
 import time
 from ..data import MetricData, MetricDataCollection
-
+from .registry import register_metric
 
 logger = logging.getLogger(__name__)
 
@@ -50,7 +50,7 @@ class Metric:
         self.children = []
 
     def __init__(self, name, root_metric: 'Metric' = None, metric_level: str = None,
-                 **kwargs):
+                 *args, **kwargs):
         """When reimplementing the method, remember to pass kwargs here!"""
         self.name = name
         self.root_metric = root_metric
@@ -203,3 +203,19 @@ class EmbeddedSubmetrics(LeafMetric):
         """
 
         return self.__class__(self.name, self, INHERIT, *self.args, labels=labels, **self.kwargs)
+
+
+@register_metric
+class EmptyMetric(Metric):
+    """
+    A metric that disregards all data that it's fed, and outputs nothing.
+
+    A placeholder for the times when you configure metrics and decide to leave some of them out blank.
+    """
+    CLASS_NAME = 'empty'
+
+    def _handle(self, *args, **kwargs) -> None:
+        pass
+
+    def to_metric_data(self) -> MetricDataCollection:
+        return MetricDataCollection()

@@ -47,6 +47,7 @@ are available:
 * base - for just a container metric
 * int - for int values
 * float - for float values
+* empty - disregard all provided values, outputs nothing
 * counter - starts from zero, increments or decrements the counter value. Also optionally
   can register the amount of calls
 

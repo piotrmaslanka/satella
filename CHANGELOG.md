@@ -1,6 +1,7 @@
 # v2.4.4
 
 * added `PrometheusHTTPExporterThread`
+* added `EmptyMetric`
 
 # v2.4.3
 
