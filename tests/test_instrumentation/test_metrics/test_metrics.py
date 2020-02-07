@@ -17,7 +17,7 @@ def choose(postfix: str, mdc: MetricDataCollection, labels=None) -> MetricData:
 
 class TestMetric(unittest.TestCase):
 
-    def tearDown(self):
+    def setUp(self) -> None:
         getMetric('').reset()
 
     def test_quantile_measure_generator(self):
@@ -127,8 +127,9 @@ class TestMetric(unittest.TestCase):
         metric = getMetric('root.test.FloatValue', 'float', INHERIT, enable_timestamp=False)
         metric.runtime(2.0)
         metric_parent = getMetric('root.test', enable_timestamp=False)
-
-        self.assertTrue(getMetric('', enable_timestamp=False).to_metric_data().strict_eq(
+        self.assertEqual(metric_parent.get_fully_qualified_name(), 'root.test')
+        logger.warning(f'{getMetric().to_metric_data().values}')
+        self.assertTrue(getMetric().to_metric_data().strict_eq(
             MetricDataCollection(MetricData('root.test.FloatValue', 2.0))))
 
         metric_parent.level = RUNTIME
