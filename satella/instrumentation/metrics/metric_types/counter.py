@@ -1,6 +1,5 @@
 import logging
-import typing as tp
-from .base import EmbeddedSubmetrics, LeafMetric
+from .base import EmbeddedSubmetrics
 from ..data import  MetricData, MetricDataCollection
 from .registry import register_metric
 logger = logging.getLogger(__name__)

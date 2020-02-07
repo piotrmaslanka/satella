@@ -1,13 +1,47 @@
 import logging
 import io
-import copy
-from satella.coding import for_argument
-
+import threading
+import http.server
+from .. import getMetric
 from ..data import MetricData, MetricDataCollection
 
 logger = logging.getLogger(__name__)
 
-__all__ = ['metric_data_collection_to_prometheus']
+__all__ = ['metric_data_collection_to_prometheus', 'PrometheusHTTPExporterThread']
+
+
+class PrometheusHandler(http.server.BaseHTTPRequestHandler):
+
+    def do_GET(self):
+        if self.path != '/metrics':
+            self.send_error(404, 'Unknown path. Only /metrics is supported.')
+            return
+
+        root_metric = getMetric()
+
+        metric_data = metric_data_collection_to_prometheus(root_metric.to_metric_data())
+        self.send_response(200)
+        self.send_header('Content-Type', 'text/plain; charset=utf-8')
+        self.end_headers()
+        self.wfile.write(metric_data.encode('utf8'))
+
+
+class PrometheusHTTPExporterThread(threading.Thread):
+    """
+    A daemon thread that listens on given interface as a HTTP server, ready to serve as a connection
+    point for Prometheus to scrape metrics off this service.
+
+    :param interface: a interface to bind to
+    :param port: a port to bind to
+    """
+    def __init__(self, interface: str, port: int):
+        super().__init__(daemon=True)
+        self.interface = interface
+        self.port = port
+
+    def run(self):
+        with http.server.HTTPServer((self.interface, self.port), PrometheusHandler) as httpd:
+            httpd.serve_forever()
 
 
 class RendererObject(io.StringIO):

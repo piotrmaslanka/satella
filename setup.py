@@ -9,7 +9,7 @@ setup(keywords=['ha', 'high availability', 'scalable', 'scalability', 'server'],
             'psutil'
       ],
       tests_require=[
-          "nose2", "mock", "coverage", "nose2[coverage_plugin]"
+          "nose2", "mock", "coverage", "nose2[coverage_plugin]", "requests"
       ],
       test_suite='nose2.collector.collector',
       python_requires='!=2.7.*,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*',

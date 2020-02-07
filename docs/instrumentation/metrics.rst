@@ -160,3 +160,9 @@ For example in such a way:
         return metric_data_collection_to_prometheus(metric.to_metric_data())
 
 Dots in metric names will be replaced with underscores.
+
+Or, if you need a HTTP server that will export metrics for Prometheus, use this class
+that is a daemonic thread you can use to easily expose metrics to Prometheus:
+
+.. autoclass:: satella.instrumentation.metrics.exporters.PrometheusHTTPExporterThread
+    :members:

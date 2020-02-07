@@ -1,6 +1,6 @@
 # v2.4.4
 
-* _TBA_
+* added `PrometheusHTTPExporterThread`
 
 # v2.4.3
 
