@@ -1,3 +1,7 @@
+# v2.4.6
+
+* _TBA_
+
 # v2.4.5
 
 * `JSONEncoder` will encode even non-JSON-able objects
