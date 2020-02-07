@@ -128,7 +128,6 @@ class TestMetric(unittest.TestCase):
         metric.runtime(2.0)
         metric_parent = getMetric('root.test', enable_timestamp=False)
         self.assertEqual(metric_parent.get_fully_qualified_name(), 'root.test')
-        logger.warning(f'{getMetric().to_metric_data().values}')
         self.assertTrue(getMetric().to_metric_data().strict_eq(
             MetricDataCollection(MetricData('root.test.FloatValue', 2.0))))
 
