@@ -12,10 +12,16 @@ class JSONAble(metaclass=ABCMeta):
 
 
 class JSONEncoder(json.JSONEncoder):
+    """
+    This encoder will encode everything!
+    """
     def default(self, o) -> str:
         if hasattr(o, 'to_json'):
             return o.to_json()
-        return super().default(o)
+        try:
+            return super().default(o)
+        except TypeError:
+            return {'type': repr(type(o)), 'str': str(o), 'repr': repr(o)}
 
 
 def json_encode(x) -> str:

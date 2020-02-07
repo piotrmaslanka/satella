@@ -17,4 +17,4 @@ class TestJson(unittest.TestCase):
         class MyClass:
             pass
 
-        self.assertRaises(TypeError, lambda: json_encode(MyClass()))
+        json_encode(MyClass())
