@@ -46,7 +46,6 @@ def getMetric(metric_name: str = '',
                     metric = METRIC_NAMES_TO_CLASSES[metric_type](name_part, root_metric,
                                                                   metric_level, **kwargs)
                 else:
-                    logger.warning(f'Creating a metric called {name_part if name_part is not None else name[-1]}')
                     metric = Metric(name_part, root_metric, metric_level_to_set_for_children,
                                     **kwargs)
                 metrics[tentative_name] = metric

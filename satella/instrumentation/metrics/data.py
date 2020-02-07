@@ -75,7 +75,6 @@ class MetricDataCollection(JSONAble):
         """
         Do values in other MetricDataCollection match also?
         """
-        logger.warning(f'Comparing {self.values} against {other.values}')
         for value in self.values:
             for value_2 in other.values:
                 if value == value_2:
