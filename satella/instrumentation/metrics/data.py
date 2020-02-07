@@ -122,11 +122,11 @@ class MetricDataCollection(JSONAble):
         return self
 
     def __add_metric_data(self, other: MetricData):
-        if other in self.values:
-            values = self.values.copy()
+        values = self.values.copy()
+        if other in values:
             values.remove(other)
         values.add(other)
-        return MetricDataCollection(self.prefix, values)
+        return MetricDataCollection(values)
 
     def __add_metric_data_collection(self, other: 'MetricDataCollection') -> 'MetricDataCollection':
         b = other.values.copy()

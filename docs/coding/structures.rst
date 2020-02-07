@@ -103,7 +103,8 @@ Immutable inherits from abc.ABCMeta, so it's safe to use abstract base classes h
 frozendict
 ==========
 
-A dictionary that can't be modified. Imported from the fine frozendict_ package.
+A dictionary that can't be modified. I didn't import the one from _frozendict PyPI package,
+because it failed on Python 3.9.
 It is additionally hashable and __eq__-able
 
 .. _frozendict: https://pypi.org/project/frozendict/

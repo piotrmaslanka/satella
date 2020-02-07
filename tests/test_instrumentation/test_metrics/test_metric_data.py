@@ -27,6 +27,11 @@ class TestMetricData(unittest.TestCase):
         a1 += MetricData('root.metric', 10, {'service': 'my_service'}, 10)
         self.assertTrue(MetricDataCollection(MetricData('root.metric', 10, {'service': 'my_service'}, 10)).strict_eq(a1))
 
+    def test_update_4(self):
+        a1 = MetricDataCollection(MetricData('root.metric', 2, {'service': 'my_service'}))
+        a1 += MetricDataCollection(MetricData('root.metric', 10, {'service': 'my_service'}, 10))
+        self.assertTrue(MetricDataCollection(MetricData('root.metric', 10, {'service': 'my_service'}, 10)).strict_eq(a1))
+
     def test_update(self):
         a1 = MetricDataCollection(MetricData('root.metric', 25.0, {'period': 1}),
                                   MetricData('root.metric', 50.0, {'period': 2}))
