@@ -16,7 +16,7 @@ install:
   - pip install nose2 mock coverage requests
 script:
   - bash tests/test_posix/test_hang_until_sig.sh
-  - coverage -m nose2
+  - coverage run -m nose2
 after_success:
   - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
   - bash build.sh
