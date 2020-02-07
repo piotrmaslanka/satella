@@ -63,8 +63,11 @@ class MetricData(JSONAble):
 
 class MetricDataCollection(JSONAble):
     def add_labels(self, labels: dict) -> None:
+        output = set()
         for child in self.values:
             child.add_labels(labels)
+            output.add(child)
+        self.values = output
 
     def __repr__(self):
         return 'MetricDataCollection(%s)' % (repr(self.values, ))

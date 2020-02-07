@@ -1,6 +1,7 @@
 # v2.4.3
 
 * better test coverage
+* bugfix release - add_labels would modify the result's hash!
 
 # v2.4.2
 
