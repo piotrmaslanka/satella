@@ -18,6 +18,7 @@ script:
   - bash tests/test_posix/test_hang_until_sig.sh
   - coverage run -m nose2
 after_success:
+  - coverage report
   - coverage xml
   - ./cc-test-reporter after-build -t coverage.py --exit-code $TRAVIS_TEST_RESULT
   - bash build.sh
