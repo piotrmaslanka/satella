@@ -40,6 +40,15 @@ class TestMetricData(unittest.TestCase):
         self.assertTrue(MetricDataCollection(MetricData('root.metric', 20.0, {'period': 1}),
                                              MetricData('root.metric', 50.0, {'period': 2})).strict_eq(a3))
 
+    def test_postfix_and_prefix(self):
+        a = MetricDataCollection(MetricData('root', 3))
+        a.prefix_with('test')
+        self.assertTrue(MetricDataCollection(MetricData('test.root', 3)).strict_eq(a))
+
+        a = MetricDataCollection(MetricData('root', 3))
+        a.postfix_with('test')
+        self.assertTrue(MetricDataCollection(MetricData('root.test', 3)).strict_eq(a))
+
     def test_update_2(self):
         a = MetricDataCollection(MetricData('root', 3, {'a': 5}),
                                  MetricData('root.sum', 3, {'a': 5}))
