@@ -1,10 +1,9 @@
 import typing as tp
-from frozendict import frozendict
 
 from satella.configuration.schema import Descriptor, descriptor_from_dict
 from satella.exceptions import ConfigurationValidationError
 
-__all__ = ['DictObject', 'apply_dict_object', 'frozendict']
+__all__ = ['DictObject', 'apply_dict_object']
 
 
 class DictObject(dict):

@@ -1,5 +1,5 @@
 from .dict_object import *
-from .immutable import Immutable
+from .immutable import Immutable, frozendict
 from .singleton import Singleton, SingletonWithRegardsTo
 from .structures import *
 from .typednamedtuple import *
