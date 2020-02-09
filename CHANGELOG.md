@@ -1,3 +1,7 @@
+# v2.4.7
+
+* _TBA_
+
 # v2.4.6
 
 * added `satella.files`
