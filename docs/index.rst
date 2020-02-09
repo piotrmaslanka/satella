@@ -22,6 +22,7 @@ Visit the project's page at GitHub_!
            json
            posix
            import
+           files
 
 
 Indices and tables
