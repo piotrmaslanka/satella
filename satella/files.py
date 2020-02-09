@@ -8,7 +8,7 @@ __all__ = ['read_re_sub_and_write']
 
 
 def read_re_sub_and_write(path: str, pattern: tp.Union[re.compile, str],
-                          repl: tp.Union[tp.Callable[[re.Match], str]]) -> None:
+                          repl: tp.Union[tp.Callable[[None], str]]) -> None:
     """
     Read a text file, treat with re.sub and write the contents
 
