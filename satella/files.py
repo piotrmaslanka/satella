@@ -14,7 +14,7 @@ def read_re_sub_and_write(path: str, pattern: tp.Union[re.compile, str],
 
     :param path: path of file to treat
     :param pattern: regexp compiled pattern or a string, a pattern to match the file contents
-    :param repl: string or a callable(str)->str to replace the contents
+    :param repl: string or a callable(re.Match)->str to replace the contents
     """
     with open(path, 'r') as f_in:
         data = f_in.read()
