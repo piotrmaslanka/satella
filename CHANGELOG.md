@@ -1,6 +1,6 @@
 # v2.4.8
 
-* _TBA_
+* added `infinite_counter`
 
 # v2.4.7
 

@@ -15,5 +15,5 @@ __all__ = [
     'precondition', 'PreconditionError',
     'rethrow_as', 'silence_excs',
     'static_var', 'metaclass_maker',
-    'catch_exception'
+    'catch_exception',
 ]
