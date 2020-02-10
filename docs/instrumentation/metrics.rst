@@ -58,10 +58,13 @@ are available:
 
     .. autoclass:: satella.instrumentation.metrics.metric_types.ClicksPerTimeUnitMetric
 
-* histogram - a metric that counts a rolling window of values,
-  and provides for a way to calculate percentiles
+* summary - a metric that counts a rolling window of values,
+  and provides for a way to calculate percentiles. Corresponds
+  to Prometheus_' summary metrics.
 
     .. autoclass:: satella.instrumentation.metrics.metric_types.HistogramMetric
+
+.. _Prometheus: https://prometheus.io/docs/concepts/metric_types/#summary
 
 Note that ``quantile.measure()`` will include time spent
 processing the generator's content by the client, so you might

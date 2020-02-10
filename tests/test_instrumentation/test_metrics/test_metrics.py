@@ -20,6 +20,28 @@ class TestMetric(unittest.TestCase):
     def setUp(self) -> None:
         getMetric('').reset()
 
+    def test_histogram(self):
+        metric = getMetric('test_histogram', 'histogram')
+        metric.runtime(1)
+        metric.runtime(2.6)
+        metric_data = metric.to_metric_data()
+        self.assertEqual(choose('', metric_data, {'le': 2.5}).value, 1)
+        self.assertEqual(choose('sum', metric_data).value, 3.6)
+        self.assertEqual(choose('count', metric_data).value, 2)
+
+    def test_histogram_children(self):
+        metric = getMetric('test_histogram', 'histogram')
+        metric.runtime(1, label='value')
+        metric.runtime(2.6, label='value')
+        metric_data = metric.to_metric_data()
+        self.assertEqual(choose('', metric_data, {'le': 2.5, 'label': 'value'}).value, 1)
+        self.assertEqual(choose('sum', metric_data, {'label': 'value'}).value, 3.6)
+        self.assertEqual(choose('count', metric_data, {'label': 'value'}).value, 2)
+        self.assertEqual(choose('total', metric_data, {'le': 2.5}).value, 1)
+        self.assertEqual(choose('total.sum', metric_data).value, 3.6)
+        self.assertEqual(choose('total.count', metric_data).value, 2)
+
+
     def test_int_children(self):
         metric = getMetric('test_children_int', 'int')
         metric.runtime(1, label='value')
@@ -27,7 +49,7 @@ class TestMetric(unittest.TestCase):
         self.assertTrue(metric.to_metric_data().strict_eq(should_be_equal_to))
 
     def test_quantile_measure_generator(self):
-        metric = getMetric('my_metric', 'histogram', quantiles=[0.5])
+        metric = getMetric('my_metric', 'summary', quantiles=[0.5])
         @metric.measure()
         def generator():
             yield 2
@@ -39,7 +61,7 @@ class TestMetric(unittest.TestCase):
         self.assertGreaterEqual(next(iter(metric.to_metric_data().values)).value, 1)
 
     def test_quantile_children(self):
-        metric = getMetric('my_metric', 'histogram', quantiles=[0.5], enable_timestamp=True)
+        metric = getMetric('my_metric', 'summary', quantiles=[0.5], enable_timestamp=True)
         metric.runtime(10.0, label='value')
         metric.runtime(20.0, label='wtf')
         metr = metric.to_metric_data()
@@ -49,7 +71,7 @@ class TestMetric(unittest.TestCase):
         self.assertTrue(all(x.timestamp is not None for x in metr.values))
 
     def test_quantile(self):
-        metric = getMetric('root.test.ExecutionTime', 'histogram', quantiles=[0.5, 0.95],
+        metric = getMetric('root.test.ExecutionTime', 'summary', quantiles=[0.5, 0.95],
                            count_calls=False, enable_timestamp=False)
         for i in range(9):
             metric.runtime(10.0)
@@ -80,7 +102,7 @@ class TestMetric(unittest.TestCase):
             MetricData('root.test.IntValue', 3)))
 
     def test_wait(self):
-        metric = getMetric('test', 'histogram', quantiles=[0.5])
+        metric = getMetric('test', 'summary', quantiles=[0.5])
         @metric.measure()
         def wait(throw=False):
             time.sleep(1)

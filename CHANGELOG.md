@@ -1,3 +1,9 @@
+# v2.4.10
+
+* renamed `HistogramMetric` to `SummaryMetric` to reflect that way things
+  are done at [Prometheus](https://prometheus.io/docs/concepts/metric_types/#summary)
+* added `HistogramMetric`
+
 # v2.4.9
 
 * bugfix release: fixed behaviour of `SimpleMetrics` with regards to labels
