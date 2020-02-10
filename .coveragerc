@@ -1,6 +1,7 @@
 [run]
 branch=1
-include=
-  satella/*
+source=
+  satella
 omit=
   tests/*
+  .eggs/*
