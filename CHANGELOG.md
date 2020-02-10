@@ -1,3 +1,7 @@
+# v2.4.12
+
+* _TBA_
+
 # v2.4.11
 
 * added `HistogramMetric.measure()`
