@@ -7,4 +7,4 @@ omit=
   .eggs/*
   setup.py
   satella/__init__.py
-
+  satella/posix/signals.py
