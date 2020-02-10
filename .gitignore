@@ -7,6 +7,7 @@ hs_err_pid*.log
 *.pydevproject
 .project
 .metadata
+lock
 bin/
 tmp/
 *.tmp
