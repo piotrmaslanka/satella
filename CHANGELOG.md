@@ -1,6 +1,6 @@
 # v2.4.9
 
-* _TBA_
+* bugfix release: fixed behaviour of `SimpleMetrics` with regards to labels
 
 # v2.4.8
 

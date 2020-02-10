@@ -18,14 +18,14 @@ class SimpleMetric(EmbeddedSubmetrics):
         super().__init__(*args, **kwargs)
         self.data = None
 
-    def _handle(self, *args, **kwargs) -> None:
-        if self.embedded_submetrics_enabled or kwargs:
-            return super()._handle(*args, **kwargs)
-        self.data = self.CONSTRUCTOR(args[0])
+    def _handle(self, value, **labels) -> None:
+        if self.embedded_submetrics_enabled or labels:
+            return super()._handle(value, **labels)
+        self.data = self.CONSTRUCTOR(value)
 
     def to_metric_data(self) -> tp.Union[list, dict, str, int, float, None]:
         if self.embedded_submetrics_enabled:
-            return super().to_json()
+            return super().to_metric_data()
         return MetricDataCollection(
             MetricData(self.name, self.data, self.labels, self.get_timestamp())
         )

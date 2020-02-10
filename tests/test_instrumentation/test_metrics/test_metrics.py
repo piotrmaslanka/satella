@@ -20,6 +20,12 @@ class TestMetric(unittest.TestCase):
     def setUp(self) -> None:
         getMetric('').reset()
 
+    def test_int_children(self):
+        metric = getMetric('test_children_int', 'int')
+        metric.runtime(1, label='value')
+        should_be_equal_to = MetricDataCollection(MetricData('test_children_int', 1, {'label': 'value'}))
+        self.assertTrue(metric.to_metric_data().strict_eq(should_be_equal_to))
+
     def test_quantile_measure_generator(self):
         metric = getMetric('my_metric', 'histogram', quantiles=[0.5])
         @metric.measure()
