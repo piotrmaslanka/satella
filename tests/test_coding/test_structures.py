@@ -5,10 +5,18 @@ import unittest
 import mock
 
 from satella.coding.structures import TimeBasedHeap, Heap, typednamedtuple, \
-    OmniHashableMixin, DictObject, apply_dict_object, Immutable, frozendict
+    OmniHashableMixin, DictObject, apply_dict_object, Immutable, frozendict, SetHeap
 
 
 class TestTimeBasedHeap(unittest.TestCase):
+
+    def test_setheap(self):
+        a = SetHeap([1, 2, 3])
+        self.assertIn(2, a)
+        self.assertEqual(1, a.pop())
+        self.assertNotIn(1, a)
+        a.push_many([3, 4])
+        self.assertEqual(len(a), 3)
 
     def test_frozendict(self):
         a = frozendict({1: 2, 3: 4})
