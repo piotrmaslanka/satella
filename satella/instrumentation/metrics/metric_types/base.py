@@ -135,7 +135,7 @@ class LeafMetric(Metric):
         self.labels = labels or {}
         assert '_timestamp' not in self.labels, 'Cannot make a label called _timestamp!'
 
-    def to_json(self) -> MetricDataCollection:
+    def to_metric_data(self) -> MetricDataCollection:
         return MetricDataCollection(MetricData(self.name, None, self.labels))
 
     def append_child(self, metric: 'Metric'):
@@ -151,7 +151,6 @@ class EmbeddedSubmetrics(LeafMetric):
     >>> metric = getMetric('root.test.IntValue', 'int', enable_timestamp=False)
     >>> metric.handle(2, label='key')
     >>> metric.handle(3, label='value')
-    >>> assert metric.to_json() == [{'label': 'key', '_': 2}, {'label': 'value', '_': 3}]
 
     If you try to inherit from it, refer to :py:class:`.simple.IntegerMetric` to see how to do it.
     And please pass all the arguments received from child class into this constructor, as this
@@ -194,7 +193,7 @@ class EmbeddedSubmetrics(LeafMetric):
                 v = v + child.to_metric_data()
             return v
         else:
-            return super().to_json()
+            return super().to_metric_data()
 
     def clone(self, labels: dict) -> 'LeafMetric':
         """

@@ -42,7 +42,7 @@ class HistogramMetric(EmbeddedSubmetrics):
     A metric that can register some values, sequentially, and then calculate quantiles from it
 
     :param last_calls: last calls to handle() to take into account
-    :param quantiles: a sequence of quantiles to return in to_json
+    :param quantiles: a sequence of quantiles to return in to_metric_data
     :param aggregate_children: whether to sum up children values (if present)
     :param count_calls: whether to count total amount of calls and total time
     """
