@@ -1,4 +1,5 @@
 import collections
+import warnings
 import functools
 import inspect
 import logging
@@ -7,7 +8,7 @@ import typing as tp
 
 import math
 
-from .base import EmbeddedSubmetrics, RUNTIME, LeafMetric
+from .base import EmbeddedSubmetrics, RUNTIME
 from .registry import register_metric
 from ..data import MetricData, MetricDataCollection
 
@@ -36,7 +37,7 @@ def percentile(n: tp.List[float], percent: float) -> float:
 
 
 @register_metric
-class QuantileMetric(EmbeddedSubmetrics):
+class HistogramMetric(EmbeddedSubmetrics):
     """
     A metric that can register some values, sequentially, and then calculate quantiles from it
 
@@ -46,7 +47,7 @@ class QuantileMetric(EmbeddedSubmetrics):
     :param count_calls: whether to count total amount of calls and total time
     """
 
-    CLASS_NAME = 'quantile'
+    CLASS_NAME = 'histogram'
 
     def __init__(self, name, root_metric: 'Metric' = None, metric_level: str = None,
                  last_calls: int = 100, quantiles: tp.Sequence[float] = (0.5, 0.95),
@@ -186,3 +187,12 @@ class QuantileMetric(EmbeddedSubmetrics):
                 return inner_normal
 
         return outer
+
+
+@register_metric
+class QuantileMetric(HistogramMetric):
+    CLASS_NAME = 'quantile'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        warnings.warn('quantile is deprecated; use histogram instead', DeprecationWarning)

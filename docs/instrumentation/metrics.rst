@@ -58,10 +58,10 @@ are available:
 
     .. autoclass:: satella.instrumentation.metrics.metric_types.ClicksPerTimeUnitMetric
 
-* quantile - a metric that counts a rolling window of values,
+* histogram - a metric that counts a rolling window of values,
   and provides for a way to calculate percentiles
 
-    .. autoclass:: satella.instrumentation.metrics.metric_types.QuantileMetric
+    .. autoclass:: satella.instrumentation.metrics.metric_types.HistogramMetric
 
 Note that ``quantile.measure()`` will include time spent
 processing the generator's content by the client, so you might

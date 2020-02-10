@@ -46,7 +46,7 @@ class Metric:
             with metrics.metrics_lock:
                 metrics.metrics = {k: v for k, v in metrics.metrics.items() if
                                    not k.startswith(self.get_fully_qualified_name() + '.')}
-            del metrics.metrics[self.get_fully_qualified_name()]
+                del metrics.metrics[self.get_fully_qualified_name()]
         self.children = []
 
     def __init__(self, name, root_metric: 'Metric' = None, metric_level: str = None,

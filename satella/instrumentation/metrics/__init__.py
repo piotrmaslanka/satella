@@ -8,7 +8,7 @@ from .metric_types import METRIC_NAMES_TO_CLASSES, RUNTIME, DISABLED, DEBUG, INH
 from .data import MetricDataCollection, MetricData
 
 __all__ = ['getMetric', 'DISABLED', 'RUNTIME', 'DEBUG', 'INHERIT', 'MetricDataCollection',
-           'MetricData']
+           'MetricData', 'Metric']
 
 metrics = {}
 metrics_lock = threading.Lock()

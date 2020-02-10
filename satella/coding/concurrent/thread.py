@@ -37,7 +37,8 @@ class TerminableThread(threading.Thread):
 
     def loop(self) -> None:
         """
-        Run one iteration of the loop. Meant to be overrided.
+        Run one iteration of the loop. Meant to be overrided. You do not need to override it
+        if you decide to override run() through.
 
         This should block for as long as a single check will take, as termination checks take place
         between calls.
@@ -75,23 +76,25 @@ class TerminableThread(threading.Thread):
         Forcing, if requested, will be done by injecting a SystemExit exception into target
         thread, so the thread must acquire GIL. For example, following would not be interruptable:
 
-        Note that calling force=True on PyPy won't work, and RuntimeError will be raised instead.
-
         >>> time.sleep(1000000)
+
+        Note that calling force=True on PyPy won't work, and NotImplementedError will be raised
+        instead.
 
         :param force: Whether to force a quit
         :return: self
         :raises RuntimeError: when something goes wrong with the underlying Python machinery
+        :raises NotImplementedError: force=True was used on PyPy
         """
         self._terminating = True
         if force:
             if platform.python_implementation() == 'PyPy':
-                raise RuntimeError('force=True was made on PyPy')
+                raise NotImplementedError('force=True was made on PyPy')
             ret = ctypes.pythonapi.PyThreadState_SetAsyncExc(ctypes.c_long(self._ident),
                                                              ctypes.py_object(SystemExit))
             if ret == 0:
                 ctypes.pythonapi.PyThreadState_SetAsyncExc(ctypes.c_long(self._ident), 0)
-                raise RuntimeError('Multiple threads killed!')
+                raise RuntimeError('Zero threads killed!')
             elif ret > 1:
                 ctypes.pythonapi.PyThreadState_SetAsyncExc(ctypes.c_long(self._ident), 0)
                 raise RuntimeError('Multiple threads killed!')

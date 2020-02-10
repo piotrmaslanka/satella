@@ -1,6 +1,8 @@
 # v2.4.7
 
-* _TBA_
+* `satella.instrumentation.metrics` now exports `Metric`
+* `QuantileMetric`(*quantile*) is now deprecated, use `HistogramMetric` (*histogram*) instead
+* `TerminableThread.terminate(force=True)` will raise `NotImplementedError` on PyPy.
 
 # v2.4.6
 
