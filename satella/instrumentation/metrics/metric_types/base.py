@@ -2,6 +2,8 @@ import typing as tp
 import logging
 import copy
 import time
+import functools
+import inspect
 from ..data import MetricData, MetricDataCollection
 from .registry import register_metric
 
@@ -202,6 +204,82 @@ class EmbeddedSubmetrics(LeafMetric):
         """
 
         return self.__class__(self.name, self, INHERIT, *self.args, labels=labels, **self.kwargs)
+
+
+class MeasurableMixin:
+    """
+    Add a .measure() method, useful for HistogramMetric and SummaryMetric
+    """
+
+    def measure(self, include_exceptions: bool = True, logging_level: int = RUNTIME,
+                value_getter: tp.Callable[[], float] = time.monotonic, **labels):
+        """
+        A decorator to measure a difference between some value after the method call
+        and before it.
+
+        By default, it will measure the execution time.
+
+        Use like:
+
+        >>> call_time = getMetric('root.metric_name.execution_time', 'summary')
+        >>> @call_time.measure()
+        >>> def measure_my_execution(args):
+        >>>     ...
+
+        If wrapped around generator, it will time it from the first element to the last,
+        so beware that it will depend on the speed of the consumer.
+
+        :param include_exceptions: whether to include exceptions
+        :param logging_level: one of RUNTIME or DEBUG
+        :param value_getter: a callable that takes no arguments and returns a float, which is
+            the value
+        :param labels: extra labels to call handle() with
+        """
+
+        def outer(fun):
+            @functools.wraps(fun)
+            def inner_normal(*args, **kwargs):
+                start_value = value_getter()
+                excepted = None
+                try:
+                    return fun(*args, **kwargs)
+                except Exception as e:
+                    excepted = e
+                finally:
+                    value_taken = value_getter() - start_value
+                    if excepted is not None and not include_exceptions:
+                        raise excepted
+
+                    self.handle(logging_level, value_taken, **labels)
+
+                    if excepted is not None:
+                        raise excepted
+
+            @functools.wraps(fun)
+            def inner_generator(*args, **kwargs):
+                start_value = value_getter()
+                excepted = None
+                try:
+                    for v in fun(*args, **kwargs):
+                        yield v
+                except Exception as e:
+                    excepted = e
+                finally:
+                    value_taken = value_getter() - start_value
+                    if excepted is not None and not include_exceptions:
+                        raise excepted
+
+                    self.handle(logging_level, value_taken, **labels)
+
+                    if excepted is not None:
+                        raise excepted
+
+            if inspect.isgeneratorfunction(fun):
+                return inner_generator
+            else:
+                return inner_normal
+
+        return outer
 
 
 @register_metric

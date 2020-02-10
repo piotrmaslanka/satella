@@ -60,11 +60,19 @@ are available:
 
 * summary - a metric that counts a rolling window of values,
   and provides for a way to calculate percentiles. Corresponds
-  to Prometheus_' summary metrics.
+  to Prometheus' summary_ metrics.
+
+    .. autoclass:: satella.instrumentation.metrics.metric_types.SummaryMetric
+        :members:
+
+* histogram - a metric that puts given values into predefined buckets.
+  Corresponds to Prometheus' histogram_ metric
 
     .. autoclass:: satella.instrumentation.metrics.metric_types.HistogramMetric
+        :members:
 
-.. _Prometheus: https://prometheus.io/docs/concepts/metric_types/#summary
+.. _summary: https://prometheus.io/docs/concepts/metric_types/#summary
+.. _histogram: https://prometheus.io/docs/concepts/metric_types/#histogram
 
 Note that ``quantile.measure()`` will include time spent
 processing the generator's content by the client, so you might

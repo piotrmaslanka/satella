@@ -8,7 +8,7 @@ import typing as tp
 
 import math
 
-from .base import EmbeddedSubmetrics, RUNTIME
+from .base import EmbeddedSubmetrics, MeasurableMixin
 from .registry import register_metric
 from ..data import MetricData, MetricDataCollection
 
@@ -37,7 +37,7 @@ def percentile(n: tp.List[float], percent: float) -> float:
 
 
 @register_metric
-class SummaryMetric(EmbeddedSubmetrics):
+class SummaryMetric(EmbeddedSubmetrics, MeasurableMixin):
     """
     A metric that can register some values, sequentially, and then calculate quantiles from it.
     It calculates configurable quantiles over a sliding window of amount of measurements.
@@ -118,76 +118,6 @@ class SummaryMetric(EmbeddedSubmetrics):
                 output += MetricData(self.name, percentile(sorted_calls, p_val),
                                      {'quantile': p_val, **self.labels}, self.get_timestamp())
         return output
-
-    def measure(self, include_exceptions: bool = True, logging_level: int = RUNTIME,
-                value_getter: tp.Callable[[], float] = time.monotonic, **labels):
-        """
-        A decorator to measure a difference between some value after the method call
-        and before it.
-
-        By default, it will measure the execution time.
-
-        Use like:
-
-        >>> call_time = getMetric('root.metric_name.execution_time', 'percentile')
-        >>> @call_time.measure()
-        >>> def measure_my_execution(args):
-        >>>     ...
-
-        If wrapped around generator, it will time it from the first element to the last,
-        so beware that it will depend on the speed of the consumer.
-
-        :param include_exceptions: whether to include exceptions
-        :param logging_level: one of RUNTIME or DEBUG
-        :param value_getter: a callable that takes no arguments and returns a float, which is
-            the value
-        :param labels: extra labels to call handle() with
-        """
-
-        def outer(fun):
-            @functools.wraps(fun)
-            def inner_normal(*args, **kwargs):
-                start_value = value_getter()
-                excepted = None
-                try:
-                    return fun(*args, **kwargs)
-                except Exception as e:
-                    excepted = e
-                finally:
-                    value_taken = value_getter() - start_value
-                    if excepted is not None and not include_exceptions:
-                        raise excepted
-
-                    self.handle(logging_level, value_taken, **labels)
-
-                    if excepted is not None:
-                        raise excepted
-
-            @functools.wraps(fun)
-            def inner_generator(*args, **kwargs):
-                start_value = value_getter()
-                excepted = None
-                try:
-                    for v in fun(*args, **kwargs):
-                        yield v
-                except Exception as e:
-                    excepted = e
-                finally:
-                    value_taken = value_getter() - start_value
-                    if excepted is not None and not include_exceptions:
-                        raise excepted
-
-                    self.handle(logging_level, value_taken, **labels)
-
-                    if excepted is not None:
-                        raise excepted
-
-            if inspect.isgeneratorfunction(fun):
-                return inner_generator
-            else:
-                return inner_normal
-
-        return outer
 
 
 @register_metric

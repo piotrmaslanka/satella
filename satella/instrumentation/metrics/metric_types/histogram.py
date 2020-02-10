@@ -1,13 +1,17 @@
 import math
 import typing as tp
+import time
+import functools
 import itertools
-from .base import EmbeddedSubmetrics
+import inspect
+from .base import EmbeddedSubmetrics, MeasurableMixin
 from .registry import register_metric
 from ..data import MetricData, MetricDataCollection
+from .. import RUNTIME
 
 
 @register_metric
-class HistogramMetric(EmbeddedSubmetrics):
+class HistogramMetric(EmbeddedSubmetrics, MeasurableMixin):
     """
     A histogram, by Prometheus' interpretation.
     
