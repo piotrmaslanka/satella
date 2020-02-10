@@ -5,10 +5,19 @@ import unittest
 import mock
 
 from satella.coding.structures import TimeBasedHeap, Heap, typednamedtuple, \
-    OmniHashableMixin, DictObject, apply_dict_object, Immutable
+    OmniHashableMixin, DictObject, apply_dict_object, Immutable, frozendict
 
 
 class TestTimeBasedHeap(unittest.TestCase):
+
+    def test_frozendict(self):
+        a = frozendict({1: 2, 3: 4})
+        self.assertEqual(a[1], 2)
+        self.assertRaises(TypeError, lambda: a.__setitem__(1, 3))
+        b = frozendict({1: 2, 3: 4})
+        self.assertEqual(a, b)
+        self.assertEqual(hash(a), hash(b))
+        self.assertRaises(TypeError, lambda: a.update({3: 5}))
 
     def test_dict_object(self):
         self.assertTrue(DictObject({'a': 5, 'b': 'test'}).is_valid_schema({'a': int, 'b': str}))
