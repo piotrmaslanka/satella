@@ -20,7 +20,7 @@ Vagrant.configure("2") do |config|
 
      # Install deps
      pip3 install -r /vagrant/requirements.txt
-     pip3 install nose coverage
+     pip3 install nose2 mock coverage nose2[coverage_plugin] requests
      pip3 install pyyaml toml
 
      # HTTP server for viewing coverage reports
