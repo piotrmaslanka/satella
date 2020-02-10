@@ -13,6 +13,7 @@ before_script:
   - ./cc-test-reporter before-build
 install:
   - pip install -r requirements.txt
+  - pip install coverage
 script:
   - bash tests/test_posix/test_hang_until_sig.sh
   - python setup.py test
