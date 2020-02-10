@@ -1,3 +1,7 @@
+# v2.4.11
+
+* _TBA_
+
 # v2.4.10
 
 * renamed `HistogramMetric` to `SummaryMetric` to reflect that way things
