@@ -1,3 +1,7 @@
+# v2.4.8
+
+* _TBA_
+
 # v2.4.7
 
 * `satella.instrumentation.metrics` now exports `Metric`
