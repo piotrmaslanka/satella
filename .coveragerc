@@ -6,4 +6,5 @@ omit=
   tests/*
   .eggs/*
   setup.py
+  satella/__init__.py
 
