@@ -1,5 +1,6 @@
 # v2.4.14
 
+* added `ge` in histograms
 * fixed the warning in yaml loader
 
 # v2.4.13
