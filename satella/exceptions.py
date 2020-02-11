@@ -1,6 +1,6 @@
 class BaseSatellaException(Exception):
     def __init__(self, msg, *args, **kwargs):
-        super().__init__(*(msg, *args))
+        super().__init__(*(msg, *args), **kwargs)
         self.msg = msg
 
     def __str__(self):
