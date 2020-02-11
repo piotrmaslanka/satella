@@ -17,7 +17,6 @@ Functions and decorators
 
 .. autofunction:: satella.coding.for_argument
 
-
 Now, give the following type structure:
 
 ::
@@ -47,5 +46,14 @@ Following function will help with that:
 
 .. autofunction:: satella.coding.metaclass_maker
 
+short_none is particularly useful with preconditions, or functions
+that accept a None value as well, example:
 
+>>> @precondition(short_none(lambda x: x == 2))
+>>> def expect_two(x=None):
+>>>     ...
+>>> expect_two(None)
+>>> expect_two(2)
+>>> self.assertRaises(PreconditionError, lambda: expect_two(3))
 
+.. autofunction:: satella.coding.short_none

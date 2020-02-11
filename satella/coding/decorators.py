@@ -1,15 +1,34 @@
 import functools
+import typing as tp
 import itertools
 
 from ..exceptions import PreconditionError
 
-__all__ = ['precondition', 'for_argument', 'PreconditionError']
+__all__ = ['precondition', 'for_argument', 'PreconditionError', 'short_none']
 
 _NOP = lambda x: x
 _TRUE = lambda x: True
 
 
-def precondition(*t_ops):
+def short_none(callable_: tp.Callable[[tp.Any], tp.Any]) -> tp.Callable[[tp.Any], tp.Any]:
+    """
+    Accept a callable. Return a callable that executes it only if passed a no-None arg, and returns
+    its result.
+    If passed a None, return a None
+
+    :param callable_: callable/1->1
+    :return: a modified callable
+    """
+    @functools.wraps(callable_)
+    def inner(arg):
+        if arg is None:
+            return None
+        else:
+            return callable_(arg)
+    return inner
+
+
+def precondition(*t_ops, **kw_opts):
     """
     Check that a precondition happens for given parameter.
     Only positional arguments are supported.
@@ -30,22 +49,38 @@ def precondition(*t_ops):
     You can use all standard locals in precondition.
 
     You function call will return a PreconditionError (subclass of
-    ValueError) if a precondition fails
+    ValueError) if a precondition fails.
+
+    Keyword arguments are supported as well. Note that precondition for them will be checked
+    only if they are passed, so make your default arguments obey the precondition, because it won't
+    be checked if the default value is used.
     """
 
     tn_ops = []
 
     for t_op in t_ops:
         if t_op is None:
-            precond = _TRUE
+            precond_ = _TRUE
         elif isinstance(t_op, str):
             q = dict(globals())
             exec('_precond = lambda x: ' + t_op, q)
-            precond = q['_precond']
+            precond_ = q['_precond']
         else:
-            precond = t_op
+            precond_ = t_op
 
-        tn_ops.append(precond)
+        tn_ops.append(precond_)
+
+    kw_ops = {}
+    for kwarg_, value in kw_opts.items():
+        if value is None:
+            precond_ = _TRUE
+        elif isinstance(value, str):
+            q = dict(globals())
+            exec('_precond = lambda x: '+value, q)
+            precond_ = q['_precond']
+        else:
+            precond_ = value
+        kw_ops[kwarg_] = precond_
 
     from satella.coding.recast_exceptions import rethrow_as
 
@@ -53,6 +88,12 @@ def precondition(*t_ops):
         @functools.wraps(fun)
         def inner(*args, **kwargs):
             assert len(args) >= len(tn_ops), 'More preconditions than positional arguments!'
+
+            for kwarg in kwargs:
+                if kwarg in kw_ops:
+                    if not kw_ops[kwarg](kwargs[kwarg]):
+                        raise PreconditionError('Argument %s failed precondition check' % (kwarg, ))
+
             with rethrow_as(TypeError, PreconditionError):
                 for arg, precond in itertools.zip_longest(args, tn_ops, fillvalue=_TRUE):
                     if not precond(arg):

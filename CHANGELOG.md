@@ -1,6 +1,7 @@
 # v2.4.12
 
-* _TBA_
+* fixed `precondition` to support kwargs
+* added `short_none`
 
 # v2.4.11
 

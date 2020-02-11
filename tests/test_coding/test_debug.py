@@ -1,10 +1,19 @@
 import unittest
 
-from satella.coding import for_argument, precondition
+from satella.coding import for_argument, precondition, short_none
 from satella.exceptions import PreconditionError
 
 
 class TestTypecheck(unittest.TestCase):
+
+    def test_precondition_kwargs(self):
+        @precondition(value='x == 2')
+        def kwarg(**kwargs):
+            return kwargs['value']
+
+        self.assertRaises(PreconditionError, lambda: kwarg(value=3))
+        kwarg(value=2)
+
     def test_precondition(self):
         @precondition('len(x) == 1', lambda x: x == 1, None)
         def return_double(x, y, z):
