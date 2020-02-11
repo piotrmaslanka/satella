@@ -1,3 +1,7 @@
+# v2.4.13
+
+* fixed the warning in yaml loader
+
 # v2.4.12
 
 * fixed `precondition` to support kwargs

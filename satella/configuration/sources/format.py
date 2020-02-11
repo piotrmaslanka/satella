@@ -79,7 +79,7 @@ else:
         Loads YAML strings
         """
         EXTRA_EXCEPTIONS = [yaml.YAMLError]
-        TRANSFORM = yaml.load
+        TRANSFORM = lambda data: yaml.load(data, loader=yaml.Loader)
 
 try:
     import toml
