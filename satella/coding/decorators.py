@@ -10,15 +10,22 @@ _NOP = lambda x: x
 _TRUE = lambda x: True
 
 
-def short_none(callable_: tp.Callable[[tp.Any], tp.Any]) -> tp.Callable[[tp.Any], tp.Any]:
+def short_none(callable_: tp.Union[str, tp.Callable[[tp.Any], tp.Any]]) -> tp.Callable[[tp.Any], tp.Any]:
     """
     Accept a callable. Return a callable that executes it only if passed a no-None arg, and returns
     its result.
     If passed a None, return a None
 
+    callable can also be a string, in this case it will be appended to lambda x: and eval'd
+
     :param callable_: callable/1->1
     :return: a modified callable
     """
+    if isinstance(callable_, str):
+        q = dict(globals())
+        exec('_precond = lambda x: '+callable_, q)
+        callable_ = q['_precond']
+
     @functools.wraps(callable_)
     def inner(arg):
         if arg is None:

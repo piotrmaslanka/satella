@@ -49,7 +49,7 @@ Following function will help with that:
 short_none is particularly useful with preconditions, or functions
 that accept a None value as well, example:
 
->>> @precondition(short_none(lambda x: x == 2))
+>>> @precondition(short_none('x == 2'))
 >>> def expect_two(x=None):
 >>>     ...
 >>> expect_two(None)

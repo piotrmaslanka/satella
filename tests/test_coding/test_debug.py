@@ -6,6 +6,12 @@ from satella.exceptions import PreconditionError
 
 class TestTypecheck(unittest.TestCase):
 
+    def test_short_none(self):
+        a = short_none('x == 2')
+        self.assertTrue(a(2))
+        self.assertIsNone(a(None))
+        self.assertFalse(a(3))
+
     def test_precondition_kwargs(self):
         @precondition(value='x == 2')
         def kwarg(**kwargs):
