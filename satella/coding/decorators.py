@@ -4,10 +4,31 @@ import itertools
 
 from ..exceptions import PreconditionError
 
-__all__ = ['precondition', 'for_argument', 'PreconditionError', 'short_none']
+__all__ = ['precondition', 'for_argument', 'PreconditionError', 'short_none', 'has_keys']
 
 _NOP = lambda x: x
 _TRUE = lambda x: True
+
+
+def has_keys(keys: tp.List[str]):
+    """
+    A decorator for asserting that a dictionary has given keys. Will raise PreconditionError if
+    it doesn't.
+
+    This outputs a callable that accepts a dict and returns True if it has all the keys necessary.
+
+    Returns True if the dict has all necessary keys.
+
+    This is meant to be used in conjunction with @precondition
+
+    :param keys: list of keys to expect
+    """
+    def inner(dictionary: dict) -> bool:
+        for key in keys:
+            if key not in dictionary:
+                raise PreconditionError('Key %s not found in dict' % (key, ))
+        return True
+    return inner
 
 
 def short_none(callable_: tp.Union[str, tp.Callable[[tp.Any], tp.Any]]) -> tp.Callable[[tp.Any], tp.Any]:
@@ -52,11 +73,12 @@ def precondition(*t_ops, **kw_opts):
     >>> def return_two(x):
     >>>     ..
 
-    If None is passed then argument will be always assumed to be True.
     You can use all standard locals in precondition.
 
     You function call will return a PreconditionError (subclass of
     ValueError) if a precondition fails.
+
+    A precondition of None will always be true.
 
     Keyword arguments are supported as well. Note that precondition for them will be checked
     only if they are passed, so make your default arguments obey the precondition, because it won't

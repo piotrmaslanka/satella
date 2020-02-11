@@ -1,10 +1,15 @@
 import unittest
 
-from satella.coding import for_argument, precondition, short_none
+from satella.coding import for_argument, precondition, short_none, has_keys
 from satella.exceptions import PreconditionError
 
 
 class TestTypecheck(unittest.TestCase):
+
+    def test_has_keys(self):
+        p = has_keys(['a', 'b'])
+        self.assertRaises(PreconditionError, lambda: p({'a': 3}))
+        p({'a': 3, 'b': 4})
 
     def test_short_none(self):
         a = short_none('x == 2')

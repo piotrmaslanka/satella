@@ -1,6 +1,8 @@
 # v2.4.15
 
 * bugfix release: commotion with `inf` in `HistogramMetric` fixed
+* documented a behaviour in `precondition`
+* added `has_keys`
 
 # v2.4.14
 
