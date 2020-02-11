@@ -41,7 +41,6 @@ class TestMetric(unittest.TestCase):
         self.assertEqual(choose('total.sum', metric_data).value, 3.6)
         self.assertEqual(choose('total.count', metric_data).value, 2)
 
-
     def test_int_children(self):
         metric = getMetric('test_children_int', 'int')
         metric.runtime(1, label='value')
