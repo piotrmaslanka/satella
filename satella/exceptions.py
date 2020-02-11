@@ -1,13 +1,16 @@
 class BaseSatellaException(Exception):
-    def __init__(self, msg, *args, **kwargs):
-        super().__init__(*(msg, *args), **kwargs)
+    def __init__(self, msg, *args):
+        super().__init__(*(msg, *args))
         self.msg = msg
 
     def __str__(self):
         return '%s(%s)' % (self.__class__.__qualname__, self.args)
 
     def __repr__(self):
-        return '%s(%s)' % (self.__class__.__qualname__, ', '.join(map(repr, self.args)))
+        return '%s%s(%s)' % ((self.__class__.__module__ + '.')
+                             if self.__class__.__module__ != 'builtins' else '',
+                             self.__class__.__qualname__,
+                             ', '.join(map(repr, self.args)))
 
 
 class ResourceLocked(BaseSatellaException):
