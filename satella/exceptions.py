@@ -42,5 +42,5 @@ class ConfigurationValidationError(ConfigurationSchemaError):
         """
         :param value: value found
         """
-        super().__init__(msg, value=value)
+        super().__init__(msg, value)
         self.value = value
