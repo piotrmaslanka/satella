@@ -1,3 +1,7 @@
+# v2.4.15
+
+* _TBA_
+
 # v2.4.14
 
 * added `ge` in histograms
