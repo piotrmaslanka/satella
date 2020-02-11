@@ -1,6 +1,6 @@
 # v2.4.15
 
-* _TBA_
+* bugfix release: commotion with `inf` in `HistogramMetric` fixed
 
 # v2.4.14
 
