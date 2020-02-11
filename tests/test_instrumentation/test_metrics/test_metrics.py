@@ -25,7 +25,7 @@ class TestMetric(unittest.TestCase):
         metric.runtime(1)
         metric.runtime(2.6)
         metric_data = metric.to_metric_data()
-        self.assertEqual(choose('', metric_data, {'le': 2.5}).value, 1)
+        self.assertEqual(choose('', metric_data, {'le': 2.5, 'ge': 1.0}).value, 1)
         self.assertEqual(choose('sum', metric_data).value, 3.6)
         self.assertEqual(choose('count', metric_data).value, 2)
 
@@ -34,10 +34,10 @@ class TestMetric(unittest.TestCase):
         metric.runtime(1, label='value')
         metric.runtime(2.6, label='value')
         metric_data = metric.to_metric_data()
-        self.assertEqual(choose('', metric_data, {'le': 2.5, 'label': 'value'}).value, 1)
+        self.assertEqual(choose('', metric_data, {'le': 2.5, 'ge': 1.0, 'label': 'value'}).value, 1)
         self.assertEqual(choose('sum', metric_data, {'label': 'value'}).value, 3.6)
         self.assertEqual(choose('count', metric_data, {'label': 'value'}).value, 2)
-        self.assertEqual(choose('total', metric_data, {'le': 2.5}).value, 1)
+        self.assertEqual(choose('total', metric_data, {'le': 2.5, 'ge': 1.0}).value, 1)
         self.assertEqual(choose('total.sum', metric_data).value, 3.6)
         self.assertEqual(choose('total.count', metric_data).value, 2)
 
