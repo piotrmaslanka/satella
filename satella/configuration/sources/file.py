@@ -116,7 +116,7 @@ class DirectorySource(FileSource):
 
 try:
     import requests
-except ModuleNotFoundError:
+except ImportError:
     pass
 else:
     class HTTPJSONSource(BaseSource):

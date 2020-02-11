@@ -1,3 +1,7 @@
+# v2.4.16
+
+* fixed an import error that occurred on Python<3.7 when there were no requests installed
+
 # v2.4.15
 
 * bugfix release: commotion with `inf` in `HistogramMetric` fixed
