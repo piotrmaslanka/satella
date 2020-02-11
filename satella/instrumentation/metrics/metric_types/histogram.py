@@ -65,11 +65,12 @@ class HistogramMetric(EmbeddedSubmetrics, MeasurableMixin):
 
     def containers_to_metric_data(self) -> MetricDataCollection:
         output = []
-        for amount, upper_bound, lower_bound in zip(self.buckets,
-                                                    self.bucket_limits + [math.inf],
-                                                    [0.0] + self.bucket_limits):
+        lower_bound = 0.0
+        for amount, upper_bound in zip(self.buckets,
+                                       self.bucket_limits + [math.inf]):
             labels = self.labels.copy()
             labels.update(le=upper_bound,
                           ge=lower_bound)
             output.append(MetricData(self.name, amount, labels, self.get_timestamp()))
+            lower_bound = upper_bound
         return MetricDataCollection(output)
