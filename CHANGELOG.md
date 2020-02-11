@@ -1,3 +1,7 @@
+# v2.4.16
+
+* _TBA_
+
 # v2.4.15
 
 * fixed an import error that occurred on Python<3.7 when there were no requests installed
