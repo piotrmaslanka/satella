@@ -1,4 +1,10 @@
+__all__ = ['BaseSatellaException', 'ResourceLockingError', 'ResourceNotLocked', 'ResourceLocked',
+           'ConfigurationValidationError', 'ConfigurationError', 'ConfigurationSchemaError',
+           'PreconditionError']
+
+
 class BaseSatellaException(Exception):
+    """"Base class for all Satella exceptions"""
     def __init__(self, msg, *args):
         super().__init__(*(msg, *args))
         self.msg = msg
@@ -13,11 +19,15 @@ class BaseSatellaException(Exception):
                              ', '.join(map(repr, self.args)))
 
 
-class ResourceLocked(BaseSatellaException):
+class ResourceLockingError(BaseSatellaException):
+    """Base class for resource locking issues"""
+
+
+class ResourceLocked(ResourceLockingError):
     """Given resource has been already locked"""
 
 
-class ResourceNotLocked(BaseSatellaException):
+class ResourceNotLocked(ResourceLockingError):
     """Locking given resource is needed in order to access it"""
 
 
