@@ -8,7 +8,8 @@ class EmptyMetric(Metric):
     """
     A metric that disregards all data that it's fed, and outputs nothing.
 
-    A placeholder for the times when you configure metrics and decide to leave some of them out blank.
+    A placeholder for the times when you configure metrics and decide to leave some of them out
+    blank.
     """
     CLASS_NAME = 'empty'
 

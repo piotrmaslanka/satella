@@ -26,4 +26,3 @@ def read_re_sub_and_write(path: str, pattern: tp.Union[re.compile, str],
 
     with open(path, 'w') as f_out:
         f_out.write(data)
-

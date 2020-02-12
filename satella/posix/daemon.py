@@ -12,7 +12,6 @@ except ImportError:
         def __getattr__(self, item):
             return lambda q: 0
 
-
     pwd = grp = L()
 
 DEVNULL = '/dev/null'

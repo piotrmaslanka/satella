@@ -82,7 +82,8 @@ class DumpToFileHandler(BaseExceptionHandler):
     """
     Write the stack trace to a stream-file.
 
-    Note that your file-like objects you throw into that must support only .write() and optionally .flush()
+    Note that your file-like objects you throw into that must support only .write() and optionally
+    .flush()
     """
 
     def __init__(self, human_readables: tp.Iterable[AsStreamTypeAcceptHR],
@@ -90,10 +91,10 @@ class DumpToFileHandler(BaseExceptionHandler):
         """
         Handler that dumps an exception to a file.
 
-        :param human_readables: iterable of either a file-like objects, or paths where human-readable files will
-            be output
-        :param trace_pickles: iterable of either a file-like objects, or paths where pickles with stack status
-            will be output
+        :param human_readables: iterable of either a file-like objects, or paths where
+            human-readable files will be output
+        :param trace_pickles: iterable of either a file-like objects, or paths where pickles with
+            stack status will be output
         """
         super(DumpToFileHandler, self).__init__()
         self.hr = [AsStream(x, True) if not isinstance(x, AsStream) else x for x in human_readables]
@@ -104,7 +105,8 @@ class DumpToFileHandler(BaseExceptionHandler):
         try:
             tb = Traceback()
         except ValueError:
-            return False  # no traceback, probably hit KeyboardInterrupt or SystemExit, continue with it
+            return False  # no traceback, probably hit KeyboardInterrupt or SystemExit,
+            # continue with it
 
         for q in self.hr:
             with q as f:

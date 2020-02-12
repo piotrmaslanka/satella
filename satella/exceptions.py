@@ -19,11 +19,12 @@ class BaseSatellaException(Exception):
 
     def __repr__(self):
         a = '%s%s(%s' % ((self.__class__.__module__ + '.')
-                             if self.__class__.__module__ != 'builtins' else '',
-                             self.__class__.__qualname__,
-                             ', '.join(map(repr, self.args)))
+                         if self.__class__.__module__ != 'builtins' else '',
+                         self.__class__.__qualname__,
+                         ', '.join(map(repr, self.args)))
         if self.kwargs:
-            a += ', ' + (', '.join(map(lambda kv: '%s=%s' % (kv[0], repr(kv[1])), self.kwargs.items())))
+            a += ', ' + (', '.join(map(lambda kv: '%s=%s' % (kv[0], repr(kv[1])),
+                                       self.kwargs.items())))
             a += ')'
         return a
 

@@ -49,7 +49,9 @@ class OmniHashableMixin:
         """
         Note that this will only compare _HASH_FIELDS_TO_USE
         """
-        con = lambda p: [getattr(p, field_name) for field_name in self._HASH_FIELDS_TO_USE]
+        def con(p):
+            return [getattr(p, field_name) for field_name in self._HASH_FIELDS_TO_USE]
+
         if con(self) == con(other):
             return True
 
