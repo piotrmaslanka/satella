@@ -1,5 +1,7 @@
 import typing as tp
 import unittest
+import sys
+import json
 
 from satella.json import JSONAble, json_encode
 
@@ -15,6 +17,8 @@ class TestJson(unittest.TestCase):
 
     def test_unjsonable_objects(self):
         class MyClass:
-            pass
+            def __init__(self, a):
+                self.a = a
 
-        json_encode(MyClass())
+        data = json.loads(json_encode(MyClass(5)))
+        self.assertEqual(data['a'], '5')

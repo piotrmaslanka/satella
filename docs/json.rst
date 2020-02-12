@@ -17,3 +17,8 @@ You might also want to check out the JSONEncoder satella uses to do it.
 
 .. autoclass:: satella.json.JSONEncoder
     :members:
+
+This will serialize unknown objects in the following way.
+First, **__dict__** will be extracted out of this object. The dictionary
+will be constructed in such a way, that for each key in this **__dict__**,
+it's value's **repr** will be assigned.

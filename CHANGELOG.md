@@ -1,6 +1,6 @@
 # v2.4.17
 
-* _TBA_
+* changed the behaviour of `JSONEncoder` when it comes to serializing unknown objects
 
 # v2.4.16
 

@@ -21,7 +21,10 @@ class JSONEncoder(json.JSONEncoder):
         try:
             return super().default(o)
         except TypeError:
-            return {'type': repr(type(o)), 'str': str(o), 'repr': repr(o)}
+            dct = {}
+            for k, v in o.__dict__.items():
+                dct[k] = repr(v)
+            return dct
 
 
 def json_encode(x) -> str:
