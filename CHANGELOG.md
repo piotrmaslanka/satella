@@ -1,3 +1,7 @@
+# v2.4.18
+
+* added `measure.update()`
+
 # v2.4.17
 
 * changed the behaviour of `JSONEncoder` when it comes to serializing unknown objects

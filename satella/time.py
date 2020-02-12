@@ -36,8 +36,12 @@ class measure:
         self.stop_on_stop = stop_on_stop
 
     def start(self) -> None:
-        """Start measuring time"""
+        """Start measuring time or update the internal counter"""
         self.started_on = time.monotonic()
+
+    def update(self) -> None:
+        """Alias for .start()"""
+        self.start()
 
     def __call__(self, fun: tp.Optional[tp.Callable] = None) -> float:
         if fun is None:
