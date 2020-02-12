@@ -1,6 +1,7 @@
 # v2.4.17
 
 * changed the behaviour of `JSONEncoder` when it comes to serializing unknown objects
+* moved the exception `LockIsHeld` to it's proper place
 
 # v2.4.16
 
