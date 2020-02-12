@@ -2,7 +2,7 @@ import time
 import logging
 import typing as tp
 
-from .base import EmbeddedSubmetrics
+from .base import EmbeddedSubmetrics, MeasurableMixin
 from .registry import register_metric
 from ..data import MetricData, MetricDataCollection
 
@@ -38,6 +38,6 @@ class IntegerMetric(SimpleMetric):
 
 
 @register_metric
-class FloatMetric(SimpleMetric):
+class FloatMetric(SimpleMetric, MeasurableMixin):
     CLASS_NAME = 'float'
     CONSTRUCTOR = float

@@ -47,16 +47,21 @@ are available:
 * base - for just a container metric
 * int - for int values
 * float - for float values
+
+    .. autoclass:: satella.instrumentation.metrics.metric_Types.FloatMetric
+        :members:
+
 * empty - disregard all provided values, outputs nothing
 * counter - starts from zero, increments or decrements the counter value. Also optionally
   can register the amount of calls
 
-.. autoclass:: satella.instrumentation.metrics.metric_types.CounterMetric
-
+    .. autoclass:: satella.instrumentation.metrics.metric_types.CounterMetric
+        :members:
 * cps - will count given amount of calls to handle() during last
   time period, as specified by user
 
     .. autoclass:: satella.instrumentation.metrics.metric_types.ClicksPerTimeUnitMetric
+        :members:
 
 * summary - a metric that counts a rolling window of values,
   and provides for a way to calculate percentiles. Corresponds

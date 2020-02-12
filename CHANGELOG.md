@@ -1,6 +1,8 @@
 # v2.4.16
 
-* _TBA_
+* can use `Metric.measure()` as a context manager
+* added `measure()` to `FloatMetric` and `CounterMetric`
+* added the `MetricAlreadyExists` exception
 
 # v2.4.15
 

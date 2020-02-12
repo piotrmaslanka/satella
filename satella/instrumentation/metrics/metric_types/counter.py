@@ -1,12 +1,12 @@
 import logging
-from .base import EmbeddedSubmetrics
+from .base import EmbeddedSubmetrics, MeasurableMixin
 from ..data import  MetricData, MetricDataCollection
 from .registry import register_metric
 logger = logging.getLogger(__name__)
 
 
 @register_metric
-class CounterMetric(EmbeddedSubmetrics):
+class CounterMetric(EmbeddedSubmetrics, MeasurableMixin):
     """
     A counter that can be adjusted by a given value.
 

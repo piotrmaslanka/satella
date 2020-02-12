@@ -229,6 +229,11 @@ class MeasurableMixin:
         If wrapped around generator, it will time it from the first element to the last,
         so beware that it will depend on the speed of the consumer.
 
+        It also can be used as a context manager:
+
+        >>> with call_time.measure(logging_level=DEBUG, label='key'):
+        >>>     ...
+
         :param include_exceptions: whether to include exceptions
         :param logging_level: one of RUNTIME or DEBUG
         :param value_getter: a callable that takes no arguments and returns a float, which is
@@ -236,50 +241,72 @@ class MeasurableMixin:
         :param labels: extra labels to call handle() with
         """
 
-        def outer(fun):
-            @functools.wraps(fun)
-            def inner_normal(*args, **kwargs):
-                start_value = value_getter()
-                excepted = None
-                try:
-                    return fun(*args, **kwargs)
-                except Exception as e:
-                    excepted = e
-                finally:
-                    value_taken = value_getter() - start_value
-                    if excepted is not None and not include_exceptions:
-                        raise excepted
+        class MeasurableMixinInternal:
+            def __init__(self, metric_class, include_exceptions, value_getter, logging_level, labels):
+                self.metric_class = metric_class
+                self.value_getter = value_getter
+                self.logging_level = logging_level
+                self.include_exceptions = include_exceptions
+                self.labels = labels
+                self.value = None
 
-                    self.handle(logging_level, value_taken, **labels)
+            def __call__(self, fun):
+                @functools.wraps(fun)
+                def inner_normal(*args, **kwargs):
+                    start_value = value_getter()
+                    excepted = None
+                    try:
+                        return fun(*args, **kwargs)
+                    except Exception as e:
+                        excepted = e
+                    finally:
+                        value_taken = self.value_getter() - start_value
+                        if excepted is not None and not self.include_exceptions:
+                            raise excepted
 
-                    if excepted is not None:
-                        raise excepted
+                        self.metric_class.handle(logging_level, value_taken, **labels)
 
-            @functools.wraps(fun)
-            def inner_generator(*args, **kwargs):
-                start_value = value_getter()
-                excepted = None
-                try:
-                    for v in fun(*args, **kwargs):
-                        yield v
-                except Exception as e:
-                    excepted = e
-                finally:
-                    value_taken = value_getter() - start_value
-                    if excepted is not None and not include_exceptions:
-                        raise excepted
+                        if excepted is not None:
+                            raise excepted
 
-                    self.handle(logging_level, value_taken, **labels)
+                @functools.wraps(fun)
+                def inner_generator(*args, **kwargs):
+                    start_value = value_getter()
+                    excepted = None
+                    try:
+                        for v in fun(*args, **kwargs):
+                            yield v
+                    except Exception as e:
+                        excepted = e
+                    finally:
+                        value_taken = value_getter() - start_value
+                        if excepted is not None and not self.include_exceptions:
+                            raise excepted
 
-                    if excepted is not None:
-                        raise excepted
+                        self.metric_class.handle(self.logging_level, value_taken, **self.labels)
 
-            if inspect.isgeneratorfunction(fun):
-                return inner_generator
-            else:
-                return inner_normal
+                        if excepted is not None:
+                            raise excepted
 
-        return outer
+                if inspect.isgeneratorfunction(fun):
+                    return inner_generator
+                else:
+                    return inner_normal
+
+            def __enter__(self):
+                self.value = self.value_getter()
+                return self
+
+            def __exit__(self, exc_type, exc_val, exc_tb):
+                if not self.include_exceptions and exc_type is not None:
+                    return False
+
+                elapsed = self.value_getter() - self.value
+                self.metric_class.handle(self.logging_level, elapsed, **self.labels)
+
+                return False
+
+        return MeasurableMixinInternal(self, include_exceptions, value_getter, logging_level, labels)
 
 
 @register_metric

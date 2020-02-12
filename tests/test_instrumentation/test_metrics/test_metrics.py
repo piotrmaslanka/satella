@@ -5,6 +5,7 @@ import inspect
 
 from satella.instrumentation.metrics import getMetric, DEBUG, RUNTIME, INHERIT, MetricData, \
     MetricDataCollection
+from satella.exceptions import MetricAlreadyExists
 
 logger = logging.getLogger(__name__)
 
@@ -41,6 +42,17 @@ class TestMetric(unittest.TestCase):
         self.assertEqual(choose('total.sum', metric_data).value, 3.6)
         self.assertEqual(choose('total.count', metric_data).value, 2)
 
+    def test_metric_already_exists(self):
+        getMetric('testmetric2', 'cps')
+        try:
+            getMetric('testmetric2', 'summary')
+        except MetricAlreadyExists as e:
+            self.assertEqual(e.name, 'testmetric2')
+            self.assertEqual(e.requested_type, 'summary')
+            self.assertEqual(e.existing_type, 'cps')
+        else:
+            self.fail('Exception not raised')
+
     def test_int_children(self):
         metric = getMetric('test_children_int', 'int')
         metric.runtime(1, label='value')
@@ -57,6 +69,18 @@ class TestMetric(unittest.TestCase):
         for v in generator():
             pass
         self.assertTrue(inspect.isgeneratorfunction(generator))
+        self.assertGreaterEqual(next(iter(metric.to_metric_data().values)).value, 1)
+
+    def test_quantile_context_manager(self):
+        metric = getMetric('test_metric', 'summary', quantiles=[0.5])
+        with metric.measure():
+            time.sleep(1)
+        self.assertGreaterEqual(next(iter(metric.to_metric_data().values)).value, 1)
+
+    def test_counter_measure(self):
+        metric = getMetric('test2', 'counter')
+        with metric.measure():
+            time.sleep(2)
         self.assertGreaterEqual(next(iter(metric.to_metric_data().values)).value, 1)
 
     def test_quantile_children(self):

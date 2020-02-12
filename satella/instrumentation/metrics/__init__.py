@@ -6,6 +6,7 @@ import typing as tp
 logger = logging.getLogger(__name__)
 from .metric_types import METRIC_NAMES_TO_CLASSES, RUNTIME, DISABLED, DEBUG, INHERIT, Metric
 from .data import MetricDataCollection, MetricData
+from satella.exceptions import MetricAlreadyExists
 
 __all__ = ['getMetric', 'DISABLED', 'RUNTIME', 'DEBUG', 'INHERIT', 'MetricDataCollection',
            'MetricData', 'Metric']
@@ -22,13 +23,26 @@ def getMetric(metric_name: str = '',
     """
     Obtain a metric of given name.
 
-    metric_name --  must be a module name
+    :param metric_name: a metric name. Subsequent nesting levels have to be separated with a dot
+    :param metric_type: metric type
+    :raise MetricAlreadyExists: a metric having this name already exists, but with a different type
     """
     metric_level_to_set_for_children = metric_level or INHERIT
     name = metric_name.split('.')
     with metrics_lock:
         root_metric = None
-        for name_index, name_part in itertools.chain(((0, ''), ), enumerate(name, start=1)):
+
+        if metric_name in metrics:
+            if metrics[metric_name].CLASS_NAME != metric_type:
+                raise MetricAlreadyExists('Metric of name %s exists with type %s, which is '
+                                          'different that requested %s' % (
+                                              metric_name, metrics[metric_name].CLASS_NAME,
+                                              metric_type),
+                                          name=metric_name,
+                                          requested_type=metric_type,
+                                          existing_type=metrics[metric_name].CLASS_NAME)
+
+        for name_index, name_part in itertools.chain(((0, ''),), enumerate(name, start=1)):
             tentative_name = '.'.join(name[:name_index])
             if tentative_name not in metrics:
                 if tentative_name == '':
