@@ -146,7 +146,7 @@ class Regexp(String):
     following:
 
     >>> class IPv6(Regexp):
-    >>>     REGEXP = '(\A([0-9a-f]{1,4}:)' ...
+    >>>     REGEXP = '(([0-9a-f]{1,4}:)' ...
     """
     REGEXP = r'.*'
 
@@ -334,7 +334,7 @@ def register_custom_descriptor(name: str):
 
     >>> @register_custom_descriptor('ipv6')
     >>> class IPv6(Regexp):
-    >>>     REGEXP = '(\A([0-9a-f]{1,4}:)' ...
+    >>>     REGEXP = '(([0-9a-f]{1,4}:)' ...
 
     :param name: under which it is supposed to be invokable
     """
