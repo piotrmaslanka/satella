@@ -17,13 +17,13 @@ logger = logging.getLogger(__name__)
 def dump_frames_on(sig_no: SIG_TYPE, stack_frame: types.FrameType, output: tp.TextIO):
     from satella.instrumentation import Traceback
 
-    sys.stderr.write("Stack frame dump requested\n")
+    output.write("Stack frame dump requested\n")
     # noinspection PyProtectedMember
     for frame_no, frame in sys._current_frames().items():
-        sys.stderr.write("For stack frame %s" % (frame_no,))
+        output.write("For stack frame %s" % (frame_no,))
         tb = Traceback(frame)
         tb.pretty_print(output=output)
-    sys.stderr.write("End of stack frame dump\n")
+    output.write("End of stack frame dump\n")
 
 
 # noinspection PyProtectedMember
