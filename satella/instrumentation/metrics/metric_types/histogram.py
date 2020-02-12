@@ -9,7 +9,8 @@ from ..data import MetricData, MetricDataCollection
 @register_metric
 class HistogramMetric(EmbeddedSubmetrics, MeasurableMixin):
     """
-    A histogram, by Prometheus' interpretation.
+    A histogram, by  `Prometheus' <https://github.com/prometheus/client_python#histogram/>`_
+    interpretation.
     
     :param buckets: buckets to add. First bucket will be from zero to first value, second from first
         value to second, last bucket will be from last value to infinity. So there are 
