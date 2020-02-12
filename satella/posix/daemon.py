@@ -1,7 +1,7 @@
-import logging
 import os
 import sys
 import typing as tp
+import types
 
 try:
     import pwd
@@ -14,8 +14,6 @@ except ImportError:
 
 
     pwd = grp = L()
-
-logger = logging.getLogger(__name__)
 
 DEVNULL = '/dev/null'
 
@@ -64,25 +62,26 @@ def daemonize(exit_via: tp.Callable = sys.exit,
     _parse_ug(gid, grp, 'gr_gid', os.setegid)
 
 
-def _parse_ug(no, module, field_name, osfun):
+def _parse_ug(no: tp.Union[str, int], module: types.ModuleType, field_name: str,
+              osfun: tp.Callable[[int], None]) -> None:
     if no is not None:
         if isinstance(no, str):
             no = getattr(module.getpwnam(no), field_name)
         osfun(no)
 
 
-def _redirect_descriptors_to_null():
+def _redirect_descriptors_to_null() -> None:
     sys.stdin = open(DEVNULL, 'rb')
     sys.stdout = open(DEVNULL, 'wb')
     sys.stderr = open(DEVNULL, 'wb')
 
 
-def _close_descriptors():
+def _close_descriptors() -> None:
     for d in [sys.stdin, sys.stdout, sys.stderr]:
         d.close()
 
 
-def _double_fork(exit_via):
+def _double_fork(exit_via: tp.Callable[[], tp.NoReturn]) -> None:
     os.umask(0)
 
     if os.fork() > 0:
