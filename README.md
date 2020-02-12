@@ -9,11 +9,6 @@ satella
 [![PyPI](https://img.shields.io/pypi/implementation/satella.svg)](https://pypi.python.org/pypi/satella)
 [![Documentation Status](https://readthedocs.org/projects/satella/badge/?version=latest)](http://satella.readthedocs.io/en/latest/?badge=latest)
 
-_satella.posix_ in unavailable on non-POSIX systems, but the rest should work OK.
-
-Full [documentation](http://satella.readthedocs.io/en/latest/?badge=latest)
-is available for the brave souls that do decide to use this library.
-
 Satella is an almost-zero-requirements Python 3.5+ library for writing
 server applications, especially those dealing with mundane but
 useful things. It also runs on PyPy.
@@ -25,6 +20,8 @@ Satella contains, among other things:
 * helpful [exception handlers](satella/exception_handling)
 * common programming [idioms](satella/coding)
 
+Full [documentation](http://satella.readthedocs.io/en/latest/?badge=latest)
+is available for the brave souls that do decide to use this library.
+
 See [LICENSE](LICENSE) for text of the license. This library may contain
 code taken from elsewhere on the internets, so this is copyright (c) respective authors.
-
