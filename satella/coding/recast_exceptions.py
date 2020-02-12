@@ -30,7 +30,8 @@ class rethrow_as:
 
     >>> rethrow_as(NameError, ValueError)
 
-    You can also provide a pairwise translation, eg. from NameError to ValueError and from OSError to IOError
+    You can also provide a pairwise translation, eg. from NameError to ValueError and from OSError
+    to IOError
 
     >>> rethrow_as((NameError, ValueError), (OSError, IOError))
 
@@ -97,8 +98,10 @@ def catch_exception(exc_class: tp.Union[tp.Type[Exception], tp.Tuple[tp.Type[Exc
 
     :param exc_class: Exception classes to catch
     :param callable: callable/0 to call to obtain it
-    :param return_instead: what to return instead of the function result if it didn't end in an exception
-    :param return_value_on_no_exception: whether to return the function result if exception didn't happen
+    :param return_instead: what to return instead of the function result if it didn't end in an
+        exception
+    :param return_value_on_no_exception: whether to return the function result if exception didn't
+        happen
     :raises ValueError: an exception was not thrown
     :raises TypeError: a different exception was thrown that the one we're catchin
     """

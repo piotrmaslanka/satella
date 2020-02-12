@@ -6,8 +6,13 @@ from ..exceptions import PreconditionError
 
 __all__ = ['precondition', 'for_argument', 'PreconditionError', 'short_none', 'has_keys']
 
-_NOP = lambda x: x
-_TRUE = lambda x: True
+
+def _NOP(x):
+    return x
+
+
+def _TRUE(x):
+    return True
 
 
 def has_keys(keys: tp.List[str]):
@@ -31,7 +36,8 @@ def has_keys(keys: tp.List[str]):
     return inner
 
 
-def short_none(callable_: tp.Union[str, tp.Callable[[tp.Any], tp.Any]]) -> tp.Callable[[tp.Any], tp.Any]:
+def short_none(callable_: tp.Union[str, tp.Callable[[tp.Any], tp.Any]]) -> tp.Callable[[tp.Any],
+                                                                                       tp.Any]:
     """
     Accept a callable. Return a callable that executes it only if passed a no-None arg, and returns
     its result.
@@ -137,7 +143,8 @@ def precondition(*t_ops, **kw_opts):
 
 def for_argument(*t_ops, **t_kwops):
     """
-    Calls a callable for each of the arguments. Pass None if you do not wish to process given argument.
+    Calls a callable for each of the arguments. Pass None if you do not wish to process given
+    argument.
 
     returns is a special keyword, a callable to process the result through
 

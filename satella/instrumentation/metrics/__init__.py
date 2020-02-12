@@ -1,9 +1,7 @@
 import itertools
-import logging
 import threading
 import typing as tp
 
-logger = logging.getLogger(__name__)
 from .metric_types import METRIC_NAMES_TO_CLASSES, RUNTIME, DISABLED, DEBUG, INHERIT, Metric
 from .data import MetricDataCollection, MetricData
 from satella.exceptions import MetricAlreadyExists

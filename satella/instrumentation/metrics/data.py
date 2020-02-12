@@ -14,7 +14,8 @@ def join_metric_data_name(prefix: str, name: str):
 
 
 class MetricData(JSONAble):
-    def __init__(self, name: str, value: float, labels: dict = None, timestamp: tp.Optional[float] = None):
+    def __init__(self, name: str, value: float, labels: dict = None,
+                 timestamp: tp.Optional[float] = None):
         self.name = name
         self.value = value
         self.labels = frozendict(labels) if labels is not None else frozendict()
@@ -48,7 +49,8 @@ class MetricData(JSONAble):
         return k
 
     def __repr__(self):
-        return 'MetricData(%s, %s, %s, %s)' % (repr(self.name), repr(self.value), repr(self.labels), repr(self.timestamp))
+        return 'MetricData(%s, %s, %s, %s)' % (repr(self.name), repr(self.value),
+                                               repr(self.labels), repr(self.timestamp))
 
     @classmethod
     def from_json(cls, x: dict) -> 'MetricData':
@@ -140,7 +142,8 @@ class MetricDataCollection(JSONAble):
 
         return MetricDataCollection(b)
 
-    def __iadd_metric_data_collection(self, other: 'MetricDataCollection') -> 'MetricDataCollection':
+    def __iadd_metric_data_collection(self, other: 'MetricDataCollection') -> \
+            'MetricDataCollection':
         other_values = other.values.copy()
         for elem in self.values:
             if elem not in other_values:
@@ -154,7 +157,8 @@ class MetricDataCollection(JSONAble):
         self.values.add(other)
         return self
 
-    def __iadd__(self, other: tp.Union['MetricDataCollection', MetricData]) -> 'MetricDataCollection':
+    def __iadd__(self, other: tp.Union['MetricDataCollection', MetricData]) -> \
+            'MetricDataCollection':
         if isinstance(other, MetricDataCollection):
             return self.__iadd_metric_data_collection(other)
         else:

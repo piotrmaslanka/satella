@@ -42,7 +42,7 @@ class OmniHashableMixin:
     _HASH_FIELDS_TO_USE = []
 
     def __hash__(self):
-        return functools.reduce(operator.xor, (hash(getattr(self, field_name)) \
+        return functools.reduce(operator.xor, (hash(getattr(self, field_name))
                                                for field_name in self._HASH_FIELDS_TO_USE))
 
     def __eq__(self, other: 'OmniHashableMixin') -> bool:

@@ -19,11 +19,12 @@ class TerminableThread(threading.Thread):
 
     Flag whether to terminate is stored in **self._terminating**.
 
-    If you decide to override run(), you got to check periodically for **self._terminating** to become true.
+    If you decide to override run(), you got to check periodically for **self._terminating** to
+    become true.
     If you decide to use the loop/cleanup interface, you don't need to do so.
 
-    You may also use it as a context manager. Entering the context will start the thread, and exiting
-    it will .terminate().join() it, in the following way:
+    You may also use it as a context manager. Entering the context will start the thread, and
+    exiting it will .terminate().join() it, in the following way:
 
     >>> a = MeGrimlock()
     >>> with a:
