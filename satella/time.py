@@ -28,9 +28,10 @@ class measure:
     >>>     ...
 
     :param stop_on_stop: stop elapsing time upon calling .stop()/exiting the context manager
+    :param adjust: interval to add to current time upon initialization
     """
-    def __init__(self, stop_on_stop: bool = True):
-        self.started_on = time.monotonic()
+    def __init__(self, stop_on_stop: bool = True, adjust: float = 0.0):
+        self.started_on = time.monotonic() + adjust
         self.elapsed = None
         self.stopped_on = None
         self.stop_on_stop = stop_on_stop
@@ -42,6 +43,10 @@ class measure:
     def update(self) -> None:
         """Alias for .start()"""
         self.start()
+
+    def adjust(self, interval: float) -> None:
+        """Add given value to internal started_at counter"""
+        self.started_on += interval
 
     def __call__(self, fun: tp.Optional[tp.Callable] = None) -> float:
         if fun is None:

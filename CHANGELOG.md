@@ -1,6 +1,7 @@
 # v2.4.18
 
 * added `measure.update()`
+* added `measure.adjust()`
 * starting time of `measure` is now defined
 
 # v2.4.17
