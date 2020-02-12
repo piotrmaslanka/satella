@@ -30,7 +30,7 @@ class measure:
     :param stop_on_stop: stop elapsing time upon calling .stop()/exiting the context manager
     """
     def __init__(self, stop_on_stop: bool = True):
-        self.started_on = None
+        self.started_on = time.monotonic()
         self.elapsed = None
         self.stopped_on = None
         self.stop_on_stop = stop_on_stop
@@ -45,8 +45,6 @@ class measure:
 
     def __call__(self, fun: tp.Optional[tp.Callable] = None) -> float:
         if fun is None:
-            if self.started_on is None:
-                raise RuntimeError('Time measurement did not start yet, use .start()')
             if self.stop_on_stop and self.elapsed is not None:
                 return self.elapsed
             return time.monotonic() - self.started_on
