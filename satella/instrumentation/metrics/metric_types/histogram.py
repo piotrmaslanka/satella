@@ -1,7 +1,8 @@
 import math
 import typing as tp
 import itertools
-from .base import EmbeddedSubmetrics, MeasurableMixin
+from .base import EmbeddedSubmetrics
+from .measurable_mixin import MeasurableMixin
 from .registry import register_metric
 from ..data import MetricData, MetricDataCollection
 

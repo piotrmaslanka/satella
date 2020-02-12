@@ -1,5 +1,6 @@
 import logging
-from .base import EmbeddedSubmetrics, MeasurableMixin
+from .base import EmbeddedSubmetrics
+from .measurable_mixin import MeasurableMixin
 from ..data import  MetricData, MetricDataCollection
 from .registry import register_metric
 logger = logging.getLogger(__name__)

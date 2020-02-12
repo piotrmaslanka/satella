@@ -2,7 +2,8 @@ import time
 import logging
 import typing as tp
 
-from .base import EmbeddedSubmetrics, MeasurableMixin
+from .base import EmbeddedSubmetrics
+from .measurable_mixin import MeasurableMixin
 from .registry import register_metric
 from ..data import MetricData, MetricDataCollection
 

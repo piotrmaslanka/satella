@@ -5,7 +5,8 @@ import typing as tp
 
 import math
 
-from .base import EmbeddedSubmetrics, MeasurableMixin
+from .base import EmbeddedSubmetrics
+from .measurable_mixin import MeasurableMixin
 from .registry import register_metric
 from ..data import MetricData, MetricDataCollection
 

@@ -1,10 +1,9 @@
 import collections
 import time
 import typing as tp
-import copy
 import logging
 
-from .base import EmbeddedSubmetrics, LeafMetric
+from .base import EmbeddedSubmetrics
 from .registry import register_metric
 from ..data import MetricData, MetricDataCollection
 
