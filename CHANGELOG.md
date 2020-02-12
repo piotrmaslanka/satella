@@ -1,3 +1,7 @@
+# v2.4.17
+
+* _TBA_
+
 # v2.4.16
 
 * can use `Metric.measure()` as a context manager
