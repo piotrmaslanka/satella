@@ -79,10 +79,15 @@ are available:
 .. _summary: https://prometheus.io/docs/concepts/metric_types/#summary
 .. _histogram: https://prometheus.io/docs/concepts/metric_types/#histogram
 
-Note that ``quantile.measure()`` will include time spent
+Note that ``metric.measure()`` will include time spent
 processing the generator's content by the client, so you might
 want to avoid measuring generators. However,
 if this is the behaviour that you want, you get it.
+
+Note that if you request a different type of existing metric via `getMetric`,
+an MetricAlreadyExists exception will be raised:
+
+.. autoclass:: satella.exceptions.MetricAlreadyExists
 
 Third parameter is optional. If set, all child metrics created 
 during this metric's instantiation will receive such metric level.
