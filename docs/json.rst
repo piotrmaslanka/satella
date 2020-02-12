@@ -16,7 +16,6 @@ and lists, and also JSONAble objects, by this all
 You might also want to check out the JSONEncoder satella uses to do it.
 
 .. autoclass:: satella.json.JSONEncoder
-    :members:
 
 This will serialize unknown objects in the following way.
 First, **__dict__** will be extracted out of this object. The dictionary
