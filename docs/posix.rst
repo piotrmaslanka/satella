@@ -42,4 +42,4 @@ This is meant to acquire a lock on a file.
 .. autoclass:: satella.posix.PIDFileLock
     :members:
 
-.. autoclass:: satella.posix.LockIsHeld
+.. autoclass:: satella.exceptions.LockIsHeld

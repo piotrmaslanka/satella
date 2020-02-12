@@ -3,18 +3,9 @@ import os
 
 import psutil
 
+from satella.exceptions import LockIsHeld
+
 logger = logging.getLogger(__name__)
-
-
-class LockIsHeld(Exception):
-    """
-    Lock is held by someone
-
-    pid -- PID of the holder, who is alive
-    """
-
-    def __init__(self, pid):
-        self.pid = pid
 
 
 class PIDFileLock:

@@ -73,3 +73,15 @@ class MetricAlreadyExists(BaseSatellaException):
         self.name = name
         self.requested_type = requested_type
         self.existing_type = existing_type
+
+
+class LockIsHeld(ResourceLocked):
+    """
+    An exception raised when lock is held by someone
+
+    :param pid: PID of the holder, who is alive at the time this exception was raised.
+        This is checked via psutil.
+    """
+
+    def __init__(self, pid):
+        self.pid = pid
