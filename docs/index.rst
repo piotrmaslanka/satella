@@ -23,6 +23,7 @@ Visit the project's page at GitHub_!
            posix
            import
            files
+           time
 
 
 Indices and tables

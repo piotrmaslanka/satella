@@ -3,6 +3,7 @@
 * changed the behaviour of `JSONEncoder` when it comes to serializing unknown objects
 * moved the exception `LockIsHeld` to it's proper place
 * fixed `dump_frames_on` not to log on **sys.stderr**
+* added `satella.time.measure`
 
 # v2.4.16
 
