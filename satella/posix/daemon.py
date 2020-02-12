@@ -80,7 +80,7 @@ def _close_descriptors() -> None:
         d.close()
 
 
-def _double_fork(exit_via: tp.Callable[[], tp.NoReturn]) -> None:
+def _double_fork(exit_via: tp.Callable[[], None]) -> None:
     os.umask(0)
 
     if os.fork() > 0:
