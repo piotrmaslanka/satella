@@ -42,6 +42,10 @@ class TestMetric(unittest.TestCase):
         self.assertEqual(choose('total.sum', metric_data).value, 3.6)
         self.assertEqual(choose('total.count', metric_data).value, 2)
 
+    def test_empty(self):
+        metric = getMetric('empty', 'empty')
+        self.assertEqual(len(metric.to_metric_data().values), 0)
+
     def test_metric_already_exists(self):
         getMetric('testmetric2', 'cps')
         try:
