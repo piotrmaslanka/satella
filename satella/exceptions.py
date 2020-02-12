@@ -23,7 +23,7 @@ class BaseSatellaException(Exception):
                              self.__class__.__qualname__,
                              ', '.join(map(repr, self.args)))
         if self.kwargs:
-            a += ', ' + (', '.join(map(lambda k, v: '%s=%s' % (k, repr(v)), self.kwargs.items())))
+            a += ', ' + (', '.join(map(lambda kv: '%s=%s' % (kv[0], repr(kv[1])), self.kwargs.items())))
             a += ')'
         return a
 
