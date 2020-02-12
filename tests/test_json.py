@@ -1,7 +1,6 @@
+import json
 import typing as tp
 import unittest
-import sys
-import json
 
 from satella.json import JSONAble, json_encode
 

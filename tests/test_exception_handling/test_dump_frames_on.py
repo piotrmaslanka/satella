@@ -1,6 +1,6 @@
+import io
 import logging
 import unittest
-import io
 
 from satella.instrumentation.dump_frames_on import dump_frames_on
 

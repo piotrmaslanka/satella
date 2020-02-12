@@ -5,8 +5,8 @@ import unittest
 
 from mock import patch, Mock
 
-from satella.posix import PIDFileLock
 from satella.exceptions import LockIsHeld
+from satella.posix import PIDFileLock
 
 
 def acquire_lock_file_and_wait_for_signal(q, p):

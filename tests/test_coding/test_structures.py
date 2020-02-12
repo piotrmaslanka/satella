@@ -1,5 +1,5 @@
-import copy
 import abc
+import copy
 import unittest
 
 import mock
@@ -208,7 +208,6 @@ class TestImmutable(unittest.TestCase):
         self._test_an_instance(Point2D(2.5, 2))
 
     def test_advanced_inheritance_hierarchy(self):
-
         class AnObject:
             pass
 

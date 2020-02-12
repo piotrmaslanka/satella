@@ -18,7 +18,8 @@ class TestStuff(unittest.TestCase):
         self.assertEqual(4, catch_exception(TypeError, nop, return_value_on_no_exception=True))
         self.assertEqual(5, catch_exception(TypeError, nop, return_instead=5))
 
-        self.assertIsInstance(catch_exception((ValueError, TypeError), throw_value_error), ValueError)
+        self.assertIsInstance(catch_exception((ValueError, TypeError), throw_value_error),
+                              ValueError)
 
     @silence_excs(ValueError)
     def test_silencer_2(self):

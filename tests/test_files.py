@@ -1,6 +1,7 @@
-import unittest
 import os
 import tempfile
+import unittest
+
 from satella.files import read_re_sub_and_write
 
 

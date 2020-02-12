@@ -1,12 +1,14 @@
-import unittest
-import typing as tp
 import logging
-import requests
 import time
+import unittest
+
+import requests
+
+from satella.instrumentation.metrics import MetricData, MetricDataCollection
 from satella.instrumentation.metrics import getMetric
 from satella.instrumentation.metrics.exporters import metric_data_collection_to_prometheus, \
     PrometheusHTTPExporterThread
-from satella.instrumentation.metrics import MetricData, MetricDataCollection
+
 logger = logging.getLogger(__name__)
 
 

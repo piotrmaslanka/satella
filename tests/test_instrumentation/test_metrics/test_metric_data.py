@@ -1,5 +1,6 @@
-import unittest
 import logging
+import unittest
+
 from satella.instrumentation.metrics.data import MetricData, MetricDataCollection
 
 logger = logging.getLogger(__name__)
@@ -25,12 +26,16 @@ class TestMetricData(unittest.TestCase):
     def test_update_3(self):
         a1 = MetricDataCollection(MetricData('root.metric', 2, {'service': 'my_service'}))
         a1 += MetricData('root.metric', 10, {'service': 'my_service'}, 10)
-        self.assertTrue(MetricDataCollection(MetricData('root.metric', 10, {'service': 'my_service'}, 10)).strict_eq(a1))
+        self.assertTrue(MetricDataCollection(
+            MetricData('root.metric', 10, {'service': 'my_service'}, 10)).strict_eq(a1))
 
     def test_update_4(self):
-        a1 = MetricDataCollection(MetricData('root.metric', 2, {'service': 'my_service', 'slot': 1}))
-        a1 += MetricDataCollection(MetricData('root.metric', 10, {'service': 'my_service', 'slot': 1}, 10))
-        self.assertTrue(MetricDataCollection(MetricData('root.metric', 10, {'service': 'my_service', 'slot': 1}, 10)).strict_eq(a1))
+        a1 = MetricDataCollection(
+            MetricData('root.metric', 2, {'service': 'my_service', 'slot': 1}))
+        a1 += MetricDataCollection(
+            MetricData('root.metric', 10, {'service': 'my_service', 'slot': 1}, 10))
+        self.assertTrue(MetricDataCollection(
+            MetricData('root.metric', 10, {'service': 'my_service', 'slot': 1}, 10)).strict_eq(a1))
 
     def test_update(self):
         a1 = MetricDataCollection(MetricData('root.metric', 25.0, {'period': 1}),
@@ -38,7 +43,8 @@ class TestMetricData(unittest.TestCase):
         a2 = MetricDataCollection(MetricData('root.metric', 20.0, {'period': 1}))
         a3 = a1 + a2
         self.assertTrue(MetricDataCollection(MetricData('root.metric', 20.0, {'period': 1}),
-                                             MetricData('root.metric', 50.0, {'period': 2})).strict_eq(a3))
+                                             MetricData('root.metric', 50.0,
+                                                        {'period': 2})).strict_eq(a3))
 
     def test_postfix_and_prefix(self):
         a = MetricDataCollection(MetricData('root', 3))

@@ -1,4 +1,5 @@
 import unittest
+
 from satella.coding import metaclass_maker
 
 
@@ -25,4 +26,3 @@ class AB(A, B, metaclass=metaclass_maker):
 class TestMetaclasses(unittest.TestCase):
     def test_metaclasses(self):
         a = AB()
-

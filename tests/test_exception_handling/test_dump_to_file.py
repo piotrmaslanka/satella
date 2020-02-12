@@ -13,8 +13,9 @@ class TestDumpToFile(ExceptionHandlingTestCase):
     def setUp(self):
         self.sq, self.sa, self.tf = io.StringIO(), io.StringIO(), tempfile.mktemp()
         self.op = io.BytesIO()
-        self.exception_handler = DumpToFileHandler(human_readables=[self.sq, self.sa, self.tf, None],
-                                                   trace_pickles=[self.op])
+        self.exception_handler = DumpToFileHandler(
+            human_readables=[self.sq, self.sa, self.tf, None],
+            trace_pickles=[self.op])
         self.exception_handler.install()
 
     def tearDown(self):

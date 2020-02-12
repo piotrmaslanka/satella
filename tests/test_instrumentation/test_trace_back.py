@@ -18,6 +18,8 @@ class TestTraceback(unittest.TestCase):
             tb = Traceback()
 
             p_fmt = tb.pretty_format()
+        else:
+            self.fail('exception not raised')
 
         self.assertTrue(p_fmt)
 

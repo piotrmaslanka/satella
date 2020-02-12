@@ -1,5 +1,6 @@
 from satella.configuration import sources
-from satella.configuration.sources import EnvVarsSource, OptionalSource, AlternativeSource, EnvironmentSource, \
+from satella.configuration.sources import EnvVarsSource, OptionalSource, AlternativeSource, \
+    EnvironmentSource, \
     StaticSource, MergingSource
 from .utils import SourceTestCase, mock_env
 
