@@ -22,3 +22,9 @@ In this case, everything will be accessible from this module.
 This will examine the __all__ of your submodules, and dir() it
 if __all__'s not available. Note that lack of availability of
 __all__ will emit a log warning.
+
+And sometimes you just need a particular class loaded, identified
+by a module path and class name, eg. ``subprocess.Popen``.
+You can use the following function to get it:
+
+.. autofunction:: satella.imports.import_class

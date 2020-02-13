@@ -4,9 +4,24 @@ import os
 import pkgutil
 import typing as tp
 
-__all__ = ['import_from']
+__all__ = ['import_from', 'import_class']
 
 logger = logging.getLogger(__name__)
+
+
+def import_class(path: str) -> type:
+    """
+    Import a class identified with given module path and class name
+
+    :param path: path, eg. subprocess.Popen
+    :return: imported class
+    """
+    *path, classname = path.split('.')
+    import_path = '.'.join(path)
+    try:
+        return getattr(importlib.import_module(import_path), classname)
+    except AttributeError:
+        raise ImportError('%s not found in %s' % (classname, ))
 
 
 def import_from(path: tp.List[str], package_prefix: str, all_: tp.List[str],

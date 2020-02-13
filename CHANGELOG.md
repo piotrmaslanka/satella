@@ -3,6 +3,7 @@
 * added `measure.update()`
 * added `measure.adjust()`
 * starting time of `measure` is now defined
+* added `import_class`
 
 # v2.4.17
 
