@@ -10,7 +10,7 @@ Metrics are defined and meant to be used in a similar way
 to Python logging.
 It has a name (hierarchical, dot-separated),
 that does not have to correspond to particular
-modules or classes. It can be in one of 3 states:
+modules or classes. It can be in one of 4 states:
 
 * DISABLED
 * RUNTIME
@@ -26,7 +26,8 @@ is in state INHERIT, it will inherit the metric level from it's
 parent, traversing the tree if required.
 
 INHERIT is the default state for all other metrics than root,
-for root the default is RUNTIME.
+for root the default is RUNTIME. Root metric cannot be set to INHERIT,
+as it would not make sense.
 
 You can switch the metric anytime by assigning a correct value to
 it's ``level`` property, or by specifying it's metric level during a call to ``getMetric()``.
