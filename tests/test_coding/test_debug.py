@@ -18,10 +18,10 @@ class TestTypecheck(unittest.TestCase):
         self.assertFalse(a(3))
 
     def test_precondition_none(self):
-        @precondition(a=None, b=lambda: True)
-        def do_any(a, b):
+        @precondition(a=None)
+        def do_any(a):
             return a
-        self.assertEqual(do_any(a=5, b=True), 5)
+        self.assertEqual(do_any(a=5), 5)
 
     def test_precondition_kwargs(self):
         @precondition(value='x == 2')
