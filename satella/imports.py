@@ -21,7 +21,7 @@ def import_class(path: str) -> type:
     try:
         return getattr(importlib.import_module(import_path), classname)
     except AttributeError:
-        raise ImportError('%s not found in %s' % (classname, ))
+        raise ImportError('%s not found in %s' % (classname, import_path))
 
 
 def import_from(path: tp.List[str], package_prefix: str, all_: tp.List[str],

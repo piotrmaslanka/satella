@@ -22,3 +22,4 @@ class TestImports(unittest.TestCase):
     def test_import_class(self):
         p_open = import_class('subprocess.Popen')
         self.assertIs(p_open, subprocess.Popen)
+        self.assertRaises(ImportError, lambda: import_class('subprocess.DoesNotExist'))
