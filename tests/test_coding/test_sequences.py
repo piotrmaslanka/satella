@@ -1,12 +1,17 @@
 import logging
 import unittest
 
-from satella.coding.sequences import choose, infinite_counter
+from satella.coding.sequences import choose, infinite_counter, take_n
 
 logger = logging.getLogger(__name__)
 
 
 class TestSequences(unittest.TestCase):
+
+    def test_take_n(self):
+        subset = take_n(infinite_counter(), 10)
+        for a, b in zip(range(10), subset):
+            self.assertEqual(a, b)
 
     def test_infinite_counter(self):
         p = infinite_counter(1)

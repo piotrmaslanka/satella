@@ -14,3 +14,17 @@ infinite_counter
 An infinite generator of subsequent ints, starting at start_at with an optional step of step.
 
 .. autofunction:: satella.coding.sequences.infinite_counter
+
+take_n
+------
+
+For the rare moments, when you wish you could just do:
+
+::
+    iter: tp.Iterator
+    n_elemets = iter[:n]
+
+But it doesn't let you do this, because iter is not subscriptable.
+However, this function comes to the rescue:
+
+:: autofunction:: satella.coding.sequences.take_n

@@ -4,6 +4,7 @@
 * added `measure.adjust()`
 * starting time of `measure` is now defined
 * added `import_class`
+* added `take_n`
 
 # v2.4.17
 
