@@ -1,3 +1,7 @@
+# v2.4.19
+
+* _TBA_
+
 # v2.4.18
 
 * added `measure.update()`
