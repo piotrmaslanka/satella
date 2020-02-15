@@ -17,10 +17,11 @@ class CounterMetric(EmbeddedSubmetrics, MeasurableMixin):
     CLASS_NAME = 'counter'
 
     def __init__(self, name, root_metric: 'Metric' = None, metric_level: str = None,
+                 internal: bool = False,
                  sum_children: bool = True,
                  count_calls: bool = False, *args, **kwargs):
-        super().__init__(name, root_metric, metric_level, sum_children=sum_children,
-                         count_calls=count_calls, *args, **kwargs)
+        super().__init__(name, root_metric, metric_level, internal=internal,
+                         sum_children=sum_children, count_calls=count_calls, *args, **kwargs)
         self.sum_children = sum_children
         self.count_calls = count_calls
         self.calls = 0
@@ -30,15 +31,18 @@ class CounterMetric(EmbeddedSubmetrics, MeasurableMixin):
         if self.embedded_submetrics_enabled:
             k = super().to_metric_data()
             if self.sum_children:
-                k += MetricData(self.name+'.sum', self.value, self.labels, self.get_timestamp())
+                k += MetricData(self.name+'.sum', self.value, self.labels, self.get_timestamp(),
+                                self.internal)
             if self.count_calls:
-                k += MetricData(self.name+'.count', self.calls, self.labels, self.get_timestamp())
+                k += MetricData(self.name+'.count', self.calls, self.labels, self.get_timestamp(),
+                                self.internal)
             return k
 
         p = super().to_metric_data()
         p.set_value(self.value)
         if self.count_calls:
-            p += MetricData(self.name+'.count', self.calls, self.labels, self.get_timestamp())
+            p += MetricData(self.name+'.count', self.calls, self.labels, self.get_timestamp(),
+                            self.internal)
 
         return p
 

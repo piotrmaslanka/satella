@@ -78,6 +78,10 @@ class PrometheusHTTPExporterThread(TerminableThread):
 class RendererObject(io.StringIO):
 
     def render(self, md: MetricData):
+
+        if md.internal:     # Don't output internal metrics
+            return
+
         self.write(md.name.replace('.', '_'))
         if md.labels:
             self.write('{')

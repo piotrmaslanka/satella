@@ -21,8 +21,8 @@ class ClicksPerTimeUnitMetric(EmbeddedSubmetrics):
     CLASS_NAME = 'cps'
 
     def __init__(self, *args, time_unit_vectors: tp.Optional[tp.List[float]] = None,
-                 aggregate_children: bool = True, **kwargs):
-        super().__init__(*args, time_unit_vectors=time_unit_vectors, **kwargs)
+                 aggregate_children: bool = True, internal: bool = False, **kwargs):
+        super().__init__(*args, internal=internal, time_unit_vectors=time_unit_vectors, **kwargs)
         time_unit_vectors = time_unit_vectors or [1]
         self.last_clicks = collections.deque()
         self.aggregate_children = aggregate_children
@@ -71,6 +71,6 @@ class ClicksPerTimeUnitMetric(EmbeddedSubmetrics):
         output = []
         for time_unit, count in zip(self.time_unit_vectors, count_map):
             output.append(MetricData(self.name, count, {'period': time_unit, **self.labels},
-                                     self.get_timestamp()))
+                                     self.get_timestamp(), self.internal))
 
         return MetricDataCollection(output)

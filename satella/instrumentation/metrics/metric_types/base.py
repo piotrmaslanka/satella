@@ -22,6 +22,7 @@ class Metric:
     Switch levels by setting metric.level to a proper value
 
     :param enable_timestamp: append timestamp of last update to the metric
+    :param internal: if True, this metric won't be visible in exporters
     """
     CLASS_NAME = 'base'
 
@@ -52,10 +53,12 @@ class Metric:
         self.children = []
 
     def __init__(self, name, root_metric: 'Metric' = None, metric_level: str = None,
+                 internal: bool = False,
                  *args, **kwargs):
         """When reimplementing the method, remember to pass kwargs here!"""
         self.name = name
         self.root_metric = root_metric
+        self.internal = internal
         if metric_level is None:
             if self.name == '':
                 metric_level = RUNTIME
@@ -132,13 +135,13 @@ class LeafMetric(Metric):
     You cannot hook up any children to a leaf metric.
     """
     def __init__(self, name, root_metric: 'Metric' = None, metric_level: str = None,
-                 labels: tp.Optional[dict] = None, *args, **kwargs):
-        super().__init__(name, root_metric, metric_level, *args, **kwargs)
+                 labels: tp.Optional[dict] = None, internal: bool = False, *args, **kwargs):
+        super().__init__(name, root_metric, metric_level, internal, *args, **kwargs)
         self.labels = labels or {}
         assert '_timestamp' not in self.labels, 'Cannot make a label called _timestamp!'
 
     def to_metric_data(self) -> MetricDataCollection:
-        return MetricDataCollection(MetricData(self.name, None, self.labels))
+        return MetricDataCollection(MetricData(self.name, None, self.labels, internal=self.internal))
 
     def append_child(self, metric: 'Metric'):
         raise TypeError('This metric cannot contain children!')
@@ -160,8 +163,8 @@ class EmbeddedSubmetrics(LeafMetric):
     Refer to :py:class:`.cps.ClicksPerTimeUnitMetric` on how to do that.
     """
     def __init__(self, name, root_metric: 'Metric' = None, metric_level: str = None,
-                 labels: tp.Optional[dict] = None, *args, **kwargs):
-        super().__init__(name, root_metric, metric_level, labels, *args, **kwargs)
+                 labels: tp.Optional[dict] = None, internal: bool = False, *args, **kwargs):
+        super().__init__(name, root_metric, metric_level, labels, internal, *args, **kwargs)
         self.args = args
         self.kwargs = kwargs
         self.embedded_submetrics_enabled = False        # to check for in children

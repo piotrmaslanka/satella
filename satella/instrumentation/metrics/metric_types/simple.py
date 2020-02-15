@@ -28,7 +28,7 @@ class SimpleMetric(EmbeddedSubmetrics):
         if self.embedded_submetrics_enabled:
             return super().to_metric_data()
         return MetricDataCollection(
-            MetricData(self.name, self.data, self.labels, self.get_timestamp())
+            MetricData(self.name, self.data, self.labels, self.get_timestamp(), self.internal)
         )
 
 

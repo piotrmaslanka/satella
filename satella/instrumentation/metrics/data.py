@@ -15,8 +15,10 @@ def join_metric_data_name(prefix: str, name: str):
 
 class MetricData(JSONAble):
     def __init__(self, name: str, value: float, labels: dict = None,
-                 timestamp: tp.Optional[float] = None):
+                 timestamp: tp.Optional[float] = None,
+                 internal: bool = False):
         self.name = name
+        self.internal = internal
         self.value = value
         self.labels = frozendict(labels) if labels is not None else frozendict()
         self.timestamp = timestamp

@@ -17,6 +17,12 @@ class TestExporters(unittest.TestCase):
         a = MetricDataCollection(MetricData('root', 5, timestamp=10))
         self.assertEqual("""root 5 10000\n""", metric_data_collection_to_prometheus(a))
 
+    def test_internal_metrics(self):
+        metric = getMetric('internal_metric', 'int', internal=True)
+        metric.runtime(2)
+        self.assertNotIn('internal_metric', metric_data_collection_to_prometheus(
+            getMetric('').to_metric_data()))
+
     def test_prometheus(self):
         a = MetricDataCollection([MetricData('root.metric', 3, {'k': 2, 'm': '"'}),
                                   MetricData('root.metric', 6, {'k': 4})])

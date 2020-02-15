@@ -21,10 +21,11 @@ class HistogramMetric(EmbeddedSubmetrics, MeasurableMixin):
     CLASS_NAME = 'histogram'
 
     def __init__(self, name: str, root_metric: 'Metric' = None, metric_level: str = None,
+                 internal: bool = False,
                  buckets: tp.Sequence[float] = (.005, .01, .025, .05, .075, .1, .25, .5,
                                                 .75, 1.0, 2.5, 5.0, 7.5, 10.0),
                  aggregate_children: bool = True, *args, **kwargs):
-        super().__init__(name, root_metric, metric_level, buckets=buckets,
+        super().__init__(name, root_metric, metric_level, internal=internal, buckets=buckets,
                          aggregate_children=aggregate_children, *args, **kwargs)
         self.bucket_limits = list(buckets)
         self.buckets = [0] * (len(buckets) + 1)
@@ -73,6 +74,6 @@ class HistogramMetric(EmbeddedSubmetrics, MeasurableMixin):
             labels = self.labels.copy()
             labels.update(le=upper_bound,
                           ge=lower_bound)
-            output.append(MetricData(self.name, amount, labels, self.get_timestamp()))
+            output.append(MetricData(self.name, amount, labels, self.get_timestamp(), self.internal))
             lower_bound = upper_bound
         return MetricDataCollection(output)

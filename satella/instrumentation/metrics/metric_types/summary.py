@@ -50,13 +50,14 @@ class SummaryMetric(EmbeddedSubmetrics, MeasurableMixin):
     CLASS_NAME = 'summary'
 
     def __init__(self, name, root_metric: 'Metric' = None, metric_level: str = None,
+                 internal: bool = False,
                  last_calls: int = 100, quantiles: tp.Sequence[float] = (0.5, 0.95),
                  aggregate_children: bool = True,
                  count_calls: bool = True, *args,
                  **kwargs):
-        super().__init__(name, root_metric, metric_level, *args, last_calls=last_calls,
-                         quantiles=quantiles, aggregate_children=aggregate_children,
-                         count_calls=count_calls,
+        super().__init__(name, root_metric, metric_level, *args, internal=internal,
+                         last_calls=last_calls,  quantiles=quantiles,
+                         aggregate_children=aggregate_children, count_calls=count_calls,
                          **kwargs)
         self.last_calls = last_calls
         self.calls_queue = collections.deque()
@@ -82,8 +83,10 @@ class SummaryMetric(EmbeddedSubmetrics, MeasurableMixin):
     def to_metric_data(self) -> MetricDataCollection:
         k = self._to_metric_data()
         if self.count_calls:
-            k += MetricData(self.name+'.count', self.tot_calls, self.labels, self.get_timestamp())
-            k += MetricData(self.name+'.sum', self.tot_time, self.labels, self.get_timestamp())
+            k += MetricData(self.name+'.count', self.tot_calls, self.labels, self.get_timestamp(),
+                            self.internal)
+            k += MetricData(self.name+'.sum', self.tot_time, self.labels, self.get_timestamp(),
+                            self.internal)
         return k
 
     def _to_metric_data(self) -> MetricDataCollection:
@@ -101,8 +104,9 @@ class SummaryMetric(EmbeddedSubmetrics, MeasurableMixin):
 
             if self.count_calls:
                 k += MetricData(self.name+'.count', self.tot_calls, self.labels,
-                                self.get_timestamp())
-                k += MetricData(self.name+'.sum', self.tot_time, self.labels, self.get_timestamp())
+                                self.get_timestamp(), self.internal)
+                k += MetricData(self.name+'.sum', self.tot_time, self.labels, self.get_timestamp(),
+                                self.internal)
 
             return k
         else:
@@ -114,10 +118,11 @@ class SummaryMetric(EmbeddedSubmetrics, MeasurableMixin):
         for p_val in self.quantiles:
             if not sorted_calls:
                 output += MetricData(self.name, 0.0, {'quantile': p_val, **self.labels},
-                                     self.get_timestamp())
+                                     self.get_timestamp(), self.internal)
             else:
                 output += MetricData(self.name, percentile(sorted_calls, p_val),
-                                     {'quantile': p_val, **self.labels}, self.get_timestamp())
+                                     {'quantile': p_val, **self.labels}, self.get_timestamp(),
+                                     self.internal)
         return output
 
 

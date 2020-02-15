@@ -45,6 +45,11 @@ You obtain metrics using ``getMetric()`` as follows:
 
     ``metric = getMetric(__name__+'.StringMetric', 'string', RUNTIME, **kwargs)``
 
+**internal** is for those cases where the application is the consumer of
+the metrics, and you don't want them exposed to outside.
+Take care to examine this field of ``MetricData`` if you
+write custom exporters!
+
 Where the second argument is a metric type. Following metric types
 are available:
 
