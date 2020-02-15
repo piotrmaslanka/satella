@@ -1,3 +1,7 @@
+# v2.4.20
+
+* _TBA_
+
 # v2.4.19
 
 * added `internal` for `Metric`
