@@ -71,7 +71,6 @@ class LinkfailMetric(EmbeddedSubmetrics):
             labels = self.labels.copy()
             if keys != set([0]):
                 labels.update(address=address)
-            logger.warning(f'Processing {address}')
             mdc += MetricData(self.name+'.consecutive_failures', self.consecutive_failures[address],
                               labels, self.get_timestamp(), self.internal)
             mdc += MetricData(self.name+'.consecutive_successes', self.consecutive_successes[address],

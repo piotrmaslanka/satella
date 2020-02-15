@@ -34,8 +34,6 @@ class TestMetric(unittest.TestCase):
         for i in range(10):
             linkfail.runtime(False)
 
-        logger.warning(f'{linkfail.to_metric_data().values}')
-
         self.assertEqual(choose('.status', linkfail.to_metric_data()).value, 0)
 
         for i in range(10):
