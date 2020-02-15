@@ -77,8 +77,7 @@ class MeasurableMixin:
                     start_value = value_getter()
                     excepted = None
                     try:
-                        for v in fun(*args, **kwargs):
-                            yield v
+                        yield from fun(*args, **kwargs)
                     except Exception as e:
                         excepted = e
                     finally:
