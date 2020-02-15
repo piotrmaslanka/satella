@@ -18,8 +18,41 @@ def choose(postfix: str, mdc: MetricDataCollection, labels=None) -> MetricData:
 
 class TestMetric(unittest.TestCase):
 
+    def test_linkfail(self):
+        d = {'online': False, 'offline': False}
+
+        def on_online(address, labels):
+            d['online'] = True
+
+        def on_offline(address, labels):
+            d['offline'] = True
+
+        linkfail = getMetric('linkfail', 'linkfail', consecutive_failures_to_offline=10,
+                             consecutive_successes_to_online=10, callback_on_online=on_online,
+                             callback_on_offline=on_offline)
+
+        for i in range(10):
+            linkfail.runtime(False)
+
+        logger.warning(f'{linkfail.to_metric_data().values}')
+
+        self.assertEqual(choose('.status', linkfail.to_metric_data()).value, 0)
+
+        for i in range(10):
+            linkfail.runtime(True)
+
+        self.assertTrue(d['online'])
+        self.assertTrue(d['offline'])
+
+        self.assertEqual(choose('.status', linkfail.to_metric_data()).value, 1)
+
     def setUp(self) -> None:
         getMetric('').reset()
+
+    def test_embedded_submetrics_labels_getter(self):
+        metric = getMetric('embedded_submetrics_test', 'int')
+        metric.runtime(1, label='value')
+        self.assertTrue(metric.get_specific_metric_data({'label': 'value'}).values)
 
     def test_histogram(self):
         metric = getMetric('test_histogram', 'histogram')

@@ -200,6 +200,13 @@ class EmbeddedSubmetrics(LeafMetric):
         else:
             return super().to_metric_data()
 
+    def get_specific_metric_data(self, labels: dict) -> MetricDataCollection:
+        """
+        Return a MetricDataCollection for a child with given labels
+        """
+        key = tuple(sorted(labels.items()))
+        return self.children_mapping[key].to_metric_data()
+
     def clone(self, labels: dict) -> 'LeafMetric':
         """
         Return a fresh instance of this metric, with it's parent being set to this metric

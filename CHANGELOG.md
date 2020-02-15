@@ -1,6 +1,7 @@
 # v2.4.19
 
 * added `internal` for `Metric`
+* added `LinkfailMetric`
 
 # v2.4.18
 

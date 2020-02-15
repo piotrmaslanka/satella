@@ -72,6 +72,11 @@ are available:
     .. autoclass:: satella.instrumentation.metrics.metric_types.ClicksPerTimeUnitMetric
         :members:
 
+* linkfail - for tracking whether given link is online or offline
+
+    .. autoclass:: satella.instrumentation.metrics.metric_types.LinkfailMetric
+        :members:
+
 * summary - a metric that counts a rolling window of values,
   and provides for a way to calculate percentiles. Corresponds
   to Prometheus' summary_ metrics.
