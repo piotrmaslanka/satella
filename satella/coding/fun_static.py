@@ -1,4 +1,4 @@
-def static_var(var_name: str, starting_value):
+def static_var(var_name: str, starting_value=None):
     """
     Declare a static variable for given function
 

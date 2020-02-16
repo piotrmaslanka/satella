@@ -1,6 +1,6 @@
 # v2.4.21
 
-* _TBA_
+* added default value for `staticvar`
 
 # v2.4.20
 
