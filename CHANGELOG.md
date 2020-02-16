@@ -1,6 +1,7 @@
 # v2.4.20
 
 * deprecated `infinite_counter` (use `itertools.count` instead)
+* added `is_instance` factory function
 
 # v2.4.19
 

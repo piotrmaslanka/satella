@@ -19,6 +19,13 @@ def infinite_counter(start_at: int = 0, step: int = 1) -> tp.Generator[int, None
         i += step
 
 
+def is_instance(classes: tp.Union[tp.Tuple[type, ...], type]) -> tp.Callable[[object], bool]:
+    def inner(object_):
+        return isinstance(object_, classes)
+    inner.__doc__ = """Return a bool telling if object is of type %s""" % (repr(classes), )
+    return inner
+
+
 T = tp.TypeVar('T')
 
 

@@ -22,3 +22,17 @@ But it doesn't let you do this, because iterator is not subscriptable.
 However, this function comes to the rescue:
 
 .. autofunction:: satella.coding.sequences.take_n
+
+is_instance
+-----------
+
+A factory for filter functions that check if given object is
+an instance of something (or multiple classes, if passed a tuple
+of classes). Use like that
+
+::
+
+    orders: tp.List[BaseOrder] = ...
+    read_orders = filter(is_instance(ReadOrder), orders)
+
+.. autofunction:: satella.coding.sequences.is_instance
