@@ -1,3 +1,7 @@
+# v2.4.21
+
+* _TBA_
+
 # v2.4.20
 
 * deprecated `infinite_counter` (use `itertools.count` instead)
