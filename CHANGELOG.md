@@ -1,6 +1,7 @@
 # v2.4.21
 
 * added default value for `staticvar`
+* bugfix release: fixed linkfail metric
 
 # v2.4.20
 
