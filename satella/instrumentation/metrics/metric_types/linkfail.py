@@ -27,8 +27,8 @@ class LinkfailMetric(EmbeddedSubmetrics):
                  labels: tp.Optional[dict] = None, internal: bool = False,
                  consecutive_failures_to_offline: int = 100,
                  consecutive_successes_to_online: int = 10,
-                 callback_on_online: tp.Callable[[int, dict], None] = lambda a: None,
-                 callback_on_offline: tp.Callable[[int, dict], None] = lambda a: None,
+                 callback_on_online: tp.Callable[[int, dict], None] = lambda a, b: None,
+                 callback_on_offline: tp.Callable[[int, dict], None] = lambda a, b: None,
                  *args, **kwargs):
         super().__init__(name, root_metric, metric_level, labels, internal, *args,
                          consecutive_failures_to_offline=consecutive_failures_to_offline,

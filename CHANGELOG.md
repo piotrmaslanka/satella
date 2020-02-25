@@ -1,7 +1,11 @@
+# v2.4.22
+
+* added `is_last`
+
 # v2.4.21
 
 * added default value for `staticvar`
-* added `is_last`
+* bugfix release: fixed linkfail metric
 
 # v2.4.20
 
