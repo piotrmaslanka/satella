@@ -1,6 +1,7 @@
 # v2.4.21
 
 * added default value for `staticvar`
+* added `is_last`
 
 # v2.4.20
 

@@ -36,3 +36,8 @@ of classes). Use like that
     read_orders = filter(is_instance(ReadOrder), orders)
 
 .. autofunction:: satella.coding.sequences.is_instance
+
+is_last
+-------
+
+.. autofunction:: satella.coding.sequences.is_last

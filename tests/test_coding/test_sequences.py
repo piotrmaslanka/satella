@@ -1,12 +1,16 @@
 import logging
 import unittest
 
-from satella.coding.sequences import choose, infinite_counter, take_n, is_instance
+from satella.coding.sequences import choose, infinite_counter, take_n, is_instance, is_last
 
 logger = logging.getLogger(__name__)
 
 
 class TestSequences(unittest.TestCase):
+
+    def test_is_last(self):
+        for is_last_flag, elem in is_last([1, 2, 3, 4, 5]):
+            self.assertTrue(not is_last_flag ^ (elem == 5))
 
     def test_take_n(self):
         subset = take_n(infinite_counter(), 10)
