@@ -7,7 +7,8 @@ __all__ = ['is_last']
 T = tp.TypeVar('T')
 
 
-def is_last(lst: tp.List[T]) -> tp.Generator[tp.Tuple[bool, T], None, None]:
+# shamelessly copied from https://medium.com/better-programming/is-this-the-last-element-of-my-python-for-loop-784f5ff90bb5
+def is_last(lst: tp.Iterable[T]) -> tp.Generator[tp.Tuple[bool, T], None, None]:
     """
     Return every element of the list, alongside a flag telling is this the last element.
 
@@ -20,8 +21,9 @@ def is_last(lst: tp.List[T]) -> tp.Generator[tp.Tuple[bool, T], None, None]:
     :param lst: list to iterate thru
     :return: a generator returning (bool, T)
     """
-    for i, elem in enumerate(lst):
-        if i == len(lst) - 1:
-            yield True, elem
-        else:
-            yield False, elem
+    iterable = iter(lst)
+    ret_var = next(iterable)
+    for val in iterable:
+        yield False, ret_var
+        ret_var = val
+    yield True, ret_var

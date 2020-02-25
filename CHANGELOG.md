@@ -1,6 +1,6 @@
 # v2.4.23
 
-* _TBA_
+* improved `is_last` to work on any iterable
 
 # v2.4.22
 
