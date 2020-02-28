@@ -1,3 +1,7 @@
+# v2.4.28
+
+* _TBA_
+
 # v2.4.27
 
 * added `attach_arguments`
