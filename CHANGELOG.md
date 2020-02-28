@@ -1,3 +1,7 @@
+# v2.4.25
+
+* bugfix release: fixed `add_next` behaviour with regards to empty arguments
+
 # v2.4.24
 
 * added `add_next`
