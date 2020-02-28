@@ -85,6 +85,8 @@ class MetricDataCollection(JSONAble):
                 self.values = set(values)
             elif isinstance(values[0], MetricDataCollection):
                 self.values = values[0].values
+            else:
+                self.values = set(values[0])
         else:
             assert all(map(lambda x: isinstance(x, MetricData), values)), 'Not all arguments are ' \
                                                                           'MetricData!'
