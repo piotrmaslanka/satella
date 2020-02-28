@@ -4,7 +4,8 @@ import itertools
 
 from ..exceptions import PreconditionError
 
-__all__ = ['precondition', 'for_argument', 'PreconditionError', 'short_none', 'has_keys']
+__all__ = ['precondition', 'for_argument', 'PreconditionError', 'short_none', 'has_keys',
+           'attach_arguments']
 
 
 def _NOP(x):
@@ -13,6 +14,32 @@ def _NOP(x):
 
 def _TRUE(x):
     return True
+
+
+def attach_arguments(*args, **kwargs):
+    """
+    Return a decorator that passes extra arguments to the function.
+
+    Example:
+
+    >>> @attach_arguments(2, label='value')
+    >>> def print_args(*args, **kwargs):
+    >>>     print(args, kwargs)
+    >>> print_args(3, 4, key='value')
+
+    will print
+
+    >>> (3, 4, 2) {'key': 'value', 'label': 'value'}
+
+    Arguments given in attach_arguments will take precedence in case of key collisions.
+    """
+    def outer(fun):
+        @functools.wraps(fun)
+        def inner(*my_args, **my_kwargs):
+            my_kwargs.update(kwargs)
+            return fun(*my_args, *args, **my_kwargs)
+        return inner
+    return outer
 
 
 def has_keys(keys: tp.List[str]):

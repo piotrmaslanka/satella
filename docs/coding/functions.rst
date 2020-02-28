@@ -79,3 +79,8 @@ Example:
 >>> expect_two(None)
 >>> expect_two(2)
 >>> self.assertRaises(PreconditionError, lambda: expect_two(3))
+
+attach_arguments
+----------------
+
+.. autofunction:: satella.coding.attach_arguments
