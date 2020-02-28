@@ -14,6 +14,8 @@ def join_metric_data_name(prefix: str, name: str):
 
 
 class MetricData(JSONAble):
+    __slots__ = ['name', 'value', 'labels', 'timestamp', 'internal']
+
     def __init__(self, name: str, value: float, labels: dict = None,
                  timestamp: tp.Optional[float] = None,
                  internal: bool = False):
