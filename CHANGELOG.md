@@ -1,3 +1,7 @@
+# v2.4.27
+
+* _TBA_
+
 # v2.4.26
 
 * bugfix release: fixed `add_next` behaviour with regards to empty arguments
