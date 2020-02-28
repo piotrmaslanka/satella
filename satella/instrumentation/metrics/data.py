@@ -48,6 +48,8 @@ class MetricData(JSONAble):
         }
         if self.timestamp is not None:
             k['_timestamp'] = self.timestamp
+        if self.internal:
+            k['_internal'] = True
         return k
 
     def __repr__(self):
@@ -59,7 +61,8 @@ class MetricData(JSONAble):
         name = x.pop('_name')
         value = x.pop('_')
         timestamp = x.pop('_timestamp', None)
-        return MetricData(name, value, x, timestamp)
+        internal = x.pop('_internal', False)
+        return MetricData(name, value, x, timestamp, internal)
 
     def add_timestamp(self, timestamp: float):
         self.timestamp = timestamp
@@ -82,9 +85,9 @@ class MetricDataCollection(JSONAble):
                 self.values = set(values)
             elif isinstance(values[0], MetricDataCollection):
                 self.values = values[0].values
-            else:
-                self.values = set(values[0])
         else:
+            assert all(map(lambda x: isinstance(x, MetricData), values)), 'Not all arguments are ' \
+                                                                          'MetricData!'
             self.values = set(values)
 
     def to_json(self) -> tp.Union[list, dict, str, int, float, None]:

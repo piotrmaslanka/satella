@@ -8,6 +8,11 @@ logger = logging.getLogger(__name__)
 
 class TestMetricData(unittest.TestCase):
 
+    def test_internal(self):
+        md = MetricData('name', 2, {'labels': 'key'}, None, True)
+        md2 = MetricData.from_json(md.to_json())
+        self.assertTrue(md2.internal)
+
     def test_update_labels_2(self):
         a = MetricDataCollection(MetricData('root', 2, {'labels': 'key'}))
         a.add_labels({'service': 'wtf'})

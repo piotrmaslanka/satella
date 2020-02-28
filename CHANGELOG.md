@@ -1,6 +1,7 @@
 # v2.4.23
 
 * improved `is_last` to work on any iterable
+* `internal` will be preserved during convering MetricData to JSON
 
 # v2.4.22
 
