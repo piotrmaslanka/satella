@@ -41,3 +41,11 @@ is_last
 -------
 
 .. autofunction:: satella.coding.sequences.is_last
+
+add_next
+--------
+
+Sometimes you need to iterate through list and take also the next
+element.
+
+.. autofunction:: satella.coding.sequences.add_next

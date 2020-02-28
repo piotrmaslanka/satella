@@ -1,12 +1,18 @@
 import logging
 import unittest
 
-from satella.coding.sequences import choose, infinite_counter, take_n, is_instance, is_last
+from satella.coding.sequences import choose, infinite_counter, take_n, is_instance, is_last, \
+    add_next
 
 logger = logging.getLogger(__name__)
 
 
 class TestSequences(unittest.TestCase):
+    def test_add_next(self):
+        self.assertEqual(list(add_next([1, 2, 3, 4, 5])),
+                         [(1, 2), (2, 3), (3, 4), (4, 5), (5, None)])
+        self.assertEqual(list(add_next([1])), [(1, None)])
+        self.assertEqual(list(add_next([])), [])
 
     def test_is_last(self):
         for is_last_flag, elem in is_last([1, 2, 3, 4, 5]):

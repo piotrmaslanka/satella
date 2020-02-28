@@ -27,3 +27,25 @@ def is_last(lst: tp.Iterable[T]) -> tp.Generator[tp.Tuple[bool, T], None, None]:
         yield False, ret_var
         ret_var = val
     yield True, ret_var
+
+
+def add_next(lst: tp.Iterable[T]) -> tp.Generator[tp.Tuple[T, tp.Optional[T]], None, None]:
+    """
+    Yields a 2-tuple of given iterable, presenting the next element as second element of the tuple.
+
+    The last element will be the last element alongside with a None
+
+    Example:
+
+    >>> list(add_next([1, 2, 3, 4, 5])) == [(1, 2), (2, 3), (3, 4), (4, 5), (5, None)]
+    """
+    iterator = iter(lst)
+    try:
+        prev_val = next(iterator)
+    except StopIteration:
+        return
+    for val in iterator:
+        yield prev_val, val
+        prev_val = val
+    yield prev_val, None
+

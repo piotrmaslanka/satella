@@ -1,6 +1,6 @@
 # v2.4.24
 
-* _TBA_
+* added `add_next`
 
 # v2.4.23
 
