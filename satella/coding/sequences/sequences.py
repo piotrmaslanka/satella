@@ -40,7 +40,10 @@ def add_next(lst: tp.Iterable[T]) -> tp.Generator[tp.Tuple[T, tp.Optional[T]], N
     >>> list(add_next([1, 2, 3, 4, 5])) == [(1, 2), (2, 3), (3, 4), (4, 5), (5, None)]
     """
     iterator = iter(lst)
-    prev_val = next(iterator)
+    try:
+        prev_val = next(iterator)
+    except StopIteration:
+        return
     for val in iterator:
         yield prev_val, val
         prev_val = val
