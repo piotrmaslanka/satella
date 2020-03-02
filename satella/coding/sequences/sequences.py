@@ -5,6 +5,7 @@ logger = logging.getLogger(__name__)
 
 __all__ = ['is_last']
 T = tp.TypeVar('T')
+U = tp.TypeVar('U')
 
 
 # shamelessly copied from https://medium.com/better-programming/is-this-the-last-element-of-my-python-for-loop-784f5ff90bb5
@@ -49,3 +50,23 @@ def add_next(lst: tp.Iterable[T]) -> tp.Generator[tp.Tuple[T, tp.Optional[T]], N
         prev_val = val
     yield prev_val, None
 
+
+def half_product(seq1: tp.Iterable[T], seq2: tp.Iterable[U]) -> tp.Generator[tp.Tuple[T, U], None, None]:
+    """
+    Generate half of the Cartesian product of both sequences.
+
+    Useful when you have a commutative operation that you'd like to execute on both elements
+    (eg. checking for collisions).
+
+    Example:
+
+    >>> list(half_cartesian([1, 2, 3], [1, 2, 3])) == \
+    >>>     [(1, 1), (1, 2), (1, 3), (2, 2), (2, 3), (3, 3)]
+
+    :param seq1: First sequence
+    :param seq2: Second sequence
+    """
+    for i, elem1 in enumerate(seq1):
+        for j, elem2 in enumerate(seq2):
+            if j >= i:
+                yield elem1, elem2

@@ -49,3 +49,14 @@ Sometimes you need to iterate through list and take also the next
 element.
 
 .. autofunction:: satella.coding.sequences.add_next
+
+half_cartesian
+--------------
+
+Sometimes you need just a half of your Cartesian product, for example
+for operations that are commutative (eg. checking for collisions,
+if object A collides with B then B collides with A).
+
+It helps you save time during computationally intensive operations.
+
+.. autofuction:: satella.coding.sequences.half_cartesian

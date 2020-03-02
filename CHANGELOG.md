@@ -1,6 +1,6 @@
 # v2.4.28
 
-* _TBA_
+* added `half_product`
 
 # v2.4.27
 
