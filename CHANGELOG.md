@@ -1,6 +1,7 @@
 # v2.4.29
 
 * added `CustomException`
+* added support for Futures in `measure()`
 
 # v2.4.28
 

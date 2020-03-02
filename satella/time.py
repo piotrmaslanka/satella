@@ -2,6 +2,7 @@ import logging
 import typing as tp
 import time
 import functools
+from concurrent.futures import Future
 
 logger = logging.getLogger(__name__)
 
@@ -27,14 +28,27 @@ class measure:
     >>> def measuring(measurement_object: measure, *args, **kwargs):
     >>>     ...
 
+    You can also measure how long does executing a future take, eg.
+
+    >>> future = get_my_future()
+    >>> measurement = measure(future)
+    >>> future.result()
+    >>> print('Executing the future took', measurement(), 'seconds')
+
+    In case a future is passed, the measurement will stop automatically as soon as the future
+    returns with a result (or exception)
+
     :param stop_on_stop: stop elapsing time upon calling .stop()/exiting the context manager
     :param adjust: interval to add to current time upon initialization
     """
-    def __init__(self, stop_on_stop: bool = True, adjust: float = 0.0):
+    def __init__(self, future_to_measure: tp.Optional[Future] = None, stop_on_stop: bool = True,
+                 adjust: float = 0.0):
         self.started_on = time.monotonic() + adjust
         self.elapsed = None
         self.stopped_on = None
         self.stop_on_stop = stop_on_stop
+        if future_to_measure is not None:
+            future_to_measure.add_done_callback(lambda fut: self.stop())
 
     def start(self) -> None:
         """Start measuring time or update the internal counter"""
