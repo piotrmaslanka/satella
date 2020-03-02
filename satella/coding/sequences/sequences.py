@@ -30,25 +30,34 @@ def is_last(lst: tp.Iterable[T]) -> tp.Generator[tp.Tuple[bool, T], None, None]:
     yield True, ret_var
 
 
-def add_next(lst: tp.Iterable[T]) -> tp.Generator[tp.Tuple[T, tp.Optional[T]], None, None]:
+def add_next(lst: tp.Iterable[T], wrap_over: bool = False) -> tp.Generator[tp.Tuple[T, tp.Optional[T]], None, None]:
     """
     Yields a 2-tuple of given iterable, presenting the next element as second element of the tuple.
 
-    The last element will be the last element alongside with a None
+    The last element will be the last element alongside with a None, if wrap_over is False, or the
+    first element if wrap_over was True
 
     Example:
 
     >>> list(add_next([1, 2, 3, 4, 5])) == [(1, 2), (2, 3), (3, 4), (4, 5), (5, None)]
+    >>> list(add_next([1, 2, 3, 4, 5], True)) == [(1, 2), (2, 3), (3, 4), (4, 5), (5, 1)]
+
+    :param lst: iterable to iterate over
+    :param wrap_over: whether to attach the first element to the pair of the last element instead
+        of None
     """
     iterator = iter(lst)
     try:
-        prev_val = next(iterator)
+        first_val = prev_val = next(iterator)
     except StopIteration:
         return
     for val in iterator:
         yield prev_val, val
         prev_val = val
-    yield prev_val, None
+    if wrap_over:
+        yield prev_val, first_val
+    else:
+        yield prev_val, None
 
 
 def half_product(seq1: tp.Iterable[T], seq2: tp.Iterable[U]) -> tp.Generator[tp.Tuple[T, U], None, None]:

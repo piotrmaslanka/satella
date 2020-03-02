@@ -19,6 +19,10 @@ class TestSequences(unittest.TestCase):
         self.assertEqual(list(add_next([1])), [(1, None)])
         self.assertEqual(list(add_next([])), [])
 
+    def test_add_next_wrap_over(self):
+        self.assertEqual(list(add_next([1, 2, 3, 4, 5], True)),
+                         [(1, 2), (2, 3), (3, 4), (4, 5), (5, 1)])
+
     def test_is_last(self):
         for is_last_flag, elem in is_last([1, 2, 3, 4, 5]):
             self.assertTrue(not is_last_flag ^ (elem == 5))

@@ -1,6 +1,6 @@
 # v2.4.30
 
-* _TBA_
+* added `wrap_over` to `add_next`
 
 # v2.4.29
 
