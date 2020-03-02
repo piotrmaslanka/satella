@@ -60,3 +60,8 @@ if object A collides with B then B collides with A).
 It helps you save time during computationally intensive operations.
 
 .. autofuction:: satella.coding.sequences.half_cartesian
+
+skip_first
+----------
+
+.. autofunction:: satella.coding.sequences.skip_first

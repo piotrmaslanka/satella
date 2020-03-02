@@ -28,8 +28,20 @@ def is_instance(classes: tp.Union[tp.Tuple[type, ...], type]) -> tp.Callable[[ob
 
 T = tp.TypeVar('T')
 
+IteratorOrIterable = tp.Union[tp.Iterator[T], tp.Iterable[T]]
 
-def take_n(iterator: tp.Iterable[T], n: int, skip: int = 0) -> tp.List[T]:
+
+def skip_first(iterator: IteratorOrIterable, n: int) -> tp.Iterator[T]:
+    """
+    Skip first n elements from given iterator
+    """
+    iterator = iter(iterator)
+    for i in range(n):
+        next(iterator)
+    yield from iterator
+
+
+def take_n(iterator: IteratorOrIterable, n: int, skip: int = 0) -> tp.List[T]:
     """
     Take (first) n elements of an iterator, or the entire iterator, whichever comes first
 

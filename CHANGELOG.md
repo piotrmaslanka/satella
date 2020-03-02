@@ -1,6 +1,6 @@
 # v2.4.31
 
-* _TBA_
+* added `skip_first`
 
 # v2.4.30
 

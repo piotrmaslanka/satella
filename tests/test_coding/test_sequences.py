@@ -2,12 +2,18 @@ import logging
 import unittest
 
 from satella.coding.sequences import choose, infinite_counter, take_n, is_instance, is_last, \
-    add_next, half_product
+    add_next, half_product, skip_first
 
 logger = logging.getLogger(__name__)
 
 
 class TestSequences(unittest.TestCase):
+
+    def test_skip_first(self):
+        a = [1, 2, 3, 4, 5]
+        b = list(skip_first(a, 1))
+        self.assertEqual(b, [2, 3, 4, 5])
+
     def test_half_product(self):
         a = set(half_product([1, 2, 3], [1, 2, 3]))
         b = set([(1, 1), (1, 2), (1, 3), (2, 2), (2, 3), (3, 3)])
