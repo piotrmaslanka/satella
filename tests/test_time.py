@@ -13,7 +13,7 @@ class TestTime(unittest.TestCase):
         time.sleep(1)
         future.set_result(2)
         self.assertEqual(future.result(), 2)
-        self.assertGreater(measurement(), 1)
+        self.assertGreaterEqual(measurement(), 1)
 
     def test_measure(self):
         with measure() as measurement:
