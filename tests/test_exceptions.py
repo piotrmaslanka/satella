@@ -1,33 +1,22 @@
 import unittest
 
-from satella.exceptions import BaseSatellaException
+
+from satella.exceptions import BaseSatellaError, CustomException
 
 
 class TestExceptions(unittest.TestCase):
 
     def test_exception_kwargs(self):
-        e = BaseSatellaException('hello world', label='value')
+        e = BaseSatellaError('hello world', label='value')
         self.assertIn("label='value'", repr(e))
 
-    def test_exception(self):
-        try:
-            raise BaseSatellaException('message', 'arg1', 'arg2')
-        except BaseSatellaException as e:
-            self.assertIn('arg1', str(e))
-            self.assertIn('arg2', str(e))
-            self.assertIn('BaseSatellaException', str(e))
-        else:
-            self.fail()
-
     def test_except_inherited(self):
-        class InheritedException(BaseSatellaException):
+        class InheritedError(CustomException):
             pass
 
         try:
-            raise InheritedException('message', 'arg1', 'arg2')
-        except BaseSatellaException as e:
-            self.assertIn('arg1', str(e))
-            self.assertIn('arg2', str(e))
-            self.assertIn('InheritedException', str(e))
+            raise InheritedError('message', 'arg1', 'arg2')
+        except CustomException as e:
+            self.assertEqual(str(e), "InheritedError('message', 'arg1', 'arg2')")
         else:
             self.fail()

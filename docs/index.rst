@@ -24,6 +24,7 @@ Visit the project's page at GitHub_!
            import
            files
            time
+           exceptions
 
 
 Indices and tables

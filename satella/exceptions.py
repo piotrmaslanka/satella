@@ -1,23 +1,31 @@
-__all__ = ['BaseSatellaException', 'ResourceLockingError', 'ResourceNotLocked', 'ResourceLocked',
+import warnings
+
+__all__ = ['BaseSatellaError', 'ResourceLockingError', 'ResourceNotLocked', 'ResourceLocked',
            'ConfigurationValidationError', 'ConfigurationError', 'ConfigurationSchemaError',
-           'PreconditionError', 'MetricAlreadyExists']
+           'PreconditionError', 'MetricAlreadyExists', 'BaseSatellaException', 'CustomException']
 
 
-class BaseSatellaException(Exception):
-    """"Base class for all Satella exceptions"""
-    def __init__(self, msg, *args, **kwargs):
-        super().__init__(*(msg, *args))
+class CustomException(Exception):
+    """"
+    Base class for your custom exceptions. It will:
+
+    1. Accept any number of arguments
+    2. Provide faithful __repr__ and a reasonable __str__
+
+    It passed all arguments that your exception received via super()
+    """
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args)
         self.kwargs = kwargs
-        self.msg = msg
 
-    def __str__(self):
-        a = '%s(%s' % (self.__class__.__qualname__, self.args)
+    def __str__(self) -> str:
+        a = '%s(%s' % (self.__class__.__qualname__.split('.')[-1], ', '.join(map(repr, self.args)))
         if self.kwargs:
-            a += ', '+(', '.join(map(lambda k, v: '%s=%s' % (k, repr(v)), self.kwargs.items())))
+            a += ', ' + ', '.join(map(lambda k, v: '%s=%s' % (k, repr(v)), self.kwargs.items()))
         a += ')'
         return a
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         a = '%s%s(%s' % ((self.__class__.__module__ + '.')
                          if self.__class__.__module__ != 'builtins' else '',
                          self.__class__.__qualname__,
@@ -25,11 +33,21 @@ class BaseSatellaException(Exception):
         if self.kwargs:
             a += ', ' + (', '.join(map(lambda kv: '%s=%s' % (kv[0], repr(kv[1])),
                                        self.kwargs.items())))
-            a += ')'
+        a += ')'
         return a
 
 
-class ResourceLockingError(BaseSatellaException):
+class BaseSatellaError(CustomException):
+    """"Base class for all Satella exceptions"""
+
+
+class BaseSatellaException(BaseSatellaError):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        warnings.warn('Use BaseSatellaError instead', DeprecationWarning)
+
+
+class ResourceLockingError(BaseSatellaError):
     """Base class for resource locking issues"""
 
 
@@ -41,13 +59,13 @@ class ResourceNotLocked(ResourceLockingError):
     """Locking given resource is needed in order to access it"""
 
 
-class PreconditionError(BaseSatellaException, ValueError):
+class PreconditionError(BaseSatellaError, ValueError):
     """
     A precondition was not met for the argument
     """
 
 
-class ConfigurationError(BaseSatellaException):
+class ConfigurationError(BaseSatellaError):
     """A generic error during configuration"""
 
 
@@ -66,7 +84,7 @@ class ConfigurationValidationError(ConfigurationSchemaError):
         self.value = value
 
 
-class MetricAlreadyExists(BaseSatellaException):
+class MetricAlreadyExists(BaseSatellaError):
     """Metric with given name already exists, but with a different type"""
 
     def __init__(self, msg, name, requested_type, existing_type):

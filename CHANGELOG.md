@@ -1,6 +1,6 @@
 # v2.4.29
 
-* _TBA_
+* added `CustomException`
 
 # v2.4.28
 
