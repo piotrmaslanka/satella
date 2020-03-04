@@ -71,9 +71,8 @@ def zip_shifted(*args: tp.Union[IteratorOrIterable[T], tp.Tuple[IteratorOrIterab
                     elements.append(next(iterator))
                 iterators.append(itertools.chain(iterator, elements))
             else:
-                if isinstance(iterable, tp.Reversible):
-                    rev_iterable = reversed(iterable)
-                    elements = take_n(rev_iterable, -shift)
+                if hasattr(iterable, '__reversed__'):
+                    elements = take_n(reversed(iterable), -shift)
                     elements = reversed(elements)
                     iterators.append(itertools.chain(elements, iterable))
                 else:
