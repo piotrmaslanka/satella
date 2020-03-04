@@ -2,12 +2,20 @@ import logging
 import unittest
 
 from satella.coding.sequences import choose, infinite_counter, take_n, is_instance, is_last, \
-    add_next, half_product, skip_first
+    add_next, half_product, skip_first, zip_shifted
 
 logger = logging.getLogger(__name__)
 
 
 class TestSequences(unittest.TestCase):
+
+    def test_zip_shifted(self):
+        a = list(zip_shifted(([1, 2, 3, 4], 1), [1, 2, 3, 4]))
+        self.assertEqual(a, [(2, 1), (3, 2), (4, 3), (1, 4)])
+
+    def test_zip_shifted_negative(self):
+        a = list(zip_shifted(([1, 2, 3, 4], -1), [1, 2, 3, 4]))
+        self.assertEqual(a, [(4, 1), (1, 2), (2, 3), (3, 4)])
 
     def test_skip_first(self):
         a = [1, 2, 3, 4, 5]

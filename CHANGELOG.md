@@ -1,6 +1,6 @@
 # v2.4.32
 
-* _TBA_
+* added `zip_shifted`
 
 # v2.4.31
 

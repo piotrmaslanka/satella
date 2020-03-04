@@ -1,6 +1,7 @@
 import logging
 import typing as tp
 import warnings
+import itertools
 
 logger = logging.getLogger(__name__)
 
@@ -29,6 +30,52 @@ def is_instance(classes: tp.Union[tp.Tuple[type, ...], type]) -> tp.Callable[[ob
 T = tp.TypeVar('T')
 
 IteratorOrIterable = tp.Union[tp.Iterator[T], tp.Iterable[T]]
+
+
+def zip_shifted(*args: tp.Union[IteratorOrIterable[T], tp.Tuple[IteratorOrIterable[T], int]]) -> \
+        tp.Iterator[tp.Tuple[T, ...]]:
+    """
+    Construct an iterator, just like zip but first by cycling it's elements by it's shift factor.
+    Elements will be shifted by a certain factor, this means that they will appear earlier.
+
+    Example
+
+    >>> zip_shifted(([1, 2, 3, 4], 1), ([1, 2, 3, 4], 0)) == [(2, 1), (3, 2), (4, 3), (1, 4)]
+
+    This will work on arbitrary iterators and iterables.
+
+    Shift can be negative, in which case the last elements will appear sooner, eg.
+
+    >>> zip_shifted(([1, 2, 3, 4], -1), ([1, 2, 3, 4], 0)) == [(4, 1), (1, 2), (2, 3), (3, 4)]
+
+    However note that this will result in iterators which have negative shift to be readed entirely
+    into memory (converted internally to lists).
+
+    The resulting iterator will be as long as the shortest sequence.
+    :param args: a tuple with the iterator/iterable and amount of shift. If a non-tuple is given,
+        it is assumed that the shift is zero.
+    """
+
+    iterators = []  # type: tp.List[tp.Union[tp.Tuple[tp.Iterator[T], tp.List[T]], tp.Iterator[T]]
+    for row in args:
+        if not isinstance(row, tuple):
+            iterators.append(row)
+        else:
+            iterable, shift = row
+            if shift >= 0:
+                iterator = iter(iterable)
+                if shift < 0:
+                    raise ValueError('Negative shift given!')
+                elements = []
+                for i in range(shift):
+                    elements.append(next(iterator))
+                iterators.append(itertools.chain(iterator, elements))
+            else:
+                iterator = list(iterable)
+                iterator = iterator[shift:] + iterator[:shift]  # shift's already negative
+                iterators.append(iterator)
+
+    return zip(*iterators)
 
 
 def skip_first(iterator: IteratorOrIterable, n: int) -> tp.Iterator[T]:

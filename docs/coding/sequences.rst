@@ -65,3 +65,9 @@ skip_first
 ----------
 
 .. autofunction:: satella.coding.sequences.skip_first
+
+
+zip_shifted
+-----------
+
+.. autofunction:: satella.coding.sequences.zip_shifted
