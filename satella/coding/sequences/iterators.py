@@ -38,7 +38,7 @@ def zip_shifted(*args: tp.Union[IteratorOrIterable[T], tp.Tuple[IteratorOrIterab
     Construct an iterator, just like zip but first by cycling it's elements by it's shift factor.
     Elements will be shifted by a certain factor, this means that they will appear earlier.
 
-    Example
+    Example:
 
     >>> zip_shifted(([1, 2, 3, 4], 1), ([1, 2, 3, 4], 0)) == [(2, 1), (3, 2), (4, 3), (1, 4)]
 
