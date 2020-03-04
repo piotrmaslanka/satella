@@ -1,6 +1,8 @@
 # v2.4.33
 
-* _TBA_
+* added `stop_after`
+* made zip_shifted use less memory when the shift is negative
+  and argument is `Reversible`
 
 # v2.4.32
 

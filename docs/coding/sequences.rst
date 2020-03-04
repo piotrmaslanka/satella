@@ -71,3 +71,8 @@ zip_shifted
 -----------
 
 .. autofunction:: satella.coding.sequences.zip_shifted
+
+stop_after
+----------
+
+.. autofunction:: satella.coding.sequences.stop_after

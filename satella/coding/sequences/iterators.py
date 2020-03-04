@@ -49,7 +49,7 @@ def zip_shifted(*args: tp.Union[IteratorOrIterable[T], tp.Tuple[IteratorOrIterab
     >>> zip_shifted(([1, 2, 3, 4], -1), ([1, 2, 3, 4], 0)) == [(4, 1), (1, 2), (2, 3), (3, 4)]
 
     However note that this will result in iterators which have negative shift to be readed entirely
-    into memory (converted internally to lists).
+    into memory (converted internally to lists). This can be avoided by passing in a Reversible iterable.
 
     The resulting iterator will be as long as the shortest sequence.
     :param args: a tuple with the iterator/iterable and amount of shift. If a non-tuple is given,
@@ -71,9 +71,15 @@ def zip_shifted(*args: tp.Union[IteratorOrIterable[T], tp.Tuple[IteratorOrIterab
                     elements.append(next(iterator))
                 iterators.append(itertools.chain(iterator, elements))
             else:
-                iterator = list(iterable)
-                iterator = iterator[shift:] + iterator[:shift]  # shift's already negative
-                iterators.append(iterator)
+                if isinstance(iterable, tp.Reversible):
+                    rev_iterable = reversed(iterable)
+                    elements = take_n(rev_iterable, -shift)
+                    elements = reversed(elements)
+                    iterators.append(itertools.chain(elements, iterable))
+                else:
+                    iterator = list(iterable)
+                    iterator = iterator[shift:] + iterator[:shift]  # shift's already negative
+                    iterators.append(iterator)
 
     return zip(*iterators)
 
@@ -86,6 +92,18 @@ def skip_first(iterator: IteratorOrIterable, n: int) -> tp.Iterator[T]:
     for i in range(n):
         next(iterator)
     yield from iterator
+
+
+def stop_after(iterator: IteratorOrIterable[T], n: int) -> tp.Iterator[T]:
+    """
+    Stop this iterator after returning n elements, even if it's longer than that.
+
+    :param iterator: iterator or iterable to examine
+    :param n: elements to return
+    """
+    iterator = iter(iterator)
+    for i in range(n):
+        yield next(iterator)
 
 
 def take_n(iterator: IteratorOrIterable, n: int, skip: int = 0) -> tp.List[T]:
