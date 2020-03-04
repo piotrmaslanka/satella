@@ -1,3 +1,7 @@
+# v2.4.34
+
+* _TBA_
+
 # v2.4.33
 
 * added `stop_after`
