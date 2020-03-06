@@ -6,6 +6,7 @@ import logging
 import operator
 import time
 import typing as tp
+from abc import ABCMeta, abstractmethod
 
 from ..decorators import wraps
 
@@ -19,7 +20,7 @@ __all__ = [
 ]
 
 
-class OmniHashableMixin:
+class OmniHashableMixin(metaclass=ABCMeta):
     """
     A mix-in. Provides hashing and equal comparison for your own class using specified fields.
 
@@ -41,7 +42,11 @@ class OmniHashableMixin:
 
     for this to work in your class
     """
-    _HASH_FIELDS_TO_USE = []
+    @property
+    @abstractmethod
+    def _HASH_FIELDS_TO_USE(self) -> tp.List[str]:
+        """Return the names of properties that will be used for __eq__ and __hash__"""
+        return []
 
     def __hash__(self):
         return functools.reduce(operator.xor, (hash(getattr(self, field_name))
