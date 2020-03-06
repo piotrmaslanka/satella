@@ -1,9 +1,9 @@
-import functools
 import inspect
 import logging
 import threading
 
 from ...exceptions import ResourceLocked, ResourceNotLocked
+from ..decorators import wraps
 
 logger = logging.getLogger(__name__)
 
@@ -46,7 +46,7 @@ class LockedDataset:
     @staticmethod
     def locked(blocking=True, timeout=-1):
         def inner(f):
-            @functools.wraps(f)
+            @wraps(f)
             def in_ner(self, *args, **kwargs):
                 with self(blocking=blocking, timeout=timeout):
                     return f(self, *args, **kwargs)

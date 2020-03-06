@@ -1,5 +1,6 @@
-import functools
 import typing as tp
+
+from .decorators import wraps
 
 __all__ = [
     'rethrow_as',
@@ -61,7 +62,7 @@ class rethrow_as:
         self.exception_preprocessor = exception_preprocessor or repr
 
     def __call__(self, fun: tp.Callable) -> tp.Any:
-        @functools.wraps(fun)
+        @wraps(fun)
         def inner(*args, **kwargs):
             with self:
                 return fun(*args, **kwargs)

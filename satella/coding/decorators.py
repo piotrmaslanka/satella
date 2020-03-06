@@ -1,4 +1,3 @@
-import functools
 import typing as tp
 import itertools
 
@@ -18,10 +17,11 @@ def _TRUE(x):
 
 def wraps(cls_to_wrap: tp.Type) -> tp.Callable[[tp.Type], tp.Type]:
     """
-    A functools.wraps() but for classes
+    A functools.wraps() but for classes.
+
+    As a matter of fact, this can replace functools.wraps() entirely.
 
     :param cls_to_wrap: class to wrap
-    :return:
     """
     def outer(cls: tp.Type):
         cls.__doc__ = cls_to_wrap.__doc__
@@ -50,7 +50,7 @@ def attach_arguments(*args, **kwargs):
     Arguments given in attach_arguments will take precedence in case of key collisions.
     """
     def outer(fun):
-        @functools.wraps(fun)
+        @wraps(fun)
         def inner(*my_args, **my_kwargs):
             my_kwargs.update(kwargs)
             return fun(*my_args, *args, **my_kwargs)
@@ -96,7 +96,7 @@ def short_none(callable_: tp.Union[str, tp.Callable[[tp.Any], tp.Any]]) -> tp.Ca
         exec('_precond = lambda x: '+callable_, q)
         callable_ = q['_precond']
 
-    @functools.wraps(callable_)
+    @wraps(callable_)
     def inner(arg):
         if arg is None:
             return None
@@ -163,7 +163,7 @@ def precondition(*t_ops, **kw_opts):
     from satella.coding.recast_exceptions import rethrow_as
 
     def outer(fun):
-        @functools.wraps(fun)
+        @wraps(fun)
         def inner(*args, **kwargs):
             assert len(args) >= len(tn_ops), 'More preconditions than positional arguments!'
 
@@ -202,7 +202,7 @@ def for_argument(*t_ops, **t_kwops):
     returns = t_kwops.pop('returns', _NOP)
 
     def outer(fun):
-        @functools.wraps(fun)
+        @wraps(fun)
         def inner(*args, **kwargs):
             # add extra 'None' argument if unbound method
             assert len(args) >= len(t_ops)

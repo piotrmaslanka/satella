@@ -1,8 +1,9 @@
-import functools
 import inspect
 import logging
 import typing as tp
 import time
+
+from satella.coding import wraps
 
 from .base import RUNTIME
 
@@ -54,7 +55,7 @@ class MeasurableMixin:
                 self.value = None
 
             def __call__(self, fun):
-                @functools.wraps(fun)
+                @wraps(fun)
                 def inner_normal(*args, **kwargs):
                     start_value = value_getter()
                     excepted = None
@@ -72,7 +73,7 @@ class MeasurableMixin:
                         if excepted is not None:
                             raise excepted
 
-                @functools.wraps(fun)
+                @wraps(fun)
                 def inner_generator(*args, **kwargs):
                     start_value = value_getter()
                     excepted = None

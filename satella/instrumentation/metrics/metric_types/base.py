@@ -1,11 +1,7 @@
 import typing as tp
 import logging
-import copy
 import time
-import functools
-import inspect
 from ..data import MetricData, MetricDataCollection
-from .registry import register_metric
 
 logger = logging.getLogger(__name__)
 

@@ -1,6 +1,7 @@
-import functools
 import logging
 import threading
+
+from ..decorators import wraps
 
 __all__ = [
     'Monitor', 'RMonitor'
@@ -46,7 +47,7 @@ class Monitor:
         may vary
         """
 
-        @functools.wraps(fun)
+        @wraps(fun)
         def monitored(*args, **kwargs):
             # noinspection PyProtectedMember
             with args[0]._monitor_lock:
@@ -123,7 +124,7 @@ class Monitor:
         >>>         return SlaveClass
         """
         def outer(fun):
-            @functools.wraps(fun)
+            @wraps(fun)
             def inner(*args, **kwargs):
                 with cls.acquire(monitor):
                     return fun(*args, **kwargs)

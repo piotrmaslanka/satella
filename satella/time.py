@@ -1,8 +1,9 @@
 import logging
 import typing as tp
 import time
-import functools
 from concurrent.futures import Future
+
+from satella.coding import wraps
 
 logger = logging.getLogger(__name__)
 
@@ -68,7 +69,7 @@ class measure:
                 return self.elapsed
             return time.monotonic() - self.started_on
         else:
-            @functools.wraps(fun)
+            @wraps(fun)
             def inner(*args, **kwargs):
                 with self:
                     return fun(self, *args, **kwargs)

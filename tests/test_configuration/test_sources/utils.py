@@ -1,8 +1,8 @@
-import functools
 import os
 import typing as tp
 import unittest
 
+from satella.coding import wraps
 from satella.configuration.sources import BaseSource
 from satella.exceptions import ConfigurationError
 
@@ -17,7 +17,7 @@ def mock_env(env: tp.Optional[str] = None, val: tp.Optional[str] = None) -> \
     """
 
     def outer(fun: tp.Callable):
-        @functools.wraps(fun)
+        @wraps(fun)
         def inner(*args, **kwargs):
             try:
                 if env is not None:

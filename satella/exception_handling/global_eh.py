@@ -1,8 +1,8 @@
-import functools
 import sys
 import threading
 import typing as tp
 
+from satella.coding import wraps
 from satella.coding.structures import Singleton
 from satella.instrumentation import Traceback
 from .exception_handlers import BaseExceptionHandler, FunctionExceptionHandler, \
@@ -63,12 +63,12 @@ class GlobalExcepthook:
 
         my_self = self
 
-        @functools.wraps(threading.Thread.__init__)
+        @wraps(threading.Thread.__init__)
         def init(self, *args, **kwargs):  # custom wrapper for Thread's.__init__
             init_old(self, *args, **kwargs)
             run_old = self.run  # we will need to wrap thread's run() to catch exception_handling..
 
-            @functools.wraps(run_old)
+            @wraps(run_old)
             def run_with_except_hook(*args, **kw):  # our new run
                 # noinspection PyBroadException
                 try:

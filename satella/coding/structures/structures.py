@@ -7,6 +7,8 @@ import operator
 import time
 import typing as tp
 
+from ..decorators import wraps
+
 logger = logging.getLogger(__name__)
 
 __all__ = [
@@ -65,7 +67,7 @@ class OmniHashableMixin:
 
 
 def _extras_to_one(fun):
-    @functools.wraps(fun)
+    @wraps(fun)
     def inner(self, a, *args, **kwargs):
         return fun(self, ((a,) + args) if len(args) > 0 else a, **kwargs)
 
