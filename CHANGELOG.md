@@ -1,6 +1,6 @@
 # v2.4.36
 
-* _TBA_
+* bugfix release: more bulletproof `wraps`
 
 # v2.4.35
 
