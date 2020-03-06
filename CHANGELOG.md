@@ -1,3 +1,7 @@
+# v2.4.36
+
+* _TBA_
+
 # v2.4.35
 
 * added `Monitor.synchronize_on`
