@@ -125,7 +125,6 @@ class Monitor:
         def outer(fun):
             @functools.wraps(fun)
             def inner(*args, **kwargs):
-                logger.warning(f'{args} {kwargs}')
                 with cls.acquire(monitor):
                     return fun(*args, **kwargs)
             return inner
