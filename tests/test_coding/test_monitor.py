@@ -7,6 +7,34 @@ from satella.coding import Monitor
 
 
 class MonitorTest(unittest.TestCase):
+    def test_synchronize_on(self):
+        class TestedMasterClass(Monitor):
+            def __init__(self):
+                self.value = 0
+                super().__init__()
+
+            def get_locking_class(self):
+                class LockingClass:
+                    @Monitor.synchronize_on(self)
+                    def get_value(self2):
+                        self.value += 1
+                return LockingClass()
+
+        msc = TestedMasterClass()
+        lc = msc.get_locking_class()
+
+        class TesterThread(Thread):
+            def run(self):
+                lc.get_value()
+
+        with Monitor.acquire(msc):
+            TesterThread().start()
+            sleep(0.1)
+            self.assertEqual(msc.value, 0)
+            with Monitor.release(msc):
+                sleep(0.1)
+                self.assertEqual(msc.value, 1)
+
     def test_release_contextmanager(self):
         class TestedClass(Monitor):
             def __init__(self, cqueue):

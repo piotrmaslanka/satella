@@ -1,9 +1,12 @@
 import functools
+import logging
 import threading
 
 __all__ = [
     'Monitor', 'RMonitor'
 ]
+
+logger = logging.getLogger(__name__)
 
 
 class Monitor:
@@ -104,6 +107,30 @@ class Monitor:
             self.foo._monitor_lock.release()
             return False
 
+    @classmethod
+    def synchronize_on(cls, monitor):
+        """
+        A decorator for locking on non-self Monitor objects
+
+        Use it like:
+
+        >>> class MasterClass(Monitor):
+        >>>     def get_object(self):
+        >>>         class SlaveClass:
+        >>>             @Monitor.synchronize_on(self)
+        >>>             def get_object(self2):
+        >>>                 ...
+        >>>         return SlaveClass
+        """
+        def outer(fun):
+            @functools.wraps(fun)
+            def inner(*args, **kwargs):
+                logger.warning(f'{args} {kwargs}')
+                with cls.acquire(monitor):
+                    return fun(*args, **kwargs)
+            return inner
+        return outer
+
 
 class RMonitor(Monitor):
     """
@@ -111,6 +138,4 @@ class RMonitor(Monitor):
     """
 
     def __init__(self):
-        # todo refactor so that a Lock is not created uselessly
-        super(RMonitor, self).__init__()
         self._monitor_lock = threading.RLock()
