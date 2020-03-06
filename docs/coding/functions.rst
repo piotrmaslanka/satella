@@ -84,3 +84,9 @@ attach_arguments
 ----------------
 
 .. autofunction:: satella.coding.attach_arguments
+
+wraps
+-----
+A ``functools.wraps()`` equivalent, but for classes
+
+.. autofunction:: satella.coding.wraps
