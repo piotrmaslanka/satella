@@ -23,7 +23,7 @@ def wraps(cls_to_wrap: tp.Type) -> tp.Callable[[tp.Type], tp.Type]:
 
     :param cls_to_wrap: class to wrap
     """
-    def outer(cls: tp.Type):
+    def outer(cls: tp.Type) -> tp.Type:
         if hasattr(cls_to_wrap, '__doc__'):
             cls.__doc__ = cls_to_wrap.__doc__
         if hasattr(cls_to_wrap, '__name__'):

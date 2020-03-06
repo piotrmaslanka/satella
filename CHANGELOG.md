@@ -1,6 +1,11 @@
+# v2.4.37
+
+* _TBA_
+
 # v2.4.36
 
 * bugfix release: more bulletproof `wraps`
+* satella will internally use it's own `wraps` in lieu of `functools.wraps`
 
 # v2.4.35
 
