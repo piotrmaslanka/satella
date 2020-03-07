@@ -111,7 +111,6 @@ def short_none(callable_: tp.Union[str, tp.Callable[[tp.Any], tp.Any]]) -> tp.Ca
 def precondition(*t_ops, **kw_opts):
     """
     Check that a precondition happens for given parameter.
-    Only positional arguments are supported.
 
     You can do it like this:
 
