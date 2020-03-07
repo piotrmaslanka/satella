@@ -6,6 +6,7 @@ from .decorators import wraps
 Taken from http://code.activestate.com/recipes/204197-solving-the-metaclass-conflict/ and slightly
 modified
 """
+from abc import ABCMeta
 import typing as tp
 import logging
 
@@ -94,11 +95,13 @@ def wrap_all_methods_with(fun: tp.Callable[[tp.Callable], tp.Callable],
     Note that every callable that appears in the class namespace, ie. object that has __call__
     will be considered for wrapping.
 
+    This is compatible with the abc.ABCMeta metaclass
+
     :param fun: function to wrap all callables with given class
     :param selector: additional criterion to be ran on given callable before deciding to wrap it.
         It must return True for wrapping to proceed.
     """
-    @wraps(type)
+    @wraps(ABCMeta)
     def WrapAllMethodsWithMetaclass(name, bases, dct):
         new_dct = {}
         for key, value in dct.items():
@@ -107,7 +110,7 @@ def wrap_all_methods_with(fun: tp.Callable[[tp.Callable], tp.Callable],
                     if selector(value):
                         value = fun(value)
             new_dct[key] = value
-        return type(name, bases, new_dct)
+        return ABCMeta(name, bases, new_dct)
     return WrapAllMethodsWithMetaclass
 
 
