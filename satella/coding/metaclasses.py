@@ -102,7 +102,7 @@ def wrap_all_methods_with(fun: tp.Callable[[tp.Callable], tp.Callable],
     def WrapAllMethodsWithMetaclass(name, bases, dct):
         new_dct = {}
         for key, value in dct.items():
-            if hasattr(value, '__call__'):
+            if callable(value):
                 if not hasattr(value, '_dont_wrap'):
                     if selector(value):
                         value = fun(value)
