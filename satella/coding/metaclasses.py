@@ -91,6 +91,9 @@ def wrap_all_methods_with(fun: tp.Callable[[tp.Callable], tp.Callable],
     >>>         return 2
     >>> assert Doubles().return_four(4) == 4
 
+    Note that every callable that appears in the class namespace, ie. object that has __call__
+    will be considered for wrapping.
+
     :param fun: function to wrap all callables with given class
     :param selector: additional criterion to be ran on given callable before deciding to wrap it.
         It must return True for wrapping to proceed.
