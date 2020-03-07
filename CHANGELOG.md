@@ -1,3 +1,7 @@
+# v2.4.38
+
+* _TBA_
+
 # v2.4.37
 
 * forbidden to instantiate `OmniHashableMixin` directly
