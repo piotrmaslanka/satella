@@ -41,18 +41,7 @@ class TestMetaclasses(unittest.TestCase):
         class BaseClass(abc.ABC):
             pass
 
-        def property_wrapper(prop):
-
-            class Property(property):
-                __isabstractmethod__ = False
-
-                @rethrow_as(ValueError, KeyError)
-                def __get__(self, instance, owner):
-                    v = prop.__get__(instance, owner)
-                    logger.warning(f'Returning {v}')
-                    return v
-
-            return wraps(prop)(Property())
+        property_wrapper = wrap_property(lambda fun: rethrow_as(ValueError, KeyError)(fun))
 
         class Doubles(BaseClass, metaclass=wrap_with(callables=double,
                                                      properties=property_wrapper,
