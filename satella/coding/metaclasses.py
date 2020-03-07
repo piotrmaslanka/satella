@@ -12,23 +12,23 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__all__ = ['metaclass_maker', 'wrap_all_methods_with', 'dont_wrap']
+__all__ = ['metaclass_maker', 'wrap_with', 'dont_wrap', 'wrap_property']
 
 
-def skip_redundant(iterable, skipset=None):
-    """Redundant items are repeated items or items in the original skipset."""
-    if skipset is None: skipset = set()
+def skip_redundant(iterable, skip_set=None):
+    """Redundant items are repeated items or items in the original skip_set."""
+    if skip_set is None: skip_set = set()
     for item in iterable:
-        if item not in skipset:
-            skipset.add(item)
+        if item not in skip_set:
+            skip_set.add(item)
             yield item
 
 
 def remove_redundant(metaclasses):
-    skipset = set([type])
+    skip_set = set([type])
     for meta in metaclasses:  # determines the metaclasses to be skipped
-        skipset.update(inspect.getmro(meta)[1:])
-    return tuple(skip_redundant(metaclasses, skipset))
+        skip_set.update(inspect.getmro(meta)[1:])
+    return tuple(skip_redundant(metaclasses, skip_set))
 
 
 memoized_metaclasses_map = {}
@@ -41,7 +41,7 @@ def get_noconflict_metaclass(bases, left_metas, right_metas):
     metas = left_metas + tuple(map(type, bases)) + right_metas
     needed_metas = remove_redundant(metas)
 
-    # return existing confict-solving meta, if any
+    # return existing conflict-solving meta, if any
     if needed_metas in memoized_metaclasses_map:
         return memoized_metaclasses_map[needed_metas]
     # nope: compute, memoize and return needed conflict-solving meta
@@ -51,18 +51,18 @@ def get_noconflict_metaclass(bases, left_metas, right_metas):
         meta = needed_metas[0]
     # check for recursion, can happen i.e. for Zope ExtensionClasses
     elif needed_metas == bases:
-        raise TypeError("Incompatible root metatypes", needed_metas)
+        raise TypeError("Incompatible root meta-types", needed_metas)
     else:  # gotta work ...
-        metaname = '_' + ''.join([m.__name__ for m in needed_metas])
-        meta = metaclass_maker_f()(metaname, needed_metas, {})
+        meta_name = '_' + ''.join([m.__name__ for m in needed_metas])
+        meta = metaclass_maker_f()(meta_name, needed_metas, {})
     memoized_metaclasses_map[needed_metas] = meta
     return meta
 
 
 def metaclass_maker_f(left_metas=(), right_metas=()):
-    def make_class(name, bases, adict):
+    def make_class(name, bases, a_dict):
         metaclass = get_noconflict_metaclass(bases, left_metas, right_metas)
-        return metaclass(name, bases, adict)
+        return metaclass(name, bases, a_dict)
 
     return make_class
 
@@ -78,10 +78,41 @@ def metaclass_maker(name, bases, adict):
     return metaclass(name, bases, adict)
 
 
-def wrap_all_methods_with(fun: tp.Callable[[tp.Callable], tp.Callable],
-                          selector: tp.Callable[[tp.Callable], bool] = lambda clbl: True):
+GetterDefinition = tp.Callable[[object], tp.Any]
+SetterDefinition = tp.Callable[[object, tp.Any], None]
+DeleterDefinition = tp.Callable[[object], None]
+
+
+def wrap_property(getter: tp.Callable[[GetterDefinition], GetterDefinition] = lambda x: x,
+                  setter: tp.Callable[[SetterDefinition], SetterDefinition] = lambda x: x,
+                  deleter: tp.Callable[[DeleterDefinition], DeleterDefinition] = lambda x: x):
     """
-    A metaclass that wraps all callables discovered in this class with fun
+    Construct a property wrapper.
+
+    This will return a function, that if given a property, will wrap it's getter, setter and
+    deleter with provided functions.
+
+    Getter, setter and deleter are extracted from fget, fset and fdel, so only native properties,
+    please, not descriptor-objects.
+
+    :param getter: callable that accepts a callable(instance) -> value, and returns the same.
+        Getter will be wrapped by this
+    :param setter: callable that accepts a callable(instance, value) and returns the same.
+        Setter will be wrapped by this
+    :param deleter: callable that accepts a callable(instance), and returns the same.
+        Deleter will be wrapped by this
+    """
+    def inner(prop):
+        return wraps(prop)(property(getter(prop.fget), setter(prop.fset), deleter(prop.fdel)))
+    return inner
+
+
+def wrap_with(callables: tp.Callable[[tp.Callable], tp.Callable] = lambda x: x,
+              properties: tp.Callable[[property], property] = lambda x: x,
+              selector_callables: tp.Callable[[tp.Callable], bool] = lambda clb: True,
+              selector_properties: tp.Callable[[property], bool] = lambda clb: True):
+    """
+    A metaclass that wraps all elements discovered in this class with something
 
     Example:
 
@@ -97,24 +128,28 @@ def wrap_all_methods_with(fun: tp.Callable[[tp.Callable], tp.Callable],
 
     This is compatible with the abc.ABCMeta metaclass
 
-    :param fun: function to wrap all callables with given class
-    :param selector: additional criterion to be ran on given callable before deciding to wrap it.
-        It must return True for wrapping to proceed.
+    :param callables: function to wrap all callables with given class with
+    :param properties: function to wrap all properties with given class with
+    :param selector_callables: additional criterion to be ran on given callable before deciding
+        to wrap it. It must return True for wrapping to proceed.
+    :param selector_properties: additional criterion to be ran on given property before deciding
+        to wrap it. It must return True for wrapping to proceed.
     """
     @wraps(ABCMeta)
     def WrapAllMethodsWithMetaclass(name, bases, dct):
         new_dct = {}
         for key, value in dct.items():
-            if callable(value):
-                if not hasattr(value, '_dont_wrap'):
-                    if selector(value):
-                        value = fun(value)
+            if not hasattr(value, '_dont_wrap'):
+                if callable(value) and selector_callables(value):
+                    value = callables(value)
+                elif isinstance(value, property) and selector_properties(value):
+                    value = properties(value)
             new_dct[key] = value
         return ABCMeta(name, bases, new_dct)
     return WrapAllMethodsWithMetaclass
 
 
 def dont_wrap(fun):
-    """A special decorator to save given callable from being mulched by wrap_all_methods_with"""
+    """A special decorator to save given class member from being mulched by wrap_with"""
     fun._dont_wrap = True
     return fun
