@@ -7,7 +7,7 @@ from .concurrent import Monitor, RMonitor
 from .decorators import precondition, for_argument, PreconditionError, short_none, has_keys, \
     attach_arguments, wraps
 from .fun_static import static_var
-from .metaclasses import metaclass_maker
+from .metaclasses import metaclass_maker, wrap_all_methods_with, dont_wrap
 from .recast_exceptions import rethrow_as, silence_excs, catch_exception
 
 __all__ = [
@@ -16,5 +16,5 @@ __all__ = [
     'precondition', 'PreconditionError', 'attach_arguments',
     'rethrow_as', 'silence_excs',
     'static_var', 'metaclass_maker',
-    'catch_exception', 'wraps',
+    'catch_exception', 'wraps', 'wrap_all_methods_with', 'dont_wrap'
 ]

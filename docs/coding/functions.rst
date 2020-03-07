@@ -15,6 +15,22 @@ Functions and decorators
 
 .. autofunction:: satella.coding.for_argument
 
+wrap_all_methods_with
+---------------------
+
+Sometimes you need to wrap all methods in given class with a common
+decorator. Here's the function you can use:
+
+.. autofunction:: satella.coding.wrap_all_methods_with
+
+You can also decorate given callables in order not to be wrapped with
+
+.. autofunction:: satella.coding.dont_wrap
+
+
+metaclass_maker
+---------------
+
 Now, give the following type structure:
 
 ::
@@ -90,3 +106,4 @@ wraps
 A ``functools.wraps()`` equivalent, but for classes
 
 .. autofunction:: satella.coding.wraps
+

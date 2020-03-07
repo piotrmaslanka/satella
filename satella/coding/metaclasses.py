@@ -1,11 +1,17 @@
 import inspect
 
+from .decorators import wraps
+
 """
 Taken from http://code.activestate.com/recipes/204197-solving-the-metaclass-conflict/ and slightly
 modified
 """
+import typing as tp
+import logging
 
-__all__ = ['metaclass_maker']
+logger = logging.getLogger(__name__)
+
+__all__ = ['metaclass_maker', 'wrap_all_methods_with', 'dont_wrap']
 
 
 def skip_redundant(iterable, skipset=None):
@@ -69,3 +75,40 @@ def metaclass_maker(name, bases, adict):
     """
     metaclass = get_noconflict_metaclass(bases, (), ())
     return metaclass(name, bases, adict)
+
+
+def wrap_all_methods_with(fun: tp.Callable[[tp.Callable], tp.Callable],
+                          selector: tp.Callable[[tp.Callable], bool] = lambda clbl: True):
+    """
+    A metaclass that wraps all callables discovered in this class with fun
+
+    Example:
+
+    >>> def make_double(fun):
+    >>>     return lambda self, x: fun(x)*2
+    >>> class Doubles(metaclass=wrap_all_methods_with(make_double)):
+    >>>     def return_four(self, x):
+    >>>         return 2
+    >>> assert Doubles().return_four(4) == 4
+
+    :param fun: function to wrap all callables with given class
+    :param selector: additional criterion to be ran on given callable before deciding to wrap it.
+        It must return True for wrapping to proceed.
+    """
+    @wraps(type)
+    def WrapAllMethodsWithMetaclass(name, bases, dct):
+        new_dct = {}
+        for key, value in dct.items():
+            if hasattr(value, '__call__'):
+                if not hasattr(value, '_dont_wrap'):
+                    if selector(value):
+                        value = fun(value)
+            new_dct[key] = value
+        return type(name, bases, new_dct)
+    return WrapAllMethodsWithMetaclass
+
+
+def dont_wrap(fun):
+    """A special decorator to save given callable from being mulched by wrap_all_methods_with"""
+    fun._dont_wrap = True
+    return fun

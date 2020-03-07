@@ -1,6 +1,7 @@
 # v2.4.37
 
 * forbidden to instantiate `OmniHashableMixin` directly
+* added `wrap_all_methods_with`
 
 # v2.4.36
 
