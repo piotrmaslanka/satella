@@ -1,6 +1,7 @@
 # v2.4.38
 
-* _TBA_
+* `metric_data_collection_to_prometheus` won't export values marked as internal
+* minor doc fixes
 
 # v2.4.37
 

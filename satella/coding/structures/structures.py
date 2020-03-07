@@ -101,7 +101,7 @@ class Heap(collections.UserList, tp.Generic[HeapVar]):
             self.push(item)
 
     @_extras_to_one
-    def push(self, item: HeapVar):
+    def push(self, item: HeapVar) -> None:
         """
         Use it like:
 

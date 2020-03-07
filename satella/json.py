@@ -5,9 +5,12 @@ from abc import ABCMeta, abstractmethod
 __all__ = ['JSONEncoder', 'JSONAble', 'json_encode']
 
 
+Jsonable = tp.TypeVar('Jsonable', list, dict, str, int, float, None)
+
+
 class JSONAble(metaclass=ABCMeta):
     @abstractmethod
-    def to_json(self) -> tp.Union[list, dict, str, int, float, None]:
+    def to_json(self) -> Jsonable:
         """Return a JSON-able representation of this object"""
 
 
@@ -15,7 +18,7 @@ class JSONEncoder(json.JSONEncoder):
     """
     This encoder will encode everything!
     """
-    def default(self, o) -> str:
+    def default(self, o: tp.Any) -> Jsonable:
         if hasattr(o, 'to_json'):
             return o.to_json()
         try:
@@ -27,7 +30,7 @@ class JSONEncoder(json.JSONEncoder):
             return dct
 
 
-def json_encode(x) -> str:
+def json_encode(x: tp.Any) -> str:
     """
     Convert an object to JSON. Will properly handle subclasses of JSONAble
 

@@ -6,6 +6,10 @@ from ..exceptions import PreconditionError
 __all__ = ['precondition', 'for_argument', 'PreconditionError', 'short_none', 'has_keys',
            'attach_arguments', 'wraps']
 
+T = tp.TypeVar('T')
+U = tp.TypeVar('U')
+Expression = tp.NewType('Expression', str)
+
 
 def _NOP(x):
     return x
@@ -82,8 +86,7 @@ def has_keys(keys: tp.List[str]):
     return inner
 
 
-def short_none(callable_: tp.Union[str, tp.Callable[[tp.Any], tp.Any]]) -> tp.Callable[[tp.Any],
-                                                                                       tp.Any]:
+def short_none(clb: tp.Union[Expression, tp.Callable[[T], U]]) -> tp.Callable[[tp.Optional[T]], tp.Optional[U]]:
     """
     Accept a callable. Return a callable that executes it only if passed a no-None arg, and returns
     its result.
@@ -91,24 +94,25 @@ def short_none(callable_: tp.Union[str, tp.Callable[[tp.Any], tp.Any]]) -> tp.Ca
 
     callable can also be a string, in this case it will be appended to lambda x: and eval'd
 
-    :param callable_: callable/1->1
+    :param clb: callable/1->1
     :return: a modified callable
     """
-    if isinstance(callable_, str):
+    if isinstance(clb, str):
         q = dict(globals())
-        exec('_precond = lambda x: '+callable_, q)
-        callable_ = q['_precond']
+        exec('_callable = lambda x: '+clb, q)
+        clb = q['_callable']
 
-    @wraps(callable_)
-    def inner(arg):
+    @wraps(clb)
+    def inner(arg: tp.Optional[T]) -> tp.Optional[U]:
         if arg is None:
             return None
         else:
-            return callable_(arg)
+            return clb(arg)
     return inner
 
 
-def precondition(*t_ops, **kw_opts):
+def precondition(*t_ops: tp.Union[tp.Callable[[T], bool], Expression],
+                 **kw_opts: tp.Union[tp.Callable[[T], bool], Expression]):
     """
     Check that a precondition happens for given parameter.
 
@@ -186,7 +190,7 @@ def precondition(*t_ops, **kw_opts):
     return outer
 
 
-def for_argument(*t_ops, **t_kwops):
+def for_argument(*t_ops: tp.Callable[[T], U], **t_kwops: tp.Callable[[T], U]):
     """
     Calls a callable for each of the arguments. Pass None if you do not wish to process given
     argument.

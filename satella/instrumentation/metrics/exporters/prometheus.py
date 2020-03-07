@@ -57,7 +57,7 @@ class PrometheusHTTPExporterThread(TerminableThread):
                                       'cps' if enable_metric else 'empty',
                                       time_unit_vector=[1, 20, 60])
 
-    def run(self):
+    def run(self) -> None:
         self.httpd.server_bind()
         self.httpd.server_activate()
         self.httpd.serve_forever()
@@ -95,8 +95,11 @@ class RendererObject(io.StringIO):
 
 def metric_data_collection_to_prometheus(mdc: MetricDataCollection) -> str:
     """
-    Render the data in the form understandable by Prometheus
+    Render the data in the form understandable by Prometheus.
 
+    Values marked as internal will be skipped.
+
+    :param mdc: Metric data collection to render
     :param tree: MetricDataCollection returned by the root metric (or any metric for that instance).
     :return: a string output to present to Prometheus
     """
@@ -104,5 +107,7 @@ def metric_data_collection_to_prometheus(mdc: MetricDataCollection) -> str:
         return '\n'
     obj = RendererObject()
     for value in mdc.values:
+        if value.internal:
+            continue
         obj.render(value)
     return obj.getvalue()

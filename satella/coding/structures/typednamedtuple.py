@@ -1,4 +1,5 @@
 from collections import namedtuple
+import typing as tp
 
 __all__ = [
     'typednamedtuple',
@@ -16,7 +17,7 @@ def _adjust(q):
     return type_(var)
 
 
-def typednamedtuple(cls_name, *arg_name_type):
+def typednamedtuple(cls_name: str, *arg_name_type: type) -> tp.Type[tp.Tuple]:
     """
     Returns a new subclass of tuple with named fields.
     Fields will be coerced to type passed in the pair.

@@ -8,14 +8,18 @@ __all__ = [
     'catch_exception'
 ]
 
+ExcType = tp.Type[Exception]
+T = tp.TypeVar('T')
 
-def silence_excs(*exc_types):
+
+def silence_excs(*exc_types: ExcType):
     """
     Silence given exception types.
 
     Can be either a decorator or a context manager
     """
     return rethrow_as(exc_types, None)
+
 
 
 class rethrow_as:
@@ -39,7 +43,7 @@ class rethrow_as:
     If the second value is a None, exception will be silenced.
     """
 
-    def __init__(self, *pairs,
+    def __init__(self, *pairs: tp.Union[ExcType, tp.Tuple[ExcType, ExcType]],
                  exception_preprocessor: tp.Optional[tp.Callable[[Exception], str]] = None):
         """
         Pass tuples of (exception to catch - exception to transform to).
@@ -82,23 +86,24 @@ class rethrow_as:
                         raise to(self.exception_preprocessor(exc_val))
 
 
-returning = tp.TypeVar('T')
-
-
 def catch_exception(exc_class: tp.Union[tp.Type[Exception], tp.Tuple[tp.Type[Exception]]],
-                    callable: tp.Callable[[], returning],
-                    return_instead: tp.Optional[returning] = None,
-                    return_value_on_no_exception: bool = False) -> tp.Union[Exception, returning]:
+                    clb: tp.Callable[[], T],
+                    return_instead: tp.Optional[T] = None,
+                    return_value_on_no_exception: bool = False) -> tp.Union[Exception, T]:
     """
     Catch exception of given type and return it. Functionally equivalent to:
 
     >>> try:
-    >>>     callable()
+    >>>     v = clb()
+    >>>     if return_value_on_no_exception:
+    >>>         return v
     >>> except exc_class as e:
-    >>>     result = e
+    >>>     if return_instead:
+    >>>         return return_instead
+    >>>     return e
 
     :param exc_class: Exception classes to catch
-    :param callable: callable/0 to call to obtain it
+    :param callable: clb/0 to call to obtain it
     :param return_instead: what to return instead of the function result if it didn't end in an
         exception
     :param return_value_on_no_exception: whether to return the function result if exception didn't
@@ -107,7 +112,7 @@ def catch_exception(exc_class: tp.Union[tp.Type[Exception], tp.Tuple[tp.Type[Exc
     :raises TypeError: a different exception was thrown that the one we're catchin
     """
     try:
-        result = callable()
+        result = clb()
     except exc_class as e:
         return e
     except Exception as e:

@@ -5,8 +5,11 @@ from satella.exceptions import ConfigurationValidationError
 
 __all__ = ['DictObject', 'apply_dict_object']
 
+T = tp.TypeVar('T')
+U = tp.TypeVar('U')
 
-class DictObject(dict):
+
+class DictObject(dict, tp.Generic[T]):
     """
     A dictionary wrapper that can be accessed by attributes. Eg:
 
@@ -14,13 +17,13 @@ class DictObject(dict):
     >>> self.assertEqual(a.test, 5)
     """
 
-    def __getattr__(self, item: str) -> tp.Any:
+    def __getattr__(self, item: str) -> T:
         try:
             return self[item]
         except KeyError as e:
             raise AttributeError(repr(e))
 
-    def __setattr__(self, key: str, value: tp.Any) -> None:
+    def __setattr__(self, key: str, value: T) -> None:
         self[key] = value
 
     def __delattr__(self, key: str) -> None:
@@ -57,7 +60,7 @@ class DictObject(dict):
             return True
 
 
-def apply_dict_object(v: tp.Any) -> tp.Union[DictObject, tp.Any]:
+def apply_dict_object(v: tp.Union[tp.Any, dict[str, T]]) -> tp.Union[DictObject[T], tp.Any]:
     """
     Apply DictObject() to every dict inside v.
 
