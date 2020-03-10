@@ -1,12 +1,15 @@
+import collections
 import logging
 import threading
+import typing as tp
 
 from ..decorators import wraps
 
 __all__ = [
-    'Monitor', 'RMonitor'
+    'Monitor', 'RMonitor', 'MonitorDict', 'MonitorList'
 ]
 
+K, V, T = tp.TypeVar('K'), tp.TypeVar('V'), tp.TypeVar('T')
 logger = logging.getLogger(__name__)
 
 
@@ -139,3 +142,17 @@ class RMonitor(Monitor):
 
     def __init__(self):
         self._monitor_lock = threading.RLock()
+
+
+class MonitorList(collections.UserList[T], Monitor):
+    """A list that is also a monitor"""
+    def __init__(self, *args):
+        super().__init__(*args)
+        Monitor.__init__(self)
+
+
+class MonitorDict(collections.UserDict[K, V], Monitor):
+    """A dict that is also a monitor"""
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        Monitor.__init__(self)

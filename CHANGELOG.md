@@ -2,6 +2,7 @@
 
 * `metric_data_collection_to_prometheus` won't export values marked as internal
 * minor doc fixes
+* added `MonitorList` and `MonitorDict`
 
 # v2.4.37
 

@@ -73,3 +73,9 @@ caution and think over the consequences.
     :members:
 
 .. autoclass:: satella.coding.concurrent.RMonitor
+
+Additionally, following types are predefined for your convenience:
+
+.. autoclass:: satella.coding.concurrent.MonitorList
+
+.. autoclass:: satella.coding.concurrent.MonitorDict
