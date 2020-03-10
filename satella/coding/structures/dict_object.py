@@ -6,8 +6,6 @@ from .._safe_typing import SafeGeneric, T
 
 __all__ = ['DictObject', 'apply_dict_object']
 
-U = tp.TypeVar('U')
-
 
 class DictObject(dict, SafeGeneric):
     """
