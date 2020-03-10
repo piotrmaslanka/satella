@@ -45,6 +45,7 @@ class PrometheusHTTPExporterThread(TerminableThread):
         service or the hostname
     :param enable_metric: whether to enable the metric
     """
+
     def __init__(self, interface: str, port: int, extra_labels: tp.Optional[dict] = None,
                  enable_metric: bool = False):
         super().__init__(daemon=True)

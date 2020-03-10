@@ -34,7 +34,7 @@ except ImportError:
 __all__ = ['Traceback', 'StoredVariableValue', 'StackFrame', 'GenerationPolicy']
 
 
-class GenerationPolicy(object):
+class GenerationPolicy:
     """
     A policy that manages generating a traceback
 
@@ -42,6 +42,7 @@ class GenerationPolicy(object):
 
     Override if need be, and pass the class (or instance) to Traceback
     """
+    __slots__ = ('enable_pickling', 'compress_at', 'repr_length_limit', 'compression_level')
 
     def __init__(self, enable_pickling: bool = True,
                  compress_at: int = 128 * 1024,

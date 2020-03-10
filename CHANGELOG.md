@@ -2,6 +2,7 @@
 
 * added `DictionaryView`
 * fixed export all from `satella.coding.structures`
+* added `__slots__` in multiple places
 
 # v2.4.41
 

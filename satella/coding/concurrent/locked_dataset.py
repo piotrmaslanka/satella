@@ -35,6 +35,8 @@ class LockedDataset:
     """
 
     class InternalDataset(object):
+        __slots__ = ('lock', 'locked', 'args')
+
         def __init__(self):
             self.lock = threading.Lock()
             self.locked = False

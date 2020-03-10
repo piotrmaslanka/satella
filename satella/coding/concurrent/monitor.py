@@ -39,6 +39,7 @@ class Monitor:
     >>>         with self:
     >>>             .. do your threadsafe jobs ..
     """
+
     def __enter__(self):
         self._monitor_lock.acquire()
         return self
@@ -157,6 +158,7 @@ class RMonitor(Monitor):
 
 class MonitorList(tp.Generic[T], collections.UserList, Monitor):
     """A list that is also a monitor"""
+
     def __init__(self, *args):
         collections.UserList.__init__(self, *args)
         Monitor.__init__(self)
@@ -179,6 +181,7 @@ class MonitorList(tp.Generic[T], collections.UserList, Monitor):
 
 class MonitorDict(tp.Generic[K, V], collections.UserDict, Monitor):
     """A dict that is also a monitor"""
+
     def __init__(self, *args, **kwargs):
         collections.UserDict.__init__(self, *args, **kwargs)
         Monitor.__init__(self)

@@ -1,5 +1,6 @@
 import typing as tp
 import copy
+import collections.abc
 
 from satella.configuration.schema import Descriptor, descriptor_from_dict
 from satella.exceptions import ConfigurationValidationError
@@ -85,7 +86,7 @@ def apply_dict_object(v: tp.Union[tp.Any, tp.Dict[str, T]]) -> tp.Union[DictObje
         return v
 
 
-class DictionaryView(tp.MutableMapping[K, V]):
+class DictionaryView(collections.abc.MutableMapping, tp.MutableMapping[K, V]):
     """
     A view on a multiple dictionaries. If key isn't found in the first dictionary, it is looked up
     in another. Use like:
@@ -104,6 +105,8 @@ class DictionaryView(tp.MutableMapping[K, V]):
         dictionary that contains that key. If not, all updates will be stored in master_dict. If
         this is True, updates made to keys that are not in this dictionary will go to master_dict.
     """
+    __slots__ = ('assign_to_same_dict', 'master_dict', 'dictionaries', 'propagate_deletes')
+
     def __copy__(self):
         return DictionaryView(*copy.copy(self.dictionaries))
 
@@ -115,7 +118,6 @@ class DictionaryView(tp.MutableMapping[K, V]):
                  assign_to_same_dict: bool = True):
         self.assign_to_same_dict = assign_to_same_dict
         self.master_dict = master_dict
-        self.rest_of_dicts = rest_of_dicts
         self.dictionaries = [master_dict, *rest_of_dicts]
         self.propagate_deletes = propagate_deletes
 

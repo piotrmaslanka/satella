@@ -14,7 +14,7 @@ def join_metric_data_name(prefix: str, name: str):
 
 
 class MetricData(JSONAble):
-    __slots__ = ['name', 'value', 'labels', 'timestamp', 'internal']
+    __slots__ = ('name', 'value', 'labels', 'timestamp', 'internal')
 
     def __init__(self, name: str, value: float, labels: dict = None,
                  timestamp: tp.Optional[float] = None,
@@ -71,6 +71,8 @@ class MetricData(JSONAble):
 
 
 class MetricDataCollection(JSONAble):
+    __slots__ = ('values', )
+
     def add_labels(self, labels: dict) -> None:
         output = set()
         for child in self.values:
