@@ -1,4 +1,6 @@
+import typing as tp
 import collections
+import copy
 import logging
 import threading
 
@@ -8,6 +10,7 @@ __all__ = [
     'Monitor', 'RMonitor', 'MonitorDict', 'MonitorList'
 ]
 
+K, V, T = tp.TypeVar('K'), tp.TypeVar('V'), tp.TypeVar('T')
 logger = logging.getLogger(__name__)
 
 
@@ -142,15 +145,27 @@ class RMonitor(Monitor):
         self._monitor_lock = threading.RLock()
 
 
-class MonitorList(collections.UserList, Monitor):
+class MonitorList(tp.Generic[T], collections.UserList, Monitor):
     """A list that is also a monitor"""
     def __init__(self, *args):
-        super().__init__(*args)
+        collections.UserList.__init__(self, *args)
         Monitor.__init__(self)
 
+    def __copy__(self):
+        return MonitorList(copy.copy(self.data))
 
-class MonitorDict(collections.UserDict, Monitor):
+    def __deepcopy__(self, memodict={}):
+        return MonitorList(copy.deepcopy(self.data, memo=memodict))
+
+
+class MonitorDict(tp.Generic[K, V], collections.UserDict, Monitor):
     """A dict that is also a monitor"""
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        collections.UserDict.__init__(self, *args, **kwargs)
         Monitor.__init__(self)
+
+    def __copy__(self):
+        return MonitorDict(copy.copy(self.data))
+
+    def __deepcopy__(self, memodict={}):
+        return MonitorDict(copy.deepcopy(self.data, memo=memodict))

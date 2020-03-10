@@ -9,9 +9,10 @@ import typing as tp
 from abc import ABCMeta, abstractmethod
 
 from ..decorators import wraps
-from .._safe_typing import SafeGeneric, T
 
 logger = logging.getLogger(__name__)
+
+T = tp.TypeVar('T')
 
 __all__ = [
     'Heap',
@@ -80,7 +81,7 @@ def _extras_to_one(fun):
     return inner
 
 
-class Heap(collections.UserList, SafeGeneric):
+class Heap(collections.UserList[T]):
     """
     Sane heap as object - not like heapq.
 
@@ -111,16 +112,11 @@ class Heap(collections.UserList, SafeGeneric):
         """
         heapq.heappush(self.data, item)
 
-    def __copy(self, op) -> 'Heap':
-        h = Heap()
-        h.data = op(self.data)
-        return h
+    def __deepcopy__(self, memodict={}) -> 'Heap':
+        return self.__class__(copy.deepcopy(self.data, memo=memodict))
 
-    def __deepcopy__(self, memo) -> 'Heap':
-        return self.__copy(copy.deepcopy)
-
-    def __copy__(self) -> 'Heap':
-        return self.__copy(copy.copy)
+    def __copy__(self, memo) -> 'Heap':
+        return self.__class__(copy.copy(self.data))
 
     def __iter__(self) -> tp.Iterator[T]:
         return self.data.__iter__()
@@ -186,7 +182,7 @@ class Heap(collections.UserList, SafeGeneric):
         return item in self.data
 
 
-class SetHeap(Heap, SafeGeneric):
+class SetHeap(Heap, tp.Generic[T]):
     """
     A heap with additional invariant that no two elements are the same.
 

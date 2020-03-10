@@ -1,6 +1,7 @@
 # v2.4.40
 
-* _TBA_
+* fixed problems with __copy__stemming from https://github.com/python/typing/issues/498
+* docs fixed, Generics cleaned up
 
 # v2.4.39
 

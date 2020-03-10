@@ -21,7 +21,6 @@ def silence_excs(*exc_types: ExcType):
     return rethrow_as(exc_types, None)
 
 
-
 class rethrow_as:
     """
     Transform some exceptions into others.
@@ -86,7 +85,7 @@ class rethrow_as:
                         raise to(self.exception_preprocessor(exc_val))
 
 
-def catch_exception(exc_class: tp.Union[tp.Type[Exception], tp.Tuple[tp.Type[Exception]]],
+def catch_exception(exc_class: tp.Union[ExcType, tp.Tuple[ExcType]],
                     clb: tp.Callable[[], T],
                     return_instead: tp.Optional[T] = None,
                     return_value_on_no_exception: bool = False) -> tp.Union[Exception, T]:

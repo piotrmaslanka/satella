@@ -1,13 +1,16 @@
 import typing as tp
+import copy
+import collections
 
 from satella.configuration.schema import Descriptor, descriptor_from_dict
 from satella.exceptions import ConfigurationValidationError
-from .._safe_typing import SafeGeneric, T
 
 __all__ = ['DictObject', 'apply_dict_object']
 
+K, V = tp.TypeVar('K'), tp.TypeVar('V')
 
-class DictObject(dict, SafeGeneric):
+
+class DictObject(collections.UserDict[K, V]):
     """
     A dictionary wrapper that can be accessed by attributes. Eg:
 
@@ -15,18 +18,24 @@ class DictObject(dict, SafeGeneric):
     >>> self.assertEqual(a.test, 5)
     """
 
+    def __copy__(self):
+        return DictObject(copy.copy(self.data))
+
+    def __deepcopy__(self, memodict={}):
+        return DictObject(copy.deepcopy(self.data, memo=memodict))
+
     def __getattr__(self, item: str) -> T:
         try:
-            return self[item]
+            return self.data[item]
         except KeyError as e:
             raise AttributeError(repr(e))
 
     def __setattr__(self, key: str, value: T) -> None:
-        self[key] = value
+        self.data[key] = value
 
     def __delattr__(self, key: str) -> None:
         try:
-            del self[key]
+            del self.data[key]
         except KeyError as e:
             raise AttributeError(repr(e))
 

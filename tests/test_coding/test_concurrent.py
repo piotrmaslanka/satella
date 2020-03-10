@@ -1,11 +1,17 @@
 import platform
 import time
 import unittest
+import copy
 
-from satella.coding.concurrent import TerminableThread, CallableGroup, Condition
+from satella.coding.concurrent import TerminableThread, CallableGroup, Condition, MonitorList
 
 
 class TestConcurrent(unittest.TestCase):
+
+    def test_copy_monitor_list(self):
+        ml = MonitorList([1,2,3])
+        ml2 = copy.copy(ml)
+        self.assertEqual(ml2, ml)
 
     def test_condition(self):
 
