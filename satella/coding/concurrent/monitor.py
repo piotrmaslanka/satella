@@ -51,7 +51,7 @@ class Monitor:
     def __init__(self):
         """You need to invoke this at your constructor
         You can also use it to release locks of other objects."""
-        self._monitor_lock = threading.Lock()
+        self._monitor_lock = threading.Lock()       # type: threading.Lock
 
     @staticmethod
     def synchronized(fun):
@@ -153,7 +153,7 @@ class RMonitor(Monitor):
     """
 
     def __init__(self):
-        self._monitor_lock = threading.RLock()
+        self._monitor_lock = threading.RLock()      # type: threading.RLock
 
 
 class MonitorList(tp.Generic[T], collections.UserList, Monitor):

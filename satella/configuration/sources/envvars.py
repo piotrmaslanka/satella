@@ -19,6 +19,7 @@ class EnvironmentSource(BaseSource):
     """
     This just returns a dictionary of { env_name => that env's value }
     """
+    __slots__ = ('env_name', 'config_name', 'cast_to')
 
     def __init__(self, env_name: str, config_name: tp.Optional[str] = None, cast_to=lambda v: v):
         """
@@ -41,6 +42,7 @@ class EnvVarsSource(JSONSource):
     """
     Return a dictionary that is the JSON encoded within a particular environment variable
     """
+    __slots__ = ('env_name', )
 
     def __init__(self, env_name: str):
         super(EnvVarsSource, self).__init__('',

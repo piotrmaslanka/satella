@@ -60,8 +60,6 @@ class TestMetaclasses(unittest.TestCase):
             def return_six(self, x):
                 return 6
 
-        print(dir(Doubles))
-
         a = Doubles()
         self.assertEqual(a.return_four(2), 4)
         self.assertEqual(a.return_five(2), 5)

@@ -27,6 +27,8 @@ def _override_me(key):
 
 
 class FormatSource(BaseSource):
+    __slots__ = ('root', 'encoding')
+
     TRANSFORM = _override_me
     BASE_EXCEPTIONS = [TypeError, UnicodeDecodeError, ValueError,
                        binascii.Error, LookupError]

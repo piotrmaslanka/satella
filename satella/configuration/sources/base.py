@@ -23,6 +23,7 @@ class StaticSource(BaseSource):
     """
     A static piece of configuration. Returns exactly what is passed
     """
+    __slots__ = ('config', )
 
     def __init__(self, config: dict):
         self.config = config

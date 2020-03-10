@@ -1,6 +1,7 @@
 # v2.4.44
 
-* _TBA_
+* added typing for some members
+* added test for MemoryErrorHandler (at last!)
 
 # v2.4.43
 

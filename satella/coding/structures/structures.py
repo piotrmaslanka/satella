@@ -13,6 +13,7 @@ from ..decorators import wraps
 logger = logging.getLogger(__name__)
 
 T = tp.TypeVar('T')
+Number = tp.Union[int, float]
 
 __all__ = [
     'Heap',
@@ -246,14 +247,14 @@ class TimeBasedHeap(Heap):
         """
         return (ob for ts, ob in self.data)
 
-    def __init__(self, default_clock_source: tp.Callable[[], int] = None):
+    def __init__(self, default_clock_source: tp.Callable[[], Number] = None):
         """
         Initialize an empty heap
         """
         self.default_clock_source = default_clock_source or time.monotonic
         super().__init__(from_list=())
 
-    def put(self, timestamp_or_value: tp.Union[tp.Tuple[tp.Union[float, int], T]],
+    def put(self, timestamp_or_value: tp.Union[tp.Tuple[Number, T]],
             value: tp.Optional[T] = None) -> None:
         """
         Put an item on heap.
@@ -268,8 +269,8 @@ class TimeBasedHeap(Heap):
         assert timestamp is not None
         self.push((timestamp, item))
 
-    def pop_less_than(self, less: tp.Optional[tp.Union[int, float]] = None) -> tp.Generator[
-        T, None, None]:
+    def pop_less_than(self, less: tp.Optional[Number] = None) -> tp.Generator[
+            T, None, None]:
         """
         Return all elements less (sharp inequality) than particular value.
 
@@ -282,7 +283,7 @@ class TimeBasedHeap(Heap):
         if less is None:
             less = self.default_clock_source()
 
-        assert less is not None
+        assert less is not None, 'Default clock source returned None!'
 
         while self:
             if self.data[0][0] >= less:

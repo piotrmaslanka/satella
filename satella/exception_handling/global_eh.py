@@ -20,10 +20,11 @@ class GlobalExcepthook:
 
     Always installed
     """
+    __slots__ = ('installed_hooks', 'ignore_failed_hooks', 'old_excepthook')
 
     def __init__(self):
-        self.installed_hooks = []  # list of BaseExceptionHandler
-        self.ignore_failed_hooks = True
+        self.installed_hooks = []           # type: tp.List[BaseExceptionHandler]
+        self.ignore_failed_hooks = True     # type: bool
         self.__install()
 
     def remove_hook(self, hook: BaseExceptionHandler):
@@ -36,7 +37,7 @@ class GlobalExcepthook:
         self.installed_hooks.remove(hook)
 
     def add_hook(self, new_hook: tp.Union[
-        tp.Callable, BaseExceptionHandler]) -> BaseExceptionHandler:
+            tp.Callable, BaseExceptionHandler]) -> BaseExceptionHandler:
         """
         Register a hook to fire in case of an exception.
 

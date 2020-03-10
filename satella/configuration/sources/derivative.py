@@ -16,6 +16,7 @@ class AlternativeSource(BaseSource):
     If first source of configuration fails with ConfigurationError, use the next one instead, ad
     nauseam.
     """
+    __slots__ = ('sources', )
 
     def __init__(self, *sources: BaseSource):
         super().__init__()
@@ -64,6 +65,7 @@ class MergingSource(BaseSource):
 
     RAISE = 0  # Raise ConfigurationError if one of sources fails
     SILENT = 1  # Silently continue loading from next files if one fails
+    __slots__ = ('sources', 'on_fail')
 
     def __init__(self, *sources: BaseSource, on_fail: int = RAISE):
         super().__init__()

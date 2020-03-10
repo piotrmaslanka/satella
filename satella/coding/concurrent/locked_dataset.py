@@ -43,7 +43,7 @@ class LockedDataset:
             self.args = ()
 
     def __init__(self):
-        self.__internal = LockedDataset.InternalDataset()
+        self.__internal = LockedDataset.InternalDataset()   # type: LockedDataset.InternalDataset
 
     @staticmethod
     def locked(blocking=True, timeout=-1):

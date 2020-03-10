@@ -1,9 +1,13 @@
 import sys
 import time
+import logging
 import typing as tp
 
+from satella.coding.recast_exceptions import silence_excs
 from satella.posix import suicide
 from .exception_handlers import BaseExceptionHandler, ALWAYS_FIRST, ExceptionHandlerCallable
+
+logger = logging.getLogger(__name__)
 
 
 class MemoryErrorExceptionHandler(BaseExceptionHandler):
@@ -11,8 +15,10 @@ class MemoryErrorExceptionHandler(BaseExceptionHandler):
     A handler that terminates the entire process (or process group) is a MemoryError is seen.
 
     `custom_hook` is an exception callable to implement you own behavior. If it returns True,
-    then MemoryErrorExceptionHandler won't kill anyone.
+    then MemoryErrorExceptionHandler won't kill anyone. You can also provide a CallableGroup
+    with gather=True - if any of callables returns True, the process won't be killed.
     """
+    __slots__ = ('priority', '_free_on_memory_error', 'custom_hook', 'kill_pg', 'installed')
 
     def __init__(self,
                  custom_hook: ExceptionHandlerCallable = lambda type_, value, traceback: False,
@@ -39,14 +45,17 @@ class MemoryErrorExceptionHandler(BaseExceptionHandler):
         if not issubclass(type_, MemoryError):
             return
 
-        del self._free_on_memory_error['a']
+        with silence_excs(KeyError):
+            del self._free_on_memory_error['a']
 
         # noinspection PyBroadException
-        try:
-            if self.custom_hook(type_, value, traceback):
+        with silence_excs(Exception):
+            val = self.custom_hook(type_, value, traceback)
+            if isinstance(val, tp.Sequence):
+                val = any(val)
+
+            if val:
                 return True
-        except Exception as e:
-            pass
 
         try:
             sys.stderr.write(

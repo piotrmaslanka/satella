@@ -16,7 +16,8 @@ ALWAYS_FIRST = -1000
 NORMAL_PRIORITY = 0
 ALWAYS_LAST = 1000
 
-ExceptionHandlerCallable = tp.Callable[[type, BaseException, types.TracebackType], bool]
+ExceptionHandlerCallable = tp.Callable[[type, BaseException, types.TracebackType],
+                                       tp.Union[tp.Sequence[bool], bool]]
 
 
 class BaseExceptionHandler:
@@ -68,7 +69,10 @@ class FunctionExceptionHandler(BaseExceptionHandler):
     def handle_exception(self, type_, value, traceback):
         if type_ == SystemExit:
             return
-        return self.fun(type_, value, traceback)
+        val = self.fun(type_, value, traceback)
+        if isinstance(val, tp.Sequence):
+            val = any(val)
+        return val
 
 
 def exception_handler(priority: int = NORMAL_PRIORITY):

@@ -19,6 +19,7 @@ class FileSource(BaseSource):
     """
     Try to read a file and parse it with a known format.
     """
+    __slots__ = ('source_classes', 'path', 'encoding')
 
     def __init__(self, path: str,
                  encoding: str = 'utf-8',
@@ -64,6 +65,7 @@ class DirectorySource(FileSource):
     :param filter: callable that tells whether to use this file (or subdirectory if scan_subdirectories is enabled)
     :param on_fail: what to do in case a resource fails
     """
+    __slots__ = ('filter', 'scan_subdirectories', 'on_fail')
 
     RAISE = MergingSource.RAISE  # in case a resource fails raise it
     SILENT = MergingSource.SILENT  # in case a resource fails silently ignore it
@@ -121,6 +123,8 @@ except ImportError:
 else:
     class HTTPJSONSource(BaseSource):
         """Call somwhere, count on a 200-esque code and return a JSON!"""
+
+        __slots__ = ('url', 'method', 'kwargs')
 
         def __init__(self, url: str, method: str = 'GET', **kwargs):
             """

@@ -86,7 +86,7 @@ class TerminableThread(threading.Thread):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._terminating = False
+        self._terminating = False       # type: bool
 
     def loop(self) -> None:
         """

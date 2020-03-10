@@ -56,21 +56,22 @@ class Descriptor(object):
     """
     Base class for a descriptor
     """
+
     BASIC_MAKER = staticmethod(lambda v: v)
     MY_EXCEPTIONS = [TypeError, ValueError]  # a list of Exception classes
     CHECKERS = []  # a list of CheckerCondition
 
     def __init__(self):
-        self.pre_checkers = CallableGroup()
-        self.post_checkers = CallableGroup()
-        self.name = None
-        self.optional = None
-        self.default = None
+        self.pre_checkers = CallableGroup()     # type: tp.Callable[[bool], None]
+        self.post_checkers = CallableGroup()    # type: tp.Callable[[bool], None]
+        self.name = None                        # type: tp.Optional[str]
+        self.optional = None                    # type: tp.Optional[bool]
+        self.default = None                     # type: tp.Optional[tp.Any]
 
         for checker in self.__class__.CHECKERS:
             self.add_checker(checker)
 
-        self.MY_EXCEPTIONS = tuple(self.MY_EXCEPTIONS)
+        self.MY_EXCEPTIONS = tuple(self.MY_EXCEPTIONS)  # type: tp.Tuple[tp.Type[Exception], ...]
 
     def __str__(self):
         return '%s()' % (self.__class__.__qualname__, )
