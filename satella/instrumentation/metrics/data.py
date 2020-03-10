@@ -19,11 +19,11 @@ class MetricData(JSONAble):
     def __init__(self, name: str, value: float, labels: dict = None,
                  timestamp: tp.Optional[float] = None,
                  internal: bool = False):
-        self.name = name
-        self.internal = internal
-        self.value = value
+        self.name = name                    # type: str
+        self.internal = internal            # type: bool
+        self.value = value                  # type: tp.Any
         self.labels = frozendict(labels) if labels is not None else frozendict()
-        self.timestamp = timestamp
+        self.timestamp = timestamp          # type: tp.Optional[float]
 
     def add_labels(self, labels: dict) -> None:
         labels_current = dict(self.labels)

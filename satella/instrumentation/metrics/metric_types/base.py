@@ -170,11 +170,11 @@ class EmbeddedSubmetrics(LeafMetric):
     def __init__(self, name, root_metric: 'Metric' = None, metric_level: str = None,
                  labels: tp.Optional[dict] = None, internal: bool = False, *args, **kwargs):
         super().__init__(name, root_metric, metric_level, labels, internal, *args, **kwargs)
-        self.args = args
-        self.kwargs = kwargs
-        self.embedded_submetrics_enabled = False  # to check for in children
-        self.children_mapping = {}
-        self.last_updated = time.time()
+        self.args = args                          # type: tp.List
+        self.kwargs = kwargs                      # type: tp.Dict
+        self.embedded_submetrics_enabled = False  # type: bool
+        self.children_mapping = {}                # type: tp.Dict[tp.Any, Metric]
+        self.last_updated = time.time()           # type: float
 
     def _handle(self, *args, **labels):
         if self.enable_timestamp:

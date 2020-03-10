@@ -40,8 +40,8 @@ class FormatSource(BaseSource):
         :type root: if bytes, will be decoded with given encoding'
         """
         super().__init__()
-        self.root = root
-        self.encoding = encoding
+        self.root = root                # type: BaseSource
+        self.encoding = encoding        # type: str
 
     def provide(self) -> dict:
         cls = self.__class__

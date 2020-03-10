@@ -44,9 +44,9 @@ def load_source_from_dict(dct: dict) -> BaseSource:
 
     :raises ConfigurationError: upon failure to instantiate
     """
-    type_ = dct.pop('type')
-    args = dct.pop('args', [])
-    optional = dct.pop('optional', False)
+    type_ = dct.pop('type')                     # type: str
+    args = dct.pop('args', [])                  # type: tp.List
+    optional = dct.pop('optional', False)       # type: bool
 
     def argify(arg):
         if isinstance(arg, dict) and 'type' in arg:

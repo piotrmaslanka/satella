@@ -29,11 +29,11 @@ class HistogramMetric(EmbeddedSubmetrics, MeasurableMixin):
                  aggregate_children: bool = True, *args, **kwargs):
         super().__init__(name, root_metric, metric_level, internal=internal, buckets=buckets,
                          aggregate_children=aggregate_children, *args, **kwargs)
-        self.bucket_limits = list(buckets)
-        self.buckets = [0] * (len(buckets) + 1)
-        self.aggregate_children = aggregate_children
-        self.count = 0
-        self.sum = 0.0
+        self.bucket_limits = list(buckets)                   # type: tp.List[float]
+        self.buckets = [0] * (len(buckets) + 1)              # type: tp.List[int]
+        self.aggregate_children = aggregate_children         # type: bool
+        self.count = 0                                       # type: int
+        self.sum = 0.0                                       # type: float
 
     def _handle(self, value, **labels):
         self.count += 1

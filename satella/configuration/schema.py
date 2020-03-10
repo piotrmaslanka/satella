@@ -196,7 +196,7 @@ class List(Descriptor):
 
     def __init__(self, type_descriptor: tp.Optional[Descriptor] = None):
         super().__init__()
-        self.type_descriptor = type_descriptor or Descriptor()
+        self.type_descriptor = type_descriptor or Descriptor()      # type: Descriptor
 
     def __call__(self, value: ConfigDictValue) -> tp.List:
         value = super().__call__(value)
@@ -245,7 +245,7 @@ class Dict(Descriptor):
                  unknown_key_mapper: UnknownKeyHandlerType = lambda str,
                                                                     data: data):
         super().__init__()
-        self.keys = {item.name: item for item in keys}  # tp.Dict[str, DictDescriptorKey]
+        self.keys = {item.name: item for item in keys}  # type: tp.Dict[str, DictDescriptorKey]
         self.unknown_key_mapper = unknown_key_mapper  # Dict.UnknownKeyHandlerType
 
     def __str__(self):

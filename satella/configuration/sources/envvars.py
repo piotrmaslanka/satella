@@ -27,9 +27,9 @@ class EnvironmentSource(BaseSource):
         config_name -- name of the env_name in the dictionary to return
         """
         super(EnvironmentSource, self).__init__()
-        self.env_name = env_name
-        self.config_name = config_name or env_name
-        self.cast_to = cast_to
+        self.env_name = env_name                        # type: str
+        self.config_name = config_name or env_name      # type: str
+        self.cast_to = cast_to                          # type: tp.Callable[[tp.Any], tp.Any]
 
     @rethrow_as((ValueError, TypeError, KeyError), ConfigurationError)
     def provide(self) -> dict:
@@ -47,7 +47,7 @@ class EnvVarsSource(JSONSource):
     def __init__(self, env_name: str):
         super(EnvVarsSource, self).__init__('',
                                             encoding=sys.getfilesystemencoding())
-        self.env_name = env_name
+        self.env_name = env_name            # type: str
 
     @rethrow_as(KeyError, ConfigurationError)
     def provide(self) -> dict:

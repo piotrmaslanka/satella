@@ -40,13 +40,13 @@ class LinkfailMetric(EmbeddedSubmetrics):
                          callback_on_offline=callback_on_offline,
                          callback_on_online=callback_on_online,
                          **kwargs)
-        self.working = collections.defaultdict(lambda: True)
-        self.consecutive_failures = collections.defaultdict(lambda: 0)
-        self.consecutive_successes = collections.defaultdict(lambda: 0)
-        self.callback_on_online = callback_on_online
-        self.callback_on_offline = callback_on_offline
-        self.consecutive_failures_to_offline = consecutive_failures_to_offline
-        self.consecutive_successes_to_online = consecutive_successes_to_online
+        self.working = collections.defaultdict(lambda: True)             # type: tp.Dict[int, bool]
+        self.consecutive_failures = collections.defaultdict(lambda: 0)   # type: tp.Dict[int, int]
+        self.consecutive_successes = collections.defaultdict(lambda: 0)  # type: tp.Dict[int, int]
+        self.callback_on_online = callback_on_online                     # type: tp.Callable
+        self.callback_on_offline = callback_on_offline                   # type: tp.Callable
+        self.consecutive_failures_to_offline = consecutive_failures_to_offline      # type: int
+        self.consecutive_successes_to_online = consecutive_successes_to_online      # type: int
 
     def _handle(self, success: bool, address: int = 0, *args, **labels):
         if self.embedded_submetrics_enabled or labels:

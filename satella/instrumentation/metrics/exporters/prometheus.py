@@ -50,8 +50,8 @@ class PrometheusHTTPExporterThread(TerminableThread):
     def __init__(self, interface: str, port: int, extra_labels: tp.Optional[dict] = None,
                  enable_metric: bool = False):
         super().__init__(daemon=True)
-        self.interface = interface
-        self.port = port
+        self.interface = interface          # type: str
+        self.port = port                    # type: int
         self.httpd = http.server.HTTPServer((self.interface, self.port), PrometheusHandler,
                                             bind_and_activate=False)
         self.httpd.extra_labels = extra_labels or {}

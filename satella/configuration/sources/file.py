@@ -29,11 +29,11 @@ class FileSource(BaseSource):
         """
         super().__init__()
         from .. import sources
-        self.source_classes = [  # list of tp.Type[FormatSource]
+        self.source_classes = [         # type: tp.List[tp.Type[FormatSource]]
             (p if not isinstance(p, str) else getattr(sources, p)) for p in
             interpret_as]
-        self.path = path
-        self.encoding = encoding
+        self.path = path                # type: str
+        self.encoding = encoding        # type: str
 
     def __repr__(self):
         return '<FileSource %s, %s, ..>' % (repr(self.path), repr(self.encoding))
@@ -78,9 +78,9 @@ class DirectorySource(FileSource):
 
         super().__init__(path, encoding, interpret_as)
         self.filter = lambda files: filter(fname_filter,
-                                           files)  # tp.Callable[[tp.List[str]], tp.List[str]]
-        self.scan_subdirectories = scan_subdirectories
-        self.on_fail = on_fail
+                                           files)  # type: tp.Callable[[tp.List[str]], tp.List[str]]
+        self.scan_subdirectories = scan_subdirectories      # type: bool
+        self.on_fail = on_fail                              # type: int
 
     def __repr__(self):
         return '<DirectorySource %s, %s, ..>' % (repr(self.path), repr(self.encoding))
@@ -131,9 +131,9 @@ else:
             :param kwargs: these will be passed to requests.request(..)
             """
             super(HTTPJSONSource, self).__init__()
-            self.url = url
-            self.method = method
-            self.kwargs = kwargs
+            self.url = url              # type: str
+            self.method = method        # type: str
+            self.kwargs = kwargs        # type: tp.Dict[str, tp.Any]
 
         @rethrow_as(requests.RequestException, ConfigurationError)
         def provide(self) -> dict:

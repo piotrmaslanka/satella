@@ -24,10 +24,10 @@ class CounterMetric(EmbeddedSubmetrics, MeasurableMixin):
                  count_calls: bool = False, *args, **kwargs):
         super().__init__(name, root_metric, metric_level, internal=internal,
                          sum_children=sum_children, count_calls=count_calls, *args, **kwargs)
-        self.sum_children = sum_children
-        self.count_calls = count_calls
-        self.calls = 0
-        self.value = 0
+        self.sum_children = sum_children            # type: bool
+        self.count_calls = count_calls              # type: bool
+        self.calls = 0                              # type: int
+        self.value = 0                              # type: float
 
     def to_metric_data(self) -> MetricDataCollection:
         if self.embedded_submetrics_enabled:

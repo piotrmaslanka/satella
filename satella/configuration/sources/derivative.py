@@ -20,7 +20,7 @@ class AlternativeSource(BaseSource):
 
     def __init__(self, *sources: BaseSource):
         super().__init__()
-        self.sources = sources
+        self.sources = sources      # type: tp.List[BaseSource]
 
     def __repr__(self):
         return 'AlternativeSource(%s)' % (repr(self.sources),)

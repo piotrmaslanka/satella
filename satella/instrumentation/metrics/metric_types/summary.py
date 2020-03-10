@@ -61,13 +61,13 @@ class SummaryMetric(EmbeddedSubmetrics, MeasurableMixin):
                          last_calls=last_calls,  quantiles=quantiles,
                          aggregate_children=aggregate_children, count_calls=count_calls,
                          **kwargs)
-        self.last_calls = last_calls
-        self.calls_queue = collections.deque()
-        self.quantiles = quantiles
-        self.aggregate_children = aggregate_children
-        self.count_calls = count_calls
-        self.tot_calls = 0
-        self.tot_time = 0
+        self.last_calls = last_calls                    # type: int
+        self.calls_queue = collections.deque()          # type: tp.List[float]
+        self.quantiles = quantiles                      # type: tp.List[float]
+        self.aggregate_children = aggregate_children    # type: bool
+        self.count_calls = count_calls                  # type: bool
+        self.tot_calls = 0                              # type: int
+        self.tot_time = 0                               # type: float
 
     def _handle(self, time_taken: float, **labels) -> None:
         if self.count_calls:

@@ -1,5 +1,6 @@
-METRIC_NAMES_TO_CLASSES = {
-}
+from .base import Metric
+
+METRIC_NAMES_TO_CLASSES = {}        # type: tp.Dict[str, tp.Type[Metric]]
 
 __all__ = ['METRIC_NAMES_TO_CLASSES', 'register_metric']
 

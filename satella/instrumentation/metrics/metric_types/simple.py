@@ -1,4 +1,3 @@
-import time
 import logging
 import typing as tp
 
@@ -19,7 +18,7 @@ class SimpleMetric(EmbeddedSubmetrics):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.data = None
+        self.data = None                # type: tp.Any
 
     def _handle(self, value, **labels) -> None:
         if self.embedded_submetrics_enabled or labels:
