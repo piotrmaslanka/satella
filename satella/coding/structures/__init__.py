@@ -1,4 +1,4 @@
-from .dict_object import *
+from .dictionaries import *
 from .immutable import Immutable, frozendict
 from .singleton import Singleton, SingletonWithRegardsTo
 from .structures import *
