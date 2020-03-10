@@ -1,7 +1,7 @@
 # v2.4.43
 
 * added `HashableWrapper`
-* made `CallableGroup` thread-safe
+* made `CallableGroup` thread-safe 
 
 # v2.4.42
 
