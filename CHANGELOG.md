@@ -1,6 +1,7 @@
 # v2.4.44
 
 * added typing for some members
+* added __slots__ to most classes
 * added test for MemoryErrorHandler (at last!)
 
 # v2.4.43
