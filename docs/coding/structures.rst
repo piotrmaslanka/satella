@@ -112,3 +112,9 @@ It is additionally hashable and __eq__-able
 .. _frozendict: https://pypi.org/project/frozendict/
 
 .. autoclass:: satella.coding.structures.frozendict
+
+DictionaryView
+==============
+
+.. autoclass:: satella.coding.structures.DictionaryView
+    :members:

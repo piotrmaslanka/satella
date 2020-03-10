@@ -5,10 +5,33 @@ import unittest
 import mock
 
 from satella.coding.structures import TimeBasedHeap, Heap, typednamedtuple, \
-    OmniHashableMixin, DictObject, apply_dict_object, Immutable, frozendict, SetHeap
+    OmniHashableMixin, DictObject, apply_dict_object, Immutable, frozendict, SetHeap, \
+    DictionaryView
 
 
 class TestTimeBasedHeap(unittest.TestCase):
+
+    def test_dictionary_view(self):
+        a = {1:2, 3:4}
+        b = {4:5, 6:7}
+        dva = DictionaryView(a, b)
+
+        self.assertEqual(dva[1], 2)
+        self.assertEqual(dva[4], 5)
+        del dva[4]
+        self.assertNotIn(4, b)
+        self.assertNotIn(4, dva)
+        dva[7] = 8
+        self.assertIn(7, dva)
+        self.assertIn(7, a)
+        dva[6] = 10
+        self.assertEqual(b[6], 10)
+
+        dvb = DictionaryView(a, b, propagate_deletes=False, assign_to_same_dict=False)
+        self.assertRaises(KeyError, lambda: dvb.__delitem__(6))
+        dvb[6] = 11
+        self.assertEqual(b[6], 10)
+        self.assertEqual(a[6], 11)
 
     def test_setheap(self):
         a = SetHeap([1, 2, 3])

@@ -4,9 +4,9 @@ import copy
 from satella.configuration.schema import Descriptor, descriptor_from_dict
 from satella.exceptions import ConfigurationValidationError
 
-__all__ = ['DictObject', 'apply_dict_object']
+__all__ = ['DictObject', 'apply_dict_object', 'DictionaryView']
 
-T = tp.TypeVar('T')
+K, V, T = tp.TypeVar('K'), tp.TypeVar('V'), tp.TypeVar('T')
 
 
 class DictObject(dict, tp.Generic[T]):
@@ -82,3 +82,93 @@ def apply_dict_object(v: tp.Union[tp.Any, tp.Dict[str, T]]) -> tp.Union[DictObje
         })
     else:
         return v
+
+
+class DictionaryView(tp.MutableMapping[K, V]):
+    """
+    A view on a multiple dictionaries. If key isn't found in the first dictionary, it is looked up
+    in another. Use like:
+
+    >>> dv = DictionaryView({1:2, 3:4}, {4: 5, 6: 7})
+    >>> assert dv[4] == 5
+    >>> del dv[1]
+    >>> assertRaises(KeyError, lambda: dv.__delitem__(1))
+
+    :param master_dict: First dictionary to look up. Entries made via __setitem__ will be put here.
+    :param rest_of_dicts: Remaining dictionaries
+    :param propagate_deletes: Whether to delete given key from the first dictionary that it is
+        found. Otherwise it will be only deleted from the master_dict. Also, if this is set to
+        False, on deletion, if the key isn't found in master dictionary, deletion will KeyError.
+    :param assign_to_same_dict: whether updates done by __setitem__ should be written to the
+        dictionary that contains that key. If not, all updates will be stored in master_dict. If
+        this is True, updates made to keys that are not in this dictionary will go to master_dict.
+    """
+    def __copy__(self):
+        return DictionaryView(*copy.copy(self.dictionaries))
+
+    def __deepcopy__(self, memodict={}):
+        return DictionaryView(*copy.deepcopy(self.dictionaries, memo=memodict))
+
+    def __init__(self, master_dict: tp.Dict[K, V], *rest_of_dicts: tp.Dict[K, V],
+                 propagate_deletes: bool = True,
+                 assign_to_same_dict: bool = True):
+        self.assign_to_same_dict = assign_to_same_dict
+        self.master_dict = master_dict
+        self.rest_of_dicts = rest_of_dicts
+        self.dictionaries = [master_dict, *rest_of_dicts]
+        self.propagate_deletes = propagate_deletes
+
+    def get_all_keys(self) -> tp.Set[K]:
+        """
+        Returns all keys found in this view
+        """
+        key_set = set()
+        for dictionary in self.dictionaries:
+            key_set.update(dictionary.keys())
+        return key_set
+
+    def __contains__(self, item: K) -> bool:
+        for dictionary in self.dictionaries:
+            if item in dictionary:
+                return True
+        return False
+
+    def __iter__(self) -> tp.Generator[K, None, None]:
+        for dictionary in self.dictionaries:
+            for key in dictionary:
+                yield key
+
+    def items(self) -> tp.Generator[tp.Tuple[K, V], None, None]:
+        for dictionary in self.dictionaries:
+            for key, value in dictionary.items():
+                yield key, value
+
+    def __len__(self) -> int:
+        return len(self.get_all_keys())
+
+    def __getitem__(self, item: K) -> V:
+        for dictionary in self.dictionaries:
+            if item in dictionary:
+                return dictionary[item]
+        raise KeyError('Key not found')
+
+    def __setitem__(self, key: K, value: V):
+        if self.assign_to_same_dict:
+            for dictionary in self.dictionaries:
+                if key in dictionary:
+                    dictionary[key] = value
+                    return
+        self.master_dict[key] = value
+
+    def __delitem__(self, key: K) -> V:
+        if self.propagate_deletes:
+            for dictionary in self.dictionaries:
+                if key in dictionary:
+                    del dictionary[key]
+                    return
+            raise KeyError('Key not found')
+        else:
+            if key not in self.master_dict:
+                raise KeyError('Key not found')
+            else:
+                del self.master_dict[key]

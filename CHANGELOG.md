@@ -1,6 +1,7 @@
 # v2.4.42
 
-* _TBA_
+* added `DictionaryView`
+* fixed export all from `satella.coding.structures`
 
 # v2.4.41
 

@@ -8,7 +8,8 @@ __all__ = [
     'typednamedtuple',
     'Heap',
     'SetHeap',
-    'frozendict'
+    'DictionaryView',
+    'frozendict',
     'TimeBasedHeap',
     'OmniHashableMixin',
     'Singleton',
