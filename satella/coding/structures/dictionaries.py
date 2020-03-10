@@ -132,7 +132,7 @@ class DictionaryView(tp.MutableMapping[K, V]):
                     seen_already.add(key)
 
     @for_argument(returns=list)
-    def values(self) -> tp.Generator[V, None, None]:
+    def values(self) -> tp.AbstractSet[V]:
         seen_already = set()
         for dictionary in self.dictionaries:
             for key, value in dictionary.items():
@@ -156,14 +156,18 @@ class DictionaryView(tp.MutableMapping[K, V]):
 
     @for_argument(returns=list)
     def items(self) -> tp.AbstractSet[tp.Tuple[K, V]]:
+        seen_already = set()
         for dictionary in self.dictionaries:
-            yield from dictionary.items()
+            for key, value in dictionary.items():
+                if key not in seen_already:
+                    yield key, value
+                    seen_already.add(key)
 
     def __len__(self) -> int:
         seen_already = set()
         i = 0
         for dictionary in self.dictionaries:
-            for key, value in dictionary.items():
+            for key in dictionary:
                 if key not in seen_already:
                     i += 1
                     seen_already.add(key)
