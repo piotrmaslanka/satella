@@ -32,7 +32,7 @@ class DictObject(dict, tp.Generic[T]):
         except KeyError as e:
             raise AttributeError(repr(e))
 
-    def is_valid_schema(self, schema: tp.Optional[tp.Union[Descriptor, dict]] = None,
+    def is_valid_schema(self, schema: tp.Optional[tp.Union[Descriptor, tp.Dict]] = None,
                         **kwarg_schema) -> bool:
         """
         Check if this dictionary conforms to particular schema.
@@ -60,7 +60,7 @@ class DictObject(dict, tp.Generic[T]):
             return True
 
 
-def apply_dict_object(v: tp.Union[tp.Any, dict[str, T]]) -> tp.Union[DictObject[T], tp.Any]:
+def apply_dict_object(v: tp.Union[tp.Any, tp.Dict[str, T]]) -> tp.Union[DictObject[T], tp.Any]:
     """
     Apply DictObject() to every dict inside v.
 
