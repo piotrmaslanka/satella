@@ -3,7 +3,7 @@ import typing as tp
 import time
 from concurrent.futures import Future
 
-from satella.coding.decorators import wraps
+from functools import wraps
 
 logger = logging.getLogger(__name__)
 
