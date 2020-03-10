@@ -2,6 +2,7 @@ import typing as tp
 import copy
 import collections.abc
 
+from satella.coding.recast_exceptions import rethrow_as
 from satella.configuration.schema import Descriptor, descriptor_from_dict
 from satella.exceptions import ConfigurationValidationError
 from ..decorators import for_argument
@@ -25,20 +26,16 @@ class DictObject(dict, tp.Generic[T]):
     def __deepcopy__(self, memodict={}) -> 'DictObject':
         return DictObject(copy.deepcopy(dict(self), memo=memodict))
 
+    @rethrow_as(KeyError, AttributeError)
     def __getattr__(self, item: str) -> T:
-        try:
-            return self[item]
-        except KeyError as e:
-            raise AttributeError(repr(e))
+        return self[item]
 
     def __setattr__(self, key: str, value: T) -> None:
         self[key] = value
 
+    @rethrow_as(KeyError, AttributeError)
     def __delattr__(self, key: str) -> None:
-        try:
-            del self[key]
-        except KeyError as e:
-            raise AttributeError(repr(e))
+        del self[key]
 
     def is_valid_schema(self, schema: tp.Optional[tp.Union[Descriptor, tp.Dict]] = None,
                         **kwarg_schema) -> bool:
@@ -197,7 +194,4 @@ class DictionaryView(collections.abc.MutableMapping, tp.Generic[K, V]):
                     return
             raise KeyError('Key not found')
         else:
-            if key not in self.master_dict:
-                raise KeyError('Key not found')
-            else:
-                del self.master_dict[key]
+            del self.master_dict[key]
