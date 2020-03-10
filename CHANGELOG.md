@@ -1,3 +1,7 @@
+# v2.4.43
+
+* _TBA_
+
 # v2.4.42
 
 * added `DictionaryView`
