@@ -161,6 +161,8 @@ class Regexp(String):
         super(Regexp, self).__init__()
         if isinstance(self.REGEXP, str):
             self.regexp = re.compile(self.REGEXP)
+        else:
+            self.regexp = self.REGEXP
 
     def __call__(self, value: ConfigDictValue) -> str:
         value = super(Regexp, self).__call__(value)
