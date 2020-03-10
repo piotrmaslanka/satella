@@ -1,3 +1,7 @@
+# v2.4.41
+
+* _TBA_
+
 # v2.4.40
 
 * fixed problems with __copy__stemming from https://github.com/python/typing/issues/498
