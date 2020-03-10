@@ -1,6 +1,6 @@
 # v2.4.39
 
-* _TBA_
+* added `Condition`
 
 # v2.4.38
 

@@ -2,10 +2,26 @@ import platform
 import time
 import unittest
 
-from satella.coding.concurrent import TerminableThread, CallableGroup
+from satella.coding.concurrent import TerminableThread, CallableGroup, Condition
 
 
 class TestConcurrent(unittest.TestCase):
+
+    def test_condition(self):
+
+        dct = {'a': False}
+        cond = Condition()
+
+        class MyThread(TerminableThread):
+            def run(self) -> None:
+                cond.wait()
+                dct['a'] = True
+
+        MyThread().start()
+        self.assertFalse(dct['a'])
+        cond.notify()
+        time.sleep(0.1)
+        self.assertTrue(dct['a'])
 
     def test_cg_proforma(self):
         cg = CallableGroup()

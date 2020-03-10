@@ -1,9 +1,61 @@
 import ctypes
 import logging
+import typing as tp
 import platform
 import threading
+from satella.time import measure
+from threading import Condition as PythonCondition
+from ...exceptions import ResourceLocked, WouldWaitMore
 
 logger = logging.getLogger(__name__)
+
+
+class Condition(PythonCondition):
+    """
+    A wrapper to faciliate easier usage of Pythons' threading.Condition.
+
+    There's no need to acquire the underlying lock, as wait/notify/notify_all do it for you.
+    """
+
+    def wait(self, timeout: tp.Optional[float] = None):
+        """
+        Wait for condition to become true.
+
+        :param timeout: timeout to wait. None is default and means infinity
+        :raises ResourceLocked: unable to acquire the lock within specified timeout.
+        :raises WouldWaitMore: wait's timeout has expired
+        """
+        with measure() as measurement:
+            if timeout is None:
+                self.acquire()
+            else:
+                if not self.acquire(timeout=timeout):
+                    raise ResourceLocked('internal lock locked')
+
+            try:
+                if timeout is None:
+                    super().wait()
+                else:
+                    if not super().wait(timeout=timeout-measurement()):
+                        raise WouldWaitMore('wait was not notified')
+            finally:
+                self.release()
+
+    def notify_all(self) -> None:
+        """
+        Notify all threads waiting on this Condition
+        """
+        with self._lock:
+            super().notify_all()
+
+    def notify(self, n: int = 1):
+        """
+        Notify n threads waiting on this Condition
+
+        :param n: amount of threads to notify
+        """
+        with self._lock:
+            super().notify(n=n)
 
 
 class TerminableThread(threading.Thread):

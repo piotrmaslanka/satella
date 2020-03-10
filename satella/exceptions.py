@@ -59,6 +59,10 @@ class ResourceNotLocked(ResourceLockingError):
     """Locking given resource is needed in order to access it"""
 
 
+class WouldWaitMore(ResourceLockingError):
+    """wait()'s timeout has expired"""
+
+
 class PreconditionError(BaseSatellaError, ValueError):
     """
     A precondition was not met for the argument
