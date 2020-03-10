@@ -1,3 +1,7 @@
+# v2.4.42
+
+* _TBA_
+
 # v2.4.41
 
 * added the context manager syntax for `Monitor`
