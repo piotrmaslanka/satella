@@ -158,7 +158,7 @@ class Regexp(String):
     REGEXP = r'.*'
 
     def __init__(self):
-        super(Regexp, self).__init__()
+        super().__init__()
         if isinstance(self.REGEXP, str):
             self.regexp = re.compile(self.REGEXP)
         else:
