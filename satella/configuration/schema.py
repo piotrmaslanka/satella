@@ -26,7 +26,9 @@ ObjectMakerType = tp.Callable[
     [ConfigDictValue], tp.Any]  # might raise ConfigurationSchemaError as well
 
 
-class CheckerCondition(object):
+class CheckerCondition:
+    __slots__ = ('condition', 'description', 'is_pre_checker')
+
     PRE_CHECKER = 0
     POST_CHECKER = 1
 
@@ -52,7 +54,7 @@ def must_be_one_of(*items):
                             is_pre_checker=False)
 
 
-class Descriptor(object):
+class Descriptor:
     """
     Base class for a descriptor
     """

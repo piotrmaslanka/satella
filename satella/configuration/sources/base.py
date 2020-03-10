@@ -4,7 +4,7 @@ __all__ = [
 ]
 
 
-class BaseSource(object):
+class BaseSource:
     """Base class for all configuration sources"""
     __slots__ = ()
 
