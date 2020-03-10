@@ -60,7 +60,7 @@ class DictObject(dict, SafeGeneric):
             return True
 
 
-def apply_dict_object(v: tp.Union[tp.Any, tp.Dict[str, T]]) -> tp.Union[DictObject[T], tp.Any]:
+def apply_dict_object(v: tp.Union[tp.Any, tp.Dict[str, T]]) -> tp.Union[DictObject, tp.Any]:
     """
     Apply DictObject() to every dict inside v.
 
