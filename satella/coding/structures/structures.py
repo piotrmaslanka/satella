@@ -81,7 +81,7 @@ def _extras_to_one(fun):
     return inner
 
 
-class Heap(collections.UserList[T]):
+class Heap(collections.UserList, tp.Generic[T]):
     """
     Sane heap as object - not like heapq.
 

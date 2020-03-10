@@ -10,7 +10,7 @@ __all__ = ['DictObject', 'apply_dict_object']
 T = tp.TypeVar('T')
 
 
-class DictObject(collections.UserDict[str, T]):
+class DictObject(collections.UserDict, tp.Generic[T]):
     """
     A dictionary wrapper that can be accessed by attributes. Eg:
 

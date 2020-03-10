@@ -157,12 +157,30 @@ class MonitorList(tp.Generic[T], collections.UserList, Monitor):
     def __deepcopy__(self, memodict={}):
         return MonitorList(copy.deepcopy(self.data, memo=memodict))
 
+    def __getitem__(self, item: tp.Union[slice, int]) -> T:
+        return self.data[item]
+
+    def __setitem__(self, key: int, value: T) -> None:
+        self.data[key] = value
+
+    def __delitem__(self, key: tp.Union[slice, int]) -> None:
+        del self.data[key]
+
 
 class MonitorDict(tp.Generic[K, V], collections.UserDict, Monitor):
     """A dict that is also a monitor"""
     def __init__(self, *args, **kwargs):
         collections.UserDict.__init__(self, *args, **kwargs)
         Monitor.__init__(self)
+
+    def __getitem__(self, item: K) -> V:
+        return self.data[item]
+
+    def __setitem__(self, key: K, value: V) -> None:
+        self.data[key] = value
+
+    def __delitem__(self, key: K) -> None:
+        del self.data[key]
 
     def __copy__(self):
         return MonitorDict(copy.copy(self.data))
