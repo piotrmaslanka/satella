@@ -118,3 +118,8 @@ DictionaryView
 
 .. autoclass:: satella.coding.structures.DictionaryView
     :members:
+
+HashableWrapper
+===============
+
+.. autofunction:: satella.coding.structures.HashableWrapper

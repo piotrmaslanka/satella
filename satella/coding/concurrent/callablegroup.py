@@ -1,5 +1,8 @@
 import logging
+import collections
+import copy
 import typing as tp
+from ..decorators import for_argument
 
 logger = logging.getLogger(__name__)
 
@@ -25,8 +28,6 @@ class CallableGroup:
 
     """
 
-    # todo not threadsafe with oneshots
-
     def __init__(self, gather: bool = True, swallow_exceptions: bool = False):
         """
         :param gather: if True, results from all callables will be gathered
@@ -35,7 +36,7 @@ class CallableGroup:
                                    silently ignored. If gather is set,
                                    result will be the exception instance
         """
-        self.callables = []  # type: tp.List[tp.Tuple[tp.Callable, bool]]
+        self.callables = collections.OrderedDict()  # type: tp.Dict[tp.Callable, bool]
         self.gather = gather    # type: bool
         self.swallow_exceptions = swallow_exceptions    # type: bool
 
@@ -44,7 +45,11 @@ class CallableGroup:
         :param callable_: callable
         :param one_shot: if True, callable will be unregistered after single call
         """
-        self.callables.append((callable_, one_shot))
+        from ..structures.hashable_objects import HashableWrapper
+        callable_ = HashableWrapper(callable_)
+        if callable_ in self.callables:
+            return
+        self.callables[callable_] = one_shot
 
     def __call__(self, *args, **kwargs):
         """
@@ -55,12 +60,11 @@ class CallableGroup:
 
         :return: list of results if gather was set, else None
         """
-        clbl = self.callables  # for moar thread safety
-        self.callables = []
+        callables = copy.copy(self.callables)
 
         results = []
 
-        for call, one_shot in clbl:
+        for call, one_shot in callables.items():
             try:
                 q = call(*args, **kwargs)
             except Exception as e:
@@ -72,7 +76,7 @@ class CallableGroup:
                 results.append(q)
 
             if not one_shot:
-                self.callables.append((call, one_shot))
+                self.add(call, one_shot)
 
         if self.gather:
             return results
