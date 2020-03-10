@@ -1,3 +1,7 @@
+# v2.4.39
+
+* _TBA_
+
 # v2.4.38
 
 * `metric_data_collection_to_prometheus` won't export values marked as internal
