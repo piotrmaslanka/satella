@@ -86,7 +86,7 @@ def apply_dict_object(v: tp.Union[tp.Any, tp.Dict[str, T]]) -> tp.Union[DictObje
         return v
 
 
-class DictionaryView(collections.abc.MutableMapping, tp.MutableMapping[K, V]):
+class DictionaryView(collections.abc.MutableMapping, tp.Generic[K, V]):
     """
     A view on a multiple dictionaries. If key isn't found in the first dictionary, it is looked up
     in another. Use like:
