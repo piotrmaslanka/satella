@@ -6,6 +6,7 @@ __all__ = [
 
 class BaseSource(object):
     """Base class for all configuration sources"""
+    __slots__ = ()
 
     def provide(self) -> dict:
         """
