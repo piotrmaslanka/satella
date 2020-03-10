@@ -100,9 +100,11 @@ class DumpToFileHandler(BaseExceptionHandler):
             stack status will be output
         """
         super(DumpToFileHandler, self).__init__()
-        self.hr = [AsStream(x, True) if not isinstance(x, AsStream) else x for x in human_readables]
+        self.hr = [AsStream(x, True)
+                   if not isinstance(x, AsStream) else x
+                   for x in human_readables]        # type: tp.List[AsStream]
         self.tb = [AsStream(x, False) if not isinstance(x, AsStream) else x for x in
-                   trace_pickles or []]
+                   trace_pickles or []]             # type: tp.List[AsStream]
 
     def handle_exception(self, type_, value, traceback) -> bool:
         try:

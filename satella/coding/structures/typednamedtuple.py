@@ -1,5 +1,5 @@
-from collections import namedtuple
 import typing as tp
+from collections import namedtuple
 
 __all__ = [
     'typednamedtuple',

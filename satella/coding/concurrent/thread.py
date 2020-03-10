@@ -1,10 +1,11 @@
 import ctypes
 import logging
-import typing as tp
 import platform
 import threading
-from satella.time import measure
+import typing as tp
 from threading import Condition as PythonCondition
+
+from satella.time import measure
 from ...exceptions import ResourceLocked, WouldWaitMore
 
 logger = logging.getLogger(__name__)
@@ -36,7 +37,7 @@ class Condition(PythonCondition):
                 if timeout is None:
                     super().wait()
                 else:
-                    if not super().wait(timeout=timeout-measurement()):
+                    if not super().wait(timeout=timeout - measurement()):
                         raise WouldWaitMore('wait was not notified')
             finally:
                 self.release()
@@ -83,11 +84,11 @@ class TerminableThread(threading.Thread):
     >>>     ...
     >>> self.assertFalse(a.is_alive())
     """
-    __slots__ = ('_terminating', )
+    __slots__ = ('_terminating',)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._terminating = False       # type: bool
+        self._terminating = False  # type: bool
 
     def loop(self) -> None:
         """

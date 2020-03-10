@@ -1,8 +1,8 @@
-import typing as tp
 import collections
 import copy
 import logging
 import threading
+import typing as tp
 
 from ..decorators import wraps
 
@@ -39,7 +39,7 @@ class Monitor:
     >>>         with self:
     >>>             .. do your threadsafe jobs ..
     """
-    __slots__ = ('_monitor_lock', )
+    __slots__ = ('_monitor_lock',)
 
     def __enter__(self):
         self._monitor_lock.acquire()
@@ -52,7 +52,7 @@ class Monitor:
     def __init__(self):
         """You need to invoke this at your constructor
         You can also use it to release locks of other objects."""
-        self._monitor_lock = threading.Lock()       # type: threading.Lock
+        self._monitor_lock = threading.Lock()  # type: threading.Lock
 
     @staticmethod
     def synchronized(fun):
@@ -139,12 +139,15 @@ class Monitor:
         >>>                 ...
         >>>         return SlaveClass
         """
+
         def outer(fun):
             @wraps(fun)
             def inner(*args, **kwargs):
                 with cls.acquire(monitor):
                     return fun(*args, **kwargs)
+
             return inner
+
         return outer
 
 
@@ -154,7 +157,7 @@ class RMonitor(Monitor):
     """
 
     def __init__(self):
-        self._monitor_lock = threading.RLock()      # type: threading.RLock
+        self._monitor_lock = threading.RLock()  # type: threading.RLock
 
 
 class MonitorList(tp.Generic[T], collections.UserList, Monitor):

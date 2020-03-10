@@ -1,6 +1,6 @@
-import logging
 import collections
 import copy
+import logging
 import typing as tp
 
 logger = logging.getLogger(__name__)
@@ -37,8 +37,8 @@ class CallableGroup:
                                    result will be the exception instance
         """
         self.callables = collections.OrderedDict()  # type: tp.Dict[tp.Callable, bool]
-        self.gather = gather    # type: bool
-        self.swallow_exceptions = swallow_exceptions    # type: bool
+        self.gather = gather  # type: bool
+        self.swallow_exceptions = swallow_exceptions  # type: bool
 
     def add(self, callable_: tp.Callable, one_shot: bool = False):
         """

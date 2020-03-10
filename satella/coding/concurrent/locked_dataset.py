@@ -2,8 +2,8 @@ import inspect
 import logging
 import threading
 
-from ...exceptions import ResourceLocked, ResourceNotLocked
 from ..decorators import wraps
+from ...exceptions import ResourceLocked, ResourceNotLocked
 
 logger = logging.getLogger(__name__)
 
@@ -43,7 +43,7 @@ class LockedDataset:
             self.args = ()
 
     def __init__(self):
-        self.__internal = LockedDataset.InternalDataset()   # type: LockedDataset.InternalDataset
+        self.__internal = LockedDataset.InternalDataset()  # type: LockedDataset.InternalDataset
 
     @staticmethod
     def locked(blocking=True, timeout=-1):

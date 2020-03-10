@@ -17,7 +17,9 @@ __all__ = ['metaclass_maker', 'wrap_with', 'dont_wrap', 'wrap_property']
 
 def skip_redundant(iterable, skip_set=None):
     """Redundant items are repeated items or items in the original skip_set."""
-    if skip_set is None: skip_set = set()
+    if skip_set is None:
+        skip_set = set()
+
     for item in iterable:
         if item not in skip_set:
             skip_set.add(item)
@@ -102,8 +104,10 @@ def wrap_property(getter: tp.Callable[[GetterDefinition], GetterDefinition] = la
     :param deleter: callable that accepts a callable(instance), and returns the same.
         Deleter will be wrapped by this
     """
+
     def inner(prop):
         return wraps(prop)(property(getter(prop.fget), setter(prop.fset), deleter(prop.fdel)))
+
     return inner
 
 
@@ -135,6 +139,7 @@ def wrap_with(callables: tp.Callable[[tp.Callable], tp.Callable] = lambda x: x,
     :param selector_properties: additional criterion to be ran on given property before deciding
         to wrap it. It must return True for wrapping to proceed.
     """
+
     @wraps(ABCMeta)
     def WrapAllMethodsWithMetaclass(name, bases, dct):
         new_dct = {}
@@ -146,6 +151,7 @@ def wrap_with(callables: tp.Callable[[tp.Callable], tp.Callable] = lambda x: x,
                     value = properties(value)
             new_dct[key] = value
         return ABCMeta(name, bases, new_dct)
+
     return WrapAllMethodsWithMetaclass
 
 

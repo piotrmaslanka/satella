@@ -45,6 +45,7 @@ class OmniHashableMixin(metaclass=ABCMeta):
 
     for this to work in your class
     """
+
     @property
     @abstractmethod
     def _HASH_FIELDS_TO_USE(self) -> tp.List[str]:
@@ -59,6 +60,7 @@ class OmniHashableMixin(metaclass=ABCMeta):
         """
         Note that this will only compare _HASH_FIELDS_TO_USE
         """
+
         def con(p):
             return [getattr(p, field_name) for field_name in self._HASH_FIELDS_TO_USE]
 
@@ -270,7 +272,7 @@ class TimeBasedHeap(Heap):
         self.push((timestamp, item))
 
     def pop_less_than(self, less: tp.Optional[Number] = None) -> tp.Generator[
-            T, None, None]:
+        T, None, None]:
         """
         Return all elements less (sharp inequality) than particular value.
 

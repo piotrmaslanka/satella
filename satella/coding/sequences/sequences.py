@@ -30,7 +30,8 @@ def is_last(lst: tp.Iterable[T]) -> tp.Generator[tp.Tuple[bool, T], None, None]:
     yield True, ret_var
 
 
-def add_next(lst: tp.Iterable[T], wrap_over: bool = False) -> tp.Generator[tp.Tuple[T, tp.Optional[T]], None, None]:
+def add_next(lst: tp.Iterable[T], wrap_over: bool = False) -> tp.Generator[
+    tp.Tuple[T, tp.Optional[T]], None, None]:
     """
     Yields a 2-tuple of given iterable, presenting the next element as second element of the tuple.
 
@@ -60,7 +61,8 @@ def add_next(lst: tp.Iterable[T], wrap_over: bool = False) -> tp.Generator[tp.Tu
         yield prev_val, None
 
 
-def half_product(seq1: tp.Iterable[T], seq2: tp.Iterable[U]) -> tp.Generator[tp.Tuple[T, U], None, None]:
+def half_product(seq1: tp.Iterable[T], seq2: tp.Iterable[U]) -> tp.Generator[
+    tp.Tuple[T, U], None, None]:
     """
     Generate half of the Cartesian product of both sequences.
 

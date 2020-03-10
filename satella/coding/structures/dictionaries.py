@@ -1,6 +1,6 @@
-import typing as tp
-import copy
 import collections.abc
+import copy
+import typing as tp
 
 from satella.coding.recast_exceptions import rethrow_as
 from satella.configuration.schema import Descriptor, descriptor_from_dict

@@ -21,7 +21,7 @@ class Immutable(metaclass=ImmutableMetaType):
     >>>         self.attribute = 'value'
     """
 
-    __locked_for_writes = False     # type: bool
+    __locked_for_writes = False  # type: bool
 
     # Following make this class immutable
     def __setattr__(self, attr, value):
@@ -44,6 +44,7 @@ class frozendict(dict):
     A hashable dict with express forbid to change it's values
     Both keys and values must be hashable in order for this dict to be hashable.
     """
+
     def __setitem__(self, key, value):
         raise TypeError('Cannot update a frozen dict!')
 

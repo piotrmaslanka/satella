@@ -1,5 +1,5 @@
-import typing as tp
 import itertools
+import typing as tp
 
 from ..exceptions import PreconditionError
 
@@ -27,6 +27,7 @@ def wraps(cls_to_wrap: tp.Type) -> tp.Callable[[tp.Type], tp.Type]:
 
     :param cls_to_wrap: class to wrap
     """
+
     def outer(cls: tp.Type) -> tp.Type:
         if hasattr(cls_to_wrap, '__doc__'):
             cls.__doc__ = cls_to_wrap.__doc__
@@ -56,12 +57,15 @@ def attach_arguments(*args, **kwargs):
 
     Arguments given in attach_arguments will take precedence in case of key collisions.
     """
+
     def outer(fun):
         @wraps(fun)
         def inner(*my_args, **my_kwargs):
             my_kwargs.update(kwargs)
             return fun(*my_args, *args, **my_kwargs)
+
         return inner
+
     return outer
 
 
@@ -78,15 +82,18 @@ def has_keys(keys: tp.List[str]):
 
     :param keys: list of keys to expect
     """
+
     def inner(dictionary: dict) -> bool:
         for key in keys:
             if key not in dictionary:
-                raise PreconditionError('Key %s not found in dict' % (key, ))
+                raise PreconditionError('Key %s not found in dict' % (key,))
         return True
+
     return inner
 
 
-def short_none(clb: tp.Union[Expression, tp.Callable[[T], U]]) -> tp.Callable[[tp.Optional[T]], tp.Optional[U]]:
+def short_none(clb: tp.Union[Expression, tp.Callable[[T], U]]) -> tp.Callable[
+    [tp.Optional[T]], tp.Optional[U]]:
     """
     Accept a callable. Return a callable that executes it only if passed a no-None arg, and returns
     its result.
@@ -99,7 +106,7 @@ def short_none(clb: tp.Union[Expression, tp.Callable[[T], U]]) -> tp.Callable[[t
     """
     if isinstance(clb, str):
         q = dict(globals())
-        exec('_callable = lambda x: '+clb, q)
+        exec('_callable = lambda x: ' + clb, q)
         clb = q['_callable']
 
     @wraps(clb)
@@ -108,6 +115,7 @@ def short_none(clb: tp.Union[Expression, tp.Callable[[T], U]]) -> tp.Callable[[t
             return None
         else:
             return clb(arg)
+
     return inner
 
 
@@ -160,7 +168,7 @@ def precondition(*t_ops: tp.Union[tp.Callable[[T], bool], Expression],
             precond_ = _TRUE
         elif isinstance(value, str):
             q = dict(globals())
-            exec('_precond = lambda x: '+value, q)
+            exec('_precond = lambda x: ' + value, q)
             precond_ = q['_precond']
         else:
             precond_ = value
@@ -176,7 +184,7 @@ def precondition(*t_ops: tp.Union[tp.Callable[[T], bool], Expression],
             for kwarg in kwargs:
                 if kwarg in kw_ops:
                     if not kw_ops[kwarg](kwargs[kwarg]):
-                        raise PreconditionError('Argument %s failed precondition check' % (kwarg, ))
+                        raise PreconditionError('Argument %s failed precondition check' % (kwarg,))
 
             with rethrow_as(TypeError, PreconditionError):
                 for arg, precond in itertools.zip_longest(args, tn_ops, fillvalue=_TRUE):

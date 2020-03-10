@@ -57,10 +57,10 @@ class GenerationPolicy:
         """
         assert isinstance(compression_level, int) and 1 <= compression_level <= 9
 
-        self.enable_pickling = enable_pickling
-        self.compress_at = compress_at
-        self.repr_length_limit = repr_length_limit
-        self.compression_level = compression_level
+        self.enable_pickling = enable_pickling          # type: bool
+        self.compress_at = compress_at                  # type: int
+        self.repr_length_limit = repr_length_limit      # type: int
+        self.compression_level = compression_level      # type: int
 
     def should_pickle(self, value: tp.Any) -> bool:
         """
@@ -134,15 +134,15 @@ class StoredVariableValue:
         :param value: any Python value to preserve
         :param policy: policy to use (instance)
         """
-        self.repr = repr(value)
-        self.type_ = repr(type(value))
+        self.repr = repr(value)             # type: str
+        self.type_ = repr(type(value))      # type: str
 
         policy = policy or GenerationPolicy()
 
         self.repr = policy.process_repr(self.repr)
 
-        self.pickle = None
-        self.pickle_type = None
+        self.pickle = None              # type: bytes
+        self.pickle_type = None         # type: str
 
         if policy.should_pickle(value):
             try:
@@ -199,19 +199,19 @@ class StackFrame:
     """
     __slots__ = ('locals', 'globals', 'name', 'filename', 'lineno')
 
-    def __init__(self, frame: "<class 'frame'>", policy: GenerationPolicy):
+    def __init__(self, frame: types.FrameType, policy: GenerationPolicy):
         """
         :type frame: Python stack frame
         """
-        self.name = frame.f_code.co_name
-        self.filename = frame.f_code.co_filename
-        self.lineno = frame.f_lineno
+        self.name = frame.f_code.co_name                # type: str
+        self.filename = frame.f_code.co_filename        # type: str
+        self.lineno = frame.f_lineno                    # type: int
 
-        self.locals = {}
+        self.locals = {}                                # type: tp.Dict[str, StoredVariableValue]
         for key, value in frame.f_locals.items():
             self.locals[key] = StoredVariableValue(value, policy)
 
-        self.globals = {}
+        self.globals = {}                               # type: tp.Dict[str, StoredVariableValue]
         for key, value in frame.f_globals.items():
             self.globals[key] = StoredVariableValue(value, policy)
 
@@ -243,7 +243,7 @@ class Traceback(object):
 
         tb = sys.exc_info()[2]
 
-        self.frames = []
+        self.frames = []        # type: tp.List[StackFrame]
 
         if starting_frame is None:
             if tb is None:
@@ -288,7 +288,6 @@ class Traceback(object):
         :param output: a file-like object in text mode
         :return: unicode
         """
-        k = []
         output.write(self.formatted_traceback)
         output.write(u'\n* Stack trace, innermost first\n')
         for frame in self.frames:
