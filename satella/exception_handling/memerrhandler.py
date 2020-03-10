@@ -26,13 +26,12 @@ class MemoryErrorExceptionHandler(BaseExceptionHandler):
         """
         :param kill_pg: whether to kill entire process group, if applicable
         """
-        super(MemoryErrorExceptionHandler, self).__init__()
-        self.priority = ALWAYS_FIRST  # always run first!
+        super().__init__(ALWAYS_FIRST)
         # so that we have some spare space in case a MemoryError is thrown
-        self._free_on_memory_error = {'a': bytearray(1024 * 2)}
-        self.custom_hook = custom_hook
-        self.kill_pg = kill_pg
-        self.installed = False
+        self._free_on_memory_error = {'a': bytearray(1024 * 2)} # type: tp.Dict[str, bytearray]
+        self.custom_hook = custom_hook                  # type: ExceptionHandlerCallable
+        self.kill_pg = kill_pg                          # type: bool
+        self.installed = False                          # type: bool
 
     def install(self):
         if self.installed:

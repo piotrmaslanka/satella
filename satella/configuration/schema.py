@@ -3,7 +3,7 @@ import re
 import typing as tp
 
 from satella.coding.concurrent.callablegroup import CallableGroup
-from ...exceptions import ConfigurationValidationError, ConfigurationSchemaError
+from ..exceptions import ConfigurationValidationError, ConfigurationSchemaError
 
 __all__ = [
     'Descriptor',
@@ -56,6 +56,8 @@ class Descriptor(object):
     """
     Base class for a descriptor
     """
+    __slots__ = ('pre_checkers', 'post_checkers', 'name', 'optional', 'default',
+                 'my_exceptions')
 
     BASIC_MAKER = staticmethod(lambda v: v)
     MY_EXCEPTIONS = [TypeError, ValueError]  # a list of Exception classes
@@ -71,7 +73,7 @@ class Descriptor(object):
         for checker in self.__class__.CHECKERS:
             self.add_checker(checker)
 
-        self.MY_EXCEPTIONS = tuple(self.MY_EXCEPTIONS)  # type: tp.Tuple[tp.Type[Exception], ...]
+        self.my_exceptions = tuple(self.MY_EXCEPTIONS)  # type: tp.Tuple[tp.Type[Exception], ...]
 
     def __str__(self):
         return '%s()' % (self.__class__.__qualname__, )
@@ -84,7 +86,7 @@ class Descriptor(object):
 
         try:
             value = self.BASIC_MAKER(value)
-        except self.MY_EXCEPTIONS as e:
+        except self.my_exceptions as e:
             raise ConfigurationValidationError('could not pass to maker due to %s' % (e, ), value)
 
         self.post_checkers(value)
@@ -149,17 +151,19 @@ class Regexp(String):
     >>> class IPv6(Regexp):
     >>>     REGEXP = '(([0-9a-f]{1,4}:)' ...
     """
+    __slots__ = ('regexp', )
+
     REGEXP = r'.*'
 
     def __init__(self):
         super(Regexp, self).__init__()
         if isinstance(self.REGEXP, str):
-            self.REGEXP = re.compile(self.REGEXP)
+            self.regexp = re.compile(self.REGEXP)
 
     def __call__(self, value: ConfigDictValue) -> str:
         value = super(Regexp, self).__call__(value)
 
-        match = self.REGEXP.match(value)
+        match = self.regexp.match(value)
         if not match:
             raise ConfigurationValidationError('value does not match %s' % (self.REGEXP.pattern,),
                                                value)
@@ -181,12 +185,14 @@ class List(Descriptor):
     """
     This must be a list, made of entries of a descriptor (this is optional)
     """
+    __slots__ = ('type_descriptor', )
+
     CHECKERS = [must_be_type(list, tuple)]
     BASIC_MAKER = list
 
-    def __init__(self, type_desciptor: tp.Optional[Descriptor] = None):
+    def __init__(self, type_descriptor: tp.Optional[Descriptor] = None):
         super().__init__()
-        self.type_descriptor = type_desciptor or Descriptor()
+        self.type_descriptor = type_descriptor or Descriptor()
 
     def __call__(self, value: ConfigDictValue) -> tp.List:
         value = super().__call__(value)
@@ -224,6 +230,8 @@ class Dict(Descriptor):
     >>>     create_key(IPv4(), 'ip_addr')
     >>>])
     """
+    __slots__ = ('keys', 'unknown_key_mapper')
+
     BASIC_MAKER = dict
     CHECKERS = [must_be_type(dict)]
 
@@ -276,6 +284,7 @@ class Union(Descriptor):
 
     then value can be either a list or a dict
     """
+    __slots__ = ('descriptors', )
 
     def __init__(self, *descriptors: tp.List[Descriptor]):
         super().__init__()

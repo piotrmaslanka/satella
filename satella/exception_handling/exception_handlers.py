@@ -21,6 +21,8 @@ ExceptionHandlerCallable = tp.Callable[[type, BaseException, types.TracebackType
 
 
 class BaseExceptionHandler:
+    __slots__ = ('priority', )
+
     def __init__(self, priority=NORMAL_PRIORITY):
         """
         Instantiate an exception handler with provided priority.
@@ -61,6 +63,7 @@ class FunctionExceptionHandler(BaseExceptionHandler):
 
     Your exception handler must return a bool, whether to intercept the exception and not propagate it.
     """
+    __slots__ = ('fun', )
 
     def __init__(self, fun: ExceptionHandlerCallable, priority: int = NORMAL_PRIORITY):
         super(FunctionExceptionHandler, self).__init__(priority)

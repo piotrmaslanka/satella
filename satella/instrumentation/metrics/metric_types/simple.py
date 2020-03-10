@@ -12,6 +12,8 @@ logger = logging.getLogger(__name__)
 
 
 class SimpleMetric(EmbeddedSubmetrics):
+    __slots__ = ('data', )
+
     CLASS_NAME = 'string'
     CONSTRUCTOR = str
 

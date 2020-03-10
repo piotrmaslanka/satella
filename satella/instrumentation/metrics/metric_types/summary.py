@@ -46,6 +46,8 @@ class SummaryMetric(EmbeddedSubmetrics, MeasurableMixin):
     :param aggregate_children: whether to sum up children values (if present)
     :param count_calls: whether to count total amount of calls and total time
     """
+    __slots__ = ('last_calls', 'calls_queue', 'quantiles', 'aggregate_children',
+                 'count_calls', 'tot_calls', 'tot_time')
 
     CLASS_NAME = 'summary'
 

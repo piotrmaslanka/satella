@@ -21,6 +21,10 @@ class LinkfailMetric(EmbeddedSubmetrics):
     :param callback_on_offline: callback that accepts an address of a link that becomes offline
         and labels
     """
+    __slots__ = ('working', 'consecutive_failures', 'consecutive_successes',
+                 'callback_on_online', 'callback_on_offline',
+                 'consecutive_failures_to_offline', 'consecutive_successes_to_online')
+
     CLASS_NAME = 'linkfail'
 
     def __init__(self, name: str, root_metric: 'Metric' = None, metric_level: str = None,

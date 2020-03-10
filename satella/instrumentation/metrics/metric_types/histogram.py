@@ -18,6 +18,8 @@ class HistogramMetric(EmbeddedSubmetrics, MeasurableMixin):
         len(buckets)+1 buckets. Buckets are expected to be passed in sorted!
     :param aggregate_children: whether to accept child calls to be later presented as total
     """
+    __slots__ = ('bucket_limits', 'buckets', 'aggregate_children', 'count', 'sum')
+
     CLASS_NAME = 'histogram'
 
     def __init__(self, name: str, root_metric: 'Metric' = None, metric_level: str = None,

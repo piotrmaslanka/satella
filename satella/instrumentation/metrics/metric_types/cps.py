@@ -18,6 +18,8 @@ class ClicksPerTimeUnitMetric(EmbeddedSubmetrics):
 
     By default (if you do not specify otherwise) this will track calls made during the last second.
     """
+    __slots__ = ('last_clicks', 'aggregate_children', 'cutoff_period', 'time_unit_vectors')
+
     CLASS_NAME = 'cps'
 
     def __init__(self, *args, time_unit_vectors: tp.Optional[tp.List[float]] = None,

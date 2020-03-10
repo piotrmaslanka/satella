@@ -1,6 +1,7 @@
-import typing as tp
 import logging
 import time
+import typing as tp
+
 from ..data import MetricData, MetricDataCollection
 
 logger = logging.getLogger(__name__)
@@ -20,6 +21,9 @@ class Metric:
     :param enable_timestamp: append timestamp of last update to the metric
     :param internal: if True, this metric won't be visible in exporters
     """
+    __slots__ = ('name', 'root_metric', 'internal', '_level', 'enable_timestamp',
+                 'last_updated', 'children')
+
     CLASS_NAME = 'base'
 
     def get_fully_qualified_name(self):
@@ -62,8 +66,8 @@ class Metric:
                 metric_level = INHERIT
         self._level = metric_level
         self.enable_timestamp = kwargs.get('enable_timestamp', False)
-        if self.enable_timestamp:
-            self.last_updated = time.time()
+        self.last_updated = time.time() if self.enable_timestamp else None \
+            # type: tp.Optional[float]
 
         assert not (
                 self.name == '' and self.level == INHERIT), 'Unable to set INHERIT for root metric!'
@@ -130,6 +134,8 @@ class LeafMetric(Metric):
 
     You cannot hook up any children to a leaf metric.
     """
+    __slots__ = ('labels',)
+
     def __init__(self, name, root_metric: 'Metric' = None, metric_level: str = None,
                  labels: tp.Optional[dict] = None, internal: bool = False, *args, **kwargs):
         super().__init__(name, root_metric, metric_level, internal, *args, **kwargs)
@@ -137,7 +143,8 @@ class LeafMetric(Metric):
         assert '_timestamp' not in self.labels, 'Cannot make a label called _timestamp!'
 
     def to_metric_data(self) -> MetricDataCollection:
-        return MetricDataCollection(MetricData(self.name, None, self.labels, internal=self.internal))
+        return MetricDataCollection(
+            MetricData(self.name, None, self.labels, internal=self.internal))
 
     def append_child(self, metric: 'Metric'):
         raise TypeError('This metric cannot contain children!')
@@ -158,12 +165,14 @@ class EmbeddedSubmetrics(LeafMetric):
     constructor actually stores them!
     Refer to :py:class:`.cps.ClicksPerTimeUnitMetric` on how to do that.
     """
+    __slots__ = ('args', 'kwargs', 'embedded_submetrics_enabled', 'children_mapping')
+
     def __init__(self, name, root_metric: 'Metric' = None, metric_level: str = None,
                  labels: tp.Optional[dict] = None, internal: bool = False, *args, **kwargs):
         super().__init__(name, root_metric, metric_level, labels, internal, *args, **kwargs)
         self.args = args
         self.kwargs = kwargs
-        self.embedded_submetrics_enabled = False        # to check for in children
+        self.embedded_submetrics_enabled = False  # to check for in children
         self.children_mapping = {}
         self.last_updated = time.time()
 
@@ -210,4 +219,3 @@ class EmbeddedSubmetrics(LeafMetric):
         """
 
         return self.__class__(self.name, self, INHERIT, *self.args, labels=labels, **self.kwargs)
-

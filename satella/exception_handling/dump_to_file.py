@@ -25,6 +25,8 @@ class AsStream:
     MODE_STREAM = 1
     MODE_DEVNULL = 2
 
+    __slots__ = ('o', 'human_readable', 'mode', 'file')
+
     def __init__(self, o: AsStreamTypeAccept, human_readable: bool):
         """
         A stream to dump to
@@ -85,6 +87,7 @@ class DumpToFileHandler(BaseExceptionHandler):
     Note that your file-like objects you throw into that must support only .write() and optionally
     .flush()
     """
+    __slots__ = ('hr', 'tb')
 
     def __init__(self, human_readables: tp.Iterable[AsStreamTypeAcceptHR],
                  trace_pickles: tp.Iterable[AsStreamTypeAcceptIN] = None):

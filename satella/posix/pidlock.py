@@ -29,6 +29,7 @@ class PIDFileLock:
    * LockIsHeld - lock is already held. This has two attributes - pid (int), the PID of holder,
                                   and is_alive (bool) - whether the holder is an alive process
     """
+    __slots__ = ('path', 'file_no')
 
     def __init__(self, pid_file, base_dir=u'/var/run'):
         """

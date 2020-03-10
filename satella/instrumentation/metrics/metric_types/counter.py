@@ -14,6 +14,8 @@ class CounterMetric(EmbeddedSubmetrics, MeasurableMixin):
     :param sum_children: whether to sum up all calls to children
     :param count_calls: count the amount of calls to handle()
     """
+    __slots__ = ('sum_children', 'count_calls', 'calls', 'value')
+
     CLASS_NAME = 'counter'
 
     def __init__(self, name, root_metric: 'Metric' = None, metric_level: str = None,
