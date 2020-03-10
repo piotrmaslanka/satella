@@ -32,9 +32,9 @@ class CheckerCondition:
     PRE_CHECKER = 0
     POST_CHECKER = 1
 
-    def __init__(self, conditon: CheckerConditionType, description: str = u'',
+    def __init__(self, condition: CheckerConditionType, description: str = u'',
                  is_pre_checker: bool = True):
-        self.condition = conditon
+        self.condition = condition
         self.description = description
         self.is_pre_checker = is_pre_checker
 
