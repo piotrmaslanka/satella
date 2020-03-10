@@ -27,12 +27,6 @@ class TestTimeBasedHeap(unittest.TestCase):
         self.assertEqual(hash(a), hash(b))
         self.assertRaises(TypeError, lambda: a.update({3: 5}))
 
-    def test_dict_object(self):
-        self.assertTrue(DictObject({'a': 5, 'b': 'test'}).is_valid_schema({'a': int, 'b': str}))
-        self.assertFalse(DictObject({'a': 5, 'b': 'test'}).is_valid_schema({'a': int, 'b': int}))
-        self.assertTrue(DictObject({'a': 5, 'b': 'test'}).is_valid_schema(a=int, b=str))
-        self.assertFalse(DictObject({'a': 5, 'b': 'test'}).is_valid_schema(a=int, b=int))
-
     def test_omni(self):
         class Omni(OmniHashableMixin):
             _HASH_FIELDS_TO_USE = ['a']
@@ -67,6 +61,9 @@ class TestTimeBasedHeap(unittest.TestCase):
         self.assertIn((10, 'ala'), q)
         self.assertIn((20, 'ma'), q)
         self.assertNotIn((30, 'kota'), q)
+
+        self.assertIsInstance(copy.copy(tbh), TimeBasedHeap)
+        self.assertIsInstance(copy.deepcopy(tbh), TimeBasedHeap)
 
     def test_imprv(self):
         tbh = TimeBasedHeap()
@@ -110,6 +107,13 @@ class TestTimeBasedHeap(unittest.TestCase):
 
 
 class TestDictObject(unittest.TestCase):
+
+    def test_valid_schema(self):
+        self.assertTrue(DictObject({'a': 5, 'b': 'test'}).is_valid_schema({'a': int, 'b': str}))
+        self.assertFalse(DictObject({'a': 5, 'b': 'test'}).is_valid_schema({'a': int, 'b': int}))
+        self.assertTrue(DictObject({'a': 5, 'b': 'test'}).is_valid_schema(a=int, b=str))
+        self.assertFalse(DictObject({'a': 5, 'b': 'test'}).is_valid_schema(a=int, b=int))
+
     def test_apply_dict_object(self):
         a = {'a': {'b': 5}, 'c': [{'a': 5}]}
         b = DictObject({'a': DictObject({'b': 5}), 'c': [DictObject({'a': 5})]})
@@ -136,6 +140,16 @@ class TestDictObject(unittest.TestCase):
             del a.c
 
         self.assertRaises(AttributeError, delete)
+
+    def test_copying(self):
+        a = DictObject({1:2})
+        b = copy.copy(a)
+        self.assertEqual(a, b)
+        self.assertFalse(id(a) == id(b))
+        c = copy.deepcopy(a)
+        c[1] = 3
+        self.assertEqual(a[1], 2)
+        self.assertEqual(c[1], 3)
 
 
 class TestHeap(unittest.TestCase):

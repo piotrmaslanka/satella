@@ -115,7 +115,7 @@ class Heap(collections.UserList, tp.Generic[T]):
     def __deepcopy__(self, memodict={}) -> 'Heap':
         return self.__class__(copy.deepcopy(self.data, memo=memodict))
 
-    def __copy__(self, memo) -> 'Heap':
+    def __copy__(self) -> 'Heap':
         return self.__class__(copy.copy(self.data))
 
     def __iter__(self) -> tp.Iterator[T]:
@@ -182,7 +182,7 @@ class Heap(collections.UserList, tp.Generic[T]):
         return item in self.data
 
 
-class SetHeap(Heap, tp.Generic[T]):
+class SetHeap(Heap):
     """
     A heap with additional invariant that no two elements are the same.
 
