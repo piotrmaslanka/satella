@@ -2,7 +2,6 @@ import logging
 import collections
 import copy
 import typing as tp
-from ..decorators import for_argument
 
 logger = logging.getLogger(__name__)
 
