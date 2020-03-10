@@ -41,6 +41,7 @@ class rethrow_as:
 
     If the second value is a None, exception will be silenced.
     """
+    __slots__ = ('mapping', 'exception_preprocessor')
 
     def __init__(self, *pairs: tp.Union[ExcType, tp.Tuple[ExcType, ExcType]],
                  exception_preprocessor: tp.Optional[tp.Callable[[Exception], str]] = None):
