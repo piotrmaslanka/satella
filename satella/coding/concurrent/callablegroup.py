@@ -8,7 +8,7 @@ __all__ = [
 ]
 
 
-class CallableGroup(object):
+class CallableGroup:
     """
     This behaves like a function, but allows to add other functions to call
     when invoked, eg.
@@ -35,16 +35,16 @@ class CallableGroup(object):
                                    silently ignored. If gather is set,
                                    result will be the exception instance
         """
-        self.callables = []  # tuple of (callable, oneshot)
-        self.gather = gather
-        self.swallow_exceptions = swallow_exceptions
+        self.callables = []  # type: tp.List[tp.Tuple[tp.Callable, bool]]
+        self.gather = gather    # type: bool
+        self.swallow_exceptions = swallow_exceptions    # type: bool
 
-    def add(self, callable_: tp.Callable, oneshot: bool = False):
+    def add(self, callable_: tp.Callable, one_shot: bool = False):
         """
         :param callable_: callable
-        :param oneshot: if True, callable will be unregistered after single call
+        :param one_shot: if True, callable will be unregistered after single call
         """
-        self.callables.append((callable_, oneshot))
+        self.callables.append((callable_, one_shot))
 
     def __call__(self, *args, **kwargs):
         """
@@ -60,9 +60,9 @@ class CallableGroup(object):
 
         results = []
 
-        for callable, oneshot in clbl:
+        for call, one_shot in clbl:
             try:
-                q = callable(*args, **kwargs)
+                q = call(*args, **kwargs)
             except Exception as e:
                 if not self.swallow_exceptions:
                     raise  # re-raise
@@ -71,8 +71,8 @@ class CallableGroup(object):
             if self.gather:
                 results.append(q)
 
-            if not oneshot:
-                self.callables.append((callable, oneshot))
+            if not one_shot:
+                self.callables.append((call, one_shot))
 
         if self.gather:
             return results
