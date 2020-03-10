@@ -1,3 +1,7 @@
+# v2.4.44
+
+* _TBA_
+
 # v2.4.43
 
 * added `HashableWrapper`
