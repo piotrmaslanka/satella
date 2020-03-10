@@ -26,6 +26,7 @@ class CallableGroup:
     will be propagated.
 
     """
+    __slots__ = ('callables', 'gather', 'swallow_exceptions')
 
     def __init__(self, gather: bool = True, swallow_exceptions: bool = False):
         """

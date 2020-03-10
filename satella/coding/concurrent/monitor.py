@@ -39,6 +39,7 @@ class Monitor:
     >>>         with self:
     >>>             .. do your threadsafe jobs ..
     """
+    __slots__ = ('_monitor_lock', )
 
     def __enter__(self):
         self._monitor_lock.acquire()
