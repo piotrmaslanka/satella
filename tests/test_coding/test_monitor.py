@@ -66,6 +66,38 @@ class MonitorTest(unittest.TestCase):
                 sleep(0.4)
                 self.assertEqual(cq.qsize(), 2)
 
+
+    def test_release_contextmanager_syntax(self):
+        class TestedClass(Monitor):
+            def __init__(self, cqueue):
+                self.cqueue = cqueue
+                Monitor.__init__(self)
+
+            @Monitor.synchronized
+            def execute(self):
+                self.cqueue.put(1)
+                sleep(1)
+                self.cqueue.get()
+
+        class TesterThread(Thread):
+            def __init__(self, tc):
+                self.tc = tc
+                Thread.__init__(self)
+
+            def run(self):
+                self.tc.execute()
+
+        cq = Queue()
+        cq.put(1)
+        tc = TestedClass(cq)
+        tt = TesterThread(tc)
+
+        with tc:
+            with Monitor.release(tc):
+                tt.start()
+                sleep(0.4)
+                self.assertEqual(cq.qsize(), 2)
+
     def test_acquire_contextmanager(self):
         class TestedClass(Monitor):
             def __init__(self, cqueue):

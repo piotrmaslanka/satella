@@ -35,9 +35,19 @@ class Monitor:
     >>>         .. do your jobs ..
     >>>         with Monitor.acquire(self):
     >>>             .. do your threadsafe jobs ..
+    >>>         .. do your jobs ..
+    >>>         with self:
+    >>>             .. do your threadsafe jobs ..
     """
+    def __enter__(self):
+        self._monitor_lock.acquire()
+        return self
 
-    def __init__(self, obj=None):
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self._monitor_lock.release()
+        return False
+
+    def __init__(self):
         """You need to invoke this at your constructor
         You can also use it to release locks of other objects."""
         self._monitor_lock = threading.Lock()

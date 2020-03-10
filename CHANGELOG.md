@@ -1,6 +1,9 @@
 # v2.4.41
 
-* _TBA_
+* added the context manager syntax for `Monitor`
+  Please note that `Monitor.acquire()` syntax will not be deprecated, owing to 
+  being a parallel to `Monitor.release()` which may be useful when we're
+  already holding the lock from another source (eg. decorator)
 
 # v2.4.40
 
