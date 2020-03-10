@@ -1,6 +1,7 @@
 # v2.4.43
 
-* _TBA_
+* added `HashableWrapper`
+* made `CallableGroup` thread-safe
 
 # v2.4.42
 

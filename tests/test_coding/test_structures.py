@@ -6,10 +6,29 @@ import mock
 
 from satella.coding.structures import TimeBasedHeap, Heap, typednamedtuple, \
     OmniHashableMixin, DictObject, apply_dict_object, Immutable, frozendict, SetHeap, \
-    DictionaryView
+    DictionaryView, HashableWrapper
 
 
-class TestTimeBasedHeap(unittest.TestCase):
+class TestMisc(unittest.TestCase):
+    def test_hashable_wrapper(self):
+        class NotHashable:
+            def __init__(self, a):
+                self.a = a
+
+            def __call__(self, *args, **kwargs):
+                return 5
+
+        nh = NotHashable(5)
+        nw = HashableWrapper(nh)
+        self.assertEquals(nw.a, 5)
+        nw.a = 4
+        self.assertEquals(nw.a, 4)
+        del nw.a
+        self.assertRaises(AttributeError, lambda: getattr(nw, 'a'))
+        self.assertEqual(nw, nh)
+        self.assertEqual(nw, nw)
+        hash(nw)
+        self.assertEqual(nw(), 5)
 
     def test_dictionary_view(self):
         a = {1:2, 3:4}
@@ -34,6 +53,8 @@ class TestTimeBasedHeap(unittest.TestCase):
         self.assertEqual(a[6], 11)
 
         self.assertEqual(len(dvb), 4)
+
+
 
     def test_setheap(self):
         a = SetHeap([1, 2, 3])
