@@ -1,3 +1,7 @@
+# v2.4.45
+
+* _TBA_
+
 # v2.4.44
 
 * added typing for some members
