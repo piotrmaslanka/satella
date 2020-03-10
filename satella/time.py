@@ -42,6 +42,8 @@ class measure:
     :param stop_on_stop: stop elapsing time upon calling .stop()/exiting the context manager
     :param adjust: interval to add to current time upon initialization
     """
+    __slots__ = ('started_on', 'elapsed', 'stopped_on', 'stop_on_stop')
+
     def __init__(self, future_to_measure: tp.Optional[Future] = None, stop_on_stop: bool = True,
                  adjust: float = 0.0):
         self.started_on = time.monotonic() + adjust
