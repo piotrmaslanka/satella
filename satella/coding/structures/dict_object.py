@@ -2,14 +2,14 @@ import typing as tp
 
 from satella.configuration.schema import Descriptor, descriptor_from_dict
 from satella.exceptions import ConfigurationValidationError
+from .._safe_typing import SafeGeneric, T
 
 __all__ = ['DictObject', 'apply_dict_object']
 
-T = tp.TypeVar('T')
 U = tp.TypeVar('U')
 
 
-class DictObject(dict, tp.Generic[T]):
+class DictObject(dict, SafeGeneric):
     """
     A dictionary wrapper that can be accessed by attributes. Eg:
 

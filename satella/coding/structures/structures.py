@@ -9,6 +9,7 @@ import typing as tp
 from abc import ABCMeta, abstractmethod
 
 from ..decorators import wraps
+from .._safe_typing import SafeGeneric, T
 
 logger = logging.getLogger(__name__)
 
@@ -79,10 +80,7 @@ def _extras_to_one(fun):
     return inner
 
 
-HeapVar = tp.TypeVar('T')
-
-
-class Heap(collections.UserList, tp.Generic[HeapVar]):
+class Heap(collections.UserList, SafeGeneric):
     """
     Sane heap as object - not like heapq.
 
@@ -92,16 +90,16 @@ class Heap(collections.UserList, tp.Generic[HeapVar]):
     Not thread-safe
     """
 
-    def __init__(self, from_list: tp.Optional[tp.Iterable[HeapVar]] = None):
+    def __init__(self, from_list: tp.Optional[tp.Iterable[T]] = None):
         super().__init__(from_list)
         heapq.heapify(self.data)
 
-    def push_many(self, items: tp.Iterable[HeapVar]) -> None:
+    def push_many(self, items: tp.Iterable[T]) -> None:
         for item in items:
             self.push(item)
 
     @_extras_to_one
-    def push(self, item: HeapVar) -> None:
+    def push(self, item: T) -> None:
         """
         Use it like:
 
@@ -124,10 +122,10 @@ class Heap(collections.UserList, tp.Generic[HeapVar]):
     def __copy__(self) -> 'Heap':
         return self.__copy(copy.copy)
 
-    def __iter__(self) -> tp.Iterator[HeapVar]:
+    def __iter__(self) -> tp.Iterator[T]:
         return self.data.__iter__()
 
-    def pop(self) -> HeapVar:
+    def pop(self) -> T:
         """
         Return smallest element of the heap.
 
@@ -135,8 +133,8 @@ class Heap(collections.UserList, tp.Generic[HeapVar]):
         """
         return heapq.heappop(self.data)
 
-    def filter_map(self, filter_fun: tp.Optional[tp.Callable[[HeapVar], bool]] = None,
-                   map_fun: tp.Optional[tp.Callable[[HeapVar], tp.Any]] = None):
+    def filter_map(self, filter_fun: tp.Optional[tp.Callable[[T], bool]] = None,
+                   map_fun: tp.Optional[tp.Callable[[T], tp.Any]] = None):
         """
         Get only items that return True when condition(item) is True. Apply a
          transform: item' = item(condition) on
@@ -154,7 +152,7 @@ class Heap(collections.UserList, tp.Generic[HeapVar]):
         """
         return len(self.data) > 0
 
-    def iter_ascending(self) -> tp.Iterable[HeapVar]:
+    def iter_ascending(self) -> tp.Iterable[T]:
         """
         Return an iterator returning all elements in this heap sorted ascending.
         State of the heap is not changed
@@ -163,7 +161,7 @@ class Heap(collections.UserList, tp.Generic[HeapVar]):
         while heap:
             yield heapq.heappop(heap)
 
-    def iter_descending(self) -> tp.Iterable[HeapVar]:
+    def iter_descending(self) -> tp.Iterable[T]:
         """
         Return an iterator returning all elements in this heap sorted descending.
         State of the heap is not changed.
@@ -184,11 +182,11 @@ class Heap(collections.UserList, tp.Generic[HeapVar]):
     def __repr__(self) -> str:
         return u'<satella.coding.Heap>'
 
-    def __contains__(self, item: HeapVar) -> bool:
+    def __contains__(self, item: T) -> bool:
         return item in self.data
 
 
-class SetHeap(Heap, tp.Generic[HeapVar]):
+class SetHeap(Heap, SafeGeneric):
     """
     A heap with additional invariant that no two elements are the same.
 
@@ -197,25 +195,25 @@ class SetHeap(Heap, tp.Generic[HeapVar]):
     #notthreadsafe
     """
 
-    def __init__(self, from_list: tp.Optional[tp.Iterable[HeapVar]] = None):
+    def __init__(self, from_list: tp.Optional[tp.Iterable[T]] = None):
         super().__init__(from_list=from_list)
         self.set = set(self.data)
 
-    def push(self, item: HeapVar):
+    def push(self, item: T):
         if item not in self.set:
             super().push(item)
             self.set.add(item)
 
-    def pop(self) -> HeapVar:
+    def pop(self) -> T:
         item = super().pop()
         self.set.remove(item)
         return item
 
-    def __contains__(self, item: HeapVar) -> bool:
+    def __contains__(self, item: T) -> bool:
         return item in self.set
 
-    def filter_map(self, filter_fun: tp.Optional[tp.Callable[[HeapVar], bool]] = None,
-                   map_fun: tp.Optional[tp.Callable[[HeapVar], tp.Any]] = None):
+    def filter_map(self, filter_fun: tp.Optional[tp.Callable[[T], bool]] = None,
+                   map_fun: tp.Optional[tp.Callable[[T], tp.Any]] = None):
         super().filter_map(filter_fun=filter_fun, map_fun=map_fun)
         self.set = set(self.data)
 
@@ -245,7 +243,7 @@ class TimeBasedHeap(Heap):
     def __repr__(self):
         return '<satella.coding.TimeBasedHeap with %s elements>' % (len(self.data),)
 
-    def items(self) -> tp.Iterable[HeapVar]:
+    def items(self) -> tp.Iterable[T]:
         """
         Return an iterable, but WITHOUT timestamps (only items), in
         unspecified order
@@ -259,8 +257,8 @@ class TimeBasedHeap(Heap):
         self.default_clock_source = default_clock_source or time.monotonic
         super().__init__(from_list=())
 
-    def put(self, timestamp_or_value: tp.Union[tp.Tuple[tp.Union[float, int], HeapVar]],
-            value: tp.Optional[HeapVar] = None) -> None:
+    def put(self, timestamp_or_value: tp.Union[tp.Tuple[tp.Union[float, int], T]],
+            value: tp.Optional[T] = None) -> None:
         """
         Put an item on heap.
 
@@ -275,7 +273,7 @@ class TimeBasedHeap(Heap):
         self.push((timestamp, item))
 
     def pop_less_than(self, less: tp.Optional[tp.Union[int, float]] = None) -> tp.Generator[
-        HeapVar, None, None]:
+        T, None, None]:
         """
         Return all elements less (sharp inequality) than particular value.
 
@@ -295,7 +293,7 @@ class TimeBasedHeap(Heap):
                 return
             yield self.pop()
 
-    def remove(self, item: HeapVar) -> None:
+    def remove(self, item: T) -> None:
         """
         Remove all things equal to item
         """
