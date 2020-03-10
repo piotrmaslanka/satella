@@ -44,12 +44,12 @@ class CheckerCondition:
 
 
 def must_be_type(*cls_or_tuple):
-    return CheckerCondition(conditon=lambda v: isinstance(v, cls_or_tuple),
+    return CheckerCondition(condition=lambda v: isinstance(v, cls_or_tuple),
                             description='not one of types %s' % (cls_or_tuple,))
 
 
 def must_be_one_of(*items):
-    return CheckerCondition(conditon=lambda v: v in items,
+    return CheckerCondition(condition=lambda v: v in items,
                             description='not in set %s' % (items,),
                             is_pre_checker=False)
 
