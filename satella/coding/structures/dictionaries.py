@@ -3,6 +3,7 @@ import copy
 
 from satella.configuration.schema import Descriptor, descriptor_from_dict
 from satella.exceptions import ConfigurationValidationError
+from ..decorators import for_argument
 
 __all__ = ['DictObject', 'apply_dict_object', 'DictionaryView']
 
@@ -118,14 +119,26 @@ class DictionaryView(tp.MutableMapping[K, V]):
         self.dictionaries = [master_dict, *rest_of_dicts]
         self.propagate_deletes = propagate_deletes
 
-    def get_all_keys(self) -> tp.Set[K]:
+    @for_argument(returns=list)
+    def keys(self) -> tp.AbstractSet[K]:
         """
         Returns all keys found in this view
         """
-        key_set = set()
+        seen_already = set()
         for dictionary in self.dictionaries:
-            key_set.update(dictionary.keys())
-        return key_set
+            for key in dictionary:
+                if key not in seen_already:
+                    yield key
+                    seen_already.add(key)
+
+    @for_argument(returns=list)
+    def values(self) -> tp.Generator[V, None, None]:
+        seen_already = set()
+        for dictionary in self.dictionaries:
+            for key, value in dictionary.items():
+                if key not in seen_already:
+                    yield value
+                    seen_already.add(key)
 
     def __contains__(self, item: K) -> bool:
         for dictionary in self.dictionaries:
@@ -133,18 +146,28 @@ class DictionaryView(tp.MutableMapping[K, V]):
                 return True
         return False
 
-    def __iter__(self) -> tp.Generator[K, None, None]:
+    def __iter__(self) -> tp.Iterator[K]:
+        seen_already = set()
         for dictionary in self.dictionaries:
             for key in dictionary:
-                yield key
+                if key not in seen_already:
+                    yield key
+                    seen_already.add(key)
 
-    def items(self) -> tp.Generator[tp.Tuple[K, V], None, None]:
+    @for_argument(returns=list)
+    def items(self) -> tp.AbstractSet[tp.Tuple[K, V]]:
         for dictionary in self.dictionaries:
-            for key, value in dictionary.items():
-                yield key, value
+            yield from dictionary.items()
 
     def __len__(self) -> int:
-        return len(self.get_all_keys())
+        seen_already = set()
+        i = 0
+        for dictionary in self.dictionaries:
+            for key, value in dictionary.items():
+                if key not in seen_already:
+                    i += 1
+                    seen_already.add(key)
+        return i
 
     def __getitem__(self, item: K) -> V:
         for dictionary in self.dictionaries:

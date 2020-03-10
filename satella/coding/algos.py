@@ -7,6 +7,8 @@ def merge_dicts(v1: tp.Any, v2: tp.Any) -> tp.Any:
     """
     Try to merge two dicts/list together. If key collision is found, value from v2 will be taken.
 
+    If the objects aren't dicts or lists, v2 will be returned.
+
     Lists will be concatenated, and dicts updated. v1 will be updated in-place!
     """
     if isinstance(v1, dict) and isinstance(v2, dict):

@@ -33,6 +33,8 @@ class TestTimeBasedHeap(unittest.TestCase):
         self.assertEqual(b[6], 10)
         self.assertEqual(a[6], 11)
 
+        self.assertEqual(len(dvb), 4)
+
     def test_setheap(self):
         a = SetHeap([1, 2, 3])
         self.assertIn(2, a)
