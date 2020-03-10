@@ -7,10 +7,10 @@ from satella.exceptions import ConfigurationValidationError
 
 __all__ = ['DictObject', 'apply_dict_object']
 
-K, V = tp.TypeVar('K'), tp.TypeVar('V')
+T = tp.TypeVar('T')
 
 
-class DictObject(collections.UserDict[K, V]):
+class DictObject(collections.UserDict[str, T]):
     """
     A dictionary wrapper that can be accessed by attributes. Eg:
 
@@ -18,10 +18,10 @@ class DictObject(collections.UserDict[K, V]):
     >>> self.assertEqual(a.test, 5)
     """
 
-    def __copy__(self):
+    def __copy__(self) -> 'DictObject':
         return DictObject(copy.copy(self.data))
 
-    def __deepcopy__(self, memodict={}):
+    def __deepcopy__(self, memodict={}) -> 'DictObject':
         return DictObject(copy.deepcopy(self.data, memo=memodict))
 
     def __getattr__(self, item: str) -> T:
