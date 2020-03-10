@@ -9,6 +9,8 @@ try:
 except ImportError:
     # Windows?
     class L(object):  # always return UID=GID=0
+        __slots__ = ()
+
         def __getattr__(self, item):
             return lambda q: 0
 
