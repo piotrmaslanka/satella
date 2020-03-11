@@ -1,3 +1,7 @@
+# v2.4.46
+
+* _TBA_
+
 # v2.4.45
 
 * added capability for Configuration to execute arbitary Python
