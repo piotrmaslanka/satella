@@ -38,10 +38,7 @@ class SourceTestCase(unittest.TestCase):
         self.assertRaises(fails_with, source.provide)
 
     def assertSourceEmpty(self, source: BaseSource):
-        self.assertEqual(self.provide(source), {})
+        self.assertEqual(source.provide(), {})
 
     def assertSourceHas(self, source: BaseSource, value: tp.Any, postop=lambda x: x):
-        self.assertEqual(postop(self.provide(source)), value)
-
-    def provide(self, source: BaseSource) -> dict:
-        return source.provide()
+        self.assertEqual(postop(source.provide()), value)

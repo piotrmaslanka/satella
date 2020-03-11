@@ -1,4 +1,5 @@
 import copy
+import importlib
 
 from satella.coding import rethrow_as, for_argument
 from satella.configuration import sources
@@ -23,10 +24,21 @@ __all__ = [
     'load_source_from_list'
 ]
 
+
+def handle_import(dct: dict):
+    def convert(v):
+        if 'cast_before' in dct:
+            v = EXTRA_TYPES[dct['cast_before']['type']](dct['cast_before'])(v)
+
+        return getattr(importlib.import_module(dct['module']), dct['attribute'])(v)
+    return convert
+
+
 EXTRA_TYPES = {
     'binary': lambda dct: dct['value'].encode(dct.get('encoding', 'ascii')),
     'lambda': lambda dct: eval('lambda x: ' + dct['operation'], globals(),
-                               locals())
+                               locals()),
+    'import': handle_import,
 }
 
 

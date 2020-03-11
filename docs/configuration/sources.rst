@@ -61,8 +61,47 @@ Always you can provide a key called ``optional`` with a value of True, this will
 
 The second reserved type if ``binary``. This will encode the ``value`` key with ``encoding`` encoding (default is ascii).
 
+An extra type is ``import``. It imports an expression and calls it with
+discovered value, returning the output.
+
+It accepts the following variables:
+
+* module - module to import the expression from
+* attribute - name of the attribute inside the module
+* cast_before - a type to convert the value to before applying it to.
+
+Eg:
+
+::
+
+    class MyEnum(enum.IntEnum):
+        A = 0
+
+    os.environ['TEST_ENV'] = '2'
+
+    dct = {
+        "type": "EnvironmentSource",
+        "args": ["TEST_ENV", "TEST_ENV"],
+        "cast_to": {
+            "module": "my_module",
+            "attribute": "MyEnum",
+            "cast_before": {
+                "type": "lambda",
+                "operation": "int"
+            }
+        }
+    }
+
+    config = load_source_from_dict(dct)
+    assert config.provide()['TEST_ENV'] == MyEnum(0)
+
 To instantiate the schema, use the following functions:
 
 .. autofunction:: satella.configuration.sources.load_source_from_dict
 
 .. autofunction:: satella.configuration.sources.load_source_from_list
+
+Please note that if your attacker has control over these files, he might
+provoke the application into executing arbitrary Python.
+
+**Sanitize your inputs!**
