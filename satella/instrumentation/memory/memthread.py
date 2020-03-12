@@ -184,5 +184,6 @@ class MemoryPressureManager(TerminableThread):
         def outer(fun):
             MemoryPressureManager().callbacks_on_remains[severity].add(
                 CallNoMoreOftenThan(call_no_more_often_than, fun))
+            return fun
 
         return outer
