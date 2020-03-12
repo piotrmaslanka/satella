@@ -40,7 +40,7 @@ class ZerothSeverity(BaseCondition):
 class OperationJoin(BaseCondition):
     __slots__ = ('conditions', )
 
-    def __init__(self, *conditions: MemoryCondition):
+    def __init__(self, *conditions: BaseCondition):
         self.conditions = conditions
 
     def can_fire(self, local_memory_data, local_maximum_consume: tp.Optional[int]) -> bool:
@@ -75,7 +75,7 @@ class Not(BaseCondition):
     """True only if provided condition is false"""
     __slots__ = ('condition', )
 
-    def __init__(self, condition: MemoryCondition):
+    def __init__(self, condition: BaseCondition):
         self.condition = condition
 
     def can_fire(self, local_memory_data, local_maximum_consume: tp.Optional[int]) -> bool:
