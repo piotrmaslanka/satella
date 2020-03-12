@@ -17,7 +17,7 @@ class PIDFileLock:
     >>> with PIDFileLock('myservice.pid'):
     >>>     ... rest of code ..
 
-    Or alternatively
+    Any alternatively
 
     >>> pid_lock = PIDFileLock('myservice.pid')
     >>> pid_lock.acquire()

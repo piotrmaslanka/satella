@@ -178,7 +178,7 @@ class StoredVariableValue:
             raise ValueError('value was never pickled')
         elif self.pickle_type == 'failed':
             raise ValueError(
-                'Value has failed to be pickled, reason is %s' % (self.pickle,))
+                'MemoryCondition has failed to be pickled, reason is %s' % (self.pickle,))
         elif self.pickle_type == 'pickle/gzip':
             pickle_ = zlib.decompress(self.pickle)
         elif self.pickle_type == 'pickle':

@@ -1,6 +1,7 @@
 # v2.5.0
 
 * added `CallableMetric`
+* added `MemoryPressureManager`
 
 # v2.4.45
 

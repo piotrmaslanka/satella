@@ -17,6 +17,7 @@ Visit the project's page at GitHub_!
            coding/concurrent
            coding/sequences
            instrumentation/traceback
+           instrumentation/memory
            instrumentation/metrics
            exception_handling
            json

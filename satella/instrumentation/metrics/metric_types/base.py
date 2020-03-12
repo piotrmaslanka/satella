@@ -161,7 +161,7 @@ class EmbeddedSubmetrics(LeafMetric):
     >>> metric.handle(3, label='value')
 
     If you try to inherit from it, refer to :py:class:`.simple.IntegerMetric` to see how to do it.
-    And please pass all the arguments received from child class into this constructor, as this
+    All please pass all the arguments received from child class into this constructor, as this
     constructor actually stores them!
     Refer to :py:class:`.cps.ClicksPerTimeUnitMetric` on how to do that.
     """
