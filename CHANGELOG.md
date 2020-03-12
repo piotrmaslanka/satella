@@ -1,6 +1,6 @@
-# v2.4.46
+# v2.5.0
 
-* _TBA_
+* added `CallableMetric`
 
 # v2.4.45
 

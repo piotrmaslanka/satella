@@ -18,6 +18,10 @@ def choose(postfix: str, mdc: MetricDataCollection, labels=None) -> MetricData:
 
 class TestMetric(unittest.TestCase):
 
+    def test_callable(self):
+        callable_ = getMetric('callable', 'callable', value_getter=lambda: 5.0)
+        self.assertEqual(list(callable_.to_metric_data().values)[0].value, 5.0)
+
     def test_linkfail(self):
         d = {'online': False, 'offline': False}
 

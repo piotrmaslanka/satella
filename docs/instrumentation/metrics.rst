@@ -90,6 +90,12 @@ are available:
     .. autoclass:: satella.instrumentation.metrics.metric_types.HistogramMetric
         :members:
 
+* callable - a metric whose value is a result of a given callable
+
+    .. autoclass:: satella.instrumentation.metrics.metric_types.CallableMetric
+        :members:
+
+
 .. _summary: https://prometheus.io/docs/concepts/metric_types/#summary
 .. _histogram: https://prometheus.io/docs/concepts/metric_types/#histogram
 
