@@ -1,3 +1,7 @@
+# v2.5.2
+
+* _TBA_
+
 # v2.5.1
 
 * bugfix release: fixed constructor for `Not` in `MemoryPressureManager`
