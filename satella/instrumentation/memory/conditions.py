@@ -75,7 +75,7 @@ class Not(BaseCondition):
     """True only if provided condition is false"""
     __slots__ = ('condition', )
 
-    def __int__(self, condition: MemoryCondition):
+    def __init__(self, condition: MemoryCondition):
         self.condition = condition
 
     def can_fire(self, local_memory_data, local_maximum_consume: tp.Optional[int]) -> bool:
