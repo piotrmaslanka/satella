@@ -9,20 +9,20 @@ from satella.coding.concurrent import CallableGroup
 from satella.coding.concurrent import TerminableThread
 from satella.coding.structures import Singleton
 from satella.time import measure
-from .conditions import MemoryCondition, ZerothSeverity
+from .conditions import BaseCondition, ZerothSeverity
 
 logger = logging.getLogger(__name__)
 
-__all__ = ['MemoryPressureManager', 'GB', 'MB', 'KB']
+__all__ = ['MemoryPressureManager']
 
 
 class CallNoMoreOftenThan:
     __slots__ = ('interval', 'callable', 'last_called')
 
     def __init__(self, interval: int, callable_: tp.Callable[[], None]):
-        self.interval = interval
-        self.callable = callable_
-        self.last_called = 0
+        self.interval = interval            # type: int
+        self.callable = callable_           # type: tp.Callable[[], None]
+        self.last_called = 0                # type: float
 
     def __call__(self, *args, **kwargs):
         if time.monotonic() - self.last_called >= self.interval:
@@ -52,27 +52,32 @@ class MemoryPressureManager(TerminableThread):
     :param maximum_available: maximum amount of memory that this program can use
     :param severity_levels: this defines the levels of severity. A level is reached when program's
         consumption is other this many percent of it's maximum_available amount of memory.
-    :param global_severity_levels:
+    :param check_interval: amount of seconds of pause between consecutive checks
     """
     __slots__ = ('process', 'maximum_available', 'severity_levels', 'callbacks_on_entered',
-                 'callbacks_on_remaing', 'current_severity_level', 'check_interval')
+                 'callbacks_on_remains', 'current_severity_level', 'check_interval')
 
     def __init__(self, maximum_available: tp.Optional[int] = None,
-                 severity_levels: tp.List[MemoryCondition] = None,
+                 severity_levels: tp.List[BaseCondition] = None,
                  check_interval: int = 10):
         super().__init__(daemon=True)
-        self.process = psutil.Process(os.getpid())
-        self.maximum_available = maximum_available
-        self.severity_levels = [ZerothSeverity()] + (severity_levels or [])
-        self.callbacks_on_entered = [CallableGroup(gather=False) for i in
-                                     range(len(self.severity_levels))]
-        self.callbacks_on_remains = [CallableGroup(gather=False) for i in
-                                     range(len(self.severity_levels))]
-        self.callbacks_on_left = [CallableGroup(gather=False) for i in
-                                  range(len(self.severity_levels))]
-        self.current_severity_level = 0
-        self.stopped = False
-        self.check_interval = check_interval
+        self.process = psutil.Process(os.getpid())      # type: psutil.Process
+        self.maximum_available = maximum_available      # type: int
+        self.severity_levels = [ZerothSeverity()] + (
+                severity_levels or [])                  # type: tp.List[BaseCondition]
+
+        self.callbacks_on_entered = [CallableGroup(gather=False) for _ in
+                                     range(len(
+                                         self.severity_levels))]  # type: tp.List[CallableGroup]
+        self.callbacks_on_remains = [CallableGroup(gather=False) for _ in
+                                     range(len(
+                                         self.severity_levels))]  # type: tp.List[CallableGroup]
+        self.callbacks_on_left = [CallableGroup(gather=False) for _ in
+                                  range(len(
+                                      self.severity_levels))]  # type: tp.List[CallableGroup]
+        self.current_severity_level = 0             # type: int
+        self.stopped = False                        # type: bool
+        self.check_interval = check_interval        # type: int
         self.start()
 
     def advance_to_severity_level(self, target_level: int):

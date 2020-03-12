@@ -5,7 +5,7 @@ import functools
 import psutil
 
 __all__ = ['GB', 'MB', 'KB', 'Any', 'All', 'GlobalAbsoluteValue', 'GlobalRelativeValue',
-           'LocalRelativeValue', 'LocalAbsoluteValue', 'MemoryCondition', 'ZerothSeverity',
+           'LocalRelativeValue', 'LocalAbsoluteValue', 'BaseCondition', 'ZerothSeverity',
            'CustomCondition', 'Not']
 
 logger = logging.getLogger(__name__)
@@ -15,26 +15,29 @@ MB = 1024*1024
 KB = 1024
 
 
-class MemoryCondition(metaclass=ABCMeta):
-    __slots__ = ('value', )
-
-    def __init__(self, value: int):
-        self.value = value
+class BaseCondition(metaclass=ABCMeta):
+    __slots__ = ()
 
     @abstractmethod
     def can_fire(self, local_memory_data, local_maximum_consume: tp.Optional[int]) -> bool:
         """Has this severity level been reached?"""
 
 
-class ZerothSeverity(MemoryCondition):
-    def __init__(self):
-        pass
+class MemoryCondition(BaseCondition):
+    __slots__ = ('value', )
+
+    def __init__(self, value: int):
+        self.value = value
+
+
+class ZerothSeverity(BaseCondition):
+    __slots__ = ()
 
     def can_fire(self, local_memory_data, local_maximum_consume: tp.Optional[int]) -> bool:
         return True
 
 
-class OperationJoin(MemoryCondition):
+class OperationJoin(BaseCondition):
     __slots__ = ('conditions', )
 
     def __init__(self, *conditions: MemoryCondition):
@@ -48,6 +51,7 @@ class OperationJoin(MemoryCondition):
 
 class Any(OperationJoin):
     """This is true if one of the arguments is True"""
+    __slots__ = ()
 
     @staticmethod
     def OPERATOR(a, b):
@@ -58,6 +62,7 @@ class Any(OperationJoin):
 
 class All(OperationJoin):
     """This is true if all arguments are True"""
+    __slots__ = ()
 
     @staticmethod
     def OPERATOR(a, b):
@@ -66,7 +71,7 @@ class All(OperationJoin):
     STARTING_VALUE = True
 
 
-class Not(MemoryCondition):
+class Not(BaseCondition):
     """True only if provided condition is false"""
     __slots__ = ('condition', )
 
@@ -79,6 +84,7 @@ class Not(MemoryCondition):
 
 class GlobalAbsoluteValue(MemoryCondition):
     """If free memory globally falls below this many bytes, given severity level starts"""
+    __slots__ = ()
 
     def can_fire(self, local_memory_data, local_maximum_consume: tp.Optional[int]) -> bool:
         return psutil.virtual_memory().available < self.value
@@ -88,6 +94,7 @@ class GlobalRelativeValue(MemoryCondition):
     """
     If percentage of global free memory falls below this many bytes, given severity level starts
     """
+    __slots__ = ()
 
     def can_fire(self, local_memory_data, local_maximum_consume: tp.Optional[int]) -> bool:
         return psutil.virtual_memory().available / psutil.virtual_memory().total < (
@@ -99,6 +106,7 @@ class LocalAbsoluteValue(MemoryCondition):
     If free memory falls below this many bytes from what the program can maximally consume this
     severity level starts
     """
+    __slots__ = ()
 
     def can_fire(self, local_memory_data, local_maximum_consume: tp.Optional[int]) -> bool:
         return local_maximum_consume - local_memory_data.rss < self.value
@@ -109,12 +117,13 @@ class LocalRelativeValue(MemoryCondition):
     If percentage of memory available to this process in regards to what the program can
     maximally consume falls below this level, given severity level starts
     """
+    __slots__ = ()
 
     def can_fire(self, local_memory_data, local_maximum_consume: tp.Optional[int]) -> bool:
         return local_memory_data.rss / local_maximum_consume < (1-self.value / 100)
 
 
-class CustomCondition(MemoryCondition):
+class CustomCondition(BaseCondition):
     """
     A custom condition. Condition that is true if attached callable/0 returns True.
 

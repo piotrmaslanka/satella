@@ -9,8 +9,10 @@ __all__ = [
     'CallableGroup',
 ]
 
+T = tp.TypeVar('T')
 
-class CallableGroup:
+
+class CallableGroup(tp.Generic[T]):
     """
     This behaves like a function, but allows to add other functions to call
     when invoked, eg.
@@ -36,11 +38,11 @@ class CallableGroup:
                                    silently ignored. If gather is set,
                                    result will be the exception instance
         """
-        self.callables = collections.OrderedDict()  # type: tp.Dict[tp.Callable, bool]
-        self.gather = gather  # type: bool
+        self.callables = collections.OrderedDict()    # type: tp.Dict[tp.Callable, bool]
+        self.gather = gather                          # type: bool
         self.swallow_exceptions = swallow_exceptions  # type: bool
 
-    def add(self, callable_: tp.Callable, one_shot: bool = False):
+    def add(self, callable_: tp.Callable[[], T], one_shot: bool = False):
         """
         :param callable_: callable
         :param one_shot: if True, callable will be unregistered after single call
@@ -51,7 +53,7 @@ class CallableGroup:
             return
         self.callables[callable_] = one_shot
 
-    def __call__(self, *args, **kwargs):
+    def __call__(self, *args, **kwargs) -> tp.Optional[tp.List[T]]:
         """
         Run the callable. All registered callables will be called with
         passed arguments, so they should have the same arity.
