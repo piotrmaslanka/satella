@@ -20,9 +20,9 @@ class TestMisc(unittest.TestCase):
 
         nh = NotHashable(5)
         nw = HashableWrapper(nh)
-        self.assertEquals(nw.a, 5)
+        self.assertEqual(nw.a, 5)
         nw.a = 4
-        self.assertEquals(nw.a, 4)
+        self.assertEqual(nw.a, 4)
         del nw.a
         self.assertRaises(AttributeError, lambda: getattr(nw, 'a'))
         self.assertEqual(nw, nh)
