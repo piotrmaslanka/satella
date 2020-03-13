@@ -7,7 +7,7 @@ from satella.configuration.schema import Descriptor, descriptor_from_dict
 from satella.exceptions import ConfigurationValidationError
 from ..decorators import for_argument
 
-__all__ = ['DictObject', 'apply_dict_object', 'DictionaryView']
+__all__ = ['DictObject', 'apply_dict_object', 'DictionaryView', 'TwoWayDictionary']
 
 K, V, T = tp.TypeVar('K'), tp.TypeVar('V'), tp.TypeVar('T')
 
@@ -195,3 +195,70 @@ class DictionaryView(collections.abc.MutableMapping, tp.Generic[K, V]):
             raise KeyError('Key not found')
         else:
             del self.master_dict[key]
+
+
+class TwoWayDictionary(tp.Generic[K, V]):
+    """
+    A dictionary that keeps also a reverse_data mapping, allowing to look up keys by values.
+
+    Not thread-safe.
+
+    Example usage:
+
+    >>> twd = TwoWayDictionary()
+    >>> twd[2] = 3
+    >>> self.assertEqual(twd.reverse[3], 2)
+
+    :param data: data to generate the dict from
+    """
+    __slots__ = ('data', 'reverse_data', '_reverse')
+
+    def __init__(self, data=None, _is_reverse: bool = False):
+        if not _is_reverse:
+            self.data = dict(data or [])
+            self.reverse_data = {v: k for k, v in self.data.items()}
+            self._reverse = TwoWayDictionary(_is_reverse=True)
+            self._reverse.data = self.reverse_data
+            self._reverse.reverse_data = self.data
+            self._reverse._reverse = self
+
+    def __getitem__(self, item: K) -> V:
+        return self.data[item]
+
+    def items(self) -> tp.Iterator[tp.Tuple[K, V]]:
+        return self.data.items()
+
+    def keys(self) -> tp.AbstractSet[K]:
+        return self.data.keys()
+
+    def values(self) -> tp.AbstractSet[V]:
+        return self.data.values()
+
+    def __len__(self) -> int:
+        return len(self.data)
+
+    def __setitem__(self, key, value):
+        try:
+            prev_val = self.data[key]
+        except KeyError:
+            pass
+        else:
+            del self.reverse_data[prev_val]
+
+        if value in self.reverse_data:
+            raise ValueError('This value is already mapped to something!')
+
+        self.data[key] = value
+        self.reverse_data[value] = key
+
+    def __delitem__(self, key: K) -> None:
+        value = self.data[key]
+        del self.data[key]
+        del self.reverse_data[value]
+
+    @property
+    def reverse(self) -> 'TwoWayDictionary':
+        """
+        Return a reverse mapping. Reverse mapping is updated as soon as an operation is done.
+        """
+        return self._reverse

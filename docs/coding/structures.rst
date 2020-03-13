@@ -123,3 +123,9 @@ HashableWrapper
 ===============
 
 .. autofunction:: satella.coding.structures.HashableWrapper
+
+TwoWayDictionary
+================
+
+.. autoclass:: satella.coding.structures.TwoWayDictionary
+    :members:

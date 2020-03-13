@@ -6,10 +6,20 @@ import mock
 
 from satella.coding.structures import TimeBasedHeap, Heap, typednamedtuple, \
     OmniHashableMixin, DictObject, apply_dict_object, Immutable, frozendict, SetHeap, \
-    DictionaryView, HashableWrapper
+    DictionaryView, HashableWrapper, TwoWayDictionary
 
 
 class TestMisc(unittest.TestCase):
+    def test_two_way_dict(self):
+        twd = TwoWayDictionary({1:2, 3:4})
+        self.assertEqual(twd.reverse[4], 3)
+        del twd[1]
+        self.assertRaises(KeyError, lambda: twd[1])
+        self.assertRaises(KeyError, lambda: twd.reverse[2])
+        twd[3] = 8
+        self.assertEqual(twd.reverse[8], 3)
+        self.assertRaises(KeyError, lambda: twd.reverse[4])
+
     def test_hashable_wrapper(self):
         class NotHashable:
             def __init__(self, a):
