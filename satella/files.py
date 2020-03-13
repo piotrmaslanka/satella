@@ -40,13 +40,16 @@ def _cond_join(prefix: tp.Optional[str], filename: str) -> str:
 def find_files(path: str, wildcard: str = r'(.*)',
                prefix_with: tp.Optional[str] = None,
                scan_subdirectories: bool = True,
-               apply_wildcard_to_entire_path: bool = False) -> tp.Iterator[str]:
+               apply_wildcard_to_entire_path: bool = False,
+               prefix_with_path: bool = True) -> tp.Iterator[str]:
     """
     Look at given path's files and all subdirectories and return an iterator of
     file names (paths included) that conform to given wildcard.
 
     Note that wildcard is only applied to the file name if apply_wildcard_to_entire_path is False,
     else the wildcard is applied to entire path (including the application of prefix_with!).
+
+    Files will be additionally prefixed with path, but only if prefix_with_path is True
 
     :param path: path to look into.
     :param wildcard: a regular expression to match
@@ -56,10 +59,14 @@ def find_files(path: str, wildcard: str = r'(.*)',
         when checking wildcard
     :return: paths with the files. They will be relative paths, relative to path
     """
+    if prefix_with_path:
+        prefix_with = _cond_join(prefix_with, path)
+
     for filename in os.listdir(path):
         if scan_subdirectories and os.path.isdir(os.path.join(path, filename)):
             new_prefix = _cond_join(prefix_with, filename)
-            yield from find_files(os.path.join(path, filename), wildcard, prefix_with=new_prefix)
+            yield from find_files(os.path.join(path, filename), wildcard, prefix_with=new_prefix,
+                                  prefix_with_path=False)
         else:
             if apply_wildcard_to_entire_path:
                 fn_path = _cond_join(prefix_with, filename)
