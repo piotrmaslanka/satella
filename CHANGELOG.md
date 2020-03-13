@@ -1,6 +1,6 @@
 # v2.5.3
 
-* _TBA_
+* added `prefix_with` and `scan_subdirectories` to `find_files`
 
 # v2.5.2
 

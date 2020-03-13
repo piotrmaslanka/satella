@@ -20,7 +20,8 @@ class TestFiles(unittest.TestCase):
         os.mkdir(os.path.join(directory, 'test'))
         with open(os.path.join(directory, 'test', 'test.txt'), 'wb') as f_out:
             f_out.write(b'test')
-        self.assertEqual(list(find_files(directory, r'(.*)\.txt')), [os.path.join('test', 'test.txt')])
+        self.assertEqual(list(find_files(directory, r'(.*)\.txt', prefix_with='test')), [
+            os.path.join('test', 'test', 'test.txt')])
         shutil.rmtree(directory)
 
     def test_read_re_sub_and_write(self):
