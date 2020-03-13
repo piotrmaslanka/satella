@@ -1,15 +1,34 @@
 import abc
 import copy
 import unittest
+import collections
 
 import mock
 
 from satella.coding.structures import TimeBasedHeap, Heap, typednamedtuple, \
     OmniHashableMixin, DictObject, apply_dict_object, Immutable, frozendict, SetHeap, \
-    DictionaryView, HashableWrapper, TwoWayDictionary
+    DictionaryView, HashableWrapper, TwoWayDictionary, Ranking
 
 
 class TestMisc(unittest.TestCase):
+    def test_ranking(self):
+        Entry = collections.namedtuple('Entry', ('a', ))
+        e1 = Entry(1)
+        e2 = Entry(2)
+        e3 = Entry(3)
+        ranking = Ranking([e1, e2], lambda e: e.a)
+
+        self.assertEqual(ranking[0], e1)
+        self.assertEqual(ranking[1], e2)
+        self.assertEqual(ranking.get_position_of(e1), 0)
+        self.assertEqual(list(ranking.get_sorted()), [e1, e2])
+
+        ranking.add(e3)
+        self.assertEqual(list(ranking.get_sorted()), [e1, e2, e3])
+        ranking.remove(e1)
+        self.assertEqual(list(ranking.get_sorted()), [e2, e3])
+        self.assertEqual(ranking[-1], e3)
+
     def test_two_way_dict(self):
         twd = TwoWayDictionary({1:2, 3:4})
         self.assertEqual(twd.reverse[4], 3)

@@ -129,3 +129,9 @@ TwoWayDictionary
 
 .. autoclass:: satella.coding.structures.TwoWayDictionary
     :members:
+
+Ranking
+=======
+
+.. autoclass:: satella.coding.structures.Ranking
+    :members:

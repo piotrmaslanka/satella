@@ -1,6 +1,7 @@
 # v2.5.5
 
-* _TBA_
+* added `TwoWayDictionary`
+* added `Ranking`
 
 # v2.5.4
 
