@@ -1,3 +1,7 @@
+# v2.5.5
+
+* _TBA_
+
 # v2.5.4
 
 * changed the behavior of `find_files`
