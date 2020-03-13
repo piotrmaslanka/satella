@@ -1,6 +1,7 @@
 # v2.5.3
 
-* added `prefix_with` and `scan_subdirectories` to `find_files`
+* added extra options to `find_files`
+* refactored `find_files`
 
 # v2.5.2
 
