@@ -87,6 +87,7 @@ class MemoryPressureManager(TerminableThread):
     def advance_to_severity_level(self, target_level: int):
         while self.current_severity_level != target_level:
             delta = target_level - self.current_severity_level
+            delta = int(delta / abs(delta))
 
             if delta > 0:
                 # Means we are ENTERING a severity level

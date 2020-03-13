@@ -1,7 +1,8 @@
 # v2.5.4
 
 * changed the behavior of `find_files`
-
+* fixed a bug in `MemoryPressureManager` wherein consecutive states were
+  not entered
 # v2.5.3
 
 * added extra options to `find_files`

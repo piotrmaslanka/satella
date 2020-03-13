@@ -22,6 +22,7 @@ class TestMemory(unittest.TestCase):
         a = {'memory': False,
              'calls': 0,
              'improved': False,
+             'times_entered_1': 0,
              'level_2_engaged': False,
              'level_2_confirmed': False}
 
@@ -40,6 +41,7 @@ class TestMemory(unittest.TestCase):
         @MemoryPressureManager.register_on_entered_severity(1)
         def call_on_no_memory():
             a['memory'] = True
+            a['times_entered_1'] += 1
 
         @MemoryPressureManager.register_on_left_severity(1)
         def call_improved():
@@ -53,10 +55,13 @@ class TestMemory(unittest.TestCase):
         self.assertTrue(a['memory'])
         self.assertFalse(a['improved'])
         self.assertGreater(a['calls'], 0)
+        self.assertEqual(a['times_entered_1'], 1)
         odc.value = False
         time.sleep(3)
         self.assertTrue(a['improved'])
+        self.assertEqual(a['times_entered_1'], 1)
         self.assertTrue(a['memory'])
         a['level_2_engaged'] = True
         time.sleep(3)
+        self.assertEqual(a['times_entered_1'], 2)
         self.assertTrue(a['level_2_confirmed'])
