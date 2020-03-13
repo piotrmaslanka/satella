@@ -32,21 +32,17 @@ class SortedList(tp.Generic[T]):
     def __iter__(self) -> tp.Iterator[T]:
         return iter(self.items)
 
-    def key_changed(self, item: T):
-        """
-        Signal that key value for given item has been changed
-
-        :param item: item whose key value has changed
-        """
-        self.remove(item)
-        self.add(item)
-
     def __len__(self) -> int:
         return len(self.items)
 
     def index(self, other: T) -> int:
         """Return index at which given value has been placed"""
         return self.items.index(other)
+
+    def extend(self, elements: tp.Iterable[T]):
+        """Adds multiple elements to this list"""
+        for elem in elements:
+            self.add(elem)
 
     def __getitem__(self, item: int) -> tp.Union[T, tp.List[T]]:
         return self.items[item]
@@ -67,7 +63,7 @@ class SortedList(tp.Generic[T]):
         Add an element. Returns the index at which it was inserted.
 
         :param other: element to insert
-        :return: index that is is available at now
+        :return: index that the entry is available now at
         """
         key_value = self.key(other)
 
@@ -80,3 +76,4 @@ class SortedList(tp.Generic[T]):
         self.items.insert(index, other)
         self.keys.insert(index, key_value)
 
+        return index
