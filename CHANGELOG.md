@@ -1,3 +1,7 @@
+# v2.5.6
+
+* _TBA_
+
 # v2.5.5
 
 * added `TwoWayDictionary`
