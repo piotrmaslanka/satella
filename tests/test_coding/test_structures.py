@@ -11,6 +11,9 @@ from satella.coding.structures import TimeBasedHeap, Heap, typednamedtuple, \
 
 
 class TestMisc(unittest.TestCase):
+    def test_two_way_dict2(self):
+        self.assertRaises(ValueError, lambda: TwoWayDictionary([(1, 2), (2, 2)]))
+
     def test_ranking(self):
         Entry = collections.namedtuple('Entry', ('a', ))
         e1 = Entry(1)

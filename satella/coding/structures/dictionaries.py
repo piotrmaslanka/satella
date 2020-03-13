@@ -210,6 +210,8 @@ class TwoWayDictionary(tp.Generic[K, V]):
     >>> self.assertEqual(twd.reverse[3], 2)
 
     :param data: data to generate the dict from
+    :raises ValueError: on being given data from which it is impossible to construct a reverse
+        mapping (ie. same value appears at least twice)
     """
     __slots__ = ('data', 'reverse_data', '_reverse')
 
@@ -217,6 +219,9 @@ class TwoWayDictionary(tp.Generic[K, V]):
         if not _is_reverse:
             self.data = dict(data or [])
             self.reverse_data = {v: k for k, v in self.data.items()}
+            if len(self.reverse_data) != len(self.data):
+                raise ValueError('Value repeats itself, invalid data!')
+
             self._reverse = TwoWayDictionary(_is_reverse=True)
             self._reverse.data = self.reverse_data
             self._reverse.reverse_data = self.data
@@ -237,16 +242,16 @@ class TwoWayDictionary(tp.Generic[K, V]):
     def __len__(self) -> int:
         return len(self.data)
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key: K, value: V):
+        if value in self.reverse_data:
+            raise ValueError('This value is already mapped to something!')
+
         try:
             prev_val = self.data[key]
         except KeyError:
             pass
         else:
             del self.reverse_data[prev_val]
-
-        if value in self.reverse_data:
-            raise ValueError('This value is already mapped to something!')
 
         self.data[key] = value
         self.reverse_data[value] = key
@@ -257,7 +262,7 @@ class TwoWayDictionary(tp.Generic[K, V]):
         del self.reverse_data[value]
 
     @property
-    def reverse(self) -> 'TwoWayDictionary':
+    def reverse(self) -> tp.MutableMapping[V, K]:
         """
         Return a reverse mapping. Reverse mapping is updated as soon as an operation is done.
         """
