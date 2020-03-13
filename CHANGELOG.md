@@ -1,3 +1,7 @@
+# v2.5.4
+
+* _TBA_
+
 # v2.5.3
 
 * added extra options to `find_files`
