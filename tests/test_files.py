@@ -20,6 +20,10 @@ class TestFiles(unittest.TestCase):
         os.mkdir(os.path.join(directory, 'test'))
         with open(os.path.join(directory, 'test', 'test.txt'), 'wb') as f_out:
             f_out.write(b'test')
+        self.assertEqual(list(find_files(directory, r'(.*)test(.*)\.txt', prefix_with='test',
+                                         apply_wildcard_to_entire_path=True)), [
+            os.path.join('test', 'test', 'test.txt')])
+
         self.assertEqual(list(find_files(directory, r'(.*)\.txt', prefix_with='test')), [
             os.path.join('test', 'test', 'test.txt')])
         shutil.rmtree(directory)

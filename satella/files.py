@@ -29,28 +29,40 @@ def read_re_sub_and_write(path: str, pattern: tp.Union[re.compile, str],
         f_out.write(data)
 
 
+def cond_join(prefix: tp.Optional[str], filename: str) -> str:
+    if prefix is None:
+        return filename
+    else:
+        return os.path.join(prefix, filename)
+
+
 def find_files(path: str, wildcard: str = r'(.*)',
                prefix_with: tp.Optional[str] = None,
-               scan_subdirectories: bool = True) -> tp.Iterator[str]:
+               scan_subdirectories: bool = True,
+               apply_wildcard_to_entire_path: bool = False) -> tp.Iterator[str]:
     """
     Look at given path's files and all subdirectories and return an iterator of
     file names (paths included) that conform to given wildcard.
+
+    Note that wildcard is only applied to the file name if apply_wildcard_to_entire_path is False,
+    else the wildcard is applied to entire path (including the application of prefix_with!).
 
     :param path: path to look into.
     :param wildcard: a regular expression to match
     :param prefix_with: an optional path component to prefix before the filename with os.path.join
     :param scan_subdirectories: whether to scan subdirectories
+    :param apply_wildcard_to_entire_path: whether to take the entire relative path into account
+        when checking wildcard
     :return: paths with the files. They will be relative paths, relative to path
     """
     for filename in os.listdir(path):
         if scan_subdirectories and os.path.isdir(os.path.join(path, filename)):
-            for file in find_files(os.path.join(path, filename), wildcard):
-                v = os.path.join(filename, file)
-                if prefix_with is not None:
-                    v = os.path.join(prefix_with, v)
-                yield v
-        elif re.match(wildcard, filename):
-            if prefix_with is not None:
-                filename = os.path.join(prefix_with, filename)
-            yield filename
-
+            new_prefix = cond_join(prefix_with, filename)
+            yield from find_files(os.path.join(path, filename), wildcard, prefix_with=new_prefix)
+        else:
+            if apply_wildcard_to_entire_path:
+                fn_path = cond_join(prefix_with, filename)
+            else:
+                fn_path = filename
+            if re.match(wildcard, fn_path):
+                yield cond_join(prefix_with, filename)
