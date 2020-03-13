@@ -1,14 +1,11 @@
 from abc import ABCMeta, abstractmethod
 import typing as tp
-import logging
 import functools
 import psutil
 
 __all__ = ['GB', 'MB', 'KB', 'Any', 'All', 'GlobalAbsoluteValue', 'GlobalRelativeValue',
            'LocalRelativeValue', 'LocalAbsoluteValue', 'BaseCondition', 'ZerothSeverity',
            'CustomCondition', 'Not']
-
-logger = logging.getLogger(__name__)
 
 GB = 1024*1024*1024
 MB = 1024*1024
@@ -136,7 +133,5 @@ class CustomCondition(BaseCondition):
         self.callable = callable_
 
     def can_fire(self, local_memory_data, local_maximum_consume: tp.Optional[int]) -> bool:
-        v = self.callable()
-        logger.warning('Custom condition %s returning %s' % (self.callable, v))
-        return v
+        return self.callable()
 

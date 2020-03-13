@@ -131,7 +131,6 @@ class MemoryPressureManager(TerminableThread):
         memory_info = self.process.memory_info()
         for level, condition in reversed(list(enumerate(self.severity_levels))):
             if condition.can_fire(memory_info, self.maximum_available):
-                logger.warning('Condition %s was true on level %s' % (condition, level))
                 return level
 
     @staticmethod
