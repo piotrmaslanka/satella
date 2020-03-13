@@ -29,7 +29,8 @@ def read_re_sub_and_write(path: str, pattern: tp.Union[re.compile, str],
         f_out.write(data)
 
 
-def cond_join(prefix: tp.Optional[str], filename: str) -> str:
+def _cond_join(prefix: tp.Optional[str], filename: str) -> str:
+    """or a conditional os.path.join"""
     if prefix is None:
         return filename
     else:
@@ -57,12 +58,12 @@ def find_files(path: str, wildcard: str = r'(.*)',
     """
     for filename in os.listdir(path):
         if scan_subdirectories and os.path.isdir(os.path.join(path, filename)):
-            new_prefix = cond_join(prefix_with, filename)
+            new_prefix = _cond_join(prefix_with, filename)
             yield from find_files(os.path.join(path, filename), wildcard, prefix_with=new_prefix)
         else:
             if apply_wildcard_to_entire_path:
-                fn_path = cond_join(prefix_with, filename)
+                fn_path = _cond_join(prefix_with, filename)
             else:
                 fn_path = filename
             if re.match(wildcard, fn_path):
-                yield cond_join(prefix_with, filename)
+                yield _cond_join(prefix_with, filename)
