@@ -1,6 +1,6 @@
 # v2.5.6
 
-* _TBA_
+* added `SortedList`
 
 # v2.5.5
 

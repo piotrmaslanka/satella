@@ -2,15 +2,32 @@ import abc
 import copy
 import unittest
 import collections
+import logging
 
 import mock
 
 from satella.coding.structures import TimeBasedHeap, Heap, typednamedtuple, \
     OmniHashableMixin, DictObject, apply_dict_object, Immutable, frozendict, SetHeap, \
-    DictionaryView, HashableWrapper, TwoWayDictionary, Ranking
+    DictionaryView, HashableWrapper, TwoWayDictionary, Ranking, SortedList
+
+
+logger = logging.getLogger(__name__)
 
 
 class TestMisc(unittest.TestCase):
+    def test_sorted_list(self):
+        sl = SortedList([3, 2, 1], lambda a: a)
+        self.assertEqual(sl[0], 1)
+        self.assertEqual(sl[-1], 3)
+        self.assertEqual(sl.index(2), 1)
+        sl.add(5)
+        self.assertEqual(sl.index(5), 3)
+        self.assertRaises(ValueError, lambda: sl.index(6))
+        sl.add(4)
+        self.assertEqual(sl.index(5), 4)
+        sl.remove(1)
+        self.assertEqual(sl.index(5), 3)
+
     def test_two_way_dict2(self):
         self.assertRaises(ValueError, lambda: TwoWayDictionary([(1, 2), (2, 2)]))
 
