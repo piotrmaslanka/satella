@@ -1,20 +1,24 @@
 import abc
-import copy
-import unittest
 import collections
+import copy
 import logging
+import unittest
 
 import mock
 
 from satella.coding.structures import TimeBasedHeap, Heap, typednamedtuple, \
     OmniHashableMixin, DictObject, apply_dict_object, Immutable, frozendict, SetHeap, \
-    DictionaryView, HashableWrapper, TwoWayDictionary, Ranking, SortedList
-
+    DictionaryView, HashableWrapper, TwoWayDictionary, Ranking, SortedList, SliceableDeque
 
 logger = logging.getLogger(__name__)
 
 
 class TestMisc(unittest.TestCase):
+    def test_sliceable_deque(self):
+        sd = SliceableDeque([1, 2, 3, 4, 5, 6, 7])
+        self.assertEqual(list(sd[1:-1]), [2, 3, 4, 5, 6])
+        self.assertEqual(sd.__getitem__(0), 1)
+
     def test_sorted_list(self):
         sl = SortedList([3, 2, 1], lambda a: a)
         self.assertEqual(sl[0], 1)
@@ -32,11 +36,11 @@ class TestMisc(unittest.TestCase):
         self.assertRaises(ValueError, lambda: TwoWayDictionary([(1, 2), (2, 2)]))
 
     def test_ranking(self):
-        Entry = collections.namedtuple('Entry', ('a', ))
+        Entry = collections.namedtuple('Entry', ('a',))
         e1 = Entry(1)
         e2 = Entry(2)
         e3 = Entry(3)
-        ranking = Ranking([e1, e2], lambda e: e.a)
+        ranking = Ranking([e1, e2], lambda e: e.a)  # type: Ranking[Entry]
 
         self.assertEqual(ranking[0], e1)
         self.assertEqual(ranking[1], e2)
@@ -48,9 +52,12 @@ class TestMisc(unittest.TestCase):
         ranking.remove(e1)
         self.assertEqual(list(ranking.get_sorted()), [e2, e3])
         self.assertEqual(ranking[-1], e3)
+        e25 = Entry(2.5)
+        ranking.add(e25)
+        self.assertEqual(list(ranking.get_sorted()), [e2, e25, e3])
 
     def test_two_way_dict(self):
-        twd = TwoWayDictionary({1:2, 3:4})
+        twd = TwoWayDictionary({1: 2, 3: 4})
         self.assertEqual(twd.reverse[4], 3)
         del twd[1]
         self.assertRaises(KeyError, lambda: twd[1])
@@ -80,8 +87,8 @@ class TestMisc(unittest.TestCase):
         self.assertEqual(nw(), 5)
 
     def test_dictionary_view(self):
-        a = {1:2, 3:4}
-        b = {4:5, 6:7}
+        a = {1: 2, 3: 4}
+        b = {4: 5, 6: 7}
         dva = DictionaryView(a, b)
 
         self.assertEqual(dva[1], 2)
@@ -102,8 +109,6 @@ class TestMisc(unittest.TestCase):
         self.assertEqual(a[6], 11)
 
         self.assertEqual(len(dvb), 4)
-
-
 
     def test_setheap(self):
         a = SetHeap([1, 2, 3])
@@ -237,7 +242,7 @@ class TestDictObject(unittest.TestCase):
         self.assertRaises(AttributeError, delete)
 
     def test_copying(self):
-        a = DictObject({1:2})
+        a = DictObject({1: 2})
         b = copy.copy(a)
         self.assertEqual(a, b)
         self.assertFalse(id(a) == id(b))

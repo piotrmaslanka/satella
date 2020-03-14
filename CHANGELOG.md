@@ -1,6 +1,7 @@
 # v2.5.7
 
-* _TBA_
+* optimized `Ranking`
+* added `SlicableDeque`
 
 # v2.5.6
 
