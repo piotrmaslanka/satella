@@ -1,3 +1,8 @@
+# v2.5.7
+
+* optimized `Ranking`
+* added `SlicableDeque`
+
 # v2.5.6
 
 * added `SortedList`

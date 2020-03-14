@@ -5,10 +5,11 @@ from .singleton import Singleton, SingletonWithRegardsTo
 from .structures import SetHeap, OmniHashableMixin, TimeBasedHeap, Heap
 from .typednamedtuple import typednamedtuple
 from .ranking import Ranking
-from .sorted_list import SortedList
+from .sorted_list import SortedList, SliceableDeque
 
 __all__ = [
     'SortedList',
+    'SliceableDeque',
     'Ranking',
     'TwoWayDictionary',
     'typednamedtuple',

@@ -141,3 +141,9 @@ SortedList
 
 .. autoclass:: satella.coding.structures.SortedList
     :members:
+
+SliceableDeque
+==============
+
+.. autoclass:: satella.coding.structures.SliceableDeque
+    :members:
