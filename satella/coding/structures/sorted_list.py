@@ -93,7 +93,9 @@ class SortedList(tp.Generic[T]):
 
 class SliceableDeque(tp.Generic[T]):
     """
-    A collections.deque that supports slicing
+    A collections.deque that supports slicing.
+
+    Just note that it will return a generator upon being sliced!
     """
     __slots__ = ('deque', )
 
