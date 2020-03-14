@@ -1,6 +1,6 @@
 # v2.5.8
 
-* _TBA_
+* added `pop` and `popleft` to SortedList
 
 # v2.5.7
 

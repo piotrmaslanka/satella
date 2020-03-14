@@ -31,6 +31,16 @@ class SortedList(tp.Generic[T]):
     def __contains__(self, item: T) -> bool:
         return item in self.items
 
+    def pop(self) -> T:
+        """Return the highest element, removing it from the list"""
+        self.keys.pop()
+        return self.items.pop()
+
+    def popleft(self) -> T:
+        """Return the smallest element, removing it from the list"""
+        self.keys.popleft()
+        return self.items.popleft()
+
     def __iter__(self) -> tp.Iterator[T]:
         return iter(self.items)
 

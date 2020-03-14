@@ -31,6 +31,8 @@ class TestMisc(unittest.TestCase):
         self.assertEqual(sl.index(5), 4)
         sl.remove(1)
         self.assertEqual(sl.index(5), 3)
+        self.assertEqual(sl.pop(), 5)
+        self.assertEqual(sl.popleft(), 2)
 
     def test_two_way_dict2(self):
         self.assertRaises(ValueError, lambda: TwoWayDictionary([(1, 2), (2, 2)]))
