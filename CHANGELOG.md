@@ -1,3 +1,7 @@
+# v2.5.8
+
+* _TBA_
+
 # v2.5.7
 
 * optimized `Ranking`
