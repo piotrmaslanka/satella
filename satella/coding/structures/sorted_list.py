@@ -47,7 +47,6 @@ class SortedList(tp.Generic[T]):
             self.add(elem)
 
     def __getitem__(self, item: tp.Union[slice, int]) -> tp.Union[T, tp.Iterator[T]]:
-        logger.warning(f'Querying with {item} items is {self.items}')
         return self.items[item]
 
     def remove(self, other: T) -> None:
