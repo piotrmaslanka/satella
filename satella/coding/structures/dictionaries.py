@@ -261,6 +261,9 @@ class TwoWayDictionary(collections.abc.MutableMapping, tp.Generic[K, V]):
         del self.data[key]
         del self.reverse_data[value]
 
+    def __iter__(self) -> tp.Iterator[K]:
+        return iter(self.data)
+
     @property
     def reverse(self) -> tp.MutableMapping[V, K]:
         """
