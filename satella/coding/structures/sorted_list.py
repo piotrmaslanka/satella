@@ -91,7 +91,7 @@ class SortedList(tp.Generic[T]):
         return index
 
 
-class SliceableDeque(tp.Generic[T]):
+class SliceableDeque(collections.abc.MutableSequence, tp.Generic[T]):
     """
     A collections.deque that supports slicing.
 
