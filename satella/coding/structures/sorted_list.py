@@ -102,6 +102,9 @@ class SliceableDeque(collections.abc.MutableSequence, tp.Generic[T]):
     def __bool__(self) -> bool:
         return bool(self.deque)
 
+    def insert(self, i: int, item: T):
+        self.deque.insert(i, item)
+
     def __init__(self, *args, **kwargs):
         self.deque = collections.deque(*args, **kwargs)
 
