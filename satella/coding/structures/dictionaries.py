@@ -197,7 +197,7 @@ class DictionaryView(collections.abc.MutableMapping, tp.Generic[K, V]):
             del self.master_dict[key]
 
 
-class TwoWayDictionary(tp.Generic[K, V]):
+class TwoWayDictionary(collections.abc.MutableMapping, tp.Generic[K, V]):
     """
     A dictionary that keeps also a reverse_data mapping, allowing to look up keys by values.
 
