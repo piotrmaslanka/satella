@@ -91,7 +91,7 @@ class SortedList(tp.Generic[T]):
         return index
 
 
-class SliceableDeque:
+class SliceableDeque(tp.Generic[T]):
     """
     A collections.deque that supports slicing
     """
@@ -125,6 +125,7 @@ class SliceableDeque:
         return getattr(self.deque, item)
 
     def __getitem__(self, item) -> tp.Union[tp.Iterator[T], T]:
+        """Return either one element, or a generator over a slice"""
         tot_length = len(self)
         if type(item) is slice:
             start, stop, step = item.indices(tot_length)
