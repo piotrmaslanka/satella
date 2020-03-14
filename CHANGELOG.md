@@ -1,6 +1,7 @@
 # v2.5.9
 
-* _TBA_
+* added `MutableMapping` to `TwoWayDictionary`
+* added `MutableSequence` to `SliceableDeque`
 
 # v2.5.8
 
