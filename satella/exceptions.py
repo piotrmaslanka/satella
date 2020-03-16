@@ -47,13 +47,9 @@ class CodedCustomExceptionMetaclass(type):
             return True
 
         try:
-            if not hasattr(instance, 'code'):
-                return False
-            y = cls.code == instance.code
-            return y
+            return cls.code == instance.code
         except AttributeError:
-            y = super().__instancecheck__(instance)
-            return y
+            return super().__instancecheck__(instance)
 
 
 class CodedCustomException(CustomException, metaclass=CodedCustomExceptionMetaclass):
