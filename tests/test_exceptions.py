@@ -28,7 +28,7 @@ class TestExceptions(unittest.TestCase):
         exc = CodedCustomException('message', 2)
         self.assertIsInstance(exc, Base2Error)
 
-        exc = Base2Error()
+        exc = Base2Error('message')
         del exc.code
 
         self.assertIsInstance(exc, Base2Error)
