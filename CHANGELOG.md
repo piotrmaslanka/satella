@@ -1,3 +1,7 @@
+# v2.5.10
+
+* _TBA_
+
 # v2.5.9
 
 * added `MutableMapping` to `TwoWayDictionary`
