@@ -42,7 +42,7 @@ class CustomException(Exception):
 class CodedCustomExceptionMetaclass(type):
     code = None     # type: tp.Optional[tp.Any]
 
-    def __instancecheck__(cls, instance: 'CodedCustomError'):
+    def __instancecheck__(cls, instance):
         if super().__instancecheck__(instance):
             return True
 
