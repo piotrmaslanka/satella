@@ -40,7 +40,7 @@ class CustomException(Exception):
 
 
 class CodedCustomExceptionMetaclass(type):
-    code: tp.Optional[tp.Any] = None
+    code = None     # type: tp.Optional[tp.Any]
 
     def __instancecheck__(cls, instance: 'CodedCustomError'):
         if super().__instancecheck__(instance):
@@ -55,7 +55,7 @@ class CodedCustomExceptionMetaclass(type):
 class CodedCustomException(CustomException, metaclass=CodedCustomExceptionMetaclass):
     def __init__(self, message, code: tp.Optional[tp.Any] = None, *args, **kwargs):
         super().__init__(message, code, *args, **kwargs)
-        self.message = message
+        self.message = message      # type: str
         if code is not None:
             self.code = code
 
