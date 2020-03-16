@@ -36,6 +36,33 @@ Example:
 
     assert isinstance(BaseCodedError('message', 2', Code2Error)
 
+The exceptions have to be in a common hierarchy to check them via
+codes.
+
+
+For example, the following is true:
+
+::
+    class DifferentHierarchy(CodedCustomException):
+        pass
+
+    assert not isinstance(DifferentHierarchy('message', 2), Code2Error)
+
+
+In general, please do not construct direct exceptions from CodedCustomException,
+please do it via a hierarchy such as:
+
+::
+
+    class GenericError(CodedCustomException):
+        pass
+
+    class SpecificError(GenericError):
+        code = 3
+
+    raise SpecificError('message')
+
+
 Note that this won't allow you to handle exceptions like that
 
 ::

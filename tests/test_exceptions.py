@@ -22,13 +22,19 @@ class TestExceptions(unittest.TestCase):
             self.fail()
 
     def test_coded_exception(self):
-        class Base2Error(CodedCustomException):
+        class BaseError(CodedCustomException):
+            pass
+
+        class Base2Error(BaseError):
             code = 2
 
-        exc = CodedCustomException('message', 2)
-        self.assertIsInstance(exc, Base2Error)
+        self.assertIsInstance(BaseError('message', 2), CodedCustomException)
+        self.assertIsInstance(Base2Error('message'), CodedCustomException)
+        self.assertNotIsInstance(CodedCustomException('message', 2), Base2Error)
+        self.assertIsInstance(BaseError('message', 2), Base2Error)
+        self.assertIsInstance(Base2Error('message'), Base2Error)
 
-        exc = Base2Error('message')
+        class DifferentHierarchy(CodedCustomException):
+            pass
 
-        self.assertIsInstance(exc, Base2Error)
-
+        self.assertNotIsInstance(DifferentHierarchy('message', 2), Base2Error)

@@ -39,12 +39,34 @@ class CustomException(Exception):
         return a
 
 
+def get_base_of_bases(classes):
+    class_bases = ()
+    for class_ in classes:
+        class_bases += class_.__bases__
+    return class_bases
+
+
 class CodedCustomExceptionMetaclass(type):
     code = None     # type: tp.Optional[tp.Any]
 
     def __instancecheck__(cls, instance):
         if super().__instancecheck__(instance):
             return True
+
+        if cls is CodedCustomException:
+            return super().__instancecheck__(cls, instance)
+
+        class_base = (cls, )
+        while CodedCustomException not in get_base_of_bases(class_base) and class_base:
+            class_base = get_base_of_bases(class_base)
+
+        inst_base = (instance.__class__, )
+        while CodedCustomException not in get_base_of_bases(inst_base) and inst_base:
+            inst_base = get_base_of_bases(inst_base)
+
+        if len(set(class_base).intersection(set(inst_base))) == 0:
+            # These classes belong in different exception hierarchies
+            return False
 
         try:
             return cls.code == instance.code
