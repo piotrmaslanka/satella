@@ -53,7 +53,7 @@ class CodedCustomExceptionMetaclass(type):
 
 
 class CodedCustomException(CustomException, metaclass=CodedCustomExceptionMetaclass):
-    def __init__(self, message, code: tp.Optional[tp.Any] = None, *args, **kwargs):
+    def __init__(self, message, code=None, *args, **kwargs):
         super().__init__(message, code, *args, **kwargs)
         self.message = message      # type: str
         if code is not None:
