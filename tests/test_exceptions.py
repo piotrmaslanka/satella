@@ -1,7 +1,7 @@
 import unittest
 
 
-from satella.exceptions import BaseSatellaError, CustomException
+from satella.exceptions import BaseSatellaError, CustomException, CodedCustomException
 
 
 class TestExceptions(unittest.TestCase):
@@ -20,3 +20,10 @@ class TestExceptions(unittest.TestCase):
             self.assertEqual(str(e), "InheritedError('message', 'arg1', 'arg2')")
         else:
             self.fail()
+
+    def test_coded_exception(self):
+        class Base2Error(CodedCustomException):
+            code = 2
+
+        exc = CodedCustomException('message', 2)
+        self.assertIsInstance(exc, Base2Error)

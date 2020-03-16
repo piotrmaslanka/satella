@@ -1,8 +1,10 @@
 import warnings
+import typing as tp
 
 __all__ = ['BaseSatellaError', 'ResourceLockingError', 'ResourceNotLocked', 'ResourceLocked',
            'ConfigurationValidationError', 'ConfigurationError', 'ConfigurationSchemaError',
-           'PreconditionError', 'MetricAlreadyExists', 'BaseSatellaException', 'CustomException']
+           'PreconditionError', 'MetricAlreadyExists', 'BaseSatellaException', 'CustomException',
+           'CodedCustomException']
 
 
 class CustomException(Exception):
@@ -35,6 +37,31 @@ class CustomException(Exception):
                                        self.kwargs.items())))
         a += ')'
         return a
+
+
+class CodedCustomExceptionMetaclass(type):
+    code: tp.Optional[tp.Any] = None
+
+    def __instancecheck__(cls, instance: 'CodedCustomError'):
+        if super().__instancecheck__(instance):
+            return True
+
+        try:
+            if not hasattr(instance, 'code'):
+                return False
+            y = cls.code == instance.code
+            return y
+        except AttributeError:
+            y = super().__instancecheck__(instance)
+            return y
+
+
+class CodedCustomException(CustomException, metaclass=CodedCustomExceptionMetaclass):
+    def __init__(self, message, code: tp.Optional[tp.Any] = None, *args, **kwargs):
+        super().__init__(message, code, *args, **kwargs)
+        self.message = message
+        if code is not None:
+            self.code = code
 
 
 class BaseSatellaError(CustomException):

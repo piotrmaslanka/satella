@@ -2,6 +2,7 @@
 
 * added `MutableMapping` to `TwoWayDictionary`
 * added `MutableSequence` to `SliceableDeque`
+* added `CodedCustomException`
 
 # v2.5.8
 
