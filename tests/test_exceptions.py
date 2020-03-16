@@ -29,7 +29,6 @@ class TestExceptions(unittest.TestCase):
         self.assertIsInstance(exc, Base2Error)
 
         exc = Base2Error('message')
-        del exc.code
 
         self.assertIsInstance(exc, Base2Error)
 
