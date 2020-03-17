@@ -1,6 +1,6 @@
 import collections
 import warnings
-import logging
+
 import typing as tp
 
 import math
@@ -11,7 +11,7 @@ from .registry import register_metric
 from ..data import MetricData, MetricDataCollection
 
 
-logger = logging.getLogger(__name__)
+
 
 
 # shamelessly taken from

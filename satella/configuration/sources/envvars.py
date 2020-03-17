@@ -1,4 +1,3 @@
-import logging
 import os
 import sys
 import typing as tp
@@ -7,8 +6,6 @@ from satella.coding import rethrow_as
 from satella.exceptions import ConfigurationError
 from .base import BaseSource
 from .format import JSONSource
-
-logger = logging.getLogger(__name__)
 
 __all__ = [
     'EnvVarsSource', 'EnvironmentSource',

@@ -1,8 +1,8 @@
-import logging
+
 import collections
 import typing as tp
 from .sorted_list import SortedList
-logger = logging.getLogger(__name__)
+
 
 
 __all__ = ['Ranking']

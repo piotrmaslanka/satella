@@ -1,10 +1,7 @@
-import logging
 import time
 import typing as tp
 
 from ..data import MetricData, MetricDataCollection
-
-logger = logging.getLogger(__name__)
 
 DISABLED = 1
 RUNTIME = 2

@@ -1,4 +1,4 @@
-import logging
+
 import io
 import typing as tp
 from satella.coding.concurrent import TerminableThread
@@ -6,7 +6,7 @@ import http.server
 from .. import getMetric
 from ..data import MetricData, MetricDataCollection
 
-logger = logging.getLogger(__name__)
+
 
 __all__ = ['metric_data_collection_to_prometheus', 'PrometheusHTTPExporterThread']
 

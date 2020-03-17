@@ -1,8 +1,8 @@
-import logging
+
 import typing as tp
 import collections
 
-logger = logging.getLogger(__name__)
+
 
 __all__ = ['SortedList', 'SliceableDeque']
 

@@ -1,4 +1,4 @@
-import logging
+
 import typing as tp
 
 from .base import EmbeddedSubmetrics
@@ -7,7 +7,7 @@ from .registry import register_metric
 from ..data import MetricData, MetricDataCollection
 
 
-logger = logging.getLogger(__name__)
+
 
 
 class SimpleMetric(EmbeddedSubmetrics):

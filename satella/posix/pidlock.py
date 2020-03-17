@@ -1,11 +1,8 @@
-import logging
 import os
 
 import psutil
 
 from satella.exceptions import LockIsHeld
-
-logger = logging.getLogger(__name__)
 
 
 class PIDFileLock:

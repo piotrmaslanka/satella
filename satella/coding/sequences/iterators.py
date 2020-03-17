@@ -1,9 +1,9 @@
 import itertools
-import logging
+
 import typing as tp
 import warnings
 
-logger = logging.getLogger(__name__)
+
 
 
 def infinite_counter(start_at: int = 0, step: int = 1) -> tp.Generator[int, None, None]:

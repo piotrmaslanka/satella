@@ -1,6 +1,6 @@
 import collections
 import copy
-import logging
+
 import threading
 import typing as tp
 
@@ -11,7 +11,7 @@ __all__ = [
 ]
 
 K, V, T = tp.TypeVar('K'), tp.TypeVar('V'), tp.TypeVar('T')
-logger = logging.getLogger(__name__)
+
 
 
 class Monitor:

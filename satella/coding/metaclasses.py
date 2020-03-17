@@ -8,9 +8,9 @@ modified
 """
 from abc import ABCMeta
 import typing as tp
-import logging
 
-logger = logging.getLogger(__name__)
+
+
 
 __all__ = ['metaclass_maker', 'wrap_with', 'dont_wrap', 'wrap_property']
 

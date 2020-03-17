@@ -1,13 +1,10 @@
 import sys
 import time
-import logging
 import typing as tp
 
 from satella.coding.recast_exceptions import silence_excs
 from satella.posix import suicide
 from .exception_handlers import BaseExceptionHandler, ALWAYS_FIRST, ExceptionHandlerCallable
-
-logger = logging.getLogger(__name__)
 
 
 class MemoryErrorExceptionHandler(BaseExceptionHandler):

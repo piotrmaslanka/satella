@@ -1,5 +1,5 @@
 import inspect
-import logging
+
 import typing as tp
 import time
 
@@ -7,7 +7,7 @@ from satella.coding import wraps
 
 from .base import RUNTIME
 
-logger = logging.getLogger(__name__)
+
 
 
 class MeasurableMixin:

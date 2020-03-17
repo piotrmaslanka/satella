@@ -1,9 +1,6 @@
-import logging
 import typing as tp
 import re
 import os
-
-logger = logging.getLogger(__name__)
 
 __all__ = ['read_re_sub_and_write', 'find_files']
 
@@ -57,6 +54,7 @@ def find_files(path: str, wildcard: str = r'(.*)',
     :param scan_subdirectories: whether to scan subdirectories
     :param apply_wildcard_to_entire_path: whether to take the entire relative path into account
         when checking wildcard
+    :param prefix_with_path: whether to add path to the resulting path
     :return: paths with the files. They will be relative paths, relative to path
     """
     if prefix_with_path:

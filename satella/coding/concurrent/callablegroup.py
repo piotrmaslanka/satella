@@ -1,9 +1,6 @@
 import collections
 import copy
-import logging
 import typing as tp
-
-logger = logging.getLogger(__name__)
 
 __all__ = [
     'CallableGroup',

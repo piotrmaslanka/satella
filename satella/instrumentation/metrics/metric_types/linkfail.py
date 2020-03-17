@@ -1,11 +1,11 @@
-import logging
+
 import typing as tp
 
 from ..data import MetricDataCollection, MetricData
 from .base import EmbeddedSubmetrics
 from .registry import register_metric
 import collections
-logger = logging.getLogger(__name__)
+
 
 
 @register_metric

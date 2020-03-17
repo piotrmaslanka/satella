@@ -1,9 +1,9 @@
-import logging
+
 import typing as tp
 from satella.json import JSONAble
 from satella.coding.structures import frozendict
 
-logger = logging.getLogger(__name__)
+
 
 
 def join_metric_data_name(prefix: str, name: str):

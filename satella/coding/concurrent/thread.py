@@ -1,5 +1,5 @@
 import ctypes
-import logging
+
 import platform
 import threading
 import typing as tp
@@ -8,7 +8,7 @@ from threading import Condition as PythonCondition
 from satella.time import measure
 from ...exceptions import ResourceLocked, WouldWaitMore
 
-logger = logging.getLogger(__name__)
+
 
 
 class Condition(PythonCondition):

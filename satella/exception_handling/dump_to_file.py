@@ -1,6 +1,5 @@
 from __future__ import print_function, absolute_import, division
 
-import logging
 import os
 import typing as tp
 import uuid
@@ -8,8 +7,6 @@ import uuid
 from satella.coding import silence_excs
 from satella.instrumentation import Traceback
 from .exception_handlers import BaseExceptionHandler
-
-logger = logging.getLogger(__name__)
 
 __all__ = [
     'DumpToFileHandler'

@@ -1,5 +1,3 @@
-import logging
-
 from satella.coding import merge_dicts
 from satella.exceptions import ConfigurationError
 from .base import BaseSource
@@ -7,8 +5,6 @@ from .base import BaseSource
 __all__ = [
     'AlternativeSource', 'OptionalSource', 'MergingSource'
 ]
-
-logger = logging.getLogger(__name__)
 
 
 class AlternativeSource(BaseSource):

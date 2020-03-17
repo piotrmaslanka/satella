@@ -1,11 +1,8 @@
-import logging
 import typing as tp
 import time
 from concurrent.futures import Future
 
 from functools import wraps
-
-logger = logging.getLogger(__name__)
 
 __all__ = ['measure']
 

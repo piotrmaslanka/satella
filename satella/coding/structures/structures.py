@@ -2,7 +2,7 @@ import collections
 import copy
 import functools
 import heapq
-import logging
+
 import operator
 import time
 import typing as tp
@@ -10,7 +10,7 @@ from abc import ABCMeta, abstractmethod
 
 from ..decorators import wraps
 
-logger = logging.getLogger(__name__)
+
 
 T = tp.TypeVar('T')
 Number = tp.Union[int, float]

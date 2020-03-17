@@ -1,3 +1,7 @@
+# v2.5.11
+
+* removed redundant loggers
+
 # v2.5.10
 
 * exported CodedCustomExceptionMetaclass

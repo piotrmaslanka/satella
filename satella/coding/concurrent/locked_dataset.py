@@ -1,11 +1,11 @@
 import inspect
-import logging
+
 import threading
 
 from ..decorators import wraps
 from ...exceptions import ResourceLocked, ResourceNotLocked
 
-logger = logging.getLogger(__name__)
+
 
 
 class LockedDataset:
