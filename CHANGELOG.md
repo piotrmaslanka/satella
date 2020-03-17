@@ -1,6 +1,8 @@
 # v2.5.11
 
 * removed redundant loggers
+* added `LockedStructure`
+* added `Proxy`
 
 # v2.5.10
 

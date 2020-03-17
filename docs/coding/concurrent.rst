@@ -79,3 +79,18 @@ Additionally, following types are predefined for your convenience:
 .. autoclass:: satella.coding.concurrent.MonitorList
 
 .. autoclass:: satella.coding.concurrent.MonitorDict
+
+LockedStructure
+===============
+
+A proxy to an object along with a lock, that can be triggered
+using the context manager:
+
+::
+
+    a = {1:2, 3:4}
+    ls = LockedStructure(a)
+
+    assert len(ls), 2
+    with ls:
+        a[4] = 5

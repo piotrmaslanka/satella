@@ -147,3 +147,8 @@ SliceableDeque
 
 .. autoclass:: satella.coding.structures.SliceableDeque
     :members:
+
+Proxy
+=====
+
+.. autoclass:: satella.coding.structures.Proxy

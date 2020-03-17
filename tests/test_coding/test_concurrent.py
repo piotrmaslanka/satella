@@ -3,10 +3,30 @@ import time
 import unittest
 import copy
 
-from satella.coding.concurrent import TerminableThread, CallableGroup, Condition, MonitorList
+from satella.coding.concurrent import TerminableThread, CallableGroup, Condition, MonitorList, \
+    LockedStructure
 
 
 class TestConcurrent(unittest.TestCase):
+
+    def test_locked_structure(self):
+        class MyLockedStructure:
+            def __call__(self, *args, **kwargs):
+                return 5
+
+            def __init__(self, a, b, c):
+                self.a = a
+                self.b = b
+                self.c = c
+
+        mls = MyLockedStructure(1, 2, 3)
+        ls = LockedStructure(mls)
+
+        ls.b = 5
+        with ls:
+            self.assertEqual(mls.b, 5)
+            self.assertEqual(mls.a, 1)
+            self.assertEqual(mls(), 5)
 
     def test_copy_monitor_list(self):
         ml = MonitorList([1,2,3])
