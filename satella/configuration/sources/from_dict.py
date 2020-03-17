@@ -14,6 +14,8 @@ If a dict has a field "type" then it will be treated specially:
 * "lambda" - it allows expressing the simplest filters there can be
   name of a source class - it will be instantated with arguments "args".
   rest keys will be kwargs.
+* "import" it will import "attribute" from module "module" and call it with this value,
+  optionally preprocessing it with "cast_before"
                              
 Special key is "optional" to be bool - if so, the source will be decorated as optional
                                                           
