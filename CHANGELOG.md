@@ -1,3 +1,7 @@
+# v2.5.12
+
+* _TBA_
+
 # v2.5.11
 
 * removed redundant loggers
