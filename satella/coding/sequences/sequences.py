@@ -81,3 +81,26 @@ def half_product(seq1: tp.Iterable[T], seq2: tp.Iterable[U]) -> tp.Generator[
         for j, elem2 in enumerate(seq2):
             if j >= i:
                 yield elem1, elem2
+
+
+def group_quantity(length: int, seq: tp.Iterable[T]) -> tp.Generator[tp.List[T], None, None]:
+    """
+    Slice an iterable into lists containing at most len entries.
+
+    Eg.
+
+    >>> assert list(group_quantity(3, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10])) == [[1, 2, 3], [4, 5, 6],
+    >>>                                                                     [7, 8, 9], [10]]
+
+    :param length: length for the returning sequences
+    :param seq: sequence to split
+    """
+    entries = []
+    for elem in seq:
+        if len(entries) < length:
+            entries.append(elem)
+        else:
+            yield entries
+            entries = [elem]
+    if entries:
+        yield entries

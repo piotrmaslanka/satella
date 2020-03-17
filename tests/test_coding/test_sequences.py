@@ -2,12 +2,16 @@ import logging
 import unittest
 
 from satella.coding.sequences import choose, infinite_counter, take_n, is_instance, is_last, \
-    add_next, half_product, skip_first, zip_shifted, stop_after
+    add_next, half_product, skip_first, zip_shifted, stop_after, group_quantity
 
 logger = logging.getLogger(__name__)
 
 
 class TestSequences(unittest.TestCase):
+
+    def test_group_quantity(self):
+        self.assertEqual(list(group_quantity(3, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10])),
+                         [[1, 2, 3], [4, 5, 6], [7, 8, 9], [10]])
 
     def test_stop_after(self):
         a = [1,2,3,4,5,6,7]

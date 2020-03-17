@@ -76,3 +76,8 @@ stop_after
 ----------
 
 .. autofunction:: satella.coding.sequences.stop_after
+
+group_quantity
+--------------
+
+.. autofunction:: satella.coding.sequences.group_quantity
