@@ -2,7 +2,7 @@ import os
 import sys
 import typing as tp
 
-from satella.coding import rethrow_as
+from satella.coding.recast_exceptions import rethrow_as
 from satella.exceptions import ConfigurationError
 from .base import BaseSource
 from .format import JSONSource

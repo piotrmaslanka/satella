@@ -3,7 +3,7 @@ import codecs
 import json
 import typing as tb
 
-from satella.coding import rethrow_as
+from satella.coding.recast_exceptions import rethrow_as
 from satella.exceptions import ConfigurationError
 from .base import BaseSource
 

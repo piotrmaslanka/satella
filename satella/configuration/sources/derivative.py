@@ -1,4 +1,4 @@
-from satella.coding import merge_dicts
+from satella.coding.algos import merge_dicts
 from satella.exceptions import ConfigurationError
 from .base import BaseSource
 

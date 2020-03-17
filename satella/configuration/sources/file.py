@@ -2,7 +2,7 @@ import logging
 import os
 import typing as tb
 
-from satella.coding import rethrow_as
+from satella.coding.recast_exceptions import rethrow_as
 from .base import BaseSource
 from .derivative import MergingSource
 from .format import FORMAT_SOURCES, FormatSource
