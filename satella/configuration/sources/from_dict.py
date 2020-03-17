@@ -1,7 +1,8 @@
 import copy
 import importlib
 
-from satella.coding.recast_exceptions import rethrow_as, for_argument
+from satella.coding.recast_exceptions import rethrow_as
+from satella.coding.decorators import for_argument
 from satella.configuration import sources
 from satella.configuration.sources.base import BaseSource
 from satella.exceptions import ConfigurationError
