@@ -1,6 +1,6 @@
 # v2.5.10
 
-* _TBA_
+* exported CodedCustomExceptionMetaclass
 
 # v2.5.9
 

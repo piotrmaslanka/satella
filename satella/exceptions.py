@@ -4,7 +4,7 @@ import typing as tp
 __all__ = ['BaseSatellaError', 'ResourceLockingError', 'ResourceNotLocked', 'ResourceLocked',
            'ConfigurationValidationError', 'ConfigurationError', 'ConfigurationSchemaError',
            'PreconditionError', 'MetricAlreadyExists', 'BaseSatellaException', 'CustomException',
-           'CodedCustomException']
+           'CodedCustomException', 'CodedCustomExceptionMetaclass']
 
 
 class CustomException(Exception):
@@ -47,6 +47,9 @@ def get_base_of_bases(classes):
 
 
 class CodedCustomExceptionMetaclass(type):
+    """
+    Metaclass implementing the isinstance check for coded custom exceptions
+    """
     code = None     # type: tp.Optional[tp.Any]
 
     def __instancecheck__(cls, instance):

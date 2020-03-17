@@ -75,3 +75,9 @@ Note that this won't allow you to handle exceptions like that
         self.fail()
 
 As this is a Python limitation.
+
+The CodedCustomException uses the following metaclass to accomplish
+it's magic
+
+.. autoclass:: satella.exceptions.CodedCustomExceptionMetaclass
+    :members:
