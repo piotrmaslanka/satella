@@ -1,3 +1,7 @@
+# v2.5.13
+
+* _TBA_
+
 # v2.5.12
 
 * added `iter_dict_of_list`
