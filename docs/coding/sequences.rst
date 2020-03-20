@@ -81,3 +81,8 @@ group_quantity
 --------------
 
 .. autofunction:: satella.coding.sequences.group_quantity
+
+iter_dict_of_list
+-----------------
+
+.. autofunction: satella.coding.sequences.iter_dict_of_list

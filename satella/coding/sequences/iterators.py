@@ -3,7 +3,19 @@ import itertools
 import typing as tp
 import warnings
 
+T, U = tp.TypeVar('T'), tp.TypeVar('U')
 
+
+def iter_dict_of_list(dct: tp.Dict[T, tp.List[U]]) -> tp.Generator[tp.Tuple[T, U], None, None]:
+    """
+    Presents a simple way to iterate over a dictionary whose values are lists.
+
+    This will return the dictionary key and each of the value contained in the list attached to
+    the key.
+    """
+    for key, items in dct.items():
+        for item in items:
+            yield key, item
 
 
 def infinite_counter(start_at: int = 0, step: int = 1) -> tp.Generator[int, None, None]:
