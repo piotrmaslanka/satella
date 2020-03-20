@@ -2,8 +2,10 @@ import typing as tp
 import threading
 from satella.coding.structures.proxy import Proxy
 
+T = tp.TypeVar('T')
 
-class LockedStructure(Proxy):
+
+class LockedStructure(Proxy, tp.Generic[T]):
     """
     A wizard to make every Python structure thread-safe.
 
