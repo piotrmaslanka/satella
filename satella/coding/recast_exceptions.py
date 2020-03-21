@@ -67,6 +67,7 @@ class log_exceptions:
         def inner(*args, **kwargs):
             with self:
                 return fun(*args, **kwargs)
+        return inner
 
 
 class rethrow_as:
