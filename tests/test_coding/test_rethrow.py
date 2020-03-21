@@ -16,6 +16,10 @@ class TestStuff(unittest.TestCase):
 
         raise_keyerror()
 
+        with silence_excs(KeyError):
+            with log_exceptions(logger):
+                raise_keyerror()
+
     def test_returns(self):
         @silence_excs(ValueError, returns=5)
         def throw_value_error():

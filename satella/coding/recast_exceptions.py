@@ -6,7 +6,8 @@ from .decorators import wraps
 __all__ = [
     'rethrow_as',
     'silence_excs',
-    'catch_exception'
+    'catch_exception',
+    'log_exceptions',
 ]
 
 ExcType = tp.Type[Exception]
@@ -36,12 +37,14 @@ class log_exceptions:
 
     The exception will be logged and re-raised.
 
+    Logger will be passed the exception instance as exc_info.
+
     :param logger: a logger to which the exception has to be logged
     :param severity: a severity level
     :param format_string: a format string with fields:
-        - exc_type
-        - exc_val
-        - exc_tb
+        - e      : the exception instance itself
+        - args   : arguments with which the function was called, unavailable if context manager
+        - kwargs : arguments with which the function was called, unavailable if context manager
         Example: "{exc_type} occurred with message {exc_val} with traceback {exc_tb}"
     """
     __slots__ = ('logger', 'severity', 'format_string')
@@ -56,17 +59,21 @@ class log_exceptions:
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         if exc_type is not None:
-            self.logger.log(self.severity, self.format_string.format(exc_type=exc_type,
-                                                                     exc_val=exc_val,
-                                                                     exc_tb=exc_tb),
+            self.logger.log(self.severity, self.format_string.format(e=exc_val),
                             exc_info=exc_val)
         return False
 
     def __call__(self, fun):
         @wraps(fun)
         def inner(*args, **kwargs):
-            with self:
+            try:
                 return fun(*args, **kwargs)
+            except Exception as e:
+                self.logger.log(self.severity, self.format_string.format(e=e,
+                                                                         args=args,
+                                                                         kwargs=kwargs),
+                                exc_info=e)
+                raise e
         return inner
 
 
