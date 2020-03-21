@@ -5,7 +5,8 @@
 * patched `DictObject` to inherit from `UserDict` 
   instead of `dict`
 * imports will log it's problem via warning, and now
-  to the log anymore 
+  to the log anymore
+* added [semantic versioning](https://semver.org/spec/v2.0.0.html) 
 
 # v2.5.12
 
