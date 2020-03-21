@@ -62,6 +62,12 @@ class log_exceptions:
                             exc_info=exc_val)
         return False
 
+    def __call__(self, fun):
+        @wraps(fun)
+        def inner(*args, **kwargs):
+            with self:
+                return fun(*args, **kwargs)
+
 
 class rethrow_as:
     """
