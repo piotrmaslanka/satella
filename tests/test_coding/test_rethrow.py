@@ -5,6 +5,12 @@ from satella.coding import rethrow_as, silence_excs, catch_exception
 
 class TestStuff(unittest.TestCase):
 
+    def test_returns(self):
+        @silence_excs(ValueError, returns=5)
+        def throw_value_error():
+            raise ValueError()
+        self.assertEqual(5, throw_value_error())
+
     def test_catching(self):
         def throw_value_error():
             raise ValueError()

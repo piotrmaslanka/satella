@@ -1,6 +1,7 @@
 # v2.5.13
 
 * `LockedStructure` is now generic
+* added `returns` to `rethrow_as`
 
 # v2.5.12
 

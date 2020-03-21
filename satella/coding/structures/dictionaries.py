@@ -14,7 +14,12 @@ K, V, T = tp.TypeVar('K'), tp.TypeVar('V'), tp.TypeVar('T')
 
 class DictObject(dict, tp.Generic[T]):
     """
-    A dictionary wrapper that can be accessed by attributes. Eg:
+    A dictionary wrapper that can be accessed by attributes.
+
+    You can use keys different than strings, but they will be inaccessable as attributes, and
+    you will have to do subscription to get them.
+
+    Eg:
 
     >>> a = DictObject({'test': 5})
     >>> self.assertEqual(a.test, 5)

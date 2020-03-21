@@ -12,13 +12,21 @@ ExcType = tp.Type[Exception]
 T = tp.TypeVar('T')
 
 
-def silence_excs(*exc_types: ExcType):
+def silence_excs(*exc_types: ExcType, returns=None):
     """
     Silence given exception types.
 
-    Can be either a decorator or a context manager
+    Can be either a decorator or a context manager.
+
+    If you are using it as a decorator, you can specify what value should the function return
+    by using the returns kwarg:
+
+    >>> @silence_excs(KeyError, returns=5)
+    >>> def returns_5():
+    >>>     raise KeyError()
+    >>> assert returns_5() == 5
     """
-    return rethrow_as(exc_types, None)
+    return rethrow_as(exc_types, None, returns=returns)
 
 
 class rethrow_as:
@@ -40,16 +48,26 @@ class rethrow_as:
     >>> rethrow_as((NameError, ValueError), (OSError, IOError))
 
     If the second value is a None, exception will be silenced.
+
+    If you are using it as a decorator, you can specify what value should the function return
+    by using the returns kwarg:
+
+    >>> @rethrow_as(KeyError, None, returns=5)
+    >>> def returns_5():
+    >>>     raise KeyError()
+    >>> assert returns_5() == 5
     """
-    __slots__ = ('mapping', 'exception_preprocessor')
+    __slots__ = ('mapping', 'exception_preprocessor', 'returns', '__exception_remapped')
 
     def __init__(self, *pairs: tp.Union[ExcType, tp.Tuple[ExcType, ExcType]],
-                 exception_preprocessor: tp.Optional[tp.Callable[[Exception], str]] = None):
+                 exception_preprocessor: tp.Optional[tp.Callable[[Exception], str]] = repr,
+                 returns=None):
         """
         Pass tuples of (exception to catch - exception to transform to).
 
         :param exception_preprocessor: other callable/1 to use instead of repr.
             Should return a str, a text description of the exception
+        :param returns: what value should the function return if this is used as a decorator
         """
         try:
             a, b = pairs  # throws ValueError
@@ -64,12 +82,18 @@ class rethrow_as:
 
         self.mapping = list(pairs)
         self.exception_preprocessor = exception_preprocessor or repr
+        self.returns = returns
+        self.__exception_remapped = False
 
     def __call__(self, fun: tp.Callable) -> tp.Any:
         @wraps(fun)
         def inner(*args, **kwargs):
             with self:
-                return fun(*args, **kwargs)
+                v = fun(*args, **kwargs)
+            if self.__exception_remapped:
+                return self.returns
+            else:
+                return v
 
         return inner
 
@@ -80,6 +104,7 @@ class rethrow_as:
         if exc_type is not None:
             for from_, to in self.mapping:
                 if issubclass(exc_type, from_):
+                    self.__exception_remapped = True
                     if to is None:
                         return True
                     else:
@@ -103,7 +128,7 @@ def catch_exception(exc_class: tp.Union[ExcType, tp.Tuple[ExcType]],
     >>>     return e
 
     :param exc_class: Exception classes to catch
-    :param callable: clb/0 to call to obtain it
+    :param clb: callable/0 to call to raise the exception
     :param return_instead: what to return instead of the function result if it didn't end in an
         exception
     :param return_value_on_no_exception: whether to return the function result if exception didn't
