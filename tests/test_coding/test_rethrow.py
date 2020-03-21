@@ -1,9 +1,20 @@
 import unittest
+import logging
+from satella.coding import rethrow_as, silence_excs, catch_exception, log_exceptions
 
-from satella.coding import rethrow_as, silence_excs, catch_exception
+
+logger = logging.getLogger(__name__)
 
 
 class TestStuff(unittest.TestCase):
+
+    def test_log_exceptions(self):
+        @silence_excs(KeyError)
+        @log_exceptions(logger)
+        def raise_keyerror():
+            raise KeyError('hello')
+
+        raise_keyerror()
 
     def test_returns(self):
         @silence_excs(ValueError, returns=5)

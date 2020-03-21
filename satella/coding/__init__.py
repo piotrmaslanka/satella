@@ -8,7 +8,7 @@ from .decorators import precondition, for_argument, PreconditionError, short_non
     attach_arguments, wraps
 from .fun_static import static_var
 from .metaclasses import metaclass_maker, wrap_with, dont_wrap, wrap_property
-from .recast_exceptions import rethrow_as, silence_excs, catch_exception
+from .recast_exceptions import rethrow_as, silence_excs, catch_exception, log_exceptions
 
 __all__ = [
     'Monitor', 'RMonitor', 'merge_dicts',
@@ -16,5 +16,5 @@ __all__ = [
     'precondition', 'PreconditionError', 'attach_arguments',
     'rethrow_as', 'silence_excs',
     'static_var', 'metaclass_maker',
-    'catch_exception', 'wraps', 'wrap_with', 'dont_wrap', 'wrap_property'
+    'catch_exception', 'wraps', 'wrap_with', 'dont_wrap', 'wrap_property', 'log_exceptions'
 ]

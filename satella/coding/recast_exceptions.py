@@ -1,4 +1,5 @@
 import typing as tp
+import logging
 import threading
 from .decorators import wraps
 
@@ -27,6 +28,39 @@ def silence_excs(*exc_types: ExcType, returns=None):
     >>> assert returns_5() == 5
     """
     return rethrow_as(exc_types, None, returns=returns)
+
+
+class log_exceptions:
+    """
+    Decorator/context manager to log your exceptions into the log.
+
+    The exception will be logged and re-raised.
+
+    :param logger: a logger to which the exception has to be logged
+    :param severity: a severity level
+    :param format_string: a format string with fields:
+        - exc_type
+        - exc_val
+        - exc_tb
+        Example: "{exc_type} occurred with message {exc_val} with traceback {exc_tb}"
+    """
+    __slots__ = ('logger', 'severity', 'format_string')
+
+    def __init__(self, logger, severity=logging.ERROR, format_string='{exc_val}'):
+        self.logger = logger
+        self.severity = severity
+        self.format_string = format_string
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if exc_type is not None:
+            self.logger.log(self.severity, self.format_string.format(exc_type=exc_type,
+                                                                     exc_val=exc_val,
+                                                                     exc_tb=exc_tb),
+                            exc_info=exc_val)
+        return False
 
 
 class rethrow_as:
