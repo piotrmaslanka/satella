@@ -1,12 +1,10 @@
 import importlib
-import logging
 import os
 import pkgutil
+import warnings
 import typing as tp
 
 __all__ = ['import_from', 'import_class']
-
-logger = logging.getLogger(__name__)
 
 
 def import_class(path: str) -> type:
@@ -76,8 +74,8 @@ def import_from(path: tp.List[str], package_prefix: str, all_: tp.List[str],
             try:
                 package_ref = module.__all__
             except AttributeError:
-                logger.warning('Module %s does not contain __all__, enumerating it instead',
-                               package_prefix + '.' + modname)
+                warnings.warn('Module %s does not contain __all__, enumerating it instead' %
+                              (package_prefix + '.' + modname, ), RuntimeWarning)
                 package_ref = dir(module)
 
             for item in package_ref:

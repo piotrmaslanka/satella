@@ -1,18 +1,18 @@
 import collections.abc
+import collections
 import copy
 import typing as tp
 
 from satella.coding.recast_exceptions import rethrow_as
 from satella.configuration.schema import Descriptor, descriptor_from_dict
 from satella.exceptions import ConfigurationValidationError
-from ..decorators import for_argument
 
 __all__ = ['DictObject', 'apply_dict_object', 'DictionaryView', 'TwoWayDictionary']
 
 K, V, T = tp.TypeVar('K'), tp.TypeVar('V'), tp.TypeVar('T')
 
 
-class DictObject(dict, tp.Generic[T]):
+class DictObject(tp.MutableMapping[str, T]):
     """
     A dictionary wrapper that can be accessed by attributes.
 
@@ -25,18 +25,48 @@ class DictObject(dict, tp.Generic[T]):
     >>> self.assertEqual(a.test, 5)
     """
 
+    def __init__(self, *args, **kwargs):
+        self.__data = dict(*args, **kwargs)
+
+    def __delitem__(self, k: str) -> None:
+        del self.__data[k]
+
+    def __setitem__(self, k: str, v: T) -> None:
+        self.__data[k] = v
+
+    def __getitem__(self, item: str) -> T:
+        return self.__data[item]
+
+    def __iter__(self) -> tp.Iterator[str]:
+        return iter(self.__data)
+
+    def __len__(self) -> int:
+        return len(self.__data)
+
     def __copy__(self) -> 'DictObject':
-        return DictObject(copy.copy(dict(self)))
+        return DictObject(self.__data.copy())
+
+    def __eq__(self, other: dict):
+        if isinstance(other, DictObject):
+            return self.__data == other.__data
+        else:
+            return self.__data == other
+
+    def copy(self) -> 'DictObject':
+        return DictObject(self.__data.copy())
 
     def __deepcopy__(self, memodict={}) -> 'DictObject':
-        return DictObject(copy.deepcopy(dict(self), memo=memodict))
+        return DictObject(copy.deepcopy(self.__data, memo=memodict))
 
     @rethrow_as(KeyError, AttributeError)
     def __getattr__(self, item: str) -> T:
         return self[item]
 
     def __setattr__(self, key: str, value: T) -> None:
-        self[key] = value
+        if key == '_DictObject__data':
+            return super().__setattr__(key, value)
+        else:
+            self[key] = value
 
     @rethrow_as(KeyError, AttributeError)
     def __delattr__(self, key: str) -> None:
@@ -63,7 +93,7 @@ class DictObject(dict, tp.Generic[T]):
             descriptor = descriptor_from_dict(schema)
 
         try:
-            descriptor(self)
+            descriptor(self.__data)
         except ConfigurationValidationError:
             return False
         else:
@@ -123,27 +153,6 @@ class DictionaryView(collections.abc.MutableMapping, tp.Generic[K, V]):
         self.dictionaries = [master_dict, *rest_of_dicts]
         self.propagate_deletes = propagate_deletes
 
-    @for_argument(returns=list)
-    def keys(self) -> tp.AbstractSet[K]:
-        """
-        Returns all keys found in this view
-        """
-        seen_already = set()
-        for dictionary in self.dictionaries:
-            for key in dictionary:
-                if key not in seen_already:
-                    yield key
-                    seen_already.add(key)
-
-    @for_argument(returns=list)
-    def values(self) -> tp.AbstractSet[V]:
-        seen_already = set()
-        for dictionary in self.dictionaries:
-            for key, value in dictionary.items():
-                if key not in seen_already:
-                    yield value
-                    seen_already.add(key)
-
     def __contains__(self, item: K) -> bool:
         for dictionary in self.dictionaries:
             if item in dictionary:
@@ -156,15 +165,6 @@ class DictionaryView(collections.abc.MutableMapping, tp.Generic[K, V]):
             for key in dictionary:
                 if key not in seen_already:
                     yield key
-                    seen_already.add(key)
-
-    @for_argument(returns=list)
-    def items(self) -> tp.AbstractSet[tp.Tuple[K, V]]:
-        seen_already = set()
-        for dictionary in self.dictionaries:
-            for key, value in dictionary.items():
-                if key not in seen_already:
-                    yield key, value
                     seen_already.add(key)
 
     def __len__(self) -> int:

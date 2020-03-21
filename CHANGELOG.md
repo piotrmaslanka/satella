@@ -2,6 +2,10 @@
 
 * `LockedStructure` is now generic
 * added `returns` to `rethrow_as`
+* patched `DictObject` to inherit from `UserDict` 
+  instead of `dict`
+* imports will log it's problem via warning, and now
+  to the log anymore 
 
 # v2.5.12
 

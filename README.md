@@ -13,6 +13,8 @@ Satella is an almost-zero-requirements Python 3.5+ library for writing
 server applications, especially those dealing with mundane but
 useful things. It also runs on PyPy.
 
+Satella uses [semantic versioning 2.0](https://semver.org/spec/v2.0.0.html).
+
 Satella contains, among other things:
 
 * things to help you manage your [application's configuration](satella/configuration)

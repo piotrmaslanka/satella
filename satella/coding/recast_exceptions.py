@@ -1,5 +1,5 @@
 import typing as tp
-
+import threading
 from .decorators import wraps
 
 __all__ = [
@@ -48,14 +48,6 @@ class rethrow_as:
     >>> rethrow_as((NameError, ValueError), (OSError, IOError))
 
     If the second value is a None, exception will be silenced.
-
-    If you are using it as a decorator, you can specify what value should the function return
-    by using the returns kwarg:
-
-    >>> @rethrow_as(KeyError, None, returns=5)
-    >>> def returns_5():
-    >>>     raise KeyError()
-    >>> assert returns_5() == 5
     """
     __slots__ = ('mapping', 'exception_preprocessor', 'returns', '__exception_remapped')
 
@@ -83,14 +75,18 @@ class rethrow_as:
         self.mapping = list(pairs)
         self.exception_preprocessor = exception_preprocessor or repr
         self.returns = returns
-        self.__exception_remapped = False
 
-    def __call__(self, fun: tp.Callable) -> tp.Any:
+        # this is threading.local because two threads may execute the same function at the
+        # same time, and exceptions from one function would leak to another
+        self.__exception_remapped = threading.local()
+
+    def __call__(self, fun: tp.Callable) -> tp.Callable:
         @wraps(fun)
         def inner(*args, **kwargs):
             with self:
                 v = fun(*args, **kwargs)
-            if self.__exception_remapped:
+            if self.__exception_remapped.was_raised:
+                # This means that the normal flow of execution was interrupted
                 return self.returns
             else:
                 return v
@@ -98,13 +94,14 @@ class rethrow_as:
         return inner
 
     def __enter__(self):
+        self.__exception_remapped.was_raised = False
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         if exc_type is not None:
             for from_, to in self.mapping:
                 if issubclass(exc_type, from_):
-                    self.__exception_remapped = True
+                    self.__exception_remapped.was_raised = True
                     if to is None:
                         return True
                     else:
