@@ -1,3 +1,7 @@
+# v2.5.14
+
+* _TBA_
+
 # v2.5.13
 
 * `LockedStructure` is now generic
