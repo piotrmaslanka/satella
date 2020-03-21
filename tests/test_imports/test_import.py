@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 class TestImports(unittest.TestCase):
     def test_imports(self):
         import tests.test_imports.importa
-        with warnings.catch_warnings() as warns:
+        with warnings.catch_warnings(record=True) as warns:
             tests.test_imports.importa.do_import()
         self.assertGreater(len(warns), 0)
 
