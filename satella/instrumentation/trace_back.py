@@ -1,22 +1,3 @@
-"""
-Allows you to preserve entire stack frame along with all variables (even
- pickles them).
-
-After this, you can send this report somewhere. At target, it will be unpickled
- in a safe way
-(without importing anything extra from environment). You can unpickle
-particular variables stored,
-but that may involve an import.
-
-Use in such a way:
-
->>> try:
->>>     ...
->>> except WhateverError as e:
->>>     tp = Traceback()
->>>     print(tp.pretty_print())
->>>     # you can now pickle it if you wish to
-"""
 import inspect
 import io
 import sys
@@ -41,6 +22,11 @@ class GenerationPolicy:
     For a "default" policy it's pretty customizable
 
     Override if need be, and pass the class (or instance) to Traceback
+
+    :param enable_pickling: bool, whether to enable pickling at all
+    :param compress_at: pickles longer than this (bytes) will be compressed
+    :param repr_length_limit: maximum length of __repr__. None for no limit.
+    :param compression_level: "1" is fastest, "9" is slowest
     """
     __slots__ = ('enable_pickling', 'compress_at', 'repr_length_limit', 'compression_level')
 
@@ -48,13 +34,6 @@ class GenerationPolicy:
                  compress_at: int = 128 * 1024,
                  repr_length_limit: int = 128 * 1024,
                  compression_level: int = 6):
-        """
-
-        :param enable_pickling: bool, whether to enable pickling at all
-        :param compress_at: pickles longer than this (bytes) will be compressed
-        :param repr_length_limit: maximum length of __repr__. None for no limit.
-        :param compression_level: "1" is fastest, "9" is slowest
-        """
         assert isinstance(compression_level, int) and 1 <= compression_level <= 9
 
         self.enable_pickling = enable_pickling          # type: bool
@@ -124,16 +103,14 @@ class StoredVariableValue:
             "failed/gzip" - compression failed, pickle contains a UTF-8 text with
                 human-readable exception reason
 
+    If value cannot be pickled, it's repr will be at least preserved
+
+    :param value: any Python value to preserve
+    :param policy: policy to use (instance)
     """
     __slots__ = ('repr', 'type_', 'pickle', 'pickle_type')
 
     def __init__(self, value: tp.Any, policy: tp.Optional[GenerationPolicy] = None):
-        """
-        If value cannot be pickled, it's repr will be at least preserved
-
-        :param value: any Python value to preserve
-        :param policy: policy to use (instance)
-        """
         self.repr = repr(value)             # type: str
         self.type_ = repr(type(value))      # type: str
 
@@ -200,9 +177,6 @@ class StackFrame:
     __slots__ = ('locals', 'globals', 'name', 'filename', 'lineno')
 
     def __init__(self, frame: types.FrameType, policy: GenerationPolicy):
-        """
-        :type frame: Python stack frame
-        """
         self.name = frame.f_code.co_name                # type: str
         self.filename = frame.f_code.co_filename        # type: str
         self.lineno = frame.f_lineno                    # type: int
@@ -216,26 +190,24 @@ class StackFrame:
             self.globals[key] = StoredVariableValue(value, policy)
 
 
-class Traceback(object):
+class Traceback:
     """
     Class used to preserve exceptions and chains of stack frames.
      Picklable.
+
+    If starting frame is not given, an exception must be in progress.
+
+    :param starting_frame: frame to start tracking the traceback from.
+        Must be either None, in which case an exception must be in progress and will be taken
+        else must be an instance of <class 'frame'>.
+    :param policy: policy for traceback generation
+    :raise ValueError: there is no traceback to get info from!
+        Is any exception in process?
      """
     __slots__ = ('formatted_traceback', 'frames')
 
     def __init__(self, starting_frame: tp.Optional[types.FrameType] = None,
                  policy=GenerationPolicy):
-        """
-        To be invoked while processing an exception is in progress
-
-        :param starting_frame: frame to start tracking the traceback from.
-            Must be either None, in which case an exception must be in progress and will be taken
-            else must be an instance of <class 'frame'>.
-        :param policy: policy for traceback generation
-        :raise ValueError: there is no traceback to get info from!
-            Is any exception in process?
-        """
-
         if inspect.isclass(policy):
             value_pickling_policy = policy()
         else:
