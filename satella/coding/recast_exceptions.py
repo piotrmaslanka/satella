@@ -45,22 +45,39 @@ class log_exceptions:
         - e      : the exception instance itself
         - args   : arguments with which the function was called, unavailable if context manager
         - kwargs : arguments with which the function was called, unavailable if context manager
+        You can specify additional fields providing the locals_ argument
         Example: "{exc_type} occurred with message {exc_val} with traceback {exc_tb}"
+    :param locals_: local variables to add to the format string. args and kwargs will be overwritten
+        by this, but e will never be overwritten.
+    :param exc_types: logger will log only on those exceptions. Default is None which means
+        log on all exceptions
     """
-    __slots__ = ('logger', 'severity', 'format_string')
+    __slots__ = ('logger', 'severity', 'format_string', 'locals', 'exc_types')
 
-    def __init__(self, logger, severity=logging.ERROR, format_string='{exc_val}'):
+    def __init__(self, logger, severity=logging.ERROR, format_string='{exc_val}',
+                 locals_: tp.Optional[tp.Dict] = None,
+                 exc_types: tp.Optional[tp.Union[ExcType, tp.Sequence[ExcType]]] = None):
         self.logger = logger
         self.severity = severity
         self.format_string = format_string
+        self.locals = locals_
+        if exc_types is None:
+            self.exc_types = Exception
+        else:
+            self.exc_types = exc_types
 
     def __enter__(self):
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         if exc_type is not None:
-            self.logger.log(self.severity, self.format_string.format(e=exc_val),
-                            exc_info=exc_val)
+            if issubclass(exc_type, self.exc_types):
+                format_dict = {}
+                if self.locals is not None:
+                    format_dict.update(self.locals)
+                format_dict['e'] = exc_val
+                self.logger.log(self.severity, self.format_string.format(format_dict),
+                                exc_info=exc_val)
         return False
 
     def __call__(self, fun):
@@ -69,10 +86,14 @@ class log_exceptions:
             try:
                 return fun(*args, **kwargs)
             except Exception as e:
-                self.logger.log(self.severity, self.format_string.format(e=e,
-                                                                         args=args,
-                                                                         kwargs=kwargs),
-                                exc_info=e)
+                if isinstance(e, self.exc_types):
+                    format_dict = {'args': args,
+                                   'kwargs': kwargs}
+                    if self.locals is not None:
+                        format_dict.update(self.locals)
+                    format_dict['e'] = e
+                    self.logger.log(self.severity, self.format_string.format(format_dict),
+                                    exc_info=e)
                 raise e
         return inner
 

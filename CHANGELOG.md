@@ -1,6 +1,6 @@
 # v2.5.15
 
-* _TBA_
+* added extra options to `log_exceptions`
 
 # v2.5.14
 

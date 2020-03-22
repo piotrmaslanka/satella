@@ -8,6 +8,8 @@ Functions and decorators
 
 .. autofunction:: satella.coding.silence_excs
 
+.. autoclass:: satella.coding.log_exceptions
+
 .. autoclass:: satella.coding.rethrow_as
     :members:
 

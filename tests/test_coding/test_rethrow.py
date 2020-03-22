@@ -9,8 +9,10 @@ logger = logging.getLogger(__name__)
 class TestStuff(unittest.TestCase):
 
     def test_log_exceptions(self):
+        a = 5
+
         @silence_excs(KeyError)
-        @log_exceptions(logger)
+        @log_exceptions(logger, logging.CRITICAL, '{a} {e} {args}', locals())
         def raise_keyerror():
             raise KeyError('hello')
 
