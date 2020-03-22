@@ -1,6 +1,6 @@
 import typing as tp
 import threading
-from satella.coding.structures.proxy import Proxy
+from ..structures.proxy import Proxy
 
 T = tp.TypeVar('T')
 
@@ -24,7 +24,7 @@ class LockedStructure(Proxy, tp.Generic[T]):
     Note that in-place operations return the locked structure.
     """
 
-    def __init__(self, obj_to_wrap, lock: tp.Optional[threading.Lock] = None):
+    def __init__(self, obj_to_wrap: T, lock: tp.Optional[threading.Lock] = None):
         super().__init__(obj_to_wrap)
         self.__lock = lock or threading.Lock()
 
@@ -40,3 +40,4 @@ class LockedStructure(Proxy, tp.Generic[T]):
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.__lock.release()
+        return False
