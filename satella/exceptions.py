@@ -4,7 +4,7 @@ import typing as tp
 __all__ = ['BaseSatellaError', 'ResourceLockingError', 'ResourceNotLocked', 'ResourceLocked',
            'ConfigurationValidationError', 'ConfigurationError', 'ConfigurationSchemaError',
            'PreconditionError', 'MetricAlreadyExists', 'BaseSatellaException', 'CustomException',
-           'CodedCustomException', 'CodedCustomExceptionMetaclass']
+           'CodedCustomException', 'CodedCustomExceptionMetaclass', 'WouldWaitMore']
 
 
 class CustomException(Exception):
