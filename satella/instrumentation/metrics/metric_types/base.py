@@ -17,7 +17,7 @@ class MetricLevel(enum.IntEnum):
         return self.value >= other.value
 
 
-# todo deprecated, remove in 2.8.x maybe?
+# todo deprecated, remove in 3.0 maybe?
 DISABLED = MetricLevel.DISABLED
 RUNTIME = MetricLevel.RUNTIME
 DEBUG = MetricLevel.DEBUG
@@ -84,7 +84,7 @@ class Metric:
 
         assert not (
                 self.name == '' and self.level == MetricLevel.INHERIT), 'Unable to set INHERIT for root metric!'
-        self.children = []
+        self.children = []      # type: tp.List[Metric]
 
     def get_timestamp(self) -> tp.Optional[float]:
         """Return this timestamp, or None if no timestamp support is enabled"""
@@ -125,7 +125,11 @@ class Metric:
         return output
 
     def _handle(self, *args, **kwargs) -> None:
-        """To be overridden!"""
+        """
+        To be overridden!
+
+        The right place to process your data, after it's level was verified by :meth:`Metric.handle`
+        """
         raise TypeError('This is a container metric!')
 
     @for_argument(None, MetricLevel)

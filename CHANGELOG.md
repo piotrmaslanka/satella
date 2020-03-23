@@ -7,6 +7,12 @@ levels were ints. They are subclasses of an
 `enum.intEnum` how, but ints are still accepted
 as a argument.
 
+Furthermore, directly importing logging levels
+(as RUNTIME, DEBUG, etc.) is deprecated. Import
+MetricLevel instead.
+
+These imports will be removed in v3.0.
+
 * changed metric levels from ints to an enum
 
 # v2.5.15

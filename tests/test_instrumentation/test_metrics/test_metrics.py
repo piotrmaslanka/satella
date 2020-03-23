@@ -233,7 +233,7 @@ class TestMetric(unittest.TestCase):
         self.assertTrue(getMetric().to_metric_data().strict_eq(
             MetricDataCollection(MetricData('root.test.FloatValue', 2.0))))
 
-        metric_parent.level = RUNTIME
+        metric_parent.level = MetricLevel.RUNTIME
         metric.debug(3.0)
 
         self.assertTrue(getMetric('', enable_timestamp=False).to_metric_data().strict_eq(
