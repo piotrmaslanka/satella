@@ -13,7 +13,8 @@ class MeasurableMixin:
     Add a .measure() method, useful for HistogramMetric and SummaryMetric
     """
 
-    def measure(self, include_exceptions: bool = True, logging_level: int = MetricLevel,
+    def measure(self, include_exceptions: bool = True,
+                logging_level: MetricLevel = MetricLevel.RUNTIME,
                 value_getter: tp.Callable[[], float] = time.monotonic, **labels):
         """
         A decorator to measure a difference between some value after the method call

@@ -1,6 +1,12 @@
 # v2.6.0
 
-** Possibly API breaking change! **
+**Possibly API breaking change!**
+
+You will be impacted if you assume that metric 
+levels were ints. They are subclasses of an 
+`enum.intEnum` how, but ints are still accepted
+as a argument.
+
 * changed metric levels from ints to an enum
 
 # v2.5.15

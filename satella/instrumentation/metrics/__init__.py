@@ -2,12 +2,13 @@ import itertools
 import threading
 import typing as tp
 
-from .metric_types import METRIC_NAMES_TO_CLASSES, MetricLevel, Metric
+from .metric_types import METRIC_NAMES_TO_CLASSES, MetricLevel, Metric, DEBUG, DISABLED, \
+    INHERIT, RUNTIME
 from .data import MetricDataCollection, MetricData
 from satella.exceptions import MetricAlreadyExists
 
 __all__ = ['getMetric', 'MetricLevel', 'MetricDataCollection',
-           'MetricData', 'Metric']
+           'MetricData', 'Metric', 'DISABLED', 'DEBUG', 'INHERIT', 'RUNTIME']
 
 metrics = {}
 metrics_lock = threading.Lock()

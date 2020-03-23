@@ -2,6 +2,8 @@ import enum
 import time
 import typing as tp
 
+from satella.coding.decorators import for_argument
+
 from ..data import MetricData, MetricDataCollection
 
 
@@ -13,6 +15,13 @@ class MetricLevel(enum.IntEnum):
 
     def __ge__(self, other: 'MetricLevel') -> bool:
         return self.value >= other.value
+
+
+# todo deprecated, remove in 2.8.x maybe?
+DISABLED = MetricLevel.DISABLED
+RUNTIME = MetricLevel.RUNTIME
+DEBUG = MetricLevel.DEBUG
+INHERIT = MetricLevel.INHERIT
 
 
 class Metric:
@@ -55,7 +64,8 @@ class Metric:
                 del metrics.metrics[self.get_fully_qualified_name()]
         self.children = []
 
-    def __init__(self, name, root_metric: 'Metric' = None, metric_level: str = None,
+    def __init__(self, name, root_metric: 'Metric' = None,
+                 metric_level: tp.Optional[tp.Union[MetricLevel, int]] = None,
                  internal: bool = False,
                  *args, **kwargs):
         """When reimplementing the method, remember to pass kwargs here!"""
@@ -67,7 +77,7 @@ class Metric:
                 metric_level = MetricLevel.RUNTIME
             else:
                 metric_level = MetricLevel.INHERIT
-        self._level = metric_level  # type: MetricLevel
+        self._level = MetricLevel(metric_level)  # type: MetricLevel
         self.enable_timestamp = kwargs.get('enable_timestamp', False)
         self.last_updated = time.time() if self.enable_timestamp else None \
             # type: tp.Optional[float]
@@ -91,6 +101,7 @@ class Metric:
         return metric._level
 
     @level.setter
+    @for_argument(None, MetricLevel)
     def level(self, value: MetricLevel) -> None:
         assert not (
                     value == MetricLevel.INHERIT and self.name == ''), 'Cannot set INHERIT for the root metric!'
@@ -117,7 +128,8 @@ class Metric:
         """To be overridden!"""
         raise TypeError('This is a container metric!')
 
-    def handle(self, level: int, *args, **kwargs) -> None:
+    @for_argument(None, MetricLevel)
+    def handle(self, level: tp.Union[int, MetricLevel], *args, **kwargs) -> None:
         if self.can_process_this_level(level):
             if self.enable_timestamp:
                 self.last_updated = time.time()
