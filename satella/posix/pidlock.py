@@ -1,5 +1,4 @@
 import os
-
 import psutil
 
 from satella.exceptions import LockIsHeld

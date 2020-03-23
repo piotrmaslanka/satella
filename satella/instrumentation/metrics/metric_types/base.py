@@ -1,12 +1,18 @@
+import enum
 import time
 import typing as tp
 
 from ..data import MetricData, MetricDataCollection
 
-DISABLED = 1
-RUNTIME = 2
-DEBUG = 3
-INHERIT = 4
+
+class MetricLevel(enum.IntEnum):
+    DISABLED = 1
+    RUNTIME = 2
+    DEBUG = 3
+    INHERIT = 4
+
+    def __ge__(self, other: 'MetricLevel') -> bool:
+        return self.value >= other.value
 
 
 class Metric:
@@ -41,7 +47,7 @@ class Metric:
         if self.name == '':
             with metrics.metrics_lock:
                 metrics.metrics = {}
-                metrics.level = RUNTIME
+                metrics.level = MetricLevel.RUNTIME
         else:
             with metrics.metrics_lock:
                 metrics.metrics = {k: v for k, v in metrics.metrics.items() if
@@ -58,16 +64,16 @@ class Metric:
         self.internal = internal
         if metric_level is None:
             if self.name == '':
-                metric_level = RUNTIME
+                metric_level = MetricLevel.RUNTIME
             else:
-                metric_level = INHERIT
-        self._level = metric_level
+                metric_level = MetricLevel.INHERIT
+        self._level = metric_level  # type: MetricLevel
         self.enable_timestamp = kwargs.get('enable_timestamp', False)
         self.last_updated = time.time() if self.enable_timestamp else None \
             # type: tp.Optional[float]
 
         assert not (
-                self.name == '' and self.level == INHERIT), 'Unable to set INHERIT for root metric!'
+                self.name == '' and self.level == MetricLevel.INHERIT), 'Unable to set INHERIT for root metric!'
         self.children = []
 
     def get_timestamp(self) -> tp.Optional[float]:
@@ -78,21 +84,22 @@ class Metric:
         return self.name
 
     @property
-    def level(self) -> int:
+    def level(self) -> MetricLevel:
         metric = self
-        while metric._level == INHERIT:
+        while metric._level == MetricLevel.INHERIT:
             metric = metric.root_metric
         return metric._level
 
     @level.setter
-    def level(self, value: int) -> None:
-        assert not (value == INHERIT and self.name == ''), 'Cannot set INHERIT for the root metric!'
+    def level(self, value: MetricLevel) -> None:
+        assert not (
+                    value == MetricLevel.INHERIT and self.name == ''), 'Cannot set INHERIT for the root metric!'
         self._level = value
 
     def append_child(self, metric: 'Metric'):
         self.children.append(metric)
 
-    def can_process_this_level(self, target_level: int) -> bool:
+    def can_process_this_level(self, target_level: MetricLevel) -> bool:
         return self.level >= target_level
 
     def to_metric_data(self) -> MetricDataCollection:
@@ -107,10 +114,8 @@ class Metric:
         return output
 
     def _handle(self, *args, **kwargs) -> None:
-        """
-        Override me!
-        """
-        raise NotImplementedError('This is an abstract method!')
+        """To be overridden!"""
+        raise TypeError('This is a container metric!')
 
     def handle(self, level: int, *args, **kwargs) -> None:
         if self.can_process_this_level(level):
@@ -119,10 +124,10 @@ class Metric:
             return self._handle(*args, **kwargs)
 
     def debug(self, *args, **kwargs):
-        self.handle(DEBUG, *args, **kwargs)
+        self.handle(MetricLevel.DEBUG, *args, **kwargs)
 
     def runtime(self, *args, **kwargs):
-        self.handle(RUNTIME, *args, **kwargs)
+        self.handle(MetricLevel.RUNTIME, *args, **kwargs)
 
 
 class LeafMetric(Metric):
@@ -167,11 +172,11 @@ class EmbeddedSubmetrics(LeafMetric):
     def __init__(self, name, root_metric: 'Metric' = None, metric_level: str = None,
                  labels: tp.Optional[dict] = None, internal: bool = False, *args, **kwargs):
         super().__init__(name, root_metric, metric_level, labels, internal, *args, **kwargs)
-        self.args = args                          # type: tp.List
-        self.kwargs = kwargs                      # type: tp.Dict
+        self.args = args  # type: tp.List
+        self.kwargs = kwargs  # type: tp.Dict
         self.embedded_submetrics_enabled = False  # type: bool
-        self.children_mapping = {}                # type: tp.Dict[tp.Any, Metric]
-        self.last_updated = time.time()           # type: float
+        self.children_mapping = {}  # type: tp.Dict[tp.Any, Metric]
+        self.last_updated = time.time()  # type: float
 
     def _handle(self, *args, **labels):
         if self.enable_timestamp:
@@ -215,4 +220,5 @@ class EmbeddedSubmetrics(LeafMetric):
         and having a particular set of labels, and being of level INHERIT.
         """
 
-        return self.__class__(self.name, self, INHERIT, *self.args, labels=labels, **self.kwargs)
+        return self.__class__(self.name, self, MetricLevel.INHERIT, *self.args, labels=labels,
+                              **self.kwargs)

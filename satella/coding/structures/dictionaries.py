@@ -55,8 +55,8 @@ class DictObject(tp.MutableMapping[str, T]):
     def copy(self) -> 'DictObject':
         return DictObject(self.__data.copy())
 
-    def __deepcopy__(self, memodict={}) -> 'DictObject':
-        return DictObject(copy.deepcopy(self.__data, memo=memodict))
+    def __deepcopy__(self, memo) -> 'DictObject':
+        return DictObject(copy.deepcopy(self.__data, memo))
 
     @rethrow_as(KeyError, AttributeError)
     def __getattr__(self, item: str) -> T:
@@ -142,8 +142,8 @@ class DictionaryView(collections.abc.MutableMapping, tp.Generic[K, V]):
     def __copy__(self):
         return DictionaryView(*copy.copy(self.dictionaries))
 
-    def __deepcopy__(self, memodict={}):
-        return DictionaryView(*copy.deepcopy(self.dictionaries, memo=memodict))
+    def __deepcopy__(self, memo):
+        return DictionaryView(*copy.deepcopy(self.dictionaries, memo))
 
     def __init__(self, master_dict: tp.Dict[K, V], *rest_of_dicts: tp.Dict[K, V],
                  propagate_deletes: bool = True,

@@ -20,7 +20,7 @@ class BaseCondition(metaclass=ABCMeta):
         """Has this severity level been reached?"""
 
 
-class MemoryCondition(BaseCondition):
+class MemoryCondition(BaseCondition, metaclass=ABCMeta):
     __slots__ = ('value', )
 
     def __init__(self, value: int):

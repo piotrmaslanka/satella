@@ -98,7 +98,6 @@ class TerminableThread(threading.Thread):
         This should block for as long as a single check will take, as termination checks take place
         between calls.
         """
-        raise NotImplementedError('Override me!')
 
     def run(self) -> None:
         """

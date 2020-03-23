@@ -54,14 +54,14 @@ The JSON schema consists of defining particular sources, embedded in one another
     }
 
 If an argument consists of a dict with ``type`` key, it will be also loaded and passed internally as a source.
-Two reserved types are ``lambda``, which expects to have a key of ``operation``. This will be appended to
+One of three reserved types is ``lambda``, which expects to have a key of ``operation``. This will be appended to
 ``lambda x: `` and ``eval()``-uated.
 
 Always you can provide a key called ``optional`` with a value of True, this will wrap given Source in OptionalSource.
 
 The second reserved type if ``binary``. This will encode the ``value`` key with ``encoding`` encoding (default is ascii).
 
-An extra type is ``import``. It imports an expression and calls it with
+The third reserved type is ``import``. It imports an expression and calls it with
 discovered value, returning the output.
 
 It accepts the following variables:
@@ -102,6 +102,5 @@ To instantiate the schema, use the following functions:
 .. autofunction:: satella.configuration.sources.load_source_from_list
 
 Please note that if your attacker has control over these files, he might
-provoke the application into executing arbitrary Python.
-
-**Sanitize your inputs!**
+provoke the application into executing arbitrary Python, so
+remember to **sanitize your inputs!**

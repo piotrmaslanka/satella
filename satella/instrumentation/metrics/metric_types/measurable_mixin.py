@@ -5,9 +5,7 @@ import time
 
 from satella.coding import wraps
 
-from .base import RUNTIME
-
-
+from .base import MetricLevel
 
 
 class MeasurableMixin:
@@ -15,7 +13,7 @@ class MeasurableMixin:
     Add a .measure() method, useful for HistogramMetric and SummaryMetric
     """
 
-    def measure(self, include_exceptions: bool = True, logging_level: int = RUNTIME,
+    def measure(self, include_exceptions: bool = True, logging_level: int = MetricLevel,
                 value_getter: tp.Callable[[], float] = time.monotonic, **labels):
         """
         A decorator to measure a difference between some value after the method call
@@ -35,7 +33,7 @@ class MeasurableMixin:
 
         It also can be used as a context manager:
 
-        >>> with call_time.measure(logging_level=DEBUG, label='key'):
+        >>> with call_time.measure(logging_level=MetricLevel.DEBUG, label='key'):
         >>>     ...
 
         :param include_exceptions: whether to include exceptions

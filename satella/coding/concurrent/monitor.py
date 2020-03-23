@@ -170,8 +170,8 @@ class MonitorList(tp.Generic[T], collections.UserList, Monitor):
     def __copy__(self):
         return MonitorList(copy.copy(self.data))
 
-    def __deepcopy__(self, memodict={}):
-        return MonitorList(copy.deepcopy(self.data, memo=memodict))
+    def __deepcopy__(self, memo):
+        return MonitorList(copy.deepcopy(self.data, memo))
 
     def __getitem__(self, item: tp.Union[slice, int]) -> T:
         return self.data[item]
@@ -202,5 +202,5 @@ class MonitorDict(tp.Generic[K, V], collections.UserDict, Monitor):
     def __copy__(self):
         return MonitorDict(copy.copy(self.data))
 
-    def __deepcopy__(self, memodict={}):
-        return MonitorDict(copy.deepcopy(self.data, memo=memodict))
+    def __deepcopy__(self, memo):
+        return MonitorDict(copy.deepcopy(self.data, memo))

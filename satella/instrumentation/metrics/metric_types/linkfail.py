@@ -2,10 +2,9 @@
 import typing as tp
 
 from ..data import MetricDataCollection, MetricData
-from .base import EmbeddedSubmetrics
+from .base import EmbeddedSubmetrics, MetricLevel
 from .registry import register_metric
 import collections
-
 
 
 @register_metric
@@ -27,7 +26,8 @@ class LinkfailMetric(EmbeddedSubmetrics):
 
     CLASS_NAME = 'linkfail'
 
-    def __init__(self, name: str, root_metric: 'Metric' = None, metric_level: str = None,
+    def __init__(self, name: str, root_metric: 'Metric' = None,
+                 metric_level: tp.Optional[MetricLevel] = None,
                  labels: tp.Optional[dict] = None, internal: bool = False,
                  consecutive_failures_to_offline: int = 100,
                  consecutive_successes_to_online: int = 10,
@@ -73,7 +73,7 @@ class LinkfailMetric(EmbeddedSubmetrics):
         keys = keys.union(set(self.consecutive_failures.keys()))
         for address in keys:
             labels = self.labels.copy()
-            if keys != set([0]):
+            if keys != {0}:
                 labels.update(address=address)
             mdc += MetricData(self.name+'.consecutive_failures', self.consecutive_failures[address],
                               labels, self.get_timestamp(), self.internal)

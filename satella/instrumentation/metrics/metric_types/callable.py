@@ -2,7 +2,7 @@ import typing as tp
 import time
 
 from ..data import MetricDataCollection, MetricData
-from .base import LeafMetric
+from .base import LeafMetric, MetricLevel
 from .registry import register_metric
 
 
@@ -19,7 +19,8 @@ class CallableMetric(LeafMetric):
 
     __slots__ = ('callable', )
 
-    def __init__(self, name, root_metric: 'Metric' = None, metric_level: str = None,
+    def __init__(self, name, root_metric: 'Metric' = None,
+                 metric_level: tp.Optional[MetricLevel] = None,
                  labels: tp.Optional[dict] = None, internal: bool = False,
                  value_getter: tp.Callable[[], float] = lambda: 0, *args, **kwargs):
         super().__init__(name, root_metric, metric_level, labels, internal, *args, **kwargs)

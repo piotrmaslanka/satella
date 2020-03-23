@@ -4,7 +4,7 @@ import typing as tp
 __all__ = ['BaseSatellaError', 'ResourceLockingError', 'ResourceNotLocked', 'ResourceLocked',
            'ConfigurationValidationError', 'ConfigurationError', 'ConfigurationSchemaError',
            'PreconditionError', 'MetricAlreadyExists', 'BaseSatellaException', 'CustomException',
-           'CodedCustomException', 'CodedCustomExceptionMetaclass', 'WouldWaitMore']
+           'CodedCustomException', 'CodedCustomExceptionMetaclass', 'WouldWaitMore', 'LockIsHeld']
 
 
 class CustomException(Exception):
@@ -57,7 +57,7 @@ class CodedCustomExceptionMetaclass(type):
             return True
 
         if cls is CodedCustomException:
-            return super().__instancecheck__(cls, instance)
+            return super().__instancecheck__(instance)
 
         class_base = (cls, )
         while CodedCustomException not in get_base_of_bases(class_base) and class_base:

@@ -45,6 +45,7 @@ class PrometheusHTTPExporterThread(TerminableThread):
         service or the hostname
     :param enable_metric: whether to enable the metric
     """
+
     __slots__ = ('interface', 'port', 'httpd')
 
     def __init__(self, interface: str, port: int, extra_labels: tp.Optional[dict] = None,

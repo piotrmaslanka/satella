@@ -8,8 +8,6 @@ from .registry import register_metric
 from ..data import MetricData, MetricDataCollection
 
 
-
-
 @register_metric
 class ClicksPerTimeUnitMetric(EmbeddedSubmetrics):
     """

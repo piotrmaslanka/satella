@@ -4,8 +4,6 @@ from satella.json import JSONAble
 from satella.coding.structures import frozendict
 
 
-
-
 def join_metric_data_name(prefix: str, name: str):
     if prefix == '':
         return name

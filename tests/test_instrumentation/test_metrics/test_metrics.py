@@ -4,7 +4,7 @@ import time
 import unittest
 
 from satella.exceptions import MetricAlreadyExists
-from satella.instrumentation.metrics import getMetric, DEBUG, RUNTIME, INHERIT, MetricData, \
+from satella.instrumentation.metrics import getMetric, MetricLevel, MetricData, \
     MetricDataCollection
 
 logger = logging.getLogger(__name__)
@@ -208,11 +208,11 @@ class TestMetric(unittest.TestCase):
             counter.to_metric_data()))
 
     def test_base_metric(self):
-        metric2 = getMetric('root.test.FloatValue', 'float', DEBUG, enable_timestamp=False)
+        metric2 = getMetric('root.test.FloatValue', 'float', MetricLevel.DEBUG, enable_timestamp=False)
         metric2.runtime(2.0)
         metric2.debug(1.0)
 
-        metric3 = getMetric('root.test.IntValue', 'int', RUNTIME, enable_timestamp=False)
+        metric3 = getMetric('root.test.IntValue', 'int', MetricLevel.RUNTIME, enable_timestamp=False)
         self.assertEqual(metric3.get_fully_qualified_name(), 'root.test.IntValue')
         metric3.runtime(3)
         metric3.debug(2)
@@ -225,7 +225,8 @@ class TestMetric(unittest.TestCase):
                 MetricData('root.test.IntValue', 3)).strict_eq(root_metric.to_metric_data()))
 
     def testInheritance(self):
-        metric = getMetric('root.test.FloatValue', 'float', INHERIT, enable_timestamp=False)
+        metric = getMetric('root.test.FloatValue', 'float', MetricLevel.INHERIT,
+                           enable_timestamp=False)
         metric.runtime(2.0)
         metric_parent = getMetric('root.test', enable_timestamp=False)
         self.assertEqual(metric_parent.get_fully_qualified_name(), 'root.test')

@@ -17,6 +17,10 @@ modules or classes. It can be in one of 4 states:
 * DEBUG
 * INHERIT
 
+These are contained in a enum:
+
+.. autoclass:: satella.instrumentation.metrics.MetricLevel
+
 By default, it runs in *RUNTIME* mode. This means that statistics
 are collected only from metrics of this
 instrument that are set to at least RUNTIME. If a user wants to
@@ -43,7 +47,7 @@ The call to ``getMetric()`` is specified as follows
 
 You obtain metrics using ``getMetric()`` as follows:
 
-    ``metric = getMetric(__name__+'.StringMetric', 'string', RUNTIME, **kwargs)``
+    ``metric = getMetric(__name__+'.StringMetric', 'string', MetricLevel.RUNTIME, **kwargs)``
 
 **internal** is for those cases where the application is the consumer of
 the metrics, and you don't want them exposed to outside.

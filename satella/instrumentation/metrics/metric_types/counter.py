@@ -1,4 +1,5 @@
-from .base import EmbeddedSubmetrics
+import typing as tp
+from .base import EmbeddedSubmetrics, MetricLevel
 from .measurable_mixin import MeasurableMixin
 from ..data import MetricData, MetricDataCollection
 from .registry import register_metric
@@ -16,7 +17,8 @@ class CounterMetric(EmbeddedSubmetrics, MeasurableMixin):
 
     CLASS_NAME = 'counter'
 
-    def __init__(self, name, root_metric: 'Metric' = None, metric_level: str = None,
+    def __init__(self, name, root_metric: 'Metric' = None,
+                 metric_level: tp.Optional[MetricLevel] = None,
                  internal: bool = False,
                  sum_children: bool = True,
                  count_calls: bool = False, *args, **kwargs):

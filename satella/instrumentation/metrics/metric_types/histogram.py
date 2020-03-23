@@ -1,7 +1,7 @@
 import math
 import typing as tp
 import itertools
-from .base import EmbeddedSubmetrics
+from .base import EmbeddedSubmetrics, MetricLevel
 from .measurable_mixin import MeasurableMixin
 from .registry import register_metric
 from ..data import MetricData, MetricDataCollection
@@ -22,7 +22,8 @@ class HistogramMetric(EmbeddedSubmetrics, MeasurableMixin):
 
     CLASS_NAME = 'histogram'
 
-    def __init__(self, name: str, root_metric: 'Metric' = None, metric_level: str = None,
+    def __init__(self, name: str, root_metric: 'Metric' = None,
+                 metric_level: tp.Optional[MetricLevel] = None,
                  internal: bool = False,
                  buckets: tp.Sequence[float] = (.005, .01, .025, .05, .075, .1, .25, .5,
                                                 .75, 1.0, 2.5, 5.0, 7.5, 10.0),

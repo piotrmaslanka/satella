@@ -5,13 +5,10 @@ import typing as tp
 
 import math
 
-from .base import EmbeddedSubmetrics
+from .base import EmbeddedSubmetrics, MetricLevel
 from .measurable_mixin import MeasurableMixin
 from .registry import register_metric
 from ..data import MetricData, MetricDataCollection
-
-
-
 
 
 # shamelessly taken from
@@ -51,7 +48,8 @@ class SummaryMetric(EmbeddedSubmetrics, MeasurableMixin):
 
     CLASS_NAME = 'summary'
 
-    def __init__(self, name, root_metric: 'Metric' = None, metric_level: str = None,
+    def __init__(self, name, root_metric: 'Metric' = None,
+                 metric_level: tp.Optional[MetricLevel] = None,
                  internal: bool = False,
                  last_calls: int = 100, quantiles: tp.Sequence[float] = (0.5, 0.95),
                  aggregate_children: bool = True,

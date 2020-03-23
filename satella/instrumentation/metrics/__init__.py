@@ -2,11 +2,11 @@ import itertools
 import threading
 import typing as tp
 
-from .metric_types import METRIC_NAMES_TO_CLASSES, RUNTIME, DISABLED, DEBUG, INHERIT, Metric
+from .metric_types import METRIC_NAMES_TO_CLASSES, MetricLevel, Metric
 from .data import MetricDataCollection, MetricData
 from satella.exceptions import MetricAlreadyExists
 
-__all__ = ['getMetric', 'DISABLED', 'RUNTIME', 'DEBUG', 'INHERIT', 'MetricDataCollection',
+__all__ = ['getMetric', 'MetricLevel', 'MetricDataCollection',
            'MetricData', 'Metric']
 
 metrics = {}
@@ -16,16 +16,17 @@ metrics_lock = threading.Lock()
 # noinspection PyPep8Naming
 def getMetric(metric_name: str = '',
               metric_type: str = 'base',
-              metric_level: tp.Optional[str] = None,
+              metric_level: tp.Optional[MetricLevel] = None,
               **kwargs):
     """
     Obtain a metric of given name.
 
     :param metric_name: a metric name. Subsequent nesting levels have to be separated with a dot
     :param metric_type: metric type
+    :param metric_level: a metric level to set this metric to.
     :raise MetricAlreadyExists: a metric having this name already exists, but with a different type
     """
-    metric_level_to_set_for_children = metric_level or INHERIT
+    metric_level_to_set_for_children = metric_level or MetricLevel.INHERIT
     name = metric_name.split('.')
     with metrics_lock:
         root_metric = None
@@ -46,13 +47,13 @@ def getMetric(metric_name: str = '',
                 if tentative_name == '':
                     # initialize the root metric
                     if metric_level is None:
-                        metric_level_to_set_for_root = RUNTIME
-                    elif metric_level_to_set_for_children == INHERIT:
-                        metric_level_to_set_for_root = RUNTIME
+                        metric_level_to_set_for_root = MetricLevel.RUNTIME
+                    elif metric_level_to_set_for_children == MetricLevel.INHERIT:
+                        metric_level_to_set_for_root = MetricLevel.RUNTIME
                     else:
                         metric_level_to_set_for_root = metric_level_to_set_for_children
                     metric = Metric('', None, metric_level_to_set_for_root, **kwargs)
-                    metric.level = RUNTIME
+                    metric.level = MetricLevel.RUNTIME
                     root_metric = metric
                 elif metric_name == tentative_name:
                     metric = METRIC_NAMES_TO_CLASSES[metric_type](name_part, root_metric,

@@ -1,6 +1,7 @@
-# v2.5.16
+# v2.6.0
 
-* _TBA_
+** Possibly API breaking change! **
+* changed metric levels from ints to an enum
 
 # v2.5.15
 

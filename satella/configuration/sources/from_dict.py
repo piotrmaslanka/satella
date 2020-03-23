@@ -7,21 +7,6 @@ from satella.configuration import sources
 from satella.configuration.sources.base import BaseSource
 from satella.exceptions import ConfigurationError
 
-"""
-If a dict has a field "type" then it will be treated specially:
-
-* "binary" - it is a binary value of "value" to be encoded with "encoding" (default ascii)
-* "lambda" - it allows expressing the simplest filters there can be
-  name of a source class - it will be instantated with arguments "args".
-  rest keys will be kwargs.
-* "import" it will import "attribute" from module "module" and call it with this value,
-  optionally preprocessing it with "cast_before"
-                             
-Special key is "optional" to be bool - if so, the source will be decorated as optional
-                                                          
-See the unit test for more in-depth knowledge
-"""
-
 __all__ = [
     'load_source_from_dict',
     'load_source_from_list'
@@ -63,12 +48,12 @@ def load_source_from_dict(dct: dict) -> BaseSource:
     args = dct.pop('args', [])                  # type: tp.List
     optional = dct.pop('optional', False)       # type: bool
 
-    def argify(arg):
+    def to_arg(arg):
         if isinstance(arg, dict) and 'type' in arg:
-            atype = arg['type']
-            if atype in EXTRA_TYPES:
-                return EXTRA_TYPES[atype](arg)
-            elif atype in sources.__dict__:
+            a_type = arg['type']
+            if a_type in EXTRA_TYPES:
+                return EXTRA_TYPES[a_type](arg)
+            elif a_type in sources.__dict__:
                 return load_source_from_dict(arg)
             else:
                 raise ValueError(
@@ -76,8 +61,8 @@ def load_source_from_dict(dct: dict) -> BaseSource:
         else:
             return arg
 
-    args = map(argify, args)
-    kwargs = {k: argify(v) for k, v in dct.items()}
+    args = map(to_arg, args)
+    kwargs = {k: to_arg(v) for k, v in dct.items()}
 
     s = sources.__dict__[type_](*args, **kwargs)
 
@@ -86,7 +71,7 @@ def load_source_from_dict(dct: dict) -> BaseSource:
     return s
 
 
-def load_source_from_list(obj: list) -> BaseSource:
+def load_source_from_list(obj: list) -> 'sources.MergingSource':
     """
     Builds a MergingSource from dict-ed objects
     """

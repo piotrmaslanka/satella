@@ -115,8 +115,8 @@ class Heap(collections.UserList, tp.Generic[T]):
         """
         heapq.heappush(self.data, item)
 
-    def __deepcopy__(self, memodict={}) -> 'Heap':
-        return self.__class__(copy.deepcopy(self.data, memo=memodict))
+    def __deepcopy__(self, memo) -> 'Heap':
+        return self.__class__(copy.deepcopy(self.data, memo))
 
     def __copy__(self) -> 'Heap':
         return self.__class__(copy.copy(self.data))
