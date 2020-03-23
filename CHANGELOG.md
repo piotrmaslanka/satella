@@ -1,6 +1,8 @@
 # v2.6.1
 
-* _TBA_
+* added `shift`
+* added `other_sequence_no_longer_than`
+* deprecated `zip_shifted`. Use `zip(shift(...))` instead
 
 # v2.6.0
 

@@ -45,6 +45,60 @@ T = tp.TypeVar('T')
 IteratorOrIterable = tp.Union[tp.Iterator[T], tp.Iterable[T]]
 
 
+def other_sequence_no_longer_than(base_sequence: IteratorOrIterable,
+                                  other_sequence: IteratorOrIterable[T]) -> tp.Iterator[T]:
+    """
+    Return every item in other_sequence, but limit it's length to that of base_sequence.
+
+    If other_sequence is shorter than base_sequence, the shorter one will be returned.
+
+    :param base_sequence: sequence whose length should be taken
+    :param other_sequence: sequence to output values from
+    """
+    base_sequence, other_sequence = iter(base_sequence), iter(other_sequence)
+    while True:
+        try:
+            next(base_sequence)
+            yield next(other_sequence)
+        except StopIteration:
+            return
+
+
+def shift(iterable: IteratorOrIterable[T], shift_factor: int) -> tp.Iterator[T]:
+    """
+    Return this sequence, but shifted by factor elements, so that elements will appear
+    sooner by factor.
+
+    Eg:
+
+    >>> assert list(shift([1,2, 3], 1)) == [2, 3, 1]
+
+    However note that this will result in iterators which have negative shift to be readed entirely
+    into memory (converted internally to lists). This can be avoided by passing in a Reversible
+    iterable.
+
+    :param iterable: iterable to shift
+    :param shift_factor: factor by which shift elements.
+    :return: shifted sequence
+    """
+
+    if shift_factor >= 0:
+        iterator = iter(iterable)
+        elements = []
+        for i in range(shift_factor):
+            elements.append(next(iterator))
+        return itertools.chain(iterator, elements)
+    else:
+        if hasattr(iterable, '__reversed__'):
+            elements = take_n(reversed(iterable), -shift_factor)
+            elements = reversed(elements)
+            return other_sequence_no_longer_than(iterable, itertools.chain(elements, iterable))
+        else:
+            iterator = list(iterable)
+            iterator = iterator[shift_factor:] + iterator[:shift_factor]  # shift's already negative
+            return iterator
+
+
 def zip_shifted(*args: tp.Union[IteratorOrIterable[T], tp.Tuple[IteratorOrIterable[T], int]]) -> \
         tp.Iterator[tp.Tuple[T, ...]]:
     """
@@ -61,38 +115,21 @@ def zip_shifted(*args: tp.Union[IteratorOrIterable[T], tp.Tuple[IteratorOrIterab
 
     >>> zip_shifted(([1, 2, 3, 4], -1), ([1, 2, 3, 4], 0)) == [(4, 1), (1, 2), (2, 3), (3, 4)]
 
-    However note that this will result in iterators which have negative shift to be readed entirely
-    into memory (converted internally to lists). This can be avoided by passing in a Reversible iterable.
+    Same memory considerations as :func:`shift` apply.
 
     The resulting iterator will be as long as the shortest sequence.
     :param args: a tuple with the iterator/iterable and amount of shift. If a non-tuple is given,
         it is assumed that the shift is zero.
     """
+    warnings.warn('Use zip(shift(...)) instead!', DeprecationWarning)
 
     iterators = []  # type: tp.List[tp.Union[tp.Tuple[tp.Iterator[T], tp.List[T]], tp.Iterator[T]]
     for row in args:
         if not isinstance(row, tuple):
             iterators.append(row)
         else:
-            iterable, shift = row
-            if shift >= 0:
-                iterator = iter(iterable)
-                if shift < 0:
-                    raise ValueError('Negative shift given!')
-                elements = []
-                for i in range(shift):
-                    elements.append(next(iterator))
-                iterators.append(itertools.chain(iterator, elements))
-            else:
-                if hasattr(iterable, '__reversed__'):
-                    elements = take_n(reversed(iterable), -shift)
-                    elements = reversed(elements)
-                    iterators.append(itertools.chain(elements, iterable))
-                else:
-                    iterator = list(iterable)
-                    iterator = iterator[shift:] + iterator[:shift]  # shift's already negative
-                    iterators.append(iterator)
-
+            iterable, shift_factor = row
+            iterators.append(shift(iterable, shift_factor))
     return zip(*iterators)
 
 

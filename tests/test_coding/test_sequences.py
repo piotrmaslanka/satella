@@ -2,12 +2,22 @@ import logging
 import unittest
 
 from satella.coding.sequences import choose, infinite_counter, take_n, is_instance, is_last, \
-    add_next, half_product, skip_first, zip_shifted, stop_after, group_quantity, iter_dict_of_list
+    add_next, half_product, skip_first, zip_shifted, stop_after, group_quantity, \
+    iter_dict_of_list, shift, other_sequence_no_longer_than
 
 logger = logging.getLogger(__name__)
 
 
 class TestSequences(unittest.TestCase):
+
+    def test_other_sequence_no_longer_than(self):
+        s1 = [1, 2, 3]
+        s2 = [3, 4, 5, 6]
+        self.assertEqual(list(other_sequence_no_longer_than(s1, s2)), [3, 4, 5])
+
+    def test_shift(self):
+        self.assertEqual(list(shift([1, 2, 3], 1)), [2, 3, 1])
+        self.assertEqual(list(shift([1, 2, 3], -1)), [3, 1, 2])
 
     def test_iter_dict_of_list(self):
         a = {1: [1, 2, 3]}

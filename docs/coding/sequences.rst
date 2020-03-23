@@ -72,6 +72,8 @@ zip_shifted
 
 .. autofunction:: satella.coding.sequences.zip_shifted
 
+This is deprecated. Use ``zip(shift(...))`` instead.
+
 stop_after
 ----------
 
@@ -85,4 +87,14 @@ group_quantity
 iter_dict_of_list
 -----------------
 
-.. autofunction: satella.coding.sequences.iter_dict_of_list
+.. autofunction:: satella.coding.sequences.iter_dict_of_list
+
+shift
+-----
+
+.. autofunction:: satella.coding.sequences.shift
+
+other_sequence_no_longer_than
+-----------------------------
+
+.. autofunction:: satella.coding.sequences.other_sequence_no_longer_than
