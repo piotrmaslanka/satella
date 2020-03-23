@@ -18,7 +18,7 @@ class AlternativeSource(BaseSource):
         super().__init__()
         self.sources = sources      # type: tp.List[BaseSource]
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return 'AlternativeSource(%s)' % (repr(self.sources),)
 
     def provide(self) -> dict:
@@ -50,7 +50,7 @@ class OptionalSource(AlternativeSource):
     def __init__(self, source: BaseSource):
         super().__init__(source, BaseSource())
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return 'OptionalSource(%s)' % (repr(self.sources[0], ))
 
 
@@ -87,5 +87,5 @@ class MergingSource(BaseSource):
 
         return cfg
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return '<MergingSource %s>' % (repr(self.sources),)

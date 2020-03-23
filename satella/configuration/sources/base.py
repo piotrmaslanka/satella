@@ -16,7 +16,7 @@ class BaseSource:
         """
         return {}
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return '<%s>' % (self.__class__.__qualname__,)
 
 
