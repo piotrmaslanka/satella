@@ -1,3 +1,7 @@
+# v2.6.1
+
+* _TBA_
+
 # v2.6.0
 
 **Possibly API breaking change!**
