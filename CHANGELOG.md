@@ -1,4 +1,4 @@
-# v2.6.2
+# v2.6.3
 
 * added `satella.files.split`
 
