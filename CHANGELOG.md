@@ -1,6 +1,6 @@
 # v2.6.2
 
-* _TBA_
+* added `satella.files.split`
 
 # v2.6.1
 

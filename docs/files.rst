@@ -10,3 +10,8 @@ find_files
 ----------
 
 .. autofunction:: satella.files.find_files
+
+split
+-----
+
+.. autofuction:: satella.files.split

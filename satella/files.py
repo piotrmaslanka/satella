@@ -2,7 +2,28 @@ import typing as tp
 import re
 import os
 
-__all__ = ['read_re_sub_and_write', 'find_files']
+__all__ = ['read_re_sub_and_write', 'find_files', 'split']
+
+SEPARATORS = {'\\', '/'}
+SEPARATORS.add(os.path.sep)
+
+
+def _has_separator(path: str) -> bool:
+    return any(map(lambda x: x in path, SEPARATORS))
+
+
+def split(path: str) -> tp.List[str]:
+    """
+    An exact reverse of os.path.join
+
+    Is is true that
+
+    >>> os.path.join(split(a)) == a
+    """
+    data = list(os.path.split(path))
+    while _has_separator(data[0]):
+        data = list(os.path.split(data[0])) + data[1:]
+    return data
 
 
 def read_re_sub_and_write(path: str, pattern: tp.Union[re.compile, str],
