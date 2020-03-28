@@ -1,3 +1,7 @@
+# v2.7.2
+
+* _TBA_
+
 # v2.7.1
 
 * API change reverted to before 2.7.0
