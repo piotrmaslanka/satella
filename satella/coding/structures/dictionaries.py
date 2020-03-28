@@ -1,5 +1,5 @@
-import collections.abc
 import collections
+import collections.abc
 import copy
 import typing as tp
 
@@ -277,7 +277,7 @@ class TwoWayDictionary(collections.abc.MutableMapping, tp.Generic[K, V]):
         return self._reverse
 
 
-class DirtyDict(collections.UserDict):
+class DirtyDict(collections.UserDict, tp.Generic[K, V]):
     """
     A dictionary that has also a flag called .dirty that sets to True if the dictionary has been
     changed since that flag was last cleared.
@@ -285,26 +285,27 @@ class DirtyDict(collections.UserDict):
     Setting the dict with the value that it already has doesn't count as dirtying it.
     Note that such changes will not be registered in the dict!
     """
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.dirty = False
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key: K, value: V):
         if key in self:
             if self[key] == value:
                 return
         super().__setitem__(key, value)
         self.dirty = True
 
-    def __delitem__(self, key):
+    def __delitem__(self, key: K):
         super().__delitem__(key)
         self.dirty = True
 
-    def clear_dirty(self):
+    def clear_dirty(self) -> None:
         """Clears the dirty flag"""
         self.dirty = False
 
-    def copy_and_clear_dirty(self) -> dict:
+    def copy_and_clear_dirty(self) -> tp.Dict[K, V]:
         """Returns a copy of self and clears the dirty flag"""
         a = self.copy()
         self.dirty = False
