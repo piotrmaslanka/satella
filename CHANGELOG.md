@@ -1,6 +1,9 @@
-# v2.6.5
+# v2.7.0
 
-* _TBA_
+*Possibly API breaking change: that's if you have
+had the time to implement a feature which's been
+out for like 4 hours*
+* change in `DirtyDict`
 
 # v2.6.4
 

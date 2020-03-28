@@ -309,12 +309,18 @@ class DirtyDict(collections.UserDict, tp.Generic[K, V]):
         """Clears the dirty flag"""
         self.dirty = False
 
-    def copy_and_clear_dirty(self) -> tp.Dict[K, V]:
+    def __bool__(self) -> bool:
+        return bool(self.data)
+
+    def swap_and_clear_dirty(self) -> tp.Dict[K, V]:
         """
-        Returns a copy of self and clears the dirty flag
+        Returns this data, clears self and sets dirty to False
+
+        After this is called, this dict will be considered empty.
 
         :return: a plain, normal Python dictionary is returned
         """
-        a = self.data.copy()
+        a = self.data
+        self.data = {}
         self.dirty = False
         return a
