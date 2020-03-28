@@ -1,3 +1,7 @@
+# v2.7.1
+
+* _TBA_
+
 # v2.7.0
 
 *Possibly API breaking change: that's if you have
