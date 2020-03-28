@@ -1,4 +1,3 @@
-import collections
 import collections.abc
 import copy
 import typing as tp
@@ -277,7 +276,7 @@ class TwoWayDictionary(collections.abc.MutableMapping, tp.Generic[K, V]):
         return self._reverse
 
 
-class DirtyDict(collections.UserDict, tp.Generic[K, V]):
+class DirtyDict(collections.UserDict):
     """
     A dictionary that has also a flag called .dirty that sets to True if the dictionary has been
     changed since that flag was last cleared.
@@ -290,14 +289,14 @@ class DirtyDict(collections.UserDict, tp.Generic[K, V]):
         super().__init__(*args, **kwargs)
         self.dirty = False
 
-    def __setitem__(self, key: K, value: V):
+    def __setitem__(self, key: K, value: V) -> None:
         if key in self:
             if self[key] == value:
                 return
         super().__setitem__(key, value)
         self.dirty = True
 
-    def __delitem__(self, key: K):
+    def __delitem__(self, key: K) -> None:
         super().__delitem__(key)
         self.dirty = True
 
