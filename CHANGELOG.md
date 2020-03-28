@@ -1,6 +1,6 @@
 # v2.6.4
 
-* _TBA_
+* added `DirtyDict`
 
 # v2.6.3
 

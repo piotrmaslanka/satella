@@ -8,12 +8,26 @@ import mock
 
 from satella.coding.structures import TimeBasedHeap, Heap, typednamedtuple, \
     OmniHashableMixin, DictObject, apply_dict_object, Immutable, frozendict, SetHeap, \
-    DictionaryView, HashableWrapper, TwoWayDictionary, Ranking, SortedList, SliceableDeque
+    DictionaryView, HashableWrapper, TwoWayDictionary, Ranking, SortedList, SliceableDeque, \
+    DirtyDict
 
 logger = logging.getLogger(__name__)
 
 
 class TestMisc(unittest.TestCase):
+    def test_dirty_dict(self):
+        a = DirtyDict({1:2, 3:4})
+        self.assertFalse(a.dirty)
+        a[1] = 3
+        self.assertTrue(a.dirty)
+        a.clear_dirty()
+        self.assertFalse(a.dirty)
+        a[1] = 3
+        self.assertFalse(a.dirty)
+        self.assertEqual(a.copy_and_clear_dirty(), {1:3, 3:4})
+        del a[1]
+        self.assertTrue(a.dirty)
+
     def test_sliceable_deque(self):
         sd = SliceableDeque([1, 2, 3, 4, 5, 6, 7])
         self.assertEqual(list(sd[1:-1]), [2, 3, 4, 5, 6])

@@ -152,3 +152,15 @@ Proxy
 =====
 
 .. autoclass:: satella.coding.structures.Proxy
+
+DirtyDict
+=========
+
+A dictionary that has also a flag called ``dirty`` that says
+if it's been last modified since that flag was cleared.
+
+The flag is initially (after the dict has been created)
+set to False.
+
+.. autoclass:: satella.coding.structures.DirtyDict
+    :members:

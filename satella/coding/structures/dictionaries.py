@@ -275,3 +275,37 @@ class TwoWayDictionary(collections.abc.MutableMapping, tp.Generic[K, V]):
         Return a reverse mapping. Reverse mapping is updated as soon as an operation is done.
         """
         return self._reverse
+
+
+class DirtyDict(collections.UserDict):
+    """
+    A dictionary that has also a flag called .dirty that sets to True if the dictionary has been
+    changed since that flag was last cleared.
+
+    Setting the dict with the value that it already has doesn't count as dirtying it.
+    Note that such changes will not be registered in the dict!
+    """
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.dirty = False
+
+    def __setitem__(self, key, value):
+        if key in self:
+            if self[key] == value:
+                return
+        super().__setitem__(key, value)
+        self.dirty = True
+
+    def __delitem__(self, key):
+        super().__delitem__(key)
+        self.dirty = True
+
+    def clear_dirty(self):
+        """Clears the dirty flag"""
+        self.dirty = False
+
+    def copy_and_clear_dirty(self) -> dict:
+        """Returns a copy of self and clears the dirty flag"""
+        a = self.copy()
+        self.dirty = False
+        return a
