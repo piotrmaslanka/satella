@@ -1,9 +1,7 @@
-
 import collections
 import typing as tp
+
 from .sorted_list import SortedList
-
-
 
 __all__ = ['Ranking']
 

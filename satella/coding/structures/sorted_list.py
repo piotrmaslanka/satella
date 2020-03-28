@@ -1,8 +1,5 @@
-
-import typing as tp
 import collections
-
-
+import typing as tp
 
 __all__ = ['SortedList', 'SliceableDeque']
 

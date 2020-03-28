@@ -3,8 +3,10 @@ import typing as tp
 
 logger = logging.getLogger(__name__)
 
+T = tp.TypeVar('T')
 
-class Proxy:
+
+class Proxy(tp.Generic[T]):
     """
     A base class for classes that try to emulate some other object.
 
@@ -13,9 +15,10 @@ class Proxy:
     Note that in-place operations will return the Proxy itself, whereas simple addition will shed
     this proxy, returning object wrapped plus something.
     """
+    __slots__ = ('__obj',)
 
-    def __init__(self, object_to_wrap):
-        self.__obj = object_to_wrap
+    def __init__(self, object_to_wrap: T):
+        self.__obj = object_to_wrap  # type: T
 
     def __call__(self, *args, **kwargs):
         return self.__obj(*args, **kwargs)

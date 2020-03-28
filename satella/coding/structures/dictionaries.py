@@ -6,7 +6,7 @@ from satella.coding.recast_exceptions import rethrow_as
 from satella.configuration.schema import Descriptor, descriptor_from_dict
 from satella.exceptions import ConfigurationValidationError
 
-__all__ = ['DictObject', 'apply_dict_object', 'DictionaryView', 'TwoWayDictionary']
+__all__ = ['DictObject', 'apply_dict_object', 'DictionaryView', 'TwoWayDictionary', 'DirtyDict']
 
 K, V, T = tp.TypeVar('K'), tp.TypeVar('V'), tp.TypeVar('T')
 
@@ -15,7 +15,7 @@ class DictObject(tp.MutableMapping[str, T]):
     """
     A dictionary wrapper that can be accessed by attributes.
 
-    You can use keys different than strings, but they will be inaccessable as attributes, and
+    You can use keys different than strings, but they will be inaccessible as attributes, and
     you will have to do subscription to get them.
 
     Eg:
@@ -289,7 +289,7 @@ class DirtyDict(collections.UserDict, tp.Generic[K, V]):
         super().__init__(*args, **kwargs)
         self.dirty = False
 
-    def __copy__(self):
+    def __copy__(self) -> 'DirtyDict':
         dd = DirtyDict(self.data.copy())
         dd.dirty = self.dirty
         return dd
