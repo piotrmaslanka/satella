@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 class TestMisc(unittest.TestCase):
     def test_dirty_dict(self):
-        a = DirtyDict({1:2, 3:4})
+        a = DirtyDict({1: 2, 3: 4})
         self.assertFalse(a.dirty)
         a[1] = 3
         self.assertTrue(a.dirty)
