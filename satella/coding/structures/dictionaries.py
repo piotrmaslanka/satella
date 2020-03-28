@@ -324,3 +324,13 @@ class DirtyDict(collections.UserDict, tp.Generic[K, V]):
         self.data = {}
         self.dirty = False
         return a
+
+    def copy_and_clear_dirty(self) -> tp.Dict[K, V]:
+        """
+        Returns a copy of this data and sets dirty to False
+
+        :return: a plain, normal Python dictionary is returned
+        """
+        a = self.data.copy()
+        self.dirty = False
+        return a

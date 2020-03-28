@@ -26,7 +26,10 @@ class TestMisc(unittest.TestCase):
         self.assertFalse(a.dirty)
         del a[1]
         self.assertTrue(a.dirty)
-        self.assertEqual(a.swap_and_clear_dirty(), {3: 4})
+        self.assertEqual(a.copy_and_clear_dirty(), {3: 4})
+        a[3] = 5
+        self.assertTrue(a.dirty)
+        self.assertEqual(a.swap_and_clear_dirty(), {3: 5})
         self.assertFalse(a)
         self.assertFalse(a.dirty)
 
