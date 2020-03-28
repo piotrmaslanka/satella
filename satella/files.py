@@ -27,7 +27,7 @@ def split(path: str) -> tp.List[str]:
 
 
 def read_re_sub_and_write(path: str, pattern: tp.Union[re.compile, str],
-                          repl: tp.Union[tp.Callable[[None], str]]) -> None:
+                          repl: tp.Union[tp.Callable[[tp.Any], str]]) -> None:
     """
     Read a text file, treat with re.sub and write the contents
 
