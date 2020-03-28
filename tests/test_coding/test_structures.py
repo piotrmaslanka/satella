@@ -29,7 +29,6 @@ class TestMisc(unittest.TestCase):
         self.assertEqual(a.swap_and_clear_dirty(), {3: 4})
         self.assertFalse(a)
         self.assertFalse(a.dirty)
-        self.assertTrue(a.dirty)
 
     def test_sliceable_deque(self):
         sd = SliceableDeque([1, 2, 3, 4, 5, 6, 7])
