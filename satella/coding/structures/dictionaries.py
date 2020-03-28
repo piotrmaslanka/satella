@@ -276,7 +276,7 @@ class TwoWayDictionary(collections.abc.MutableMapping, tp.Generic[K, V]):
         return self._reverse
 
 
-class DirtyDict(collections.UserDict):
+class DirtyDict(collections.UserDict, tp.Generic[K, V]):
     """
     A dictionary that has also a flag called .dirty that sets to True if the dictionary has been
     changed since that flag was last cleared.
@@ -288,6 +288,11 @@ class DirtyDict(collections.UserDict):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.dirty = False
+
+    def __copy__(self):
+        dd = DirtyDict(self.data.copy())
+        dd.dirty = self.dirty
+        return dd
 
     def __setitem__(self, key: K, value: V) -> None:
         if key in self:
@@ -305,7 +310,11 @@ class DirtyDict(collections.UserDict):
         self.dirty = False
 
     def copy_and_clear_dirty(self) -> tp.Dict[K, V]:
-        """Returns a copy of self and clears the dirty flag"""
-        a = self.copy()
+        """
+        Returns a copy of self and clears the dirty flag
+
+        :return: a plain, normal Python dictionary is returned
+        """
+        a = self.data.copy()
         self.dirty = False
         return a
