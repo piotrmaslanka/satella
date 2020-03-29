@@ -22,13 +22,14 @@ class TestSchema(unittest.TestCase):
         schema = {
             "key": {
                 'type': 'caster',
-                'cast_to': 'tests.test_configuration.test_schema.Environment'
+                'cast_to': 'tests.test_configuration.test_schema.Environment',
+                'expr': 'y(int(x))'
             }
         }
 
         s = descriptor_from_dict(schema)
 
-        self.assertEqual(s({'key': 0}), {'key': Environment.PRODUCTION})
+        self.assertEqual(s({'key': "0"}), {'key': Environment.PRODUCTION})
 
     def test_union(self):
         ps = Union(List(), Dict(keys=[create_key(String(), 'a')]))

@@ -1,6 +1,6 @@
 # v2.7.3
 
-* _TBA_
+* further extended `Caster`
 
 # v2.7.2
 
