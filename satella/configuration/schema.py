@@ -353,14 +353,16 @@ def _get_descriptor_for(key: str, value: tp.Any) -> Descriptor:
                 dict_to_look_in.update(__builtins__)
                 dict_to_look_in.update(locals())
                 if cast_to in dict_to_look_in:
-                    args = (dict_to_look_in[cast_to],)
+                    y = dict_to_look_in[cast_to]
                 else:
-                    args = (import_class(cast_to),)
+                    y = import_class(cast_to),
                 if 'expr' in value:
                     dict_ = globals().copy()
                     dict_.update(locals())
-                    dict_['y'] = args[0]
+                    dict_['y'] = y
                     args = eval('lambda x: ' + value['expr'], dict_),
+                else:
+                    args = y,
             elif type_ == 'union':
                 args = [_get_descriptor_for('', x) for x in value.get('of', [])]
             optional, default = False, None
