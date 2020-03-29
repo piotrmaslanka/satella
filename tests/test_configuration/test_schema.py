@@ -1,3 +1,4 @@
+import enum
 import os
 import tempfile
 import unittest
@@ -7,7 +8,27 @@ from satella.configuration.sources import DirectorySource
 from satella.exceptions import ConfigurationValidationError
 
 
+class Environment(enum.IntEnum):
+    PRODUCTION = 0
+
+
 class TestSchema(unittest.TestCase):
+
+    def test_caster(self):
+        ps = Caster(Environment)
+        self.assertEqual(ps(0), Environment.PRODUCTION)
+
+    def test_descriptor_from_schema_caster(self):
+        schema = {
+            "key": {
+                'type': 'caster',
+                'cast_to': 'tests.test_configuration.test_schema.Environment'
+            }
+        }
+
+        s = descriptor_from_dict(schema)
+
+        self.assertEqual(s({'key': 0}), {'key': Environment.PRODUCTION})
 
     def test_union(self):
         ps = Union(List(), Dict(keys=[create_key(String(), 'a')]))

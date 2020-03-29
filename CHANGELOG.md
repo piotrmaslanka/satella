@@ -1,6 +1,7 @@
 # v2.7.2
 
 * changed behaviour of MergingSource a bit
+* added Caster to configuration schema
 
 # v2.7.1
 

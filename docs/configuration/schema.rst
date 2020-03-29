@@ -21,6 +21,8 @@ you should instantiate a Descriptor. Descriptor reflects how your config is nest
 
 .. autoclass:: satella.configuration.schema.Dict
 
+.. autoclass:: satella.configuration.schema.Caster
+
 Then there is a descriptor that makes it possible for a value to have one of two types:
 
 .. autoclass:: satella.configuration.schema.Union
@@ -73,6 +75,7 @@ Available string types are:
 * **any** - Descriptor
 * **bool** - Boolean
 * **union** - Union
+* **caster** - Caster
 
 Lists you define as following
 
@@ -103,3 +106,16 @@ Dicts are more simple. Each key contains the key that should be present in the d
 You load it using the following function:
 
 .. autofunction:: satella.configuration.schema.descriptor_from_dict
+
+Casters you define as
+
+::
+
+    {
+        "type": "caster"
+        "cast_to": "name of a built-in or a fully qualified class ID"
+    }
+
+If cast_to is not a builtin, it specifies a full path to a class,
+which will be loaded using
+:func:`satella.imports.import_class`

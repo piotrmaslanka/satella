@@ -3,6 +3,8 @@ import re
 import typing as tp
 
 from satella.coding.concurrent.callablegroup import CallableGroup
+from satella.coding.recast_exceptions import rethrow_as
+from satella.imports import import_class
 from ..exceptions import ConfigurationValidationError, ConfigurationSchemaError
 
 __all__ = [
@@ -14,6 +16,7 @@ __all__ = [
     'create_key',
     'must_be_type',
     'must_be_one_of',
+    'Caster',
     'CheckerCondition',
     'ConfigDictValue',
     'descriptor_from_dict',
@@ -219,6 +222,25 @@ def create_key(descriptor: Descriptor, name: str, optional: bool = False,
     return descriptor
 
 
+class Caster(Descriptor):
+    """
+    A value must be ran through a function.
+
+    Use like:
+
+    >>> class Environment(enum.IntEnum):
+    >>>     PRODUCTION = 0
+    >>> assert Caster(Environment)(0) == Environment.PRODUCTION
+    """
+
+    def __init__(self, to_cast: tp.Callable[[tp.Any], tp.Any]):
+        self.to_cast = to_cast
+
+    @rethrow_as(ValueError, ConfigurationValidationError)
+    def __call__(self, value: ConfigDictValue):
+        return self.to_cast(value)
+
+
 class Dict(Descriptor):
     """
     This entry must be a dict, having at least specified keys.
@@ -304,7 +326,8 @@ class Union(Descriptor):
 
 
 BASE_LOOKUP_TABLE = {'int': Integer, 'float': Float, 'str': String, 'ipv4': IPv4, 'list': List,
-                     'dict': Dict, 'any': Descriptor, 'bool': Boolean, 'union': Union}
+                     'dict': Dict, 'any': Descriptor, 'bool': Boolean, 'union': Union,
+                     'caster': Caster}
 
 
 def _get_descriptor_for(key: str, value: tp.Any) -> Descriptor:
@@ -324,6 +347,14 @@ def _get_descriptor_for(key: str, value: tp.Any) -> Descriptor:
             if type_ == 'list':
                 of = _get_descriptor_for('', value.get('of', ''))
                 args = (of,)
+            elif type_ == 'caster':
+                cast_to = value.get('cast_to')
+                dict_to_look_in = globals()
+                dict_to_look_in.update(locals())
+                if cast_to in dict_to_look_in:
+                    args = (dict_to_look_in[cast_to],)
+                else:
+                    args = (import_class(cast_to),)
             elif type_ == 'union':
                 args = [_get_descriptor_for('', x) for x in value.get('of', [])]
             optional, default = False, None
