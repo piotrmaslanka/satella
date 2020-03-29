@@ -358,7 +358,7 @@ def _get_descriptor_for(key: str, value: tp.Any) -> Descriptor:
                 if 'expr' in value:
                     builtins = {
                         'y': args[0],
-                        **__builtins__.__dict__
+                        **__builtins__
                     }
                     args = eval('lambda x: ' + value['expr'], globals(), builtins),
             elif type_ == 'union':
