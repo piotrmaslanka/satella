@@ -1,3 +1,7 @@
+# v2.7.3
+
+* _TBA_
+
 # v2.7.2
 
 * changed behaviour of MergingSource a bit
