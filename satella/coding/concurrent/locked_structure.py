@@ -1,5 +1,6 @@
-import typing as tp
 import threading
+import typing as tp
+
 from ..structures.proxy import Proxy
 
 T = tp.TypeVar('T')
@@ -23,6 +24,7 @@ class LockedStructure(Proxy, tp.Generic[T]):
     
     Note that in-place operations return the locked structure.
     """
+    __slots__ = ('__lock',)
 
     def __init__(self, obj_to_wrap: T, lock: tp.Optional[threading.Lock] = None):
         super().__init__(obj_to_wrap)
