@@ -63,7 +63,8 @@ class MergingSource(BaseSource):
         take care.
     :param on_fail: how to behave when a source fails
     :param fail_if_no_sources_are_correct: even if on_fail == MergingSource.SILENT,
-        if all sources fail, this will fail as well
+        if all sources fail, this will fail as well. Of course this makes sense only if on_fail ==
+        MergingSource.SILENT
     """
 
     RAISE = 0  # Raise ConfigurationError if one of sources fails

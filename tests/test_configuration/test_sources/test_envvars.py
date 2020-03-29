@@ -24,6 +24,7 @@ class TestEnvVarsSource(SourceTestCase):
     def test_merging(self):
         ds = MergingSource(
             EnvironmentSource('test', 'test'),
-            on_fail=MergingSource.SILENT
+            on_fail=MergingSource.SILENT,
+            fail_if_no_sources_are_correct=False
         )
         self.assertEqual(ds.provide(), {})
