@@ -56,24 +56,35 @@ class OptionalSource(AlternativeSource):
 
 class MergingSource(BaseSource):
     """
-    Source that merges configuration from a bunch of sources
+    Source that merges configuration from a bunch of sources. The configuration has to be a
+    dictionary!!
+
+    :param sources: Sources to examine. Source later in queue will override earlier's entries, so
+        take care.
+    :param on_fail: how to behave when a source fails
+    :param fail_if_no_sources_are_correct: even if on_fail == MergingSource.SILENT,
+        if all sources fail, this will fail as well
     """
 
     RAISE = 0  # Raise ConfigurationError if one of sources fails
     SILENT = 1  # Silently continue loading from next files if one fails
-    __slots__ = ('sources', 'on_fail')
+    __slots__ = ('sources', 'on_fail', 'fail_if_no_sources_are_correct')
 
-    def __init__(self, *sources: BaseSource, on_fail: int = RAISE):
+    def __init__(self, *sources: BaseSource, on_fail: int = RAISE,
+                 fail_if_no_sources_are_correct: bool = True):
         super().__init__()
         self.sources = sources
         self.on_fail = on_fail
+        self.fail_if_no_sources_are_correct = fail_if_no_sources_are_correct
 
     def provide(self) -> dict:
         cfg = {}
+        correct_sources = 0
 
         for source in self.sources:
             try:
                 p = source.provide()
+                correct_sources += 1
             except ConfigurationError as e:
                 if self.on_fail == MergingSource.RAISE:
                     raise e
@@ -84,6 +95,9 @@ class MergingSource(BaseSource):
             assert isinstance(p, dict), 'what was provided by the config was not a dict'
             cfg = merge_dicts(cfg, p)
             assert isinstance(cfg, dict), 'what merge_dicts returned wasn''t a dict'
+
+        if correct_sources == 0 and self.sources and self.fail_if_no_sources_are_correct:
+            raise ConfigurationError('No source was able to load the configuration')
 
         return cfg
 

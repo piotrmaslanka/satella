@@ -12,6 +12,19 @@ class TestMergingSource(SourceTestCase):
         )
         self.assertSourceHas(s, {"a": [5, 6]})
 
+    def test_fails_on_none(self):
+        s = MergingSource(
+            JSONSource('{"a: [5]}'),
+            fail_if_no_sources_are_correct=True
+        )
+        self.assertRaises(ConfigurationError, s.provide)
+
+        s = MergingSource(
+            JSONSource('{"a: [5]}'),
+            fail_if_no_sources_are_correct=False
+        )
+        self.assertEqual(s.provide(), {})
+
     def test_empty(self):
         self.assertSourceEmpty(MergingSource())
 
