@@ -357,11 +357,8 @@ def _get_descriptor_for(key: str, value: tp.Any) -> Descriptor:
                 else:
                     args = (import_class(cast_to),)
                 if 'expr' in value:
-                    builtins = {
-                        'y': args[0],
-                        **__builtins__
-                    }
-                    args = eval('lambda x: ' + value['expr'], globals(), builtins),
+                    y = args[0]
+                    args = eval('lambda x: ' + value['expr'], globals(), locals()),
             elif type_ == 'union':
                 args = [_get_descriptor_for('', x) for x in value.get('of', [])]
             optional, default = False, None
