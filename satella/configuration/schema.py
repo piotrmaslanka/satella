@@ -350,7 +350,10 @@ def _get_descriptor_for(key: str, value: tp.Any) -> Descriptor:
             elif type_ == 'caster':
                 cast_to = value.get('cast_to')
                 dict_to_look_in = globals().copy()
-                dict_to_look_in.update(__builtins__)
+                if not isinstance(__builtins__, dict):
+                    dict_to_look_in.update(__builtins__.__dict__)
+                else:
+                    dict_to_look_in.update(__builtins__)
                 dict_to_look_in.update(locals())
                 if cast_to in dict_to_look_in:
                     y = dict_to_look_in[cast_to]

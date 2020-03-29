@@ -1,6 +1,6 @@
 # v2.7.3
 
-* _TBA_
+* a slight fix for PyPy
 
 # v2.7.3
 
