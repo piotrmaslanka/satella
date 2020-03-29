@@ -350,6 +350,7 @@ def _get_descriptor_for(key: str, value: tp.Any) -> Descriptor:
             elif type_ == 'caster':
                 cast_to = value.get('cast_to')
                 dict_to_look_in = globals()
+                dict_to_look_in.update(__builtins__)
                 dict_to_look_in.update(locals())
                 if cast_to in dict_to_look_in:
                     args = (dict_to_look_in[cast_to],)
