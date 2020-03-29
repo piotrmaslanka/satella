@@ -126,9 +126,11 @@ Additionally, an extra argument can be specified:
     {
         "type": "caster",
         "cast_to": "name of a built-in or a FQ class ID",
-        "expr": "y(int(x)"
+        "expr": "y(int(x))"
     }
 
-In which case cast_to will be displayed as a _y_ in expression,
-which will be eval()ed, and this value will be output.
+In which case cast_to will be displayed as a
+**y** in expression,
+which will be eval()ed, and this value will be
+output. The input value will be called **x**.
 
