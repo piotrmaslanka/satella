@@ -355,7 +355,8 @@ def _get_descriptor_for(key: str, value: tp.Any) -> Descriptor:
                 if cast_to in dict_to_look_in:
                     y = dict_to_look_in[cast_to]
                 else:
-                    y = import_class(cast_to),
+                    y = import_class(cast_to)
+
                 if 'expr' in value:
                     dict_ = globals().copy()
                     dict_.update(locals())
