@@ -42,6 +42,7 @@ class OmniHashableMixin(metaclass=ABCMeta):
 
     for this to work in your class
     """
+    __slots__ = ()
 
     @property
     @abstractmethod
