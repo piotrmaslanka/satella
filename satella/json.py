@@ -9,6 +9,8 @@ Jsonable = tp.TypeVar('Jsonable', list, dict, str, int, float, None)
 
 
 class JSONAble(metaclass=ABCMeta):
+    __slots__ = ()
+
     @abstractmethod
     def to_json(self) -> Jsonable:
         """Return a JSON-able representation of this object"""

@@ -2,6 +2,7 @@
 
 * fixed `wraps` to provide __annotations__ as well
 * a slight fix for PyPy
+* added __slots__ to JSONAble
 
 # v2.7.3
 
