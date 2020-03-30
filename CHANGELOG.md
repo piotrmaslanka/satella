@@ -1,4 +1,4 @@
-# v2.7.3
+# v2.7.4
 
 * fixed `wraps` to provide __annotations__ as well
 * a slight fix for PyPy
