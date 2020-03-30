@@ -1,3 +1,7 @@
+# v2.7.5
+
+* _TBA_
+
 # v2.7.4
 
 * fixed `wraps` to provide __annotations__ as well
