@@ -1,6 +1,6 @@
 # v2.7.5
 
-* _TBA_
+* added extras to setup.py
 
 # v2.7.4
 
