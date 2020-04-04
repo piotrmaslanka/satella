@@ -73,8 +73,8 @@ class MetrifiedThreadPoolExecutor(ThreadPoolExecutor):
     """
     A thread pool executor that provides execution statistics as metrics.
 
-    This class will also backport some of Python 3.8's characteristics of the thread pool executor, such as initializer
-    initargs and BrokenThreadPool behaviour.
+    This class will also backport some of Python 3.8's characteristics of the thread pool executor to earlier Pythons,
+    thread name prefix, initializer, initargs and BrokenThreadPool behaviour.
 
     :param time_spent_waiting: a metric (can be aggregate) to which times spent waiting in the queue will be deposited
     :param time_spent_executing: a metric (can be aggregate) to which times spent executing will be deposited
@@ -93,6 +93,7 @@ class MetrifiedThreadPoolExecutor(ThreadPoolExecutor):
         super().__init__(max_workers)
         self._initializer = initializer
         self._initargs = initargs
+        self._idle_semaphore = threading.Semaphore(0)
         self._broken = False
         if not hasattr(self, '_thread_name_prefix'):
             self._thread_name_prefix = (thread_name_prefix or
