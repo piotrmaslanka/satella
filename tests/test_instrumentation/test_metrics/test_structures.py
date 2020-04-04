@@ -2,7 +2,7 @@ import unittest
 
 from satella.instrumentation.metrics import getMetric
 
-from satella import time
+import time
 from satella.instrumentation.metrics.structures import MetrifiedThreadPoolExecutor
 
 

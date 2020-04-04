@@ -19,6 +19,7 @@ Satella contains, among other things:
 
 * things to help you manage your [application's configuration](satella/configuration)
 * a fully equipped [metrics library](satella/instrumentation/metrics)
+    * alongside a fully metricized [ThreadPoolExecutor](satella/instrumentation/metrics/structures/threadpool.py)
 * helpful [exception handlers](satella/exception_handling)
 * common programming [idioms](satella/coding)
 

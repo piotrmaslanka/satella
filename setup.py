@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 from satella import __version__
 
-setup(keywords=['ha', 'high availability', 'scalable', 'scalability', 'server'],
+setup(keywords=['ha', 'high availability', 'scalable', 'scalability', 'server', 'metrics'],
       packages=find_packages(include=['satella', 'satella.*']),
       version=__version__,
       install_requires=[
