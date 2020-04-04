@@ -1,3 +1,4 @@
+import queue
 import threading
 import weakref
 from concurrent.futures import _base
@@ -71,18 +72,27 @@ class MetrifiedThreadPoolExecutor(ThreadPoolExecutor):
     """
     A thread pool executor that provides execution statistics as metrics.
 
+    This class will also backport some of Python 3.8's characteristics of the thread pool executor, such as initializer
+    initargs and BrokenThreadPool behaviour.
+
     :param time_spent_waiting: a metric (can be aggregate) to which times spent waiting in the queue will be deposited
     :param time_spent_executing: a metric (can be aggregate) to which times spent executing will be deposited
     :param waiting_tasks: a fresh CallableMetric that will be patched to yield the number of currently waiting tasks
     :param metric_level: a level with which to log to these two metrics
     """
 
-    def __init__(self, max_workers=None,
+    def __init__(self, max_workers=None, thread_name_prefix='',
+                 initializer=None, initargs=(),
                  time_spent_waiting=None,
                  time_spent_executing=None,
                  waiting_tasks: tp.Optional[CallableMetric] = None,
                  metric_level: MetricLevel = MetricLevel.RUNTIME):
         super().__init__(max_workers)
+        self._initializer = initializer
+        self._initargs = initargs
+        self._broken = False
+        self._thread_name_prefix = (thread_name_prefix or
+                                    ("ThreadPoolExecutor-%d" % self._counter()))
         self.waiting_time_metric = time_spent_waiting or EmptyMetric()
         self.executing_time_metric = time_spent_executing or EmptyMetric()
         self.metric_level = metric_level
@@ -146,3 +156,16 @@ class MetrifiedThreadPoolExecutor(ThreadPoolExecutor):
             t.start()
             self._threads.add(t)
             thread._threads_queues[t] = self._work_queue
+
+    def _initializer_failed(self):
+        with self._shutdown_lock:
+            self._broken = ('A thread initializer failed, the thread pool '
+                            'is not usable anymore')
+            # Drain work queue and mark pending futures failed
+            while True:
+                try:
+                    work_item = self._work_queue.get_nowait()
+                except queue.Empty:
+                    break
+                if work_item is not None:
+                    work_item.future.set_exception(BrokenThreadPool(self._broken))
