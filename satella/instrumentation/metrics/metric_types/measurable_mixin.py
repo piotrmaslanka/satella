@@ -3,8 +3,9 @@ import inspect
 import typing as tp
 import time
 
-from satella.coding import wraps
+from concurrent.futures import Future
 
+from satella.coding import wraps
 from .base import MetricLevel
 
 
@@ -12,6 +13,29 @@ class MeasurableMixin:
     """
     Add a .measure() method, useful for HistogramMetric and SummaryMetric
     """
+
+    def measure_future(self, future: Future, logging_level: MetricLevel = MetricLevel.RUNTIME,
+                       value_getter: tp.Callable[[], float] = time.monotonic, **labels):
+        """
+        A function to measure a difference between some value after the method call
+        and before it.
+
+        The value will be taken at the moment this function executes, and the moment the future completes
+        (with or without an exception)
+
+        :param future: future that is considered
+        :param logging_level: one of RUNTIME or DEBUG
+        :param value_getter: a callable that takes no arguments and returns a float, which is
+            the value
+        :param labels: extra labels to call handle() with
+        """
+        future.old_value = value_getter()
+
+        def on_future_done(fut: Future):
+            elapsed = value_getter() - future.old_value
+            self.handle(logging_level, elapsed, **labels)
+
+        future.add_done_callback(future)
 
     def measure(self, include_exceptions: bool = True,
                 logging_level: MetricLevel = MetricLevel.RUNTIME,

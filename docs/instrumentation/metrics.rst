@@ -189,6 +189,11 @@ by using the following decorator on your metric class
 
 .. autofunction:: satella.instrumentation.metrics.metric_types.register_metric
 
+To zip together two or more metrics, you can use the following class:
+
+.. autoclass:: satella.instrumentation.metrics.AggregateMetric
+    :members:
+
 
 Exporting data
 ==============
