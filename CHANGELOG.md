@@ -4,6 +4,7 @@
 * fixed infinite hang in `satella.files.split` on Windows
 * made tests pass on Windows
 * added `AggregateMetric`
+* metrics can now measure futures
 
 # v2.7.4
 
