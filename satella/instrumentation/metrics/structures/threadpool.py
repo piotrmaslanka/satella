@@ -1,3 +1,4 @@
+import itertools
 import queue
 import threading
 import weakref
@@ -80,6 +81,8 @@ class MetrifiedThreadPoolExecutor(ThreadPoolExecutor):
     :param waiting_tasks: a fresh CallableMetric that will be patched to yield the number of currently waiting tasks
     :param metric_level: a level with which to log to these two metrics
     """
+
+    _counter = itertools.count().__next__
 
     def __init__(self, max_workers=None, thread_name_prefix='',
                  initializer=None, initargs=(),
