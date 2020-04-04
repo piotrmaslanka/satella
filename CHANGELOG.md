@@ -5,6 +5,8 @@
 * made tests pass on Windows
 * added `AggregateMetric`
 * metrics can now measure futures
+* a GC fix for `TwoWayDictionary`
+* added `MetrifiedThreadPoolExecutor`
 
 # v2.7.4
 

@@ -213,11 +213,29 @@ class TwoWayDictionary(collections.abc.MutableMapping, tp.Generic[K, V]):
     >>> twd[2] = 3
     >>> self.assertEqual(twd.reverse[3], 2)
 
+    When you're done using a given TwoWayDictionary, please call .done(). This will make it easier for the GC to collect
+    the dictionaries.
+
+    You can also use the context manager to make the TwoWayDictionary clean up itself, eg.
+
+    >>> with TwoWayDictionary() as twd:
+    >>>     ...
+    >>> # at this point twd is .done()
+
     :param data: data to generate the dict from
     :raises ValueError: on being given data from which it is impossible to construct a reverse
         mapping (ie. same value appears at least twice)
     """
     __slots__ = ('data', 'reverse_data', '_reverse')
+
+    def done(self):
+        """
+        Called when the user is done using given TwoWayDictionary.
+
+        Internally this will break the reference cycle, and enable Python GC to collect the objects.
+        """
+        self.reverse.reverse = None
+        self.reverse = None
 
     def __init__(self, data=None, _is_reverse: bool = False):
         if not _is_reverse:
@@ -230,6 +248,13 @@ class TwoWayDictionary(collections.abc.MutableMapping, tp.Generic[K, V]):
             self._reverse.data = self.reverse_data
             self._reverse.reverse_data = self.data
             self._reverse._reverse = self
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.done()
+        return False
 
     def __getitem__(self, item: K) -> V:
         return self.data[item]

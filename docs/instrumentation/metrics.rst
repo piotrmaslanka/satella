@@ -217,3 +217,10 @@ that is a daemonic thread you can use to easily expose metrics to Prometheus:
 
 .. autoclass:: satella.instrumentation.metrics.exporters.PrometheusHTTPExporterThread
     :members:
+
+Useful data structures
+======================
+
+Sometimes you want to metrify a ThreadPool. Here comes the saviour:
+
+.. autoclass:: satells.instrumentation.metrics.structures.MetrifiedThreadPool
