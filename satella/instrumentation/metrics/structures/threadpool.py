@@ -98,8 +98,8 @@ class MetrifiedThreadPoolExecutor(ThreadPoolExecutor):
         if not hasattr(self, '_thread_name_prefix'):
             self._thread_name_prefix = (thread_name_prefix or
                                         ("ThreadPoolExecutor-%d" % self._counter()))
-        self.waiting_time_metric = time_spent_waiting or EmptyMetric()
-        self.executing_time_metric = time_spent_executing or EmptyMetric()
+        self.waiting_time_metric = time_spent_waiting or EmptyMetric('')
+        self.executing_time_metric = time_spent_executing or EmptyMetric('')
         self.metric_level = metric_level
         if waiting_tasks is not None:
             waiting_tasks.callable = lambda: self._work_queue.qsize()

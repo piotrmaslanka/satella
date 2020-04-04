@@ -1,6 +1,6 @@
 # v2.7.6
 
-* _TBA_
+* bugfix release: failed initializing EmptyMetrics() with no arguments
 
 # v2.7.5
 
