@@ -77,13 +77,12 @@ class MetrifiedThreadPoolExecutor(ThreadPoolExecutor):
     :param metric_level: a level with which to log to these two metrics
     """
 
-    def __init__(self, max_workers=None, thread_name_prefix='',
-                 initializer=None, initargs=(),
+    def __init__(self, max_workers=None,
                  time_spent_waiting=None,
                  time_spent_executing=None,
                  waiting_tasks: tp.Optional[CallableMetric] = None,
                  metric_level: MetricLevel = MetricLevel.RUNTIME):
-        super().__init__(max_workers, thread_name_prefix, initializer, initargs)
+        super().__init__(max_workers)
         self.waiting_time_metric = time_spent_waiting or EmptyMetric()
         self.executing_time_metric = time_spent_executing or EmptyMetric()
         self.metric_level = metric_level
