@@ -2,7 +2,11 @@ import atexit
 import weakref
 from concurrent.futures import _base
 from concurrent.futures import thread
-from concurrent.futures.thread import ThreadPoolExecutor, BrokenThreadPool, _WorkItem
+from concurrent.futures.thread import ThreadPoolExecutor, _WorkItem
+try:
+    from concurrent.futures.thread import BrokenThreadPool
+except ImportError:
+    BrokenThreadPool = RuntimeError
 import typing as tp
 import threading
 
