@@ -4,7 +4,7 @@ from satella.instrumentation.metrics import getMetric
 
 import time
 from satella.instrumentation.metrics.structures import MetrifiedThreadPoolExecutor
-from tests.test_instrumentation.test_metrics.test_metrics import choose
+from .test_metrics import choose
 
 
 def wait():
@@ -23,11 +23,11 @@ class TestThreadPoolExecutor(unittest.TestCase):
 
         mtpe.submit(wait)
         time.sleep(0.1)
-        self.assertEqual(callable_metric.to_metric_data().values[0].value, 0)
+        self.assertEqual(next(iter(callable_metric.to_metric_data().values)).value, 0)
         mtpe.submit(wait)
         fr = mtpe.submit(wait)
         time.sleep(0.1)
-        self.assertEqual(callable_metric.to_metric_data().values[0].value, 1)
+        self.assertEqual(next(iter(callable_metric.to_metric_data().values)).value, 1)
         fr.result()
-        self.assertEqual(choose('.count', executing_summary.to_metric_data()), 3)
-        self.assertEqual(choose('.count', waiting_summary.to_metric_data()), 3)
+        self.assertEqual(choose('.count', executing_summary.to_metric_data()).value, 3)
+        self.assertEqual(choose('.count', waiting_summary.to_metric_data()).value, 3)
