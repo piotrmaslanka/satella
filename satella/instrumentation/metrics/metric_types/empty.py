@@ -11,6 +11,8 @@ class EmptyMetric(Metric):
     A placeholder for the times when you configure metrics and decide to leave some of them out
     blank.
     """
+    __slots__ = ()
+
     CLASS_NAME = 'empty'
 
     def _handle(self, *args, **kwargs) -> None:

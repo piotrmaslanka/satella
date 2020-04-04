@@ -7,6 +7,7 @@
 * metrics can now measure futures
 * a GC fix for `TwoWayDictionary`
 * added `MetrifiedThreadPoolExecutor`
+* __slots__ for `EmptyMetric`
 
 # v2.7.4
 
