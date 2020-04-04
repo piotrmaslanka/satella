@@ -1,6 +1,9 @@
 # v2.7.5
 
 * added extras to setup.py
+* fixed infinite hang in `satella.files.split` on Windows
+* made tests pass on Windows
+* added `AggregateMetric`
 
 # v2.7.4
 

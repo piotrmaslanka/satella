@@ -7,8 +7,11 @@ from satella.files import read_re_sub_and_write, find_files, split
 
 class TestFiles(unittest.TestCase):
     def test_split(self):
-        self.assertEqual(split('c:/windows/system32/system32.exe'), ['c:', 'windows', 'system32',
-                                                                     'system32.exe'])
+        self.assertIn(split('c:/windows/system32/system32.exe'), [['c:', 'windows', 'system32',
+                                                                     'system32.exe'],
+                                                                  ['c:/', 'windows', 'system32',
+                                                                   'system32.exe']
+                                                                  ])
         self.assertEqual(split('~/user/something/./else'), ['~', 'user', 'something', '.',
                                                             'else'])
 

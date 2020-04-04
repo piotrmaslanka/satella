@@ -1,7 +1,6 @@
 import typing as tp
 import re
 import os
-
 __all__ = ['read_re_sub_and_write', 'find_files', 'split']
 
 SEPARATORS = {'\\', '/'}
@@ -9,6 +8,10 @@ SEPARATORS.add(os.path.sep)
 
 
 def _has_separator(path: str) -> bool:
+    # handle Windows case
+    if len(path) == 3:
+        if path.endswith(':/') or path.endswith(':\\'):
+            return False
     return any(map(lambda x: x in path, SEPARATORS))
 
 
