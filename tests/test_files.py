@@ -1,8 +1,14 @@
 import os
+from os.path import join
 import tempfile
 import unittest
 import shutil
 from satella.files import read_re_sub_and_write, find_files, split
+
+
+def putfile(path: str) -> None:
+    with open(path, 'wb') as f_out:
+        f_out.write(b'\x32')
 
 
 class TestFiles(unittest.TestCase):
@@ -26,15 +32,23 @@ class TestFiles(unittest.TestCase):
 
     def test_find_files(self):
         directory = tempfile.mkdtemp()
-        os.mkdir(os.path.join(directory, 'test'))
-        with open(os.path.join(directory, 'test', 'test.txt'), 'wb') as f_out:
-            f_out.write(b'test')
-        self.assertEqual(list(find_files(directory, r'(.*)test(.*)\.txt',
-                                         apply_wildcard_to_entire_path=True)), [
-            os.path.join(directory, 'test', 'test.txt')])
+        os.mkdir(join(directory, 'test'))
+        putfile(join(directory, 'test', 'test.txt'))
+        os.mkdir(join(directory, 'test', 'test'))
+        putfile(join(directory, 'test', 'test', 'test.txt'))
+        putfile(join(directory, 'test', 'test', 'test2.txt'))
+        self.assertEqual(set(find_files(directory, r'(.*)test(.*)\.txt',
+                                         apply_wildcard_to_entire_path=True)), {
+            join(directory, 'test', 'test.txt'),
+            join(directory, 'test', 'test', 'test.txt'),
+            join(directory, 'test', 'test', 'test2.txt')
+        })
 
-        self.assertEqual(list(find_files(directory, r'(.*)\.txt')), [
-            os.path.join(directory, 'test', 'test.txt')])
+        self.assertEqual(set(find_files(directory, r'(.*)\.txt')), {
+            join(directory, 'test', 'test.txt'),
+            join(directory, 'test', 'test', 'test.txt'),
+            join(directory, 'test', 'test', 'test2.txt')
+        })
         shutil.rmtree(directory)
 
     def test_read_re_sub_and_write(self):

@@ -9,12 +9,16 @@ import mock
 from satella.coding.structures import TimeBasedHeap, Heap, typednamedtuple, \
     OmniHashableMixin, DictObject, apply_dict_object, Immutable, frozendict, SetHeap, \
     DictionaryView, HashableWrapper, TwoWayDictionary, Ranking, SortedList, SliceableDeque, \
-    DirtyDict
+    DirtyDict, KeyAwareDefaultDict
 
 logger = logging.getLogger(__name__)
 
 
 class TestMisc(unittest.TestCase):
+    def test_key_aware_defaultdict(self):
+        a = KeyAwareDefaultDict(int)
+        self.assertEqual(a['1'], 1)
+
     def test_dirty_dict(self):
         a = DirtyDict({1: 2, 3: 4})
         self.assertFalse(a.dirty)

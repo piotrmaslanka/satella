@@ -6,7 +6,8 @@ from satella.coding.recast_exceptions import rethrow_as
 from satella.configuration.schema import Descriptor, descriptor_from_dict
 from satella.exceptions import ConfigurationValidationError
 
-__all__ = ['DictObject', 'apply_dict_object', 'DictionaryView', 'TwoWayDictionary', 'DirtyDict']
+__all__ = ['DictObject', 'apply_dict_object', 'DictionaryView', 'TwoWayDictionary', 'DirtyDict',
+           'KeyAwareDefaultDict']
 
 K, V, T = tp.TypeVar('K'), tp.TypeVar('V'), tp.TypeVar('T')
 
@@ -359,3 +360,35 @@ class DirtyDict(collections.UserDict, tp.Generic[K, V]):
         a = self.data.copy()
         self.dirty = False
         return a
+
+
+class KeyAwareDefaultDict(collections.abc.MutableMapping):
+    """
+    A defaultdict whose factory function accepts the key to provide a default value for the key
+
+    :param factory_function: a callable that accepts a single argument, a key, for which it is to provide
+        a default value
+    """
+
+    def __len__(self) -> int:
+        return len(self.dict)
+
+    def __iter__(self):
+        return iter(self.dict)
+
+    def __init__(self, factory_function: tp.Callable[[K], V], *args, **kwargs):
+        self.dict = dict(*args, **kwargs)
+        self.factory_function = factory_function
+
+    def __getitem__(self, item):
+        if item in self.dict:
+            return self.dict[item]
+        else:
+            self.dict[item] = self.factory_function(item)
+            return self.dict[item]
+
+    def __setitem__(self, key, value):
+        self.dict[key] = value
+
+    def __delitem__(self, key):
+        del self.dict[key]

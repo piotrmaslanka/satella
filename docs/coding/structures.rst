@@ -164,3 +164,8 @@ set to False.
 
 .. autoclass:: satella.coding.structures.DirtyDict
     :members:
+
+KeyAwareDefaultDict
+===================
+
+.. autoclass:: satella.coding.structures.KeyAwareDefaultDict

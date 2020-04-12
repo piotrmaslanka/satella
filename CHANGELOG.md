@@ -1,6 +1,6 @@
 # v2.7.8
 
-* _TBA_
+* added `KeyAwareDefaultDict`
 
 # v2.7.7
 

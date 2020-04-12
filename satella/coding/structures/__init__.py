@@ -1,5 +1,5 @@
 from .dictionaries import DictObject, apply_dict_object, DictionaryView, TwoWayDictionary, \
-    DirtyDict
+    DirtyDict, KeyAwareDefaultDict
 from .hashable_objects import HashableWrapper
 from .immutable import Immutable, frozendict
 from .singleton import Singleton, SingletonWithRegardsTo
@@ -10,6 +10,7 @@ from .ranking import Ranking
 from .sorted_list import SortedList, SliceableDeque
 
 __all__ = [
+    'KeyAwareDefaultDict',
     'Proxy',
     'DirtyDict',
     'SortedList',
