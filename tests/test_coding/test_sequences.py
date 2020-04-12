@@ -3,12 +3,15 @@ import unittest
 
 from satella.coding.sequences import choose, infinite_counter, take_n, is_instance, is_last, \
     add_next, half_product, skip_first, zip_shifted, stop_after, group_quantity, \
-    iter_dict_of_list, shift, other_sequence_no_longer_than
+    iter_dict_of_list, shift, other_sequence_no_longer_than, count
 
 logger = logging.getLogger(__name__)
 
 
 class TestSequences(unittest.TestCase):
+
+    def test_count(self):
+        self.assertEqual(list(count([None, None, None], 5, -2)), [5, 3, 1])
 
     def test_other_sequence_no_longer_than(self):
         s1 = [1, 2, 3]

@@ -1,6 +1,6 @@
 # v2.7.7
 
-* _TBA_
+* added `count`
 
 # v2.7.6
 
