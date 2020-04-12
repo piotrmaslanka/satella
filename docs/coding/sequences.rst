@@ -98,3 +98,8 @@ other_sequence_no_longer_than
 -----------------------------
 
 .. autofunction:: satella.coding.sequences.other_sequence_no_longer_than
+
+count
+-----
+
+.. autofunction:: satella.coding.sequences.count
