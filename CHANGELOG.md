@@ -6,6 +6,7 @@ using a kwargs. Not many people do that, most would
 prefer positional args, which work fine.
 
 * change `start_at` to `start` in `count`
+* added `skip_last` to `add_next`
 
 # v2.7.8
 

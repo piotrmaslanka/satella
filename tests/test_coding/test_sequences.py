@@ -58,6 +58,8 @@ class TestSequences(unittest.TestCase):
                          [(1, 2), (2, 3), (3, 4), (4, 5), (5, None)])
         self.assertEqual(list(add_next([1])), [(1, None)])
         self.assertEqual(list(add_next([])), [])
+        self.assertEqual(list(add_next([1, 2, 3, 4, 5], skip_last=True)),
+                         [(1, 2), (2, 3), (3, 4), (4, 5)])
 
     def test_add_next_wrap_over(self):
         self.assertEqual(list(add_next([1, 2, 3, 4, 5], True)),
