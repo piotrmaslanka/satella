@@ -6,20 +6,20 @@ import warnings
 T, U = tp.TypeVar('T'), tp.TypeVar('U')
 
 
-def count(sq: tp.Iterator, start_at: int = 0, step: int = 1) -> tp.Iterator[int]:
+def count(sq: tp.Iterator, start: tp.Optional[int] = None, step: int = 1) -> tp.Iterator[int]:
     """
     Return a sequence of integers, for each entry in the sequence with provided step.
 
     Essentially the same (if step were ignored) as:
 
-    >>> (i for i, x in enumerate(sq, start_at=start_at))
+    >>> (i for i, x in enumerate(sq, start=start_at))
 
     :param sq: sequence to enumerate
-    :param start_at: number to start at
+    :param start: alias for start_at. Prefer it in regards to start_at
     :param step: number to add to internal counter after each element
     :return: an iterator of subsequent integers
     """
-    num = start_at
+    num = start
     for _ in sq:
         yield num
         num += step

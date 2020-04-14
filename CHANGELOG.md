@@ -1,6 +1,11 @@
 # v2.7.9
 
-* _TBA_
+**Possibly API breaking change!**
+You are affected if you pass start_at to `count`
+using a kwargs. Not many people do that, most would
+prefer positional args, which work fine.
+
+* change `start_at` to `start` in `count`
 
 # v2.7.8
 
