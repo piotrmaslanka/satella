@@ -1,6 +1,6 @@
 # v2.7.10
 
-* _TBA_
+* add `even` and `odd`
 
 # v2.7.9
 

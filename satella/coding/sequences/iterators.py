@@ -6,6 +6,25 @@ import warnings
 T, U = tp.TypeVar('T'), tp.TypeVar('U')
 
 
+def even(sq: tp.Iterator[T]) -> tp.Iterator[T]:
+    """
+    Return only elements with even indices in this iterable (first element will be returned,
+    as indices are counted from 0)
+    """
+    while True:
+        yield next(sq)
+        next(sq)
+
+
+def odd(sq: tp.Iterator[T]) -> tp.Iterator[T]:
+    """
+    Return only elements with odd indices in this iterable.
+    """
+    while True:
+        next(sq)
+        yield next(sq)
+
+
 def count(sq: tp.Iterator, start: tp.Optional[int] = None, step: int = 1) -> tp.Iterator[int]:
     """
     Return a sequence of integers, for each entry in the sequence with provided step.

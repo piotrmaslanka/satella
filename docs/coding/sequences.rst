@@ -103,3 +103,10 @@ count
 -----
 
 .. autofunction:: satella.coding.sequences.count
+
+Even and odd
+------------
+
+.. autofunction:: satella.coding.sequences.even
+
+.. autofunction:: satella.coding.sequences.odd

@@ -1,8 +1,3 @@
-
-
-
-
-
 def HashableWrapper(obj):
     """
     A decorator that makes given objects hashable by their id.
