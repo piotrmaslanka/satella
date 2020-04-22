@@ -1,3 +1,7 @@
+# v2.7.12
+
+* _TBA_
+
 # v2.7.11
 
 * AggregateMetric has now the method `measure`
