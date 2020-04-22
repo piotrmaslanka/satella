@@ -1,9 +1,10 @@
 import typing as tp
 
 from .metric_types import Metric, MetricLevel
+from .metric_types.measurable_mixin import MeasurableMixin
 
 
-class AggregateMetric(Metric):
+class AggregateMetric(Metric, MeasurableMixin):
     """
     A virtual metric grabbing a few other metrics and having a single .handle() call represent a bunch of
     calls to other metrics. Ie, the following:

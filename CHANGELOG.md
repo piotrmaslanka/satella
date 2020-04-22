@@ -1,6 +1,7 @@
 # v2.7.11
 
-* _TBA_
+* AggregateMetric has now the method `measure`
+* also, a bug in `measure_future` was fixed
 
 # v2.7.10
 

@@ -35,7 +35,7 @@ class MeasurableMixin:
             elapsed = value_getter() - future.old_value
             self.handle(logging_level, elapsed, **labels)
 
-        future.add_done_callback(future)
+        future.add_done_callback(on_future_done)
 
     def measure(self, include_exceptions: bool = True,
                 logging_level: MetricLevel = MetricLevel.RUNTIME,
