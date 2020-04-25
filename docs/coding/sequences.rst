@@ -59,6 +59,9 @@ if object A collides with B then B collides with A).
 
 It helps you save time during computationally intensive operations.
 
+This routine will return a iterator of tuple containing two elements
+from the same set (ie. it will do something like a cartesian power of two).
+
 .. autofuction:: satella.coding.sequences.half_cartesian
 
 skip_first
