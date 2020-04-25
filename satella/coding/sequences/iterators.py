@@ -3,6 +3,7 @@ import itertools
 import typing as tp
 import warnings
 
+from ..recast_exceptions import silence_excs
 from ..decorators import for_argument
 
 T, U = tp.TypeVar('T'), tp.TypeVar('U')
@@ -11,6 +12,7 @@ IteratorOrIterable = tp.Union[tp.Iterator[T], tp.Iterable[T]]
 
 
 @for_argument(iter)
+@silence_excs(StopIteration)
 def even(sq: IteratorOrIterable) -> tp.Iterator[T]:
     """
     Return only elements with even indices in this iterable (first element will be returned,
@@ -22,6 +24,7 @@ def even(sq: IteratorOrIterable) -> tp.Iterator[T]:
 
 
 @for_argument(iter)
+@silence_excs(StopIteration)
 def odd(sq: IteratorOrIterable) -> tp.Iterator[T]:
     """
     Return only elements with odd indices in this iterable.
@@ -31,6 +34,7 @@ def odd(sq: IteratorOrIterable) -> tp.Iterator[T]:
         yield next(sq)
 
 
+@silence_excs(StopIteration)
 def count(sq: IteratorOrIterable, start: tp.Optional[int] = None, step: int = 1) -> tp.Iterator[int]:
     """
     Return a sequence of integers, for each entry in the sequence with provided step.
