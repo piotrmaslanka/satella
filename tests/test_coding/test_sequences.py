@@ -54,8 +54,8 @@ class TestSequences(unittest.TestCase):
         self.assertEqual(b, [2, 3, 4, 5])
 
     def test_half_cartesian(self):
-        a = set(half_cartesian([1, 2, 3], [1, 2, 3]))
-        b = set([(1, 1), (1, 2), (1, 3), (2, 2), (2, 3), (3, 3)])
+        a = set(half_cartesian([1, 2, 3]))
+        b = {(1, 1), (1, 2), (1, 3), (2, 2), (2, 3), (3, 3)}
         self.assertEqual(a, b)
 
     def test_add_next(self):
