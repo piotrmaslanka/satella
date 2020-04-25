@@ -42,7 +42,7 @@ class Proxy(tp.Generic[T]):
         return getattr(self.__obj, item)
 
     def __delattr__(self, item):
-        del self.__obj[item]
+        delattr(self.__obj, item)
 
     def __int__(self):
         return int(self.__obj)

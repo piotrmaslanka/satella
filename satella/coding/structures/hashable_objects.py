@@ -1,6 +1,11 @@
-def HashableWrapper(obj):
+from .proxy import Proxy
+
+
+class HashableWrapper(Proxy):
     """
-    A decorator that makes given objects hashable by their id.
+    A class that makes given objects hashable by their id.
+
+    Note that this class will return a proxy to the object, and not the object itself.
 
     Use like:
 
@@ -12,6 +17,6 @@ def HashableWrapper(obj):
     >>> a.a = 4
     >>> assert a.a == 4
     """
-    if not hasattr(obj, '__hash__'):
-        obj.__hash__ = lambda self: hash(id(self))
-    return obj
+
+    def __hash__(self):
+        return hash(id(self))

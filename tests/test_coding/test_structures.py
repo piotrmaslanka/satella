@@ -99,6 +99,9 @@ class TestMisc(unittest.TestCase):
             def __call__(self, *args, **kwargs):
                 return 5
 
+            def __hash__(self):
+                raise TypeError()
+
         nh = NotHashable(5)
         nw = HashableWrapper(nh)
         self.assertEqual(nw.a, 5)
