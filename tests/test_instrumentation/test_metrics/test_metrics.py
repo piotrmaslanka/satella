@@ -124,7 +124,7 @@ class TestMetric(unittest.TestCase):
         self.assertGreaterEqual(next(iter(metric.to_metric_data().values)).value, 1)
 
     def test_aggregate_metric_measure_generator(self):
-        my_metric = getMetric('my_metric', 'summary', quantiles=0.5)
+        my_metric = getMetric('my_metric', 'summary', quantiles=[0.5])
         metric = AggregateMetric(my_metric)
 
         @metric.measure()
