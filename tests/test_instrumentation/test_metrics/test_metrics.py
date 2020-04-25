@@ -123,6 +123,22 @@ class TestMetric(unittest.TestCase):
         self.assertTrue(inspect.isgeneratorfunction(generator))
         self.assertGreaterEqual(next(iter(metric.to_metric_data().values)).value, 1)
 
+    def test_aggregate_metric_measure_generator(self):
+        my_metric = getMetric('my_metric', 'summary', quantiles=0.5)
+        metric = AggregateMetric(my_metric)
+
+        @metric.measure()
+        def generator():
+            yield 2
+            time.sleep(1)
+            yield 3
+
+        for _ in generator():
+            pass
+        self.assertTrue(inspect.isgeneratorfunction(generator))
+        self.assertGreaterEqual(next(iter(my_metric.to_metric_data().values)).value, 1)
+
+
     def test_quantile_context_manager(self):
         metric = getMetric('test_metric', 'summary', quantiles=[0.5])
         with metric.measure():
