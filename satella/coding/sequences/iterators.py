@@ -91,8 +91,6 @@ def is_instance(classes: tp.Union[tp.Tuple[type, ...], type]) -> tp.Callable[[ob
     return inner
 
 
-
-
 def other_sequence_no_longer_than(base_sequence: IteratorOrIterable,
                                   other_sequence: IteratorOrIterable[T]) -> tp.Iterator[T]:
     """
