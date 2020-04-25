@@ -1,3 +1,7 @@
+# v2.7.15
+
+* _TBA_
+
 # v2.7.14
 
 * multiple bugfixes for `Proxy` object
