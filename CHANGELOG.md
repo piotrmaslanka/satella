@@ -1,6 +1,7 @@
 # v2.7.14
 
-* _TBA_
+* multiple bugfixes for `Proxy` object
+* bugfix for `HashableWrapper`: now it works
 
 # v2.7.13
 

@@ -117,7 +117,7 @@ class Proxy(tp.Generic[T]):
         return self.__obj or other
 
     def __and__(self, other):
-        return self.__obj or other
+        return self.__obj and other
 
     def __le__(self, other):
         return self.__obj <= other

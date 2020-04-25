@@ -17,6 +17,7 @@ class HashableWrapper(Proxy):
     >>> a.a = 4
     >>> assert a.a == 4
     """
+    __slots__ = ()
 
     def __hash__(self):
         return hash(id(self))

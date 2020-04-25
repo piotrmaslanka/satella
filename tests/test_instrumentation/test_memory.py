@@ -63,5 +63,5 @@ class TestMemory(unittest.TestCase):
         self.assertTrue(a['memory'])
         a['level_2_engaged'] = True
         time.sleep(3)
-        self.assertEqual(a['times_entered_1'], 2)
+        self.assertEqual(a['times_entered_1'], 3)
         self.assertTrue(a['level_2_confirmed'])
