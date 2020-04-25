@@ -1,3 +1,7 @@
+# v2.7.14
+
+* _TBA_
+
 # v2.7.13
 
 * bugfix release: header of `half_cartesian` changed
