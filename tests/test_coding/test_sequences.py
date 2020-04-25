@@ -3,12 +3,17 @@ import unittest
 
 from satella.coding.sequences import choose, infinite_counter, take_n, is_instance, is_last, \
     add_next, half_product, skip_first, zip_shifted, stop_after, group_quantity, \
-    iter_dict_of_list, shift, other_sequence_no_longer_than, count
+    iter_dict_of_list, shift, other_sequence_no_longer_than, count, even, odd
 
 logger = logging.getLogger(__name__)
 
 
 class TestSequences(unittest.TestCase):
+
+    def test_even_and_odd(self):
+        a = [0, 1, 2, 3, 4, 5, 6]
+        self.assertEqual(list(even(a)), [0, 2, 4, 6])
+        self.assertEqual(list(odd(a)), [1, 3, 5])
 
     def test_count(self):
         self.assertEqual(list(count([None, None, None], 5, -2)), [5, 3, 1])

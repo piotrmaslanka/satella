@@ -3,10 +3,15 @@ import itertools
 import typing as tp
 import warnings
 
+from ..decorators import for_argument
+
 T, U = tp.TypeVar('T'), tp.TypeVar('U')
 
+IteratorOrIterable = tp.Union[tp.Iterator[T], tp.Iterable[T]]
 
-def even(sq: tp.Iterator[T]) -> tp.Iterator[T]:
+
+@for_argument(iter)
+def even(sq: IteratorOrIterable) -> tp.Iterator[T]:
     """
     Return only elements with even indices in this iterable (first element will be returned,
     as indices are counted from 0)
@@ -16,7 +21,8 @@ def even(sq: tp.Iterator[T]) -> tp.Iterator[T]:
         next(sq)
 
 
-def odd(sq: tp.Iterator[T]) -> tp.Iterator[T]:
+@for_argument(iter)
+def odd(sq: IteratorOrIterable) -> tp.Iterator[T]:
     """
     Return only elements with odd indices in this iterable.
     """
@@ -25,7 +31,7 @@ def odd(sq: tp.Iterator[T]) -> tp.Iterator[T]:
         yield next(sq)
 
 
-def count(sq: tp.Iterator, start: tp.Optional[int] = None, step: int = 1) -> tp.Iterator[int]:
+def count(sq: IteratorOrIterable, start: tp.Optional[int] = None, step: int = 1) -> tp.Iterator[int]:
     """
     Return a sequence of integers, for each entry in the sequence with provided step.
 
@@ -78,9 +84,6 @@ def is_instance(classes: tp.Union[tp.Tuple[type, ...], type]) -> tp.Callable[[ob
     return inner
 
 
-T = tp.TypeVar('T')
-
-IteratorOrIterable = tp.Union[tp.Iterator[T], tp.Iterable[T]]
 
 
 def other_sequence_no_longer_than(base_sequence: IteratorOrIterable,

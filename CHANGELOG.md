@@ -1,6 +1,6 @@
 # v2.7.12
 
-* _TBA_
+* bugfix release: `even`, `odd` and `count` will now accept Iterables
 
 # v2.7.11
 
