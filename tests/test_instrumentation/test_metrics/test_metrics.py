@@ -138,7 +138,6 @@ class TestMetric(unittest.TestCase):
         self.assertTrue(inspect.isgeneratorfunction(generator))
         self.assertGreaterEqual(next(iter(my_metric.to_metric_data().values)).value, 1)
 
-
     def test_quantile_context_manager(self):
         metric = getMetric('test_metric', 'summary', quantiles=[0.5])
         with metric.measure():

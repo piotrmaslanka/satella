@@ -12,29 +12,32 @@ IteratorOrIterable = tp.Union[tp.Iterator[T], tp.Iterable[T]]
 
 
 @for_argument(iter)
-@silence_excs(StopIteration)
 def even(sq: IteratorOrIterable) -> tp.Iterator[T]:
     """
     Return only elements with even indices in this iterable (first element will be returned,
     as indices are counted from 0)
     """
-    while True:
-        yield next(sq)
-        next(sq)
+    try:
+        while True:
+            yield next(sq)
+            next(sq)
+    except StopIteration:
+        return
 
 
 @for_argument(iter)
-@silence_excs(StopIteration)
 def odd(sq: IteratorOrIterable) -> tp.Iterator[T]:
     """
     Return only elements with odd indices in this iterable.
     """
-    while True:
-        next(sq)
-        yield next(sq)
+    try:
+        while True:
+            next(sq)
+            yield next(sq)
+    except StopIteration:
+        return
 
 
-@silence_excs(StopIteration)
 def count(sq: IteratorOrIterable, start: tp.Optional[int] = None, step: int = 1) -> tp.Iterator[int]:
     """
     Return a sequence of integers, for each entry in the sequence with provided step.
