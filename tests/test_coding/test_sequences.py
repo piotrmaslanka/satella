@@ -58,6 +58,11 @@ class TestSequences(unittest.TestCase):
         b = {(1, 1), (1, 2), (1, 3), (2, 2), (2, 3), (3, 3)}
         self.assertEqual(a, b)
 
+    def test_half_cartesian_include_same_pairs_false(self):
+        a = set(half_cartesian([1, 2, 3], include_same_pairs=False))
+        b = {(1, 2), (1, 3), (2, 3)}
+        self.assertEqual(a, b)
+
     def test_add_next(self):
         self.assertEqual(list(add_next([1, 2, 3, 4, 5])),
                          [(1, 2), (2, 3), (3, 4), (4, 5), (5, None)])

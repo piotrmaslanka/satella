@@ -1,6 +1,6 @@
 # v2.7.15
 
-* _TBA_
+* added `include_same_pairs` to `half_cartesian`
 
 # v2.7.14
 
