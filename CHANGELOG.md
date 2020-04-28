@@ -1,6 +1,6 @@
 # v2.7.16
 
-* _TBA_
+* extended `Proxy`
 
 # v2.7.15
 

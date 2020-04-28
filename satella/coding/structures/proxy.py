@@ -14,11 +14,20 @@ class Proxy(tp.Generic[T]):
 
     Note that in-place operations will return the Proxy itself, whereas simple addition will shed
     this proxy, returning object wrapped plus something.
-    """
-    __slots__ = ('__obj',)
 
-    def __init__(self, object_to_wrap: T):
+    :param object_to_wrap: object to wrap
+    :param wrap_operations: whether results of operations returning something else should be
+        also proxied. This will be done by the following code:
+        >>> a = a.__add__(b)
+        >>> return self.__class__(a)
+        Wrapped operations include ONLY add, sub, mul, all kinds of div.
+        If you want logical operations wrapped, file an issue.
+    """
+    __slots__ = ('__obj', '__wrap_operations')
+
+    def __init__(self, object_to_wrap: T, wrap_operations: bool = False):
         self.__obj = object_to_wrap  # type: T
+        self.__wrap_operations = wrap_operations
 
     def __call__(self, *args, **kwargs):
         return self.__obj(*args, **kwargs)
@@ -33,7 +42,7 @@ class Proxy(tp.Generic[T]):
         del self.__obj[key]
 
     def __setattr__(self, key, value):
-        if key in ('_Proxy__obj', ):
+        if key in ('_Proxy__obj', '_Proxy__wrap_operations'):
             super().__setattr__(key, value)
         else:
             setattr(self.__obj, key, value)
@@ -57,30 +66,48 @@ class Proxy(tp.Generic[T]):
         return str(self.__obj)
 
     def __add__(self, other):
-        return self.__obj + other
+        result = self.__obj + other
+        if self.__wrap_operations:
+            result = self.__class__(result)
+        return result
 
     def __iadd__(self, other):
         self.__obj += other
         return self
 
     def __sub__(self, other):
-        return self.__obj - other
+        result = self.__obj - other
+        if self.__wrap_operations:
+            result = self.__class__(result)
+        return result
 
     def __isub__(self, other):
         self.__obj -= other
         return self
 
     def __mul__(self, other):
-        return self.__obj * other
+        result = self.__obj * other
+        if self.__wrap_operations:
+            result = self.__class__(result)
+        return result
 
     def __divmod__(self, other):
-        return divmod(self.__obj, other)
+        result = divmod(self.__obj, other)
+        if self.__wrap_operations:
+            result = self.__class__(result)
+        return result
 
     def __floordiv__(self, other):
-        return self.__obj // other
+        result = self.__obj // other
+        if self.__wrap_operations:
+            result = self.__class__(result)
+        return result
 
     def __truediv__(self, other):
-        return self.__obj / other
+        result = self.__obj / other
+        if self.__wrap_operations:
+            result = self.__class__(result)
+        return result
 
     def __imul__(self, other):
         self.__obj * other

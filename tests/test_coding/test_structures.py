@@ -9,12 +9,19 @@ import mock
 from satella.coding.structures import TimeBasedHeap, Heap, typednamedtuple, \
     OmniHashableMixin, DictObject, apply_dict_object, Immutable, frozendict, SetHeap, \
     DictionaryView, HashableWrapper, TwoWayDictionary, Ranking, SortedList, SliceableDeque, \
-    DirtyDict, KeyAwareDefaultDict
+    DirtyDict, KeyAwareDefaultDict, Proxy
 
 logger = logging.getLogger(__name__)
 
 
 class TestMisc(unittest.TestCase):
+    def test_proxy(self):
+        a = Proxy(5, wrap_operations=True)
+        self.assertIsInstance(a+5, Proxy)
+
+        a = Proxy(5)
+        self.assertNotIsInstance(a+5, Proxy)
+
     def test_key_aware_defaultdict(self):
         a = KeyAwareDefaultDict(int)
         self.assertEqual(a['1'], 1)
