@@ -23,6 +23,9 @@ Satella contains, among other things:
 * helpful [exception handlers](satella/exception_handling)
 * common programming [idioms](satella/coding)
 
+Most Satella objects make heavy use of `__slots__`, so they are memory friendly and usable on embedded systems,
+where memory is at premium.
+
 Full [documentation](http://satella.readthedocs.io/en/latest/?badge=latest)
 is available for the brave souls that do decide to use this library.
 
