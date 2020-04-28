@@ -9,13 +9,9 @@ class HashableWrapper(Proxy):
 
     Use like:
 
-    >>> class NotHashable:
-    >>>     def __init__(self, a):
-    >>>         self.a = a
-    >>> a = HashableWrapper(NotHashable(5))
-    >>> assert a.a == 5
-    >>> a.a = 4
-    >>> assert a.a == 4
+    >>> a = {1:2, 3:4}
+    >>> a = HashableWrapper(a)
+    >>> hash(a)
     """
     __slots__ = ()
 

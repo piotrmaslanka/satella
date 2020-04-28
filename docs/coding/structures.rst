@@ -122,7 +122,7 @@ DictionaryView
 HashableWrapper
 ===============
 
-.. autofunction:: satella.coding.structures.HashableWrapper
+.. autoclass:: satella.coding.structures.HashableWrapper
 
 TwoWayDictionary
 ================
