@@ -6,7 +6,7 @@ __all__ = ['Immutable', 'frozendict']
 class ImmutableMetaType(ABCMeta):
     def __call__(cls, *args, **kwargs):
         p = type.__call__(cls, *args, **kwargs)
-        p.__dict__['_Immutable__locked_for_writes'] = True
+        setattr(p, '_Immutable__locked_for_writes', True)
         return p
 
 
@@ -21,21 +21,27 @@ class Immutable(metaclass=ImmutableMetaType):
     >>>         self.attribute = 'value'
     """
 
-    __locked_for_writes = False  # type: bool
+    __slots__ = ('__locked_for_writes', )
 
     # Following make this class immutable
     def __setattr__(self, attr, value):
-        if self.__locked_for_writes:
-            raise TypeError(
-                '%s does not support attribute assignment' % (self.__class__.__qualname__,))
-        else:
+        try:
+            if self.__locked_for_writes:
+                raise TypeError(
+                    '%s does not support attribute assignment' % (self.__class__.__qualname__,))
+            else:
+                super().__setattr__(attr, value)
+        except AttributeError:
             super().__setattr__(attr, value)
 
     def __delattr__(self, attr):
-        if self.__locked_for_writes:
-            raise TypeError(
-                '%s does not support attribute deletion' % (self.__class__.__qualname__,))
-        else:
+        try:
+            if self.__locked_for_writes:
+                raise TypeError(
+                    '%s does not support attribute deletion' % (self.__class__.__qualname__,))
+            else:
+                super().__delattr__(attr)
+        except AttributeError:
             super().__delattr__(attr)
 
 
