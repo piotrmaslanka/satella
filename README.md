@@ -26,6 +26,9 @@ Satella contains, among other things:
 Most Satella objects make heavy use of `__slots__`, so they are memory friendly and usable on embedded systems,
 where memory is at premium.
 
+Change log is kept as part of [release notes](https://github.com/piotrmaslanka/satella/releases).
+The [CHANGELOG.md](CHANGELOG.md) file is only to track changes since last release.
+
 Full [documentation](http://satella.readthedocs.io/en/latest/?badge=latest)
 is available for the brave souls that do decide to use this library.
 
