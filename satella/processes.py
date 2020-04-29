@@ -30,28 +30,23 @@ def call_and_return_stdout(args: tp.Union[str, tp.List[str]],
         within this time, it will be sent a SIGKILL
     :param expected_return_code: an expected return code of this process. 0 is the default. If process
         returns anything else, ProcessFailed will be raise
-    :param ProcessFailed: process' result code was different from the requested
+    :raises ProcessFailed: process' result code was different from the requested
     """
     if isinstance(args, str):
         args = args.split(' ')
-    logger.warning('Modifying kwargs')
     kwargs['stdout'] = subprocess.PIPE
 
     stdout_list = []
 
-    logger.warning('Starting popen')
     proc = subprocess.Popen(args, **kwargs)
     reader_thread = threading.Thread(target=read_nowait, args=(proc, stdout_list), daemon=True)
-    logger.warning('Starting rt')
     reader_thread.start()
-    logger.warning('Waiting for termination')
 
     try:
         proc.wait(timeout=timeout)
     except subprocess.TimeoutExpired:
         proc.kill()
         proc.wait()
-    logger.warning('Terminated')
 
     if proc.returncode != expected_return_code:
         raise ProcessFailed(proc.returncode)
