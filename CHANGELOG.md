@@ -1,4 +1,2 @@
-# v2.7.18
+# v2.7.19
 
-* reformatted `ProcessFailed` exception
-* added an option not to check the return code
