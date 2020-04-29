@@ -1,8 +1,11 @@
 import subprocess
 import typing as tp
 import threading
+import logging
 
 from .exceptions import ProcessFailed
+
+logger = logging.getLogger(__name__)
 
 
 def read_nowait(process: subprocess.Popen, output_list: tp.List[str]):
@@ -31,20 +34,24 @@ def call_and_return_stdout(args: tp.Union[str, tp.List[str]],
     """
     if isinstance(args, str):
         args = args.split(' ')
-
+    logger.warning('Modifying kwargs')
     kwargs['stdout'] = subprocess.PIPE
 
     stdout_list = []
 
+    logger.warning('Starting popen')
     proc = subprocess.Popen(args, **kwargs)
     reader_thread = threading.Thread(target=read_nowait, args=(proc, stdout_list), daemon=True)
+    logger.warning('Starting rt')
     reader_thread.start()
+    logger.warning('Waiting for termination')
 
     try:
         proc.wait(timeout=timeout)
     except subprocess.TimeoutExpired:
         proc.kill()
         proc.wait()
+    logger.warning('Terminated')
 
     if proc.returncode != expected_return_code:
         raise ProcessFailed(proc.returncode)
