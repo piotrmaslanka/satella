@@ -15,7 +15,8 @@ class CustomException(Exception):
     1. Accept any number of arguments
     2. Provide faithful __repr__ and a reasonable __str__
 
-    It passed all arguments that your exception received via super()
+    It passed all arguments that your exception received via super().
+    Just remember to actually pass these arguments in your inheriting classes!
     """
     def __init__(self, *args, **kwargs):
         super().__init__(*args)
@@ -156,6 +157,7 @@ class LockIsHeld(ResourceLocked):
     """
 
     def __init__(self, pid):
+        super().__init__(pid)
         self.pid = pid
 
 
@@ -163,4 +165,5 @@ class ProcessFailed(BaseSatellaError):
     """A process finished with other result code that it was requested"""
 
     def __init__(self, rc: int):
+        super().__init__(rc)
         self.rc = rc
