@@ -41,8 +41,6 @@ def call_and_return_stdout(args: tp.Union[str, tp.List[str]],
         at all
     :raises ProcessFailed: process' result code was different from the requested
     """
-    if isinstance(args, str):
-        args = args.split(' ')
     kwargs['stdout'] = subprocess.PIPE
 
     stdout_list = []
