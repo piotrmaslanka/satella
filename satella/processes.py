@@ -10,8 +10,10 @@ logger = logging.getLogger(__name__)
 
 def read_nowait(process: subprocess.Popen, output_list: tp.List[str]):
     try:
-        while process.stdout.readable():
-            line = process.stdout.readline()
+        while process.poll() is None:
+            line = process.stdout.read(2048)
+            if line == '':
+                break
             output_list.append(line)
     except (IOError, OSError):
         pass
@@ -28,8 +30,6 @@ def call_and_return_stdout(args: tp.Union[str, tp.List[str]],
 
     A bytes object will be returned if encoding is not defined, else stdout will be decoded
     according to specified encoding.
-
-    #todo every usage of this call will spawn a daemonic thread, pending a fix
 
     :param args: arguments to run the program with. If passed a string, it will be split on space.
     :param timeout: amount of seconds to wait for the process result. If process does not complete
@@ -54,6 +54,7 @@ def call_and_return_stdout(args: tp.Union[str, tp.List[str]],
     except subprocess.TimeoutExpired:
         proc.kill()
         proc.wait()
+    reader_thread.join()
 
     if proc.returncode != expected_return_code:
         raise ProcessFailed(proc.returncode)
