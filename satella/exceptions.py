@@ -4,7 +4,8 @@ import typing as tp
 __all__ = ['BaseSatellaError', 'ResourceLockingError', 'ResourceNotLocked', 'ResourceLocked',
            'ConfigurationValidationError', 'ConfigurationError', 'ConfigurationSchemaError',
            'PreconditionError', 'MetricAlreadyExists', 'BaseSatellaException', 'CustomException',
-           'CodedCustomException', 'CodedCustomExceptionMetaclass', 'WouldWaitMore', 'LockIsHeld']
+           'CodedCustomException', 'CodedCustomExceptionMetaclass', 'WouldWaitMore', 'LockIsHeld',
+           'ProcessFailed']
 
 
 class CustomException(Exception):
@@ -156,3 +157,10 @@ class LockIsHeld(ResourceLocked):
 
     def __init__(self, pid):
         self.pid = pid
+
+
+class ProcessFailed(BaseSatellaError):
+    """A process finished with other result code that it was requested"""
+
+    def __init__(self, rc: int):
+        self.rc = rc

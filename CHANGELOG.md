@@ -2,3 +2,4 @@
 
 * extended `Proxy`
 * made `Immutable` utilize `__slots__`
+* added `satella.processes`

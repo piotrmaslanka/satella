@@ -26,6 +26,7 @@ Visit the project's page at GitHub_!
            files
            time
            exceptions
+           processes
 
 
 Indices and tables
