@@ -32,7 +32,6 @@ def call_and_return_stdout(args: tp.Union[str, tp.List[str]],
     if isinstance(args, str):
         args = args.split(' ')
 
-    kwargs['capture_output'] = True
     kwargs['stdout'] = subprocess.PIPE
 
     stdout_list = []
