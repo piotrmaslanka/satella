@@ -162,8 +162,16 @@ class LockIsHeld(ResourceLocked):
 
 
 class ProcessFailed(BaseSatellaError):
-    """A process finished with other result code that it was requested"""
+    """A process finished with other result code that it was requested
 
-    def __init__(self, rc: int):
-        super().__init__(rc)
+    :param rc: return code of the process
+    :param stdout_so_far: process' stdout gathered so far
+    """
+
+    def __init__(self, rc: int, stdout_so_far: tp.Union[bytes, str]):
+        super().__init__(rc, stdout_so_far)
         self.rc = rc
+        self.stdout_so_far = stdout_so_far
+
+    def __str__(self):
+        return 'ProcessFailed(%s)' % (self.rc, )

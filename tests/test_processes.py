@@ -6,7 +6,7 @@ from satella.processes import call_and_return_stdout
 class TestProcesses(unittest.TestCase):
     @unittest.skipIf('win' in sys.platform, 'Running on Windows')
     def test_return_stdout(self):
-        output = call_and_return_stdout('ls .', shell=True, timeout=3)
+        output = call_and_return_stdout('ls .', shell=True, timeout=3, expected_return_code=0)
         self.assertIn(b'requirements.txt', output)
 
     @unittest.skipIf('win' in sys.platform or sys.version_info.minor < 6, 'Running on Windows or Python 3.5')

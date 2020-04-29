@@ -22,7 +22,8 @@ def read_nowait(process: subprocess.Popen, output_list: tp.List[str]):
 def call_and_return_stdout(args: tp.Union[str, tp.List[str]],
                            timeout: tp.Optional[int] = None,
                            encoding: tp.Optional[str] = None,
-                           expected_return_code: int = 0, **kwargs) -> tp.Union[bytes, str]:
+                           expected_return_code: tp.Optional[int] = None,
+                           **kwargs) -> tp.Union[bytes, str]:
     """
     Call a process and return it's stdout.
 
@@ -36,7 +37,8 @@ def call_and_return_stdout(args: tp.Union[str, tp.List[str]],
         within this time, it will be sent a SIGKILL
     :param encoding: encoding with which to decode stdout. If none is passed, it will be returned as a bytes object
     :param expected_return_code: an expected return code of this process. 0 is the default. If process
-        returns anything else, ProcessFailed will be raise
+        returns anything else, ProcessFailed will be raise. If left default (None) return code won't be checked
+        at all
     :raises ProcessFailed: process' result code was different from the requested
     """
     if isinstance(args, str):
@@ -56,13 +58,14 @@ def call_and_return_stdout(args: tp.Union[str, tp.List[str]],
         proc.wait()
     reader_thread.join()
 
-    if proc.returncode != expected_return_code:
-        raise ProcessFailed(proc.returncode)
+    if encoding is None:
+        result = b''.join(stdout_list)
     else:
-        if encoding is None:
-            return b''.join(stdout_list)
-        else:
+        result = ''.join((row.decode(encoding) for row in stdout_list))
 
-            return ''.join((row.decode(encoding) for row in stdout_list))
+    if expected_return_code is not None:
+        if proc.returncode != expected_return_code:
+            raise ProcessFailed(proc.returncode, result)
 
+    return result
 
