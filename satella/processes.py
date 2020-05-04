@@ -1,16 +1,22 @@
 import subprocess
 import typing as tp
 import threading
-import logging
 
 from .exceptions import ProcessFailed
 
-logger = logging.getLogger(__name__)
+__all__ = ['call_and_return_stdout']
 
 
-def read_nowait(process: subprocess.Popen, output_list: tp.List[str]):
+def read_nowait(process: subprocess.Popen, output_list: tp.List[str]) -> None:
+    """
+    To be launched as a daemon thread. This reads stdout and appends it's entries to a list
+    """
     try:
-        while process.poll() is None:
+        while True:
+            try:
+                process.wait(timeout=0.1)
+            except subprocess.TimeoutExpired:
+                pass
             line = process.stdout.read(2048)
             if line == '':
                 break
