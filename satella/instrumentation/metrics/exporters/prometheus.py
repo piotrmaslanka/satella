@@ -89,7 +89,7 @@ class RendererObject(io.StringIO):
         if md.labels:
             self.write('{')
             self.write(','.join('%s="%s"' % (
-                key, value.replace('\\', '\\\\').replace('"', '\\"')) for key, value in md.labels.items()))
+                key, str(value).replace('\\', '\\\\').replace('"', '\\"')) for key, value in md.labels.items()))
             self.write('}')
         self.write(' %s' % (md.value, ))
         if md.timestamp is not None:
