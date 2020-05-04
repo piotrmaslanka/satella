@@ -1,3 +1,1 @@
-# v2.7.21
-
-* bugfix for Immutable
+# v2.7.22
