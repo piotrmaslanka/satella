@@ -17,6 +17,11 @@ def read_nowait(process: subprocess.Popen, output_list: tp.List[str]) -> None:
                 process.wait(timeout=0.1)
             except subprocess.TimeoutExpired:
                 pass
+            else:
+                line = process.stdout.read(2048)
+                if line:
+                    output_list.append(line)
+                break
             line = process.stdout.read(2048)
             if line == '':
                 break
