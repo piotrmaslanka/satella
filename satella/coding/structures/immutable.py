@@ -25,6 +25,9 @@ class Immutable(metaclass=ImmutableMetaType):
 
     # Following make this class immutable
     def __setattr__(self, attr, value):
+        if attr == '_Immutable__locked_for_writes':
+            return super().__setattr__(attr, value)
+
         try:
             if self.__locked_for_writes:
                 raise TypeError(
