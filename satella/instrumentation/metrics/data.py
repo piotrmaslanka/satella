@@ -64,7 +64,7 @@ class MetricData(JSONAble):
         internal = x.pop('_internal', False)
         return MetricData(name, value, x, timestamp, internal)
 
-    def add_timestamp(self, timestamp: float):
+    def add_timestamp(self, timestamp: tp.Optional[float]):
         self.timestamp = timestamp
 
 
