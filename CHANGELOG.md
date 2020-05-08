@@ -1,3 +1,5 @@
-# v2.7.22
+# v2.7.23
 
-* fixed escaping metric labels for Prometheus
+* added custom `time_getter_callable` for `satella.time`
+
+

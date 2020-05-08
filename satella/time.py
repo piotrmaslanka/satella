@@ -38,12 +38,14 @@ class measure:
 
     :param stop_on_stop: stop elapsing time upon calling .stop()/exiting the context manager
     :param adjust: interval to add to current time upon initialization
+    :param time_getter_callable: callable/0 -> float to get the time with
     """
-    __slots__ = ('started_on', 'elapsed', 'stopped_on', 'stop_on_stop')
+    __slots__ = ('started_on', 'elapsed', 'stopped_on', 'stop_on_stop', 'time_getter_callable')
 
     def __init__(self, future_to_measure: tp.Optional[Future] = None, stop_on_stop: bool = True,
-                 adjust: float = 0.0):
-        self.started_on = time.monotonic() + adjust
+                 adjust: float = 0.0, time_getter_callable: tp.Callable[[], float] = time.monotonic):
+        self.time_getter_callable = time_getter_callable
+        self.started_on = time_getter_callable() + adjust
         self.elapsed = None
         self.stopped_on = None
         self.stop_on_stop = stop_on_stop
@@ -52,7 +54,7 @@ class measure:
 
     def start(self) -> None:
         """Start measuring time or update the internal counter"""
-        self.started_on = time.monotonic()
+        self.started_on = self.time_getter_callable()
 
     def update(self) -> None:
         """Alias for .start()"""
@@ -66,7 +68,7 @@ class measure:
         if fun is None:
             if self.stop_on_stop and self.elapsed is not None:
                 return self.elapsed
-            return time.monotonic() - self.started_on
+            return self.time_getter_callable() - self.started_on
         else:
             @wraps(fun)
             def inner(*args, **kwargs):
@@ -80,7 +82,7 @@ class measure:
 
     def stop(self) -> None:
         """Stop counting time"""
-        self.stopped_on = time.monotonic()
+        self.stopped_on = self.time_getter_callable()
         self.elapsed = self.stopped_on - self.started_on
 
     def __exit__(self, exc_type, exc_val, exc_tb):
