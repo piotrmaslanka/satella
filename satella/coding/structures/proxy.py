@@ -38,8 +38,8 @@ class Proxy(metaclass=ProxyMetaclass):
     """
     __slots__ = ('__obj', '__wrap_operations')
 
-    def __init__(self, object_to_wrap: T, wrap_operations: bool = False):
-        self.__obj = object_to_wrap  # type: T
+    def __init__(self, object_to_wrap, wrap_operations: bool = False):
+        self.__obj = object_to_wrap
         self.__wrap_operations = wrap_operations
 
     def __call__(self, *args, **kwargs):
