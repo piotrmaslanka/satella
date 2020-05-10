@@ -1,6 +1,9 @@
 import abc
 import logging
+import typing as tp
+from satella.coding.metaclasses import metaclass_maker
 
+T = tp.TypeVar('T')
 logger = logging.getLogger(__name__)
 
 
@@ -16,7 +19,13 @@ class ProxyMetaclass(abc.ABCMeta):
         return isinstance(instance._Proxy__obj, cls)
 
 
-class Proxy(metaclass=ProxyMetaclass):
+class ProxyOfMetaclass(metaclass=ProxyMetaclass):
+    pass
+
+SETTABLE_KEYS = {'_Proxy__obj', '_Proxy__wrap_operations'}
+
+
+class Proxy(ProxyOfMetaclass, tp.Generic[T], metaclass=metaclass_maker):
     """
     A base class for classes that try to emulate some other object.
 
@@ -38,8 +47,8 @@ class Proxy(metaclass=ProxyMetaclass):
     """
     __slots__ = ('__obj', '__wrap_operations')
 
-    def __init__(self, object_to_wrap, wrap_operations: bool = False):
-        self.__obj = object_to_wrap
+    def __init__(self, object_to_wrap: T, wrap_operations: bool = False):
+        self.__obj = object_to_wrap     # type: T
         self.__wrap_operations = wrap_operations
 
     def __call__(self, *args, **kwargs):
@@ -55,7 +64,7 @@ class Proxy(metaclass=ProxyMetaclass):
         del self.__obj[key]
 
     def __setattr__(self, key, value):
-        if key in ('_Proxy__obj', '_Proxy__wrap_operations'):
+        if key in SETTABLE_KEYS:
             super().__setattr__(key, value)
         else:
             setattr(self.__obj, key, value)
