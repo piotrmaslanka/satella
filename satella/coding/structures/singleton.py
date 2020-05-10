@@ -1,9 +1,5 @@
 from ..decorators import wraps
 
-__all__ = [
-    'Singleton', 'SingletonWithRegardsTo'
-]
-
 
 # noinspection PyPep8Naming
 def Singleton(cls):

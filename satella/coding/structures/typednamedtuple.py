@@ -1,10 +1,6 @@
 import typing as tp
 from collections import namedtuple
 
-__all__ = [
-    'typednamedtuple',
-]
-
 
 def _nth(it, n):
     return [x[n] for x in it]

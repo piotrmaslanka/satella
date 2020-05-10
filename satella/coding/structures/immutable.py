@@ -1,7 +1,5 @@
 from abc import ABCMeta
 
-__all__ = ['Immutable', 'frozendict']
-
 
 class ImmutableMetaType(ABCMeta):
     def __call__(cls, *args, **kwargs):

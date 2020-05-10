@@ -85,6 +85,9 @@ class RendererObject(io.StringIO):
         if md.internal:     # Don't output internal metrics
             return
 
+        if md.description:
+            self.write('#')
+
         self.write(md.name.replace('.', '_'))
         if md.labels:
             self.write('{')

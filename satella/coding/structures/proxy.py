@@ -1,3 +1,4 @@
+import abc
 import logging
 import typing as tp
 
@@ -6,7 +7,19 @@ logger = logging.getLogger(__name__)
 T = tp.TypeVar('T')
 
 
-class Proxy(tp.Generic[T]):
+class ProxyMetaclass(abc.ABCMeta):
+    """
+    Metaclass implementing the isinstance check for proxies
+    """
+
+    def __instancecheck__(cls, instance):
+        if cls is Proxy:
+            return True
+
+        return isinstance(instance._Proxy__obj, cls)
+
+
+class Proxy(tp.Generic[T], metaclass=ProxyMetaclass):
     """
     A base class for classes that try to emulate some other object.
 
@@ -14,6 +27,8 @@ class Proxy(tp.Generic[T]):
 
     Note that in-place operations will return the Proxy itself, whereas simple addition will shed
     this proxy, returning object wrapped plus something.
+
+    Note that proxies are considered to be the type of the object that they wrap.
 
     :param object_to_wrap: object to wrap
     :param wrap_operations: whether results of operations returning something else should be

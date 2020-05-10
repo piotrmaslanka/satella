@@ -12,13 +12,6 @@ from ..decorators import wraps
 T = tp.TypeVar('T')
 Number = tp.Union[int, float]
 
-__all__ = [
-    'Heap',
-    'SetHeap',
-    'TimeBasedHeap',
-    'OmniHashableMixin'
-]
-
 
 class OmniHashableMixin(metaclass=ABCMeta):
     """
@@ -80,6 +73,42 @@ def _extras_to_one(fun):
         return fun(self, ((a,) + args) if len(args) > 0 else a, **kwargs)
 
     return inner
+
+
+class ReprableObject:
+    """
+    An object that will always construct it's own representation from it's __repr__, which
+    will be it's entire arguments fed to the constructor
+
+    Note the apostrophes that this class will use!
+
+    Example:
+
+    >>> class Test(ReprableObject):
+    >>>     def __init__(self, v, **kwargs):
+    >>>         super().__init__(v, **kwargs)
+    >>>
+    >>> assert repr(Test(2, label='value')) == "Test(2, label='value')"
+    """
+    __slots__ = ('__args', '__kwargs')
+
+    def __init__(self, *args, **kwargs):
+        self.__args = args
+        self.__kwargs = kwargs
+
+    def __repr__(self):
+        fragments = [self.__class__.__name__, '(']
+        arguments = []
+        for arg in self.__args:
+            arguments.append(repr(arg))
+        fragments.append(', '.join(arguments))
+        kwargs = []
+        for k, v in self.__kwargs:
+            kwargs.append('%s=%s' % (k,repr(v)))
+        if kwargs:
+            fragments.append(', '.join(kwargs))
+        fragments.append(')')
+        return ''.join(fragments)
 
 
 class Heap(collections.UserList, tp.Generic[T]):
