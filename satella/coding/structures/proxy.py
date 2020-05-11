@@ -16,6 +16,8 @@ class ProxyMetaclass(abc.ABCMeta):
         if cls is Proxy:
             return True
 
+        logger.warning('Called __instancecheck__ on %s %s' % (cls, instance))
+
         return isinstance(instance._Proxy__obj, cls)
 
 
