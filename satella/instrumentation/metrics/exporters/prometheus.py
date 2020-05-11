@@ -1,10 +1,10 @@
-import http.server
+
 import io
 import typing as tp
-
 from satella.coding.concurrent import TerminableThread
+import http.server
 from .. import getMetric
-from ..data import MetricData, MetricDataCollection
+from ..data import MetricData, MetricDataCollection, MetricDataContainer
 
 __all__ = ['metric_data_collection_to_prometheus', 'PrometheusHTTPExporterThread']
 
@@ -47,8 +47,8 @@ class PrometheusHTTPExporterThread(TerminableThread):
     def __init__(self, interface: str, port: int, extra_labels: tp.Optional[dict] = None,
                  enable_metric: bool = False):
         super().__init__(daemon=True)
-        self.interface = interface  # type: str
-        self.port = port  # type: int
+        self.interface = interface          # type: str
+        self.port = port                    # type: int
         self.httpd = http.server.HTTPServer((self.interface, self.port), PrometheusHandler,
                                             bind_and_activate=False)
         self.httpd.extra_labels = extra_labels or {}
@@ -76,21 +76,30 @@ class PrometheusHTTPExporterThread(TerminableThread):
 
 class RendererObject(io.StringIO):
 
-    def render(self, md: MetricData):
-
-        if md.internal:  # Don't output internal metrics
+    def render_container(self, c: MetricDataContainer):
+        if c.internal:
             return
+
+        if c.description:
+            self.write('# HELP %s %s\n' % (c.name.replace('.', '_'), c.description,))
+        if c.type:
+            self.write('# TYPE %s %s\n' % (c.name.replace('.', '_'), c.type, ))
+
+        for entry in c.entries:
+            self.render_entry(entry, c.timestamp)
+        self.write('\n')
+
+    def render_entry(self, md: MetricData, timestamp: tp.Optional[float]):
 
         self.write(md.name.replace('.', '_'))
         if md.labels:
             self.write('{')
             self.write(','.join('%s="%s"' % (
-                key, str(value).replace('\\', '\\\\').replace('"', '\\"')) for
-                                key, value in md.labels.items()))
+                key, str(value).replace('\\', '\\\\').replace('"', '\\"')) for key, value in md.labels.items()))
             self.write('}')
-        self.write(' %s' % (md.value,))
-        if md.timestamp is not None:
-            self.write(' %s' % (int(md.timestamp * 1000),))
+        self.write(' %s' % (md.value, ))
+        if timestamp is not None:
+            self.write(' %s' % (int(timestamp*1000), ))
         self.write('\n')
 
 
@@ -110,5 +119,5 @@ def metric_data_collection_to_prometheus(mdc: MetricDataCollection) -> str:
     for value in mdc.values:
         if value.internal:
             continue
-        obj.render(value)
+        obj.render_container(value)
     return obj.getvalue()

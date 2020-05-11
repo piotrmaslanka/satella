@@ -19,4 +19,4 @@ class EmptyMetric(Metric):
         pass
 
     def to_metric_data(self) -> MetricDataCollection:
-        return MetricDataCollection()
+        return MetricDataCollection([])

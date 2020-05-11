@@ -1,10 +1,10 @@
 import copy
-import time
 import typing as tp
+import time
 
+from ..data import MetricDataCollection, MetricData, MetricDataContainer
 from .base import LeafMetric, MetricLevel
 from .registry import register_metric
-from ..data import MetricDataCollection, MetricData
 
 
 @register_metric
@@ -26,23 +26,13 @@ class CallableMetric(LeafMetric):
                  value_getter: tp.Optional[tp.Callable[[], float]] = None, *args, **kwargs):
         super().__init__(name, root_metric, metric_level, labels, internal, *args, **kwargs)
         self.callable = value_getter
-        self.labeled_metrics = []
-
-    def register_labeled_metric(self, labeled_metric):
-        self.labeled_metrics.append(labeled_metric)
 
     def _handle(self, *args, **kwargs) -> None:
         raise TypeError('You are not supposed to call this!')
 
-    def to_metric_data(self) -> MetricDataCollection:
-        mdc = MetricDataCollection()
-        for labeled_metric in self.labeled_metrics:
-            labels = copy.copy(self.labels)
-            labels.update(labeled_metric.labels)
-            mdc += MetricData(self.name, labeled_metric.callable(), labels, time.time(),
-                              self.internal)
-
-        if self.callable:
-            mdc += MetricData(self.name, self.callable(), self.labels, time.time(), self.internal)
-
-        return mdc
+    def to_metric_data_container(self) -> MetricDataCollection:
+        return MetricDataContainer(self.name, [MetricData(self.name, self.callable(), self.labels)],
+                                   description=self.description,
+                                   metric_type=self.type,
+                                   internal=self.internal,
+                                   timestamp=self.timestamp)

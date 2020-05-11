@@ -4,7 +4,7 @@ import typing as tp
 
 from .base import EmbeddedSubmetrics
 from .registry import register_metric
-from ..data import MetricData, MetricDataCollection
+from ..data import MetricData, MetricDataCollection, MetricDataContainer
 
 
 @register_metric
@@ -15,6 +15,7 @@ class ClicksPerTimeUnitMetric(EmbeddedSubmetrics):
 
     By default (if you do not specify otherwise) this will track calls made during the last second.
     """
+
     __slots__ = ('last_clicks', 'aggregate_children', 'cutoff_period', 'time_unit_vectors')
 
     CLASS_NAME = 'cps'
@@ -40,22 +41,19 @@ class ClicksPerTimeUnitMetric(EmbeddedSubmetrics):
         except IndexError:
             pass
 
-    def to_metric_data(self) -> tp.List[int]:
-        if self.embedded_submetrics_enabled:
-            k = super().to_metric_data()
-            if not self.aggregate_children:
-                return k
-            else:
-                last_clicks = []
-                for child in self.children:
-                    last_clicks.extend(child.last_clicks)
+    def to_metric_data_container(self) -> MetricDataContainer:
+        k = super().to_metric_data_container()
+        if not self.aggregate_children:
+            return k
+        else:
+            last_clicks = []
+            for child in self.children:
+                last_clicks.extend(child.last_clicks)
 
-                sum_data = self.count_vectors(last_clicks)
-                sum_data.postfix_with('total')
+            sum_data = self.count_vectors(last_clicks)
+            md = MetricData(self.name+'.total', sum_data, self.labels)
 
-                return k + sum_data
-
-        return self.count_vectors(self.last_clicks)
+            return k + md
 
     def count_vectors(self, last_clicks) -> MetricDataCollection:
         count_map = [0] * len(self.time_unit_vectors)

@@ -1,9 +1,11 @@
+import abc
 import enum
 import time
 import typing as tp
 
 from satella.coding.decorators import for_argument
-from ..data import MetricData, MetricDataCollection
+
+from ..data import MetricData, MetricDataContainer, MetricDataCollection
 
 
 class MetricLevel(enum.IntEnum):
@@ -33,7 +35,7 @@ class Metric:
     :param internal: if True, this metric won't be visible in exporters
     """
     __slots__ = ('name', 'root_metric', 'internal', '_level', 'enable_timestamp',
-                 'last_updated', 'children')
+                 'last_updated', 'children', 'description', 'type')
 
     CLASS_NAME = 'base'
 
@@ -66,10 +68,14 @@ class Metric:
     def __init__(self, name, root_metric: 'Metric' = None,
                  metric_level: tp.Optional[tp.Union[MetricLevel, int]] = None,
                  internal: bool = False,
+                 description: tp.Optional[str] = None,
+                 metric_type: tp.Optional[str] = None,
                  *args, **kwargs):
         """When reimplementing the method, remember to pass kwargs here!"""
         self.name = name
         self.root_metric = root_metric
+        self.description = description
+        self.type = metric_type
         self.internal = internal
         if metric_level is None:
             if self.name == '':
@@ -82,11 +88,11 @@ class Metric:
             # type: tp.Optional[float]
 
         assert not (
-                self.name == '' and self.level == MetricLevel.INHERIT), \
-            'Unable to set INHERIT for root metric!'
-        self.children = []  # type: tp.List[Metric]
+                self.name == '' and self.level == MetricLevel.INHERIT), 'Unable to set INHERIT for root metric!'
+        self.children = []      # type: tp.List[Metric]
 
-    def get_timestamp(self) -> tp.Optional[float]:
+    @property
+    def timestamp(self) -> tp.Optional[float]:
         """Return this timestamp, or None if no timestamp support is enabled"""
         return self.last_updated if self.enable_timestamp else None
 
@@ -104,8 +110,7 @@ class Metric:
     @for_argument(None, MetricLevel)
     def level(self, value: MetricLevel) -> None:
         assert not (
-                value == MetricLevel.INHERIT and self.name == ''), \
-            'Cannot set INHERIT for the root metric!'
+                    value == MetricLevel.INHERIT and self.name == ''), 'Cannot set INHERIT for the root metric!'
         self._level = value
 
     def append_child(self, metric: 'Metric'):
@@ -115,7 +120,7 @@ class Metric:
         return self.level >= target_level
 
     def to_metric_data(self) -> MetricDataCollection:
-        output = MetricDataCollection()
+        output = MetricDataContainer(self.name)
         for child in self.children:
             output += child.to_metric_data()
         output.prefix_with(self.name)
@@ -147,13 +152,13 @@ class Metric:
         self.handle(MetricLevel.RUNTIME, *args, **kwargs)
 
 
-class LeafMetric(Metric):
+class LeafMetric(Metric, metaclass=abc.ABCMeta):
     """
     A metric capable of generating only leaf entries.
 
     You cannot hook up any children to a leaf metric.
     """
-    __slots__ = ('labels',)
+    __slots__ = ('labels', )
 
     def __init__(self, name, root_metric: 'Metric' = None, metric_level: str = None,
                  labels: tp.Optional[dict] = None, internal: bool = False, *args, **kwargs):
@@ -161,9 +166,13 @@ class LeafMetric(Metric):
         self.labels = labels or {}
         assert '_timestamp' not in self.labels, 'Cannot make a label called _timestamp!'
 
+    @abc.abstractmethod
+    def to_metric_data_container(self) -> MetricDataContainer:
+        return MetricDataContainer(self.name, [], description=self.description, metric_type=self.type,
+                                   internal=self.internal, timestamp=self.timestamp)
+
     def to_metric_data(self) -> MetricDataCollection:
-        return MetricDataCollection(
-            MetricData(self.name, None, self.labels, internal=self.internal))
+        return MetricDataCollection([self.to_metric_data_container()])
 
     def append_child(self, metric: 'Metric'):
         raise TypeError('This metric cannot contain children!')
@@ -215,14 +224,17 @@ class EmbeddedSubmetrics(LeafMetric):
             # noinspection PyProtectedMember
             self.children_mapping[key]._handle(*args)
 
-    def to_metric_data(self) -> MetricDataCollection:
+    @abc.abstractmethod
+    def to_metric_data_container(self) -> MetricDataContainer:
         if self.embedded_submetrics_enabled:
-            v = MetricDataCollection()
+            mdc = MetricDataContainer(self.name, [], self.description,
+                                      self.type, self.internal, self.timestamp)
             for child in self.children:
-                v = v + child.to_metric_data()
-            return v
+                for entry in child.to_metric_data_container().entries:
+                    mdc += entry
+            return mdc
         else:
-            return super().to_metric_data()
+            return MetricDataContainer(self.name, [], self.description, self.type, self.internal, self.timestamp)
 
     def get_specific_metric_data(self, labels: dict) -> MetricDataCollection:
         """

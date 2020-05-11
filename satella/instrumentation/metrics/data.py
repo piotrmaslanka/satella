@@ -1,35 +1,28 @@
+import itertools
 import typing as tp
-
-from satella.coding.structures import frozendict
+import copy
 from satella.json import JSONAble
-
+from satella.coding.structures import frozendict
+from satella.coding.structures import ReprableObject
 
 def join_metric_data_name(prefix: str, name: str):
     if prefix == '':
         return name
     else:
-        return prefix + '.' + name
+        return prefix+'.'+name
 
 
-class MetricData(JSONAble):
-    __slots__ = ('name', 'value', 'labels', 'timestamp', 'internal')
+class MetricData(ReprableObject, JSONAble):
+    __slots__ = ('name', 'value', 'labels')
 
-    def __init__(self, name: str, value: float, labels: dict = None,
-                 timestamp: tp.Optional[float] = None,
-                 internal: bool = False):
-        self.name = name  # type: str
-        self.internal = internal  # type: bool
-        self.value = value  # type: tp.Any
-        self.labels = frozendict(labels) if labels is not None else frozendict()
-        self.timestamp = timestamp  # type: tp.Optional[float]
-
-    def add_labels(self, labels: dict) -> None:
-        labels_current = dict(self.labels)
-        labels_current.update(labels)
-        self.labels = frozendict(labels_current)
+    def __init__(self, name: str, value: float, labels: dict):
+        super().__init__(name, value)
+        self.name = name                    # type: str
+        self.value = value                  # type: tp.Any
+        self.labels = labels                # type: dict
 
     def __eq__(self, other: 'MetricData') -> bool:
-        return self.labels == other.labels and self.name == other.name
+        return self.name == other.name
 
     def prefix_with(self, prefix: str) -> None:
         self.name = join_metric_data_name(prefix, self.name)
@@ -38,61 +31,107 @@ class MetricData(JSONAble):
         self.name = join_metric_data_name(self.name, postfix)
 
     def __hash__(self):
-        return hash(self.labels) ^ hash(self.name)
+        return hash(self.name)
 
-    def to_json(self, prefix: str = '') -> tp.Union[list, dict, str, int, float, None]:
-        k = {
-            '_name': join_metric_data_name(prefix, self.name),
-            '_': self.value,
-            **self.labels,
-        }
-        if self.timestamp is not None:
-            k['_timestamp'] = self.timestamp
-        if self.internal:
-            k['_internal'] = True
-        return k
-
-    def __repr__(self):
-        return 'MetricData(%s, %s, %s, %s)' % (repr(self.name), repr(self.value),
-                                               repr(self.labels), repr(self.timestamp))
+    def to_json(self, prefix: str = '') -> list:
+        return [join_metric_data_name(prefix, self.name), self.value, self.labels]
 
     @classmethod
-    def from_json(cls, x: dict) -> 'MetricData':
-        name = x.pop('_name')
-        value = x.pop('_')
-        timestamp = x.pop('_timestamp', None)
-        internal = x.pop('_internal', False)
-        return MetricData(name, value, x, timestamp, internal)
+    def from_json(cls, x: list) -> 'MetricData':
+        return MetricData(*x)
 
-    def add_timestamp(self, timestamp: tp.Optional[float]):
+
+
+class MetricDataContainer(JSONAble):
+    __slots__ = ('name', 'entries', 'description', 'type', 'internal', 'timestamp')
+
+    def __init__(self, principal_name: str, entries: tp.Sequence[MetricData] = None, description: tp.Optional[str] = None,
+                 metric_type: tp.Optional[str] = None,
+                 internal: bool = False,
+                 timestamp: tp.Optional[float] = None):
+        self.name = principal_name
+        self.entries = set(entries or ())
+        self.description = description
+        self.type = metric_type
+        self.internal = internal
         self.timestamp = timestamp
+
+    def __iter__(self):
+        return iter(self.entries)
+
+    def __len__(self):
+        return len(self.entries)
+
+    def prefix_with(self, val: str):
+        for entry in self.entries:
+            entry.name = join_metric_data_name(val, entry.name)
+
+    def postfix_with(self, val: str):
+        for entry in self.entries:
+            entry.name = join_metric_data_name(entry.name, val)
+
+    def add_labels(self, labels: tp.Dict[str, tp.Any]):
+        self.labels.update(labels)
+
+    def extend(self, other: 'MetricDataContainer') -> None:
+        self.entries.update(other.entries)
+
+    def __add__(self, other: MetricData) -> 'MetricDataContainer':
+        my = copy.copy(self)
+        if other in my.entries:
+            my.entries.remove(other)
+        my.entries.add(other)
+        return my
+
+    def __iadd__(self, other: MetricData) -> 'MetricDataContainer':
+        if other in self.entries:
+            self.entries.remove(other)
+        self.entries.add(other)
+        return self
+
+    def __eq__(self, other: 'MetricDataContainer'):
+        return self.entries == other.entries
+
+    def __hash__(self) -> int:
+        hash_value = 0
+        for entry in self.entries:
+            hash_value ^= hash(entry)
+        return hash_value
+
+    def to_json(self) -> dict:
+        x = {
+            'name': self.name,
+            'entries': [x.to_json() for x in self.entries],
+        }
+        if self.internal:
+            x['internal'] = True
+        if self.description:
+            x['description'] = self.description
+        if self.timestamp:
+            x['timestamp'] = self.timestamp
+        if self.type:
+            x['type'] = self.type
+        return x
+
+    @classmethod
+    def from_json(cls, x: dict) -> 'MetricDataContainer':
+        internal = x.pop('internal', False)
+        description = x.pop('description', None)
+        timestamp = x.pop('timestamp', None)
+        metric_type = x.pop('type', None)
+        name = x.pop('name')
+        entries = [MetricData.from_json(y) for y in x.pop('entries')]
+        return MetricDataContainer(name, entries, description, metric_type, x, internal, timestamp)
 
 
 class MetricDataCollection(JSONAble):
-    __slots__ = ('values',)
-
-    def add_labels(self, labels: dict) -> None:
-        output = set()
-        for child in self.values:
-            child.add_labels(labels)
-            output.add(child)
-        self.values = output
+    __slots__ = ('values', )
 
     def __repr__(self):
         return 'MetricDataCollection(%s)' % (repr(self.values, ))
 
-    def __init__(self, *values: tp.Union[MetricData, 'MetricDataCollection']):
-        if len(values) == 1:
-            if isinstance(values[0], MetricData):
-                self.values = set(values)
-            elif isinstance(values[0], MetricDataCollection):
-                self.values = values[0].values
-            else:
-                self.values = set(values[0])
-        else:
-            assert all(map(lambda x: isinstance(x, MetricData), values)), 'Not all arguments are ' \
-                                                                          'MetricData!'
-            self.values = set(values)
+    def __init__(self, values: tp.Iterable[tp.Union[MetricDataContainer]]):
+        self.values = set(values)
 
     def to_json(self) -> tp.Union[list, dict, str, int, float, None]:
         return [x.to_json() for x in self.values]
@@ -102,27 +141,26 @@ class MetricDataCollection(JSONAble):
         Do values in other MetricDataCollection match also?
         """
         values_found = 0
-        for value in self.values:
-            for value_2 in other.values:
-                if value == value_2:
-                    values_found += 1
-                    if value.value != value_2.value:
-                        return False
-                    break
+        for value, value_2 in itertools.product(self.values, other.values):
+            if value == value_2:
+                values_found += 1
+                if value.value != value_2.value:
+                    return False
+                break
             else:
                 return False
         return values_found == len(other.values)
 
     @classmethod
     def from_json(cls, x: tp.List[dict]) -> 'MetricDataCollection':
-        return MetricDataCollection(MetricData.from_json(y) for y in x)
+        return MetricDataCollection([MetricDataContainer.from_json(y) for y in x])
 
     def __add__(self, other):
         if isinstance(other, MetricDataCollection):
             return self.__add_metric_data_collection(other)
-        elif isinstance(other, MetricData):
-            return self.__add_metric_data(other)
-        raise TypeError('Unsupported addition with %s' % (other,))
+        elif isinstance(other, MetricDataContainer):
+            self.__add_metric_data_container(other)
+        raise TypeError('Unsupported addition with %s' % (other, ))
 
     def prefix_with(self, prefix: str) -> 'MetricDataCollection':
         """Prefix every child with given prefix and return self"""
@@ -135,7 +173,7 @@ class MetricDataCollection(JSONAble):
             child.postfix_with(postfix)
         return self
 
-    def __add_metric_data(self, other: MetricData):
+    def __add_metric_data_container(self, other: MetricDataContainer) -> 'MetricDataCollection':
         values = self.values.copy()
         if other in values:
             values.remove(other)
@@ -160,30 +198,24 @@ class MetricDataCollection(JSONAble):
         self.values = other_values
         return self
 
-    def __iadd_metric_data(self, other: 'MetricData') -> 'MetricDataCollection':
+    def __iadd_metric_data_container(self, other: MetricDataContainer) -> 'MetricDataCollection':
         if other in self.values:
             self.values.remove(other)
         self.values.add(other)
         return self
 
-    def __iadd__(self, other: tp.Union['MetricDataCollection', MetricData]) -> \
+    def __iadd__(self, other: tp.Union['MetricDataCollection', MetricDataContainer]) -> \
             'MetricDataCollection':
         if isinstance(other, MetricDataCollection):
             return self.__iadd_metric_data_collection(other)
         else:
-            return self.__iadd_metric_data(other)
+            return self.__iadd_metric_data_container(other)
 
-    def set_timestamp(self, timestamp: float) -> 'MetricDataCollection':
+    def set_timestamp(self, timestamp: tp.Optional[float]) -> 'MetricDataCollection':
         """Assign every child this timestamp and return self"""
         for child in self.values:
-            child.add_timestamp(timestamp)
+            child.timestamp = timestamp
         return self
 
     def __eq__(self, other: 'MetricDataCollection') -> bool:
         return self.values == other.values
-
-    def set_value(self, value) -> 'MetricDataCollection':
-        """Set all children to a particular value and return self. Most useful"""
-        for child in self.values:
-            child.value = value
-        return self

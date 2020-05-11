@@ -1,12 +1,14 @@
 import collections
-import math
-import typing as tp
 import warnings
+
+import typing as tp
+
+import math
 
 from .base import EmbeddedSubmetrics, MetricLevel
 from .measurable_mixin import MeasurableMixin
 from .registry import register_metric
-from ..data import MetricData, MetricDataCollection
+from ..data import MetricData, MetricDataCollection, MetricDataContainer
 
 
 # shamelessly taken from
@@ -54,16 +56,17 @@ class SummaryMetric(EmbeddedSubmetrics, MeasurableMixin):
                  count_calls: bool = True, *args,
                  **kwargs):
         super().__init__(name, root_metric, metric_level, *args, internal=internal,
-                         last_calls=last_calls, quantiles=quantiles,
+                         last_calls=last_calls,  quantiles=quantiles,
                          aggregate_children=aggregate_children, count_calls=count_calls,
+                         metric_type='summary',
                          **kwargs)
-        self.last_calls = last_calls  # type: int
-        self.calls_queue = collections.deque()  # type: tp.List[float]
-        self.quantiles = quantiles  # type: tp.List[float]
-        self.aggregate_children = aggregate_children  # type: bool
-        self.count_calls = count_calls  # type: bool
-        self.tot_calls = 0  # type: int
-        self.tot_time = 0  # type: float
+        self.last_calls = last_calls                    # type: int
+        self.calls_queue = collections.deque()          # type: tp.List[float]
+        self.quantiles = quantiles                      # type: tp.List[float]
+        self.aggregate_children = aggregate_children    # type: bool
+        self.count_calls = count_calls                  # type: bool
+        self.tot_calls = 0                              # type: int
+        self.tot_time = 0                               # type: float
 
     def _handle(self, time_taken: float, **labels) -> None:
         if self.count_calls:
@@ -78,18 +81,18 @@ class SummaryMetric(EmbeddedSubmetrics, MeasurableMixin):
 
         self.calls_queue.appendleft(time_taken)
 
-    def to_metric_data(self) -> MetricDataCollection:
-        k = self._to_metric_data()
+    def to_metric_data_container(self) -> MetricDataCollection:
+        k = self._to_metric_data_container()
         if self.count_calls:
-            k += MetricData(self.name + '.count', self.tot_calls, self.labels, self.get_timestamp(),
+            k += MetricData(self.name+'.count', self.tot_calls, self.labels, self.get_timestamp(),
                             self.internal)
-            k += MetricData(self.name + '.sum', self.tot_time, self.labels, self.get_timestamp(),
+            k += MetricData(self.name+'.sum', self.tot_time, self.labels, self.get_timestamp(),
                             self.internal)
         return k
 
-    def _to_metric_data(self) -> MetricDataCollection:
+    def _to_metric_data_container(self) -> MetricDataContainer:
         if self.embedded_submetrics_enabled:
-            k = super().to_metric_data()
+            k = super().to_metric_data_container()
             if self.aggregate_children:
                 total_calls = []
                 for child in self.children:
@@ -98,30 +101,27 @@ class SummaryMetric(EmbeddedSubmetrics, MeasurableMixin):
 
                 q = self.calculate_quantiles(total_calls)
                 q.postfix_with('total')
-                k += q
+                k.extend(q)
 
             if self.count_calls:
-                k += MetricData(self.name + '.count', self.tot_calls, self.labels,
-                                self.get_timestamp(), self.internal)
-                k += MetricData(self.name + '.sum', self.tot_time, self.labels,
-                                self.get_timestamp(),
-                                self.internal)
+                k += MetricData(self.name+'.count', self.tot_calls, self.labels)
+                k += MetricData(self.name+'.sum', self.tot_time, self.labels)
 
             return k
         else:
             return self.calculate_quantiles(self.calls_queue)
 
-    def calculate_quantiles(self, calls_queue) -> MetricDataCollection:
-        output = MetricDataCollection()
+    def calculate_quantiles(self, calls_queue) -> MetricDataContainer:
+        output = MetricDataContainer(self.name, [], self.description,
+                                     self.type, self.internal, self.timestamp)
         sorted_calls = sorted(calls_queue)
         for p_val in self.quantiles:
             if not sorted_calls:
                 output += MetricData(self.name, 0.0, {'quantile': p_val, **self.labels},
-                                     self.get_timestamp(), self.internal)
+                                     self.get_timestamp())
             else:
                 output += MetricData(self.name, percentile(sorted_calls, p_val),
-                                     {'quantile': p_val, **self.labels}, self.get_timestamp(),
-                                     self.internal)
+                                     {'quantile': p_val, **self.labels})
         return output
 
 

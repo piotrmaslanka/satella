@@ -1,9 +1,8 @@
 import typing as tp
-
 from .base import EmbeddedSubmetrics, MetricLevel
 from .measurable_mixin import MeasurableMixin
+from ..data import MetricData, MetricDataCollection, MetricDataContainer
 from .registry import register_metric
-from ..data import MetricData, MetricDataCollection
 
 
 @register_metric
@@ -24,30 +23,30 @@ class CounterMetric(EmbeddedSubmetrics, MeasurableMixin):
                  sum_children: bool = True,
                  count_calls: bool = False, *args, **kwargs):
         super().__init__(name, root_metric, metric_level, internal=internal,
-                         sum_children=sum_children, count_calls=count_calls, *args, **kwargs)
-        self.sum_children = sum_children  # type: bool
-        self.count_calls = count_calls  # type: bool
-        self.calls = 0  # type: int
-        self.value = 0  # type: float
+                         sum_children=sum_children, count_calls=count_calls, metric_type='counter',
+                         *args, **kwargs)
+        self.sum_children = sum_children            # type: bool
+        self.count_calls = count_calls              # type: bool
+        self.calls = 0                              # type: int
+        self.value = 0                              # type: float
 
-    def to_metric_data(self) -> MetricDataCollection:
+    def to_metric_data_container(self) -> MetricDataContainer:
         if self.embedded_submetrics_enabled:
             k = super().to_metric_data()
             if self.sum_children:
-                k += MetricData(self.name + '.sum', self.value, self.labels, self.get_timestamp(),
+                k += MetricData(self.name+'.total', self.value, self.labels, self.get_timestamp(),
                                 self.internal)
             if self.count_calls:
-                k += MetricData(self.name + '.count', self.calls, self.labels, self.get_timestamp(),
+                k += MetricData(self.name+'.count', self.calls, self.labels, self.get_timestamp(),
                                 self.internal)
             return k
+        else:
+            p = super().to_metric_data_container()
+            if self.count_calls:
+                p += MetricData(self.name+'.count', self.calls, self.labels)
+            p += MetricData(self.name, self.value, self.labels)
 
-        p = super().to_metric_data()
-        p.set_value(self.value)
-        if self.count_calls:
-            p += MetricData(self.name + '.count', self.calls, self.labels, self.get_timestamp(),
-                            self.internal)
-
-        return p
+            return p
 
     def _handle(self, delta: float = 0, **labels):
         if self.embedded_submetrics_enabled or labels:

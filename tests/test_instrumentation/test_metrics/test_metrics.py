@@ -37,7 +37,7 @@ class TestMetric(unittest.TestCase):
 
     def test_callable(self):
         callable_ = getMetric('callable', 'callable', value_getter=lambda: 5.0)
-        self.assertEqual(list(callable_.to_metric_data().values)[0].value, 5.0)
+        self.assertEqual(list(callable_.to_metric_data().entries)[0].value, 5.0)
 
     def test_linkfail(self):
         d = {'online': False, 'offline': False}
@@ -71,7 +71,7 @@ class TestMetric(unittest.TestCase):
     def test_embedded_submetrics_labels_getter(self):
         metric = getMetric('embedded_submetrics_test', 'int')
         metric.runtime(1, label='value')
-        self.assertTrue(metric.get_specific_metric_data({'label': 'value'}).values)
+        self.assertTrue(metric.get_specific_metric_data({'label': 'value'}).entries)
 
     def test_histogram(self):
         metric = getMetric('test_histogram', 'histogram')
@@ -96,7 +96,7 @@ class TestMetric(unittest.TestCase):
 
     def test_empty(self):
         metric = getMetric('empty', 'empty')
-        self.assertEqual(len(metric.to_metric_data().values), 0)
+        self.assertEqual(len(metric.to_metric_data().entries), 0)
 
     def test_metric_already_exists(self):
         getMetric('testmetric2', 'cps')
@@ -128,7 +128,7 @@ class TestMetric(unittest.TestCase):
         for v in generator():
             pass
         self.assertTrue(inspect.isgeneratorfunction(generator))
-        self.assertGreaterEqual(next(iter(metric.to_metric_data().values)).value, 1)
+        self.assertGreaterEqual(next(iter(metric.to_metric_data().entries)).value, 1)
 
     def test_aggregate_metric_measure_generator(self):
         my_metric = getMetric('my_metric', 'summary', quantiles=[0.5])
@@ -143,19 +143,19 @@ class TestMetric(unittest.TestCase):
         for _ in generator():
             pass
         self.assertTrue(inspect.isgeneratorfunction(generator))
-        self.assertGreaterEqual(next(iter(my_metric.to_metric_data().values)).value, 1)
+        self.assertGreaterEqual(next(iter(my_metric.to_metric_data().entries)).value, 1)
 
     def test_quantile_context_manager(self):
         metric = getMetric('test_metric', 'summary', quantiles=[0.5])
         with metric.measure():
             time.sleep(1)
-        self.assertGreaterEqual(next(iter(metric.to_metric_data().values)).value, 1)
+        self.assertGreaterEqual(next(iter(metric.to_metric_data().entries)).value, 1)
 
     def test_counter_measure(self):
         metric = getMetric('test2', 'counter')
         with metric.measure():
             time.sleep(2)
-        self.assertGreaterEqual(next(iter(metric.to_metric_data().values)).value, 1)
+        self.assertGreaterEqual(next(iter(metric.to_metric_data().entries)).value, 1)
 
     def test_quantile_children(self):
         metric = getMetric('my_metric', 'summary', quantiles=[0.5], enable_timestamp=True)
@@ -165,7 +165,7 @@ class TestMetric(unittest.TestCase):
         self.assertEqual(choose('sum', metr).value, 30.0)
         self.assertEqual(choose('count', metr).value, 2)
         self.assertEqual(choose('total', metr, {'quantile': 0.5}).value, 15.0)
-        self.assertTrue(all(x.timestamp is not None for x in metr.values))
+        self.assertTrue(all(x.timestamp is not None for x in metr.entries))
 
     def test_quantile(self):
         metric = getMetric('root.test.ExecutionTime', 'summary', quantiles=[0.5, 0.95],
@@ -214,7 +214,7 @@ class TestMetric(unittest.TestCase):
         wait()
         self.assertFalse(inspect.isgeneratorfunction(wait))
         self.assertRaises(ValueError, lambda: wait(throw=True))
-        self.assertGreaterEqual(next(iter(metric.to_metric_data().values)).value, 1)
+        self.assertGreaterEqual(next(iter(metric.to_metric_data().entries)).value, 1)
 
     def test_counter(self):
         counter = getMetric('counter', 'counter', enable_timestamp=False)

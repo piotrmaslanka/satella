@@ -1,11 +1,10 @@
-import itertools
 import math
 import typing as tp
-
+import itertools
 from .base import EmbeddedSubmetrics, MetricLevel
 from .measurable_mixin import MeasurableMixin
 from .registry import register_metric
-from ..data import MetricData, MetricDataCollection
+from ..data import MetricData, MetricDataCollection, MetricDataContainer
 
 
 @register_metric
@@ -30,12 +29,12 @@ class HistogramMetric(EmbeddedSubmetrics, MeasurableMixin):
                                                 .75, 1.0, 2.5, 5.0, 7.5, 10.0),
                  aggregate_children: bool = True, *args, **kwargs):
         super().__init__(name, root_metric, metric_level, internal=internal, buckets=buckets,
-                         aggregate_children=aggregate_children, *args, **kwargs)
-        self.bucket_limits = list(buckets)  # type: tp.List[float]
-        self.buckets = [0] * (len(buckets) + 1)  # type: tp.List[int]
-        self.aggregate_children = aggregate_children  # type: bool
-        self.count = 0  # type: int
-        self.sum = 0.0  # type: float
+                         aggregate_children=aggregate_children, metric_type='histogram', *args, **kwargs)
+        self.bucket_limits = list(buckets)                   # type: tp.List[float]
+        self.buckets = [0] * (len(buckets) + 1)              # type: tp.List[int]
+        self.aggregate_children = aggregate_children         # type: bool
+        self.count = 0                                       # type: int
+        self.sum = 0.0                                       # type: float
 
     def _handle(self, value, **labels):
         self.count += 1
@@ -54,23 +53,30 @@ class HistogramMetric(EmbeddedSubmetrics, MeasurableMixin):
                 self.buckets[index] += 1
             lower_bound = upper_bound
 
-    def to_metric_data(self) -> MetricDataCollection:
+    def to_metric_data_container(self) -> MetricDataContainer:
         if self.embedded_submetrics_enabled:
-            k = super().to_metric_data()
+            k = super().to_metric_data_container()
             if self.aggregate_children:
                 mdc = self.containers_to_metric_data()
-                mdc.postfix_with('total')
-                mdc += MetricData(self.name + '.total.sum', self.sum, {}, self.get_timestamp())
-                mdc += MetricData(self.name + '.total.count', self.count, {}, self.get_timestamp())
+                for entry in mdc:
+                    entry.postfix_with('bucket')
+                    mdc += entry
+
+                mdc += MetricData(self.name+'.sum', self.sum, {})
+                mdc += MetricData(self.name+'.count', self.count, {})
                 k += mdc
             return k
+        else:
+            mdc = super().to_metric_data_container()
+            for entry in self.containers_to_metric_data():
+                entry.postfix_with('bucket')
+                mdc += entry
 
-        mdc = self.containers_to_metric_data()
-        mdc += MetricData(self.name + '.sum', self.sum, self.labels, self.get_timestamp())
-        mdc += MetricData(self.name + '.count', self.count, self.labels, self.get_timestamp())
-        return mdc
+            mdc += MetricData(self.name+'.sum', self.sum, self.labels)
+            mdc += MetricData(self.name+'.count', self.count, self.labels)
+            return mdc
 
-    def containers_to_metric_data(self) -> MetricDataCollection:
+    def containers_to_metric_data(self) -> tp.List[MetricData]:
         output = []
         lower_bound = 0.0
         for amount, upper_bound in zip(self.buckets,
@@ -78,7 +84,6 @@ class HistogramMetric(EmbeddedSubmetrics, MeasurableMixin):
             labels = self.labels.copy()
             labels.update(le=upper_bound,
                           ge=lower_bound)
-            output.append(
-                MetricData(self.name, amount, labels, self.get_timestamp(), self.internal))
+            output.append(MetricData(self.name, amount, labels))
             lower_bound = upper_bound
-        return MetricDataCollection(output)
+        return output
