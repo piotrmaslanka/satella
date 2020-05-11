@@ -21,13 +21,11 @@ class ProxyMetaclass(abc.ABCMeta):
         return isinstance(instance._Proxy__obj, cls)
 
 
-class ProxyOfMetaclass(metaclass=ProxyMetaclass):
-    pass
 
 SETTABLE_KEYS = {'_Proxy__obj', '_Proxy__wrap_operations'}
 
 
-class Proxy(ProxyOfMetaclass, tp.Generic[T], metaclass=metaclass_maker):
+class Proxy(metaclass=ProxyMetaclass):
     """
     A base class for classes that try to emulate some other object.
 

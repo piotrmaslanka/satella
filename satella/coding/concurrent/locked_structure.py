@@ -3,10 +3,8 @@ import typing as tp
 
 from ..structures.proxy import Proxy
 
-T = tp.TypeVar('T')
 
-
-class LockedStructure(Proxy, tp.Generic[T]):
+class LockedStructure(Proxy):
     """
     A wizard to make every Python structure thread-safe.
 
@@ -26,7 +24,7 @@ class LockedStructure(Proxy, tp.Generic[T]):
     """
     __slots__ = ('__lock',)
 
-    def __init__(self, obj_to_wrap: T, lock: tp.Optional[threading.Lock] = None):
+    def __init__(self, obj_to_wrap, lock: tp.Optional[threading.Lock] = None):
         super().__init__(obj_to_wrap)
         self.__lock = lock or threading.Lock()
 
