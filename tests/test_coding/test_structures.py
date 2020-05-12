@@ -22,15 +22,6 @@ class TestMisc(unittest.TestCase):
         a = Proxy(5)
         self.assertNotIsInstance(a+5, Proxy)
 
-    def test_proxy_isinstance(self):
-        class ProxiedObject:
-            pass
-
-        proxied = ProxiedObject()
-        proxy = Proxy(proxied)
-
-        self.assertIsInstance(proxy, ProxiedObject)
-
     def test_key_aware_defaultdict(self):
         a = KeyAwareDefaultDict(int)
         self.assertEqual(a['1'], 1)
