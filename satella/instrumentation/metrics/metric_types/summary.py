@@ -50,12 +50,11 @@ class SummaryMetric(EmbeddedSubmetrics, MeasurableMixin):
 
     def __init__(self, name, root_metric: 'Metric' = None,
                  metric_level: tp.Optional[MetricLevel] = None,
-                 internal: bool = False,
                  last_calls: int = 100, quantiles: tp.Sequence[float] = (0.5, 0.95),
                  aggregate_children: bool = True,
                  count_calls: bool = True, *args,
                  **kwargs):
-        super().__init__(name, root_metric, metric_level, *args, internal=internal,
+        super().__init__(name, root_metric, metric_level, *args,
                          last_calls=last_calls,  quantiles=quantiles,
                          aggregate_children=aggregate_children, count_calls=count_calls,
                          metric_type='summary',
@@ -84,10 +83,8 @@ class SummaryMetric(EmbeddedSubmetrics, MeasurableMixin):
     def to_metric_data_container(self) -> MetricDataCollection:
         k = self._to_metric_data_container()
         if self.count_calls:
-            k += MetricData(self.name+'.count', self.tot_calls, self.labels, self.get_timestamp(),
-                            self.internal)
-            k += MetricData(self.name+'.sum', self.tot_time, self.labels, self.get_timestamp(),
-                            self.internal)
+            k += MetricData(self.name+'.count', self.tot_calls, self.labels)
+            k += MetricData(self.name+'.sum', self.tot_time, self.labels)
         return k
 
     def _to_metric_data_container(self) -> MetricDataContainer:
@@ -117,8 +114,7 @@ class SummaryMetric(EmbeddedSubmetrics, MeasurableMixin):
         sorted_calls = sorted(calls_queue)
         for p_val in self.quantiles:
             if not sorted_calls:
-                output += MetricData(self.name, 0.0, {'quantile': p_val, **self.labels},
-                                     self.get_timestamp())
+                output += MetricData(self.name, 0.0, {'quantile': p_val, **self.labels})
             else:
                 output += MetricData(self.name, percentile(sorted_calls, p_val),
                                      {'quantile': p_val, **self.labels})

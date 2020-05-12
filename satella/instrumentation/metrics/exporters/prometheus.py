@@ -1,4 +1,4 @@
-
+import logging
 import io
 import typing as tp
 from satella.coding.concurrent import TerminableThread
@@ -7,6 +7,7 @@ from .. import getMetric
 from ..data import MetricData, MetricDataCollection, MetricDataContainer
 
 __all__ = ['metric_data_collection_to_prometheus', 'PrometheusHTTPExporterThread']
+logger = logging.getLogger(__name__)
 
 
 class PrometheusHandler(http.server.BaseHTTPRequestHandler):
@@ -85,7 +86,8 @@ class RendererObject(io.StringIO):
         if c.type:
             self.write('# TYPE %s %s\n' % (c.name.replace('.', '_'), c.type, ))
 
-        for entry in c.entries:
+        for entry in c:
+            logger.warning(f'Rendering entry {entry}')
             self.render_entry(entry, c.timestamp)
         self.write('\n')
 

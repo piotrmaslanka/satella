@@ -6,6 +6,7 @@ import requests
 
 from satella.instrumentation.metrics import MetricData, MetricDataCollection
 from satella.instrumentation.metrics import getMetric
+from satella.instrumentation.metrics.data import MetricDataContainer
 from satella.instrumentation.metrics.exporters import metric_data_collection_to_prometheus, \
     PrometheusHTTPExporterThread
 
@@ -14,8 +15,8 @@ logger = logging.getLogger(__name__)
 
 class TestExporters(unittest.TestCase):
     def test_prometheus_timestamps(self):
-        a = MetricDataCollection(MetricData('root', 5, timestamp=10))
-        self.assertEqual("""root 5 10000\n""", metric_data_collection_to_prometheus(a))
+        a = MetricDataCollection([MetricDataContainer('', [MetricData('root', 5)], timestamp=10)])
+        self.assertIn("""root 5 10000\n""", metric_data_collection_to_prometheus(a))
 
     def test_internal_metrics(self):
         metric = getMetric('internal_metric', 'int', internal=True)
@@ -24,8 +25,9 @@ class TestExporters(unittest.TestCase):
             getMetric('').to_metric_data()))
 
     def test_prometheus(self):
-        a = MetricDataCollection([MetricData('root.metric', 3, {'k': 2, 'm': '"'}),
-                                  MetricData('root.metric', 6, {'k': 4})])
+        a = MetricDataCollection([MetricDataContainer('', [MetricData('root.metric', 3, {'k': 2, 'm': '"'}),
+                                                           MetricData('root.metric', 6, {'k': 4})])
+                                  ])
         b = metric_data_collection_to_prometheus(a)
         self.assertIn("""root_metric{k="4"} 6""", b)
 

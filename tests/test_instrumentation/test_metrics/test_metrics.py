@@ -5,7 +5,8 @@ import unittest
 
 from satella.exceptions import MetricAlreadyExists
 from satella.instrumentation.metrics import getMetric, MetricLevel, MetricData, \
-    MetricDataCollection, AggregateMetric, LabeledMetric
+    MetricDataCollection, AggregateMetric
+from satella.instrumentation.metrics.data import MetricDataContainer
 
 logger = logging.getLogger(__name__)
 
@@ -17,13 +18,6 @@ def choose(postfix: str, mdc: MetricDataCollection, labels=None) -> MetricData:
 
 
 class TestMetric(unittest.TestCase):
-
-    def test_labeled_metric_with_callable(self):
-        m1 = getMetric('lmc1', 'callable')
-        lm = LabeledMetric(m1, key='value')
-        lm.callable = lambda: 0
-
-        self.assertEqual(choose('lmc1', m1.to_metric_data(), {'key': 'value'}).value, 0)
 
     def test_aggregate(self):
         m1 = getMetric('am1', 'summary')
@@ -263,13 +257,13 @@ class TestMetric(unittest.TestCase):
         metric_parent = getMetric('root.test', enable_timestamp=False)
         self.assertEqual(metric_parent.get_fully_qualified_name(), 'root.test')
         self.assertTrue(getMetric().to_metric_data().strict_eq(
-            MetricDataCollection(MetricData('root.test.FloatValue', 2.0))))
+            MetricDataCollection([MetricDataContainer('', [MetricData('root.test.FloatValue', 2.0)])])))
 
         metric_parent.level = MetricLevel.RUNTIME
         metric.debug(3.0)
 
         self.assertTrue(getMetric('', enable_timestamp=False).to_metric_data().strict_eq(
-            MetricDataCollection(MetricData('root.test.FloatValue', 2.0))))
+            MetricDataCollection([MetricDataContainer('', [MetricData('root.test.FloatValue', 2.0)])])))
 
     def test_labels(self):
         metric = getMetric('root.IntValue', 'int', labels={'k': 2}, enable_timestamp=False)
