@@ -4,10 +4,16 @@ import unittest
 import copy
 
 from satella.coding.concurrent import TerminableThread, CallableGroup, Condition, MonitorList, \
-    LockedStructure
+    LockedStructure, AtomicNumber
 
 
 class TestConcurrent(unittest.TestCase):
+
+    def test_atomic_number(self):
+        a = AtomicNumber(4)
+        a -= 1
+        self.assertIsInstance(a, AtomicNumber)
+        self.assertEqual(a, 3)
 
     def test_locked_structure(self):
         class MyLockedStructure:

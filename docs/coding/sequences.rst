@@ -8,6 +8,11 @@ To return the single element that returns true on given callable, use the follow
 
 .. autofunction:: satella.coding.sequences.choose
 
+n_th
+----
+
+.. autofunction:: satella.coding.sequences.n_th
+
 take_n
 ------
 
@@ -113,3 +118,8 @@ Even and odd
 .. autofunction:: satella.coding.sequences.even
 
 .. autofunction:: satella.coding.sequences.odd
+
+Multirun
+--------
+
+.. autoclass:: satella.coding.sequences.Multirun

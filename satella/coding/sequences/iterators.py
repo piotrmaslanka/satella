@@ -3,7 +3,6 @@ import itertools
 import typing as tp
 import warnings
 
-from ..recast_exceptions import silence_excs
 from ..decorators import for_argument
 
 T, U = tp.TypeVar('T'), tp.TypeVar('U')
@@ -199,6 +198,22 @@ def stop_after(iterator: IteratorOrIterable[T], n: int) -> tp.Iterator[T]:
     iterator = iter(iterator)
     for i in range(n):
         yield next(iterator)
+
+
+def n_th(iterator: IteratorOrIterable, n: int = 0) -> T:
+    """
+    Obtain n-th element (counting from 0) of an iterable
+
+    :param n: element to return. Note that we're counting from 0
+    :raises IndexError: iterable was too short
+    """
+    obj = iter(iterator)
+    try:
+        for i in range(n):
+            next(obj)
+        return next(obj)
+    except (StopIteration, GeneratorExit):
+        raise IndexError('Iterable was too short')
 
 
 def take_n(iterator: IteratorOrIterable, n: int, skip: int = 0) -> tp.List[T]:

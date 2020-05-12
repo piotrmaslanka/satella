@@ -1,14 +1,42 @@
+import itertools
 import logging
 import unittest
 
 from satella.coding.sequences import choose, infinite_counter, take_n, is_instance, is_last, \
     add_next, half_cartesian, skip_first, zip_shifted, stop_after, group_quantity, \
-    iter_dict_of_list, shift, other_sequence_no_longer_than, count, even, odd
+    iter_dict_of_list, shift, other_sequence_no_longer_than, count, even, odd, Multirun, n_th
 
 logger = logging.getLogger(__name__)
 
 
 class TestSequences(unittest.TestCase):
+
+    def test_n_th(self):
+        self.assertEqual(n_th(itertools.count()), 0)
+        self.assertEqual(n_th(itertools.count(), 3), 3)
+
+    def test_multirun(self):
+        class Counter:
+            def __init__(self, value = 0):
+                self.value = value
+
+            def add(self, value):
+                self.value += value
+
+            def __iadd__(self, other):
+                self.add(other)
+
+            def __eq__(self, other):
+                return self.value == other.value
+
+        a = [Counter(2), Counter(3)]
+
+        b = Multirun(a)
+        b.add(3)
+        self.assertEqual(a, [Counter(5), Counter(6)])
+
+        b += 3
+        self.assertEqual(a, [Counter(8), Counter(9)])
 
     def test_even_and_odd(self):
         a = [0, 1, 2, 3, 4, 5, 6]

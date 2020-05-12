@@ -116,11 +116,11 @@ class Proxy(tp.Generic[T]):
         return result
 
     def __imul__(self, other):
-        self.__obj * other
+        self.__obj *= other
         return self
 
     def __itruediv__(self, other):
-        self.obj / other
+        self.obj /= other
         return self
 
     def __ifloordiv__(self, other):
@@ -128,7 +128,11 @@ class Proxy(tp.Generic[T]):
         return self
 
     def __ilshift__(self, other):
-        self.obj << other
+        self.obj <<= other
+        return self
+
+    def __irshift__(self, other):
+        self.obj >>= other
         return self
 
     def __iter__(self):
