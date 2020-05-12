@@ -35,7 +35,7 @@ class Metric:
     :param internal: if True, this metric won't be visible in exporters
     """
     __slots__ = ('name', 'root_metric', 'internal', '_level', 'enable_timestamp',
-                 'last_updated', 'children', 'description', 'type')
+                 'timestamp', 'children', 'description', 'type')
 
     CLASS_NAME = 'base'
 
@@ -84,17 +84,11 @@ class Metric:
                 metric_level = MetricLevel.INHERIT
         self._level = MetricLevel(metric_level)  # type: MetricLevel
         self.enable_timestamp = kwargs.get('enable_timestamp', False)
-        self.last_updated = time.time() if self.enable_timestamp else None \
-            # type: tp.Optional[float]
+        self.timestamp = time.time() if self.enable_timestamp else None  # type: tp.Optional[float]
 
         assert not (
                 self.name == '' and self.level == MetricLevel.INHERIT), 'Unable to set INHERIT for root metric!'
         self.children = []      # type: tp.List[Metric]
-
-    @property
-    def timestamp(self) -> tp.Optional[float]:
-        """Return this timestamp, or None if no timestamp support is enabled"""
-        return self.last_updated if self.enable_timestamp else None
 
     def __str__(self) -> str:
         return self.name
@@ -120,15 +114,12 @@ class Metric:
         return self.level >= target_level
 
     def to_metric_data(self) -> MetricDataCollection:
-        output = MetricDataContainer(self.name)
+        mdc = MetricDataCollection()
         for child in self.children:
-            output += child.to_metric_data()
-        output.prefix_with(self.name)
+            mdc += child.to_metric_data()
+        mdc.prefix_with(self.name)
 
-        if self.enable_timestamp:
-            output.set_timestamp(self.last_updated)
-
-        return output
+        return mdc
 
     def _handle(self, *args, **kwargs) -> None:
         """
@@ -142,8 +133,8 @@ class Metric:
     def handle(self, level: tp.Union[int, MetricLevel], *args, **kwargs) -> None:
         if self.can_process_this_level(level):
             if self.enable_timestamp:
-                self.last_updated = time.time()
-            self._handle(*args, **kwargs)
+                self.timestamp = time.time()
+            return self._handle(*args, **kwargs)
 
     def debug(self, *args, **kwargs):
         self.handle(MetricLevel.DEBUG, *args, **kwargs)
@@ -161,10 +152,9 @@ class LeafMetric(Metric, metaclass=abc.ABCMeta):
     __slots__ = ('labels', )
 
     def __init__(self, name, root_metric: 'Metric' = None, metric_level: str = None,
-                 labels: tp.Optional[dict] = None, internal: bool = False, *args, **kwargs):
-        super().__init__(name, root_metric, metric_level, internal, *args, **kwargs)
+                 labels: tp.Optional[dict] = None, *args, **kwargs):
+        super().__init__(name, root_metric, metric_level, *args, **kwargs)
         self.labels = labels or {}
-        assert '_timestamp' not in self.labels, 'Cannot make a label called _timestamp!'
 
     @abc.abstractmethod
     def to_metric_data_container(self) -> MetricDataContainer:
@@ -196,13 +186,12 @@ class EmbeddedSubmetrics(LeafMetric):
     __slots__ = ('args', 'kwargs', 'embedded_submetrics_enabled', 'children_mapping')
 
     def __init__(self, name, root_metric: 'Metric' = None, metric_level: str = None,
-                 labels: tp.Optional[dict] = None, internal: bool = False, *args, **kwargs):
-        super().__init__(name, root_metric, metric_level, labels, internal, *args, **kwargs)
+                 labels: tp.Optional[dict] = None, *args, **kwargs):
+        super().__init__(name, root_metric, metric_level, labels, *args, **kwargs)
         self.args = args  # type: tp.List
         self.kwargs = kwargs  # type: tp.Dict
         self.embedded_submetrics_enabled = False  # type: bool
         self.children_mapping = {}  # type: tp.Dict[tp.Any, Metric]
-        self.last_updated = time.time()  # type: float
 
     def _handle(self, *args, **labels):
         if self.enable_timestamp:
