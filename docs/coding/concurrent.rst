@@ -94,3 +94,11 @@ using the context manager:
     assert len(ls), 2
     with ls:
         a[4] = 5
+
+.. autoclass:: satella.coding.concurrent.LockedStructure
+
+AtomicNumber
+============
+
+.. autoclass:: satella.coding.concurrent.AtomicNumber
+    :members:
