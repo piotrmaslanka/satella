@@ -51,4 +51,8 @@ class AtomicNumber(Monitor):
 
     @Monitor.synchronized
     def __bool__(self) -> bool:
-        return self.value == 0
+        return bool(self.value)
+
+    @Monitor.synchronized
+    def __abs__(self) -> Number:
+        return abs(self.value)
