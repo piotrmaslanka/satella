@@ -1,0 +1,54 @@
+import typing as tp
+from .monitor import Monitor
+
+
+Number = tp.Union[int, float]
+
+
+class AtomicNumber(Monitor):
+    """
+    An atomic number. Note that the class is not hashable and for a reason, since it's value
+    might change in time. So in this case this is more of like a container for numbers.
+
+    Treat it like a normal number, except all operations are executed atomically.
+    """
+    __slots__ = ('value', )
+
+    def __init__(self, v: Number = 0):
+        super().__init__()
+        self.value = v
+
+    @Monitor.synchronized
+    def __iadd__(self, other: Number) -> 'AtomicNumber':
+        self.value += other
+        return self
+
+    @Monitor.synchronized
+    def __isub__(self, other: int) -> 'AtomicNumber':
+        self.value -= other
+        return self
+
+    @Monitor.synchronized
+    def __imul__(self, other: int) -> 'AtomicNumber':
+        self.value *= other
+        return self
+
+    @Monitor.synchronized
+    def __eq__(self, other: tp.Union['AtomicNumber', Number]) -> bool:
+        if isinstance(other, AtomicNumber):
+            with Monitor.acquire(other):
+                return self.value == other.value
+        else:
+            return self.value == other
+
+    @Monitor.synchronized
+    def __int__(self) -> int:
+        return int(self.value)
+
+    @Monitor.synchronized
+    def __float__(self) -> float:
+        return float(self.value)
+
+    @Monitor.synchronized
+    def __bool__(self) -> bool:
+        return self.value == 0
