@@ -14,13 +14,14 @@ class TestConcurrent(unittest.TestCase):
     def test_atomic_number_wait(self):
         an = AtomicNumber()
 
-        def process_atomic_number(an):
+        def process_atomic_number(a):
             time.sleep(0.3)
-            an += 1
+            a += 1
 
         self.assertEqual(an, 0)
         threading.Thread(target=process_atomic_number, args=(an, )).start()
         an.wait()
+        self.assertEqual(an, 1)
 
     def test_atomic_number(self):
         a = AtomicNumber(4)
