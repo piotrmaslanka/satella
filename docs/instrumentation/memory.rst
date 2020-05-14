@@ -48,3 +48,11 @@ that level 1 is still in effect. You can register your handlers here:
 
 .. autoclass:: satella.instrumentation.memory.MemoryPressureManager
     :members:
+
+install_force_gc_collect
+------------------------
+
+If you want, you can install a GC handler that will
+force a complete GC collection upon entering given severity level.
+
+.. autofunction:: satella.instrumentation.memory.install_force_gc_collect

@@ -8,6 +8,12 @@ CallableGroup
 .. autoclass:: satella.coding.concurrent.CallableGroup
     :members:
 
+CallNoOftenThan
+---------------
+
+.. autoclass:: satella.coding.concurrent.CallNoOftenThan
+    :members:
+
 LockedDataset
 =============
 

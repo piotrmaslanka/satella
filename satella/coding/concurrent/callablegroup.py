@@ -1,10 +1,8 @@
 import collections
 import copy
+import time
 import typing as tp
 
-__all__ = [
-    'CallableGroup',
-]
 
 T = tp.TypeVar('T')
 
@@ -79,3 +77,24 @@ class CallableGroup(tp.Generic[T]):
 
         if self.gather:
             return results
+
+
+class CallNoOftenThan:
+    """
+    A class that will ensure that calls to given callable are made no sooner
+    than after some interval.
+
+    :param interval: interval in seconds
+    :param callable_: callable to call
+    """
+    __slots__ = ('interval', 'callable', 'last_called')
+
+    def __init__(self, interval: float, callable_: tp.Callable[[], None]):
+        self.interval = interval            # type: float
+        self.callable = callable_           # type: tp.Callable[[], None]
+        self.last_called = 0                # type: float
+
+    def __call__(self):
+        if time.monotonic() - self.last_called >= self.interval:
+            self.callable()
+            self.last_called = time.monotonic()

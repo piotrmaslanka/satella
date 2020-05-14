@@ -1,4 +1,4 @@
-# v2.7.25
+# v2.7.26
 
-* added `wait` to `AtomicNumber`
-* added `Condition` to the docs
+* added `CallNoOftenThan`
+* added `install_force_gc_collect`

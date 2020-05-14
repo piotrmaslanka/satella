@@ -5,7 +5,7 @@ import typing as tp
 
 import psutil
 
-from satella.coding.concurrent import CallableGroup
+from satella.coding.concurrent import CallableGroup, CallNoOftenThan
 from satella.coding.concurrent import TerminableThread
 from satella.coding.structures import Singleton
 from satella.time import measure
@@ -14,20 +14,6 @@ from .conditions import BaseCondition, ZerothSeverity
 logger = logging.getLogger(__name__)
 
 __all__ = ['MemoryPressureManager']
-
-
-class CallNoMoreOftenThan:
-    __slots__ = ('interval', 'callable', 'last_called')
-
-    def __init__(self, interval: int, callable_: tp.Callable[[], None]):
-        self.interval = interval            # type: int
-        self.callable = callable_           # type: tp.Callable[[], None]
-        self.last_called = 0                # type: float
-
-    def __call__(self):
-        if time.monotonic() - self.last_called >= self.interval:
-            self.callable()
-            self.last_called = time.monotonic()
 
 
 @Singleton
@@ -189,7 +175,7 @@ class MemoryPressureManager(TerminableThread):
 
         def outer(fun):
             MemoryPressureManager().callbacks_on_remains[severity].add(
-                CallNoMoreOftenThan(call_no_more_often_than, fun))
+                CallNoOftenThan(call_no_more_often_than, fun))
             return fun
 
         return outer
