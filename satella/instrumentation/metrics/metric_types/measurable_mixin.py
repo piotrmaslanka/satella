@@ -33,8 +33,7 @@ class MeasurableMixin:
         future.old_value = value_getter()
 
         def on_future_done(fut: Future):
-            elapsed = value_getter() - future.old_value
-            self.handle(logging_level, elapsed, **labels)
+            self.handle(logging_level, value_getter() - fut.old_value, **labels)
 
         future.add_done_callback(on_future_done)
 
