@@ -7,10 +7,11 @@ from .metric_types import METRIC_NAMES_TO_CLASSES, MetricLevel, Metric, DEBUG, D
 from .data import MetricDataCollection, MetricData
 from satella.exceptions import MetricAlreadyExists
 from .aggregate import AggregateMetric
+from .labeled import LabeledMetric
 
 __all__ = ['getMetric', 'MetricLevel', 'MetricDataCollection',
            'MetricData', 'Metric', 'DISABLED', 'DEBUG', 'INHERIT', 'RUNTIME',
-           'AggregateMetric']
+           'AggregateMetric', 'LabeledMetric']
 
 metrics = {}
 metrics_lock = threading.Lock()

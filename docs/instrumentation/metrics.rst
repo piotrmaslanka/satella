@@ -194,6 +194,11 @@ To zip together two or more metrics, you can use the following class:
 .. autoclass:: satella.instrumentation.metrics.AggregateMetric
     :members:
 
+To automatically apply labels you can use this class:
+
+.. autoclass:: satella.instrumentation.metrics.LabeledMetric
+    :members:
+
 
 Exporting data
 ==============

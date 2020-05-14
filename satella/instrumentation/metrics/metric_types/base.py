@@ -137,7 +137,7 @@ class Metric:
         if self.can_process_this_level(level):
             if self.enable_timestamp:
                 self.last_updated = time.time()
-            return self._handle(*args, **kwargs)
+            self._handle(*args, **kwargs)
 
     def debug(self, *args, **kwargs):
         self.handle(MetricLevel.DEBUG, *args, **kwargs)
