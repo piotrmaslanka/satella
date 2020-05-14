@@ -13,6 +13,7 @@ class MeasurableMixin:
     """
     Add a .measure() method, useful for HistogramMetric and SummaryMetric
     """
+    __slots__ = ()
 
     def measure_future(self, future: Future, logging_level: MetricLevel = MetricLevel.RUNTIME,
                        value_getter: tp.Callable[[], float] = time.monotonic, **labels):
