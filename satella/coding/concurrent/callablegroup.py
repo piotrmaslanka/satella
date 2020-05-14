@@ -94,7 +94,7 @@ class CallNoOftenThan:
         self.callable = callable_           # type: tp.Callable[[], None]
         self.last_called = 0                # type: float
 
-    def __call__(self):
+    def __call__(self, *args, **kwargs):
         if time.monotonic() - self.last_called >= self.interval:
-            self.callable()
+            self.callable(*args, **kwargs)
             self.last_called = time.monotonic()
