@@ -19,6 +19,12 @@ class AtomicNumber(Monitor):
 
     >>> a = AtomicNumber()
     >>> a += 2
+
+    Note that if the number if used in an expression, such as
+
+    >>> b = a + 2
+
+    Then a normal number will be returned
     """
     __slots__ = ('value', 'condition')
 
@@ -36,10 +42,42 @@ class AtomicNumber(Monitor):
         self.condition.wait(timeout)
 
     @Monitor.synchronized
+    def __gt__(self, other: Number):
+        return self.value > other
+
+    @Monitor.synchronized
+    def __ge__(self, other: Number):
+        return self.value >= other
+
+    @Monitor.synchronized
+    def __lt__(self, other: Number):
+        return self.value < other
+
+    @Monitor.synchronized
+    def __len__(self, other: Number):
+        return self.value <= other
+
+    @Monitor.synchronized
     def __iadd__(self, other: Number) -> 'AtomicNumber':
         self.value += other
         self.condition.notify_all()
         return self
+
+    @Monitor.synchronized
+    def __add__(self, other: Number) -> Number:
+        return self.value + other
+
+    @Monitor.synchronized
+    def __sub__(self, other: Number) -> Number:
+        return self.value - other
+
+    @Monitor.synchronized
+    def __mul__(self, other: Number) -> Number:
+        return self.value * other
+
+    @Monitor.synchronized
+    def __truediv__(self, other: Number) -> Number:
+        return self.value / other
 
     @Monitor.synchronized
     def __isub__(self, other: int) -> 'AtomicNumber':

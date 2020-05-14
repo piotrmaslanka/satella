@@ -29,6 +29,8 @@ class TestConcurrent(unittest.TestCase):
         self.assertIsInstance(a, AtomicNumber)
         self.assertEqual(a, 3)
 
+        self.asserIsInstance(a+2, int)
+
     def test_locked_structure(self):
         class MyLockedStructure:
             def __call__(self, *args, **kwargs):
