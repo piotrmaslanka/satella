@@ -27,6 +27,6 @@ class LabeledMetric(Metric, MeasurableMixin):
         self.metric_to_wrap = metric_to_wrap
         self.labels = labels
 
-    def _handle(self, level: tp.Union[int, MetricLevel], *args, **kwargs) -> None:
+    def handle(self, level: tp.Union[int, MetricLevel], *args, **kwargs) -> None:
         kwargs.update(self.labels)
         self.metric_to_wrap.handle(level, *args, **kwargs)

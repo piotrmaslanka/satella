@@ -26,6 +26,6 @@ class AggregateMetric(Metric, MeasurableMixin):
     def __init__(self, *metrics):
         self.metrics = metrics
 
-    def _handle(self, level: tp.Union[int, MetricLevel], *args, **kwargs) -> None:
+    def handle(self, level: tp.Union[int, MetricLevel], *args, **kwargs) -> None:
         for metric in self.metrics:
             metric.handle(level, *args, **kwargs)
