@@ -9,8 +9,6 @@ from satella.time import measure
 from ...exceptions import ResourceLocked, WouldWaitMore
 
 
-
-
 class Condition(PythonCondition):
     """
     A wrapper to faciliate easier usage of Pythons' threading.Condition.

@@ -1,5 +1,6 @@
 import typing as tp
 from .monitor import Monitor
+from .thread import Condition
 
 
 Number = tp.Union[int, float]
@@ -11,26 +12,45 @@ class AtomicNumber(Monitor):
     might change in time. So in this case this is more of like a container for numbers.
 
     Treat it like a normal number, except all operations are executed atomically.
+
+    You can also wait for it to change it's value, via wait().
+
+    You change it's value in the following way:
+
+    >>> a = AtomicNumber()
+    >>> a += 2
     """
-    __slots__ = ('value', )
+    __slots__ = ('value', 'condition')
 
     def __init__(self, v: Number = 0):
         super().__init__()
         self.value = v
+        self.condition = Condition()
+
+    def wait(self, timeout: tp.Optional[float] = None):
+        """
+        Block until the atomic number changes it's value.
+
+        :raises WouldWaitMore: the value hasn't changed within the timeout
+        """
+        self.condition.wait(timeout)
 
     @Monitor.synchronized
     def __iadd__(self, other: Number) -> 'AtomicNumber':
         self.value += other
+        self.condition.notify_all()
         return self
 
     @Monitor.synchronized
     def __isub__(self, other: int) -> 'AtomicNumber':
         self.value -= other
+        self.condition.notify_all()
         return self
 
     @Monitor.synchronized
     def __imul__(self, other: int) -> 'AtomicNumber':
         self.value *= other
+        self.condition.notify_all()
         return self
 
     @Monitor.synchronized

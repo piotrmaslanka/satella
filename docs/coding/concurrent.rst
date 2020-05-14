@@ -102,3 +102,12 @@ AtomicNumber
 
 .. autoclass:: satella.coding.concurrent.AtomicNumber
     :members:
+
+Condition
+=========
+
+A simplified version of threading.Condition. Doesn't require you to acquire it
+in order to be notified. Just a bunch of syntactic sugar.
+
+.. autoclass:: satella.coding.concurrent.Condition
+    :members:
