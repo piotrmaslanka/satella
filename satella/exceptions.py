@@ -109,7 +109,7 @@ class ResourceNotLocked(ResourceLockingError):
     """Locking given resource is needed in order to access it"""
 
 
-class WouldWaitMore(ResourceLockingError):
+class WouldWaitMore(ResourceLockingError, TimeoutError):
     """wait()'s timeout has expired"""
 
 
@@ -119,7 +119,7 @@ class PreconditionError(BaseSatellaError, ValueError):
     """
 
 
-class ConfigurationError(BaseSatellaError):
+class ConfigurationError(BaseSatellaError, ValueError):
     """A generic error during configuration"""
 
 
@@ -161,7 +161,7 @@ class LockIsHeld(ResourceLocked):
         self.pid = pid
 
 
-class ProcessFailed(BaseSatellaError):
+class ProcessFailed(BaseSatellaError, OSError):
     """A process finished with other result code that it was requested
 
     :param rc: return code of the process
