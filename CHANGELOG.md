@@ -2,3 +2,5 @@
 
 * made `WouldWaitMore` be subclass of `TimeoutError`
 * made `ConfigurationError` be subclass of `ValueError`
+* fixed support for `LabeledMetric` with `CallableMetric`
+

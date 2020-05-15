@@ -5,7 +5,7 @@ import unittest
 
 from satella.exceptions import MetricAlreadyExists
 from satella.instrumentation.metrics import getMetric, MetricLevel, MetricData, \
-    MetricDataCollection, AggregateMetric
+    MetricDataCollection, AggregateMetric, LabeledMetric
 
 logger = logging.getLogger(__name__)
 
@@ -17,6 +17,13 @@ def choose(postfix: str, mdc: MetricDataCollection, labels=None) -> MetricData:
 
 
 class TestMetric(unittest.TestCase):
+
+    def test_labeled_metric_with_callable(self):
+        m1 = getMetric('lmc1', 'callable')
+        lm = LabeledMetric(m1, key='value')
+        lm.callable = lambda: 0
+
+        self.assertEqual(choose('lmc1', m1.to_metric_data(), {'key': 'value'}).value, 0)
 
     def test_aggregate(self):
         m1 = getMetric('am1', 'summary')
