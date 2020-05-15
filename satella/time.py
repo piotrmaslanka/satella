@@ -3,10 +3,6 @@ import time
 from concurrent.futures import Future
 
 from functools import wraps
-import logging
-
-
-logger = logging.getLogger(__name__)
 
 __all__ = ['measure']
 
@@ -23,6 +19,9 @@ class measure:
 
     You can also use the .start() method instead of context manager. Time measurement
     will stop after exiting or calling .stop() depending on stop_on_stop flag.
+
+    Time elapsing starts after the counter is created. If you wish to start it manually,
+    please specify create_stopped=True
 
     When instantiated and called with no arguments, this will return the time elapsed:
 
@@ -61,18 +60,25 @@ class measure:
         TypeError.
     :param adjust: interval to add to current time upon initialization
     :param time_getter_callable: callable/0 -> float to get the time with
+    :param create_stopped: if this is set to True, you will manually need to call .start()
     """
     __slots__ = ('started_on', 'elapsed', 'stopped_on', 'stop_on_stop', 'time_getter_callable')
 
     def __init__(self, future_to_measure: tp.Optional[Future] = None, stop_on_stop: bool = True,
-                 adjust: float = 0.0, time_getter_callable: tp.Callable[[], float] = time.monotonic):
+                 adjust: float = 0.0, time_getter_callable: tp.Callable[[], float] = time.monotonic,
+                 create_stopped: bool = False):
         self.time_getter_callable = time_getter_callable
         self.started_on = time_getter_callable() + adjust
-        self.elapsed = None
-        self.stopped_on = None
+        if create_stopped:
+            self.elapsed = 0
+            self.stopped_on = self.started_on
+        else:
+            self.elapsed = None
+            self.stopped_on = None
         self.stop_on_stop = stop_on_stop
         if future_to_measure is not None:
             future_to_measure.add_done_callback(lambda fut: self.stop())
+
 
     def reset(self):
         """
@@ -90,6 +96,8 @@ class measure:
         """Start measuring time or resume measuring it"""
         if not self.stop_on_stop:
             raise TypeError('stop_on_stop is disabled for this counter!')
+        if self.stopped_on is None:
+            raise TypeError('the counter is already running!')
 
         if self.stopped_on is not None:
             self.started_on = self.time_getter_callable() - self.elapsed
@@ -123,7 +131,7 @@ class measure:
             return outer(fun)
 
     def __enter__(self):
-        if self.stop_on_stop:
+        if self.elapsed is not None and self.stop_on_stop:
             self.start()
         return self
 

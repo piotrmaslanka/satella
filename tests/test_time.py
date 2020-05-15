@@ -39,6 +39,7 @@ class TestTime(unittest.TestCase):
 
     def test_resuming(self):
         a = measure()
+        self.assertRaises(TypeError, lambda: a.start())
         time.sleep(0.5)
         self.assertGreaterEqual(a(), 0.5)
         a.stop()
