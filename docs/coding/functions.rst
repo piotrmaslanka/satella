@@ -17,6 +17,9 @@ Functions and decorators
 
 .. autofunction:: satella.coding.for_argument
 
+.. autofunction:: satella.coding.chain
+
+
 Wrapping classes with something
 -------------------------------
 

@@ -3,9 +3,6 @@ import typing as tp
 
 from ..exceptions import PreconditionError
 
-__all__ = ['precondition', 'for_argument', 'PreconditionError', 'short_none', 'has_keys',
-           'attach_arguments', 'wraps']
-
 T = tp.TypeVar('T')
 U = tp.TypeVar('U')
 Expression = tp.NewType('Expression', str)
@@ -17,6 +14,56 @@ def _NOP(x):
 
 def _TRUE(x):
     return True
+
+
+def chain(fun_first: tp.Callable[..., tp.Union[tp.Tuple[tp.Tuple, tp.Dict], tp.Dict, tp.Tuple]]) -> tp.Callable:
+    """
+    A decorator to chain function calls.
+    This function is expected to return:
+
+     * a 2-tuple [tp.Tuple, tp.Dict] - args and kwargs for the next function
+     * tp.Dict - only kwargs will be passed
+     * any other tuple - only args will be passed
+     * any other type - will be passed as a first argument
+
+    of arguments to pass to wrapped function. So this
+
+    >>> def test3(...):
+    >>>     ...
+    >>> def test2(...):
+    >>>     ...
+    >>> def test(...):
+    >>>     args, kwargs = test2(...)
+    >>>     return test(3)
+    >>> v = test(a, b, c)
+
+    Is equivalent to this:
+    >>> @chain
+    >>> def test2(...):
+    >>>     ...
+    >>> @test2
+    >>> def test3(...):
+    >>>     ...
+    >>> v = test3(a, b, c)
+    """
+    def outer(fun_next):
+        @wraps(fun_next)
+        def inner(*args, **kwargs):
+            ret = fun_first(*args, **kwargs)
+            if isinstance(ret, dict):
+                args = ()
+                kwargs = ret
+            elif isinstance(ret, tuple) and len(ret) == 2:
+                args, kwargs = ret
+            elif isinstance(ret, tuple):
+                args = ret
+                kwargs = {}
+            else:
+                args = ret,
+                kwargs = {}
+            return fun_next(*args, **kwargs)
+        return inner
+    return outer
 
 
 def wraps(cls_to_wrap: tp.Type) -> tp.Callable[[tp.Type], tp.Type]:

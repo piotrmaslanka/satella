@@ -1,9 +1,33 @@
 import unittest
 from socket import socket
-from satella.coding import attach_arguments, wraps
+from satella.coding import attach_arguments, wraps, chain
 
 
 class TestDecorators(unittest.TestCase):
+
+    def test_chain_kwargs(self):
+        @chain
+        def double_arguments(**kwargs):
+            kwargs['a'] = kwargs['a']*2
+            return kwargs
+
+        @double_arguments
+        def multiply_times_two(**kwargs):
+            return kwargs['a']*2
+
+        self.assertEqual(multiply_times_two(a=2), 8)
+
+    def test_chain(self):
+        @chain
+        def double_arguments(a):
+            return a*2
+
+        @double_arguments
+        def multiply_times_two(a):
+            return a*2
+
+        self.assertEqual(multiply_times_two(2), 8)
+
     def test_attach_arguments(self):
         @attach_arguments(label=2)
         def test_me(**kwargs):
