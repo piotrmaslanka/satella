@@ -16,6 +16,46 @@ def _TRUE(x):
     return True
 
 
+class _MethodDecoratorAdaptor(object):
+    def __init__(self, decorator, func):
+        self.decorator = decorator
+        self.func = func
+
+    def __call__(self, *args, **kwargs):
+        return self.decorator(self.func)(*args, **kwargs)
+
+    def __get__(self, instance, owner):
+        return self.decorator(self.func.__get__(instance, owner))
+
+
+# taken from https://stackoverflow.com/questions/1288498/using-the-same-decorator-with-arguments-with-functions-and-methods
+def auto_adapt_to_methods(decorator):
+    """
+    Allows you to use the same decorator on methods and functions,
+    hiding the self argument from the decorator.
+
+    Usage:
+
+    >>> @auto_adapt_to_methods
+    >>> def times_two(fun):
+    >>>     def outer(a):
+    >>>         return fun(a*2)
+    >>>     return outer
+    >>> class Test:
+    >>>     @times_two
+    >>>     def twice(self, a):
+    >>>         return a*2
+    >>> @times_two
+    >>> def twice(a):
+    >>>     return a*2
+    >>> assert Test().twice(2) == 4
+    >>> assert twice(2) == 4
+    """
+    def adapt(func):
+        return _MethodDecoratorAdaptor(decorator, func)
+    return adapt
+
+
 def chain(fun_first: tp.Callable[..., tp.Union[tp.Tuple[tp.Tuple, tp.Dict], tp.Dict, tp.Tuple]]) -> tp.Callable:
     """
     A decorator to chain function calls.

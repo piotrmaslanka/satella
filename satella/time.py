@@ -1,8 +1,14 @@
+import inspect
 import typing as tp
 import time
 from concurrent.futures import Future
 
 from functools import wraps
+import logging
+
+from satella.coding.decorators import auto_adapt_to_methods
+
+logger = logging.getLogger(__name__)
 
 __all__ = ['measure']
 
@@ -20,11 +26,24 @@ class measure:
     You can also use the .start() method instead of context manager. Time measurement
     will stop after exiting or calling .stop() depending on stop_on_stop flag.
 
+    When instantiated and called with no arguments, this will return the time elapsed:
+
+    >>> a = measure()
+    >>> time.sleep(0.5)
+    >>> assert a() >= 0.5
+
     You can also decorate your functions to have them keep track time of their execution, like that:
 
     >>> @measure()
     >>> def measuring(measurement_object: measure, *args, **kwargs):
     >>>     ...
+
+    This will also correctly work on methods, correctly inserting the measurement object after self/cls:
+
+    >>> class Test:
+    >>>     @measure()
+    >>>     def measuring(self, measurement_object: measure):
+    >>>         ...
 
     You can also measure how long does executing a future take, eg.
 
@@ -34,9 +53,14 @@ class measure:
     >>> print('Executing the future took', measurement(), 'seconds')
 
     In case a future is passed, the measurement will stop automatically as soon as the future
-    returns with a result (or exception)
+    returns with a result (or exception).
 
-    :param stop_on_stop: stop elapsing time upon calling .stop()/exiting the context manager
+    Note that in order to reuse a single counter you must .reset() it first. Just calling .start()
+    after .stop() will result in the timer being resumed instead!
+
+    :param stop_on_stop: stop elapsing time upon calling .stop()/exiting the context manager.
+        If this is set to False then .start() and .stop() won't work and calling them will raise a
+        TypeError.
     :param adjust: interval to add to current time upon initialization
     :param time_getter_callable: callable/0 -> float to get the time with
     """
@@ -52,9 +76,28 @@ class measure:
         if future_to_measure is not None:
             future_to_measure.add_done_callback(lambda fut: self.stop())
 
-    def start(self) -> None:
-        """Start measuring time or update the internal counter"""
+    def reset(self):
+        """
+        Reset the counter, enabling it to start counting after a .stop() call
+
+        :raise TypeError: the counter is not stopped
+        """
+        if self.stopped_on is None:
+            raise TypeError('The counter has not been stopped')
         self.started_on = self.time_getter_callable()
+        self.elapsed = None
+        self.stopped_on = None
+
+    def start(self) -> None:
+        """Start measuring time or resume measuring it"""
+        if not self.stop_on_stop:
+            raise TypeError('stop_on_stop is disabled for this counter!')
+
+        if self.stopped_on is not None:
+            self.started_on = self.time_getter_callable() - self.elapsed
+            self.stopped_on = None
+        self.started_on = self.time_getter_callable()
+        self.elapsed = None
 
     def update(self) -> None:
         """Alias for .start()"""
@@ -70,21 +113,35 @@ class measure:
                 return self.elapsed
             return self.time_getter_callable() - self.started_on
         else:
-            @wraps(fun)
-            def inner(*args, **kwargs):
-                with self:
-                    return fun(self, *args, **kwargs)
-            return inner
+            @auto_adapt_to_methods
+            def outer(func):
+                @wraps(func)
+                def inner(*args, **kwargs):
+                    with self:
+                        return func(self, *args, **kwargs)
+                return inner
+            return outer(fun)
 
     def __enter__(self):
-        self.start()
+        if self.stop_on_stop:
+            self.start()
         return self
 
     def stop(self) -> None:
-        """Stop counting time"""
+        """
+        Stop counting time
+
+        :raises TypeError: stop_on_stop is enabled or the counter has already been stopped
+        """
+        if not self.stop_on_stop:
+            raise TypeError('stop_on_stop is disabled for this counter!')
+        if self.stopped_on is not None:
+            raise TypeError('counter already stopped!')
+
         self.stopped_on = self.time_getter_callable()
         self.elapsed = self.stopped_on - self.started_on
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        self.stop()
+        if self.stop_on_stop:
+            self.stop()
         return False

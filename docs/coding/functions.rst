@@ -19,6 +19,7 @@ Functions and decorators
 
 .. autofunction:: satella.coding.chain
 
+.. autofunction:: satella.coding.auto_adapt_to_methods
 
 Wrapping classes with something
 -------------------------------

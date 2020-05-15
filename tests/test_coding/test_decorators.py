@@ -1,9 +1,28 @@
 import unittest
 from socket import socket
-from satella.coding import attach_arguments, wraps, chain
+from satella.coding import attach_arguments, wraps, chain, auto_adapt_to_methods
 
 
 class TestDecorators(unittest.TestCase):
+
+    def test_auto_adapt_to_methods(self):
+        @auto_adapt_to_methods
+        def times_two(fun):
+            def outer(a):
+                return fun(a*2)
+            return outer
+
+        class Test:
+            @times_two
+            def twice(self, a):
+                return a*2
+
+        @times_two
+        def twice(a):
+            return a*2
+
+        self.assertEqual(Test().twice(2), 8)
+        self.assertEqual(twice(2), 8)
 
     def test_chain_kwargs(self):
         @chain
