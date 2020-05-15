@@ -1,4 +1,3 @@
-import inspect
 import typing as tp
 import time
 from concurrent.futures import Future
@@ -6,7 +5,6 @@ from concurrent.futures import Future
 from functools import wraps
 import logging
 
-from satella.coding.decorators import auto_adapt_to_methods
 
 logger = logging.getLogger(__name__)
 
@@ -113,6 +111,8 @@ class measure:
                 return self.elapsed
             return self.time_getter_callable() - self.started_on
         else:
+            from satella.coding.decorators import auto_adapt_to_methods
+
             @auto_adapt_to_methods
             def outer(func):
                 @wraps(func)
