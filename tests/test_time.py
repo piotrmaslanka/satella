@@ -35,7 +35,20 @@ class TestTime(unittest.TestCase):
                 time.sleep(0.5)
                 return measurement()
 
-        self.assertGreaterEqual(Test().try_measure(), 0.5)
+        for i in range(3):
+            self.assertTrue(0.5 <= Test().try_measure() <= 0.7)
+
+    def test_measure_method_decorator_stopped(self):
+        class Test:
+            @measure(create_stopped=True)
+            def try_measure(self, measurement):
+                time.sleep(0.3)
+                measurement.start()
+                time.sleep(0.5)
+                return measurement()
+
+        for i in range(3):
+            self.assertTrue(0.5 <= Test().try_measure() <= 0.7)
 
     def test_resuming(self):
         a = measure()
@@ -48,10 +61,10 @@ class TestTime(unittest.TestCase):
         a.start()
         time.sleep(0.5)
         self.assertLess(a(), 1.2)
-        self.assertRaises(TypeError, lambda: a.reset())
         a.stop()
         self.assertRaises(TypeError, lambda: a.stop())
         a.reset()
+        a.start()
         time.sleep(0.5)
         self.assertGreaterEqual(a(), 0.5)
         self.assertLess(a(), 0.7)

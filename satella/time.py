@@ -1,5 +1,6 @@
 import typing as tp
 import time
+import copy
 from concurrent.futures import Future
 
 from functools import wraps
@@ -55,6 +56,11 @@ class measure:
     Note that in order to reuse a single counter you must .reset() it first. Just calling .start()
     after .stop() will result in the timer being resumed instead!
 
+    Note that if you're using the decorator form, this object will be first copied and then
+    passed to the function/future. This is to prevent undefined behaviour during multithreading.
+    Also, the timer that you pass to this function will be started/not started, depending on what you
+    set earlier. .reset() will be called on a copy of this object.
+
     :param stop_on_stop: stop elapsing time upon calling .stop()/exiting the context manager.
         If this is set to False then .start() and .stop() won't work and calling them will raise a
         TypeError.
@@ -62,13 +68,15 @@ class measure:
     :param time_getter_callable: callable/0 -> float to get the time with
     :param create_stopped: if this is set to True, you will manually need to call .start()
     """
-    __slots__ = ('started_on', 'elapsed', 'stopped_on', 'stop_on_stop', 'time_getter_callable')
+    __slots__ = ('started_on', 'elapsed', 'stopped_on', 'stop_on_stop', 'time_getter_callable',
+                 'create_stopped')
 
     def __init__(self, future_to_measure: tp.Optional[Future] = None, stop_on_stop: bool = True,
                  adjust: float = 0.0, time_getter_callable: tp.Callable[[], float] = time.monotonic,
                  create_stopped: bool = False):
         self.time_getter_callable = time_getter_callable
         self.started_on = time_getter_callable() + adjust
+        self.create_stopped = create_stopped
         if create_stopped:
             self.elapsed = 0
             self.stopped_on = self.started_on
@@ -79,18 +87,13 @@ class measure:
         if future_to_measure is not None:
             future_to_measure.add_done_callback(lambda fut: self.stop())
 
-
     def reset(self):
         """
-        Reset the counter, enabling it to start counting after a .stop() call
-
-        :raise TypeError: the counter is not stopped
+        Reset the counter, enabling it to start counting after a .stop() call.
+        This will put the counter in a STOPPED mode if it's running already.
         """
-        if self.stopped_on is None:
-            raise TypeError('The counter has not been stopped')
-        self.started_on = self.time_getter_callable()
-        self.elapsed = None
-        self.stopped_on = None
+        self.stopped_on = self.started_on = self.time_getter_callable()
+        self.elapsed = 0
 
     def start(self) -> None:
         """Start measuring time or resume measuring it"""
@@ -125,8 +128,13 @@ class measure:
             def outer(func):
                 @wraps(func)
                 def inner(*args, **kwargs):
-                    with self:
-                        return func(self, *args, **kwargs)
+                    s = copy.copy(self)
+                    if not s.create_stopped:
+                        s.reset()
+                        with s:
+                            return func(s, *args, **kwargs)
+                    else:
+                        return func(s, *args, **kwargs)
                 return inner
             return outer(fun)
 
