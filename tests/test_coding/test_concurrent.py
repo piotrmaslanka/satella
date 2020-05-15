@@ -12,18 +12,16 @@ from satella.exceptions import WouldWaitMore
 
 class TestConcurrent(unittest.TestCase):
 
-    def test_atomic_number_wait(self):
+    def test_atomic_number_wait_equal(self):
         an = AtomicNumber()
 
         def process_atomic_number(a):
-            time.sleep(4)
+            time.sleep(3)
             a += 1
 
-        self.assertEqual(an, 0)
         threading.Thread(target=process_atomic_number, args=(an, )).start()
-        self.assertRaises(WouldWaitMore, lambda: an.wait(2))
-        an.wait()
-        self.assertEqual(an, 1)
+        self.assertRaises(WouldWaitMore, lambda: an.wait_until_equal(2, timeout=2))
+        an.wait_until_equal(1)
 
     def test_atomic_number(self):
         a = AtomicNumber(4)

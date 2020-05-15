@@ -1,7 +1,8 @@
 import typing as tp
 from .monitor import Monitor
 from .thread import Condition
-
+from ...exceptions import WouldWaitMore
+from ...time import measure
 
 Number = tp.Union[int, float]
 
@@ -114,3 +115,28 @@ class AtomicNumber(Monitor):
     @Monitor.synchronized
     def __abs__(self) -> Number:
         return abs(self.value)
+
+    def wait_until_equal(self, v: Number, timeout: tp.Optional[float] = None) -> None:
+        """
+        Wait until the value of this number equals v.
+
+        :param v: value to compare this number against
+        :param timeout: maximum time to wait
+        :raise WouldWaitMore: timeout expired without the value becoming equal to target
+        """
+        if timeout is None:
+            while True:
+                if self == v:
+                    break
+                self.wait()
+        else:
+            with measure() as measurement:
+                while measurement() < timeout:
+                    time_remaining = timeout - measurement()
+                    if self == v:
+                        break
+                    self.wait(time_remaining)
+
+                with Monitor.acquire(self):
+                    if self.value != v:
+                        raise WouldWaitMore()
