@@ -87,6 +87,13 @@ class measure:
         if future_to_measure is not None:
             future_to_measure.add_done_callback(lambda fut: self.stop())
 
+    def reset_and_start(self):
+        """
+        Syntactic sugar for calling reset() and then start()
+        """
+        self.reset()
+        self.start()
+
     def reset(self):
         """
         Reset the counter, enabling it to start counting after a .stop() call.
