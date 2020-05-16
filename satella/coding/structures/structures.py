@@ -75,38 +75,41 @@ def _extras_to_one(fun):
     return inner
 
 
-class ReprableObject:
+class ReprableMixin:
     """
-    An object that will always construct it's own representation from it's __repr__, which
-    will be it's entire arguments fed to the constructor
+    A sane __repr__ default.
 
-    Note the apostrophes that this class will use!
+    This takes the values for the __repr__ from repr'ing list of fields defined as
+    class property _REPR_FIELDS.
+
+    Set an optional class property of _REPR_FULL_CLASSNAME for __repr__ to output the repr alongside the module name.
 
     Example:
 
     >>> class Test(ReprableObject):
+    >>>     _REPR_FIELDS = ('v', )
     >>>     def __init__(self, v, **kwargs):
-    >>>         super().__init__(v, **kwargs)
+    >>>         self.v = v
     >>>
-    >>> assert repr(Test(2, label='value')) == "Test(2, label='value')"
+    >>> assert repr(Test(2)) == "Test(2)"
+    >>> assert repr(Test('2') == "Test('2')")
     """
-    __slots__ = ('__args', '__kwargs')
-
-    def __init__(self, *args, **kwargs):
-        self.__args = args
-        self.__kwargs = kwargs
+    _REPR_FIELDS = ()
 
     def __repr__(self):
-        fragments = [self.__class__.__name__, '(']
+        fragments = []
+        if hasattr(self, '_REPR_FULL_CLASSNAME'):
+            if self._REPR_FULL_CLASSNAME:
+                fragments = ['%s%s' % ((self.__class__.__module__ + '.')
+                                       if self.__class__.__module__ != 'builtins' else '',
+                                       self.__class__.__qualname__)]
+        if not fragments:
+            fragments = [self.__class__.__name__]
+        fragments.append('(')
         arguments = []
-        for arg in self.__args:
-            arguments.append(repr(arg))
+        for field_name in self._REPR_FIELDS:
+            arguments.append(repr(getattr(self, field_name)))
         fragments.append(', '.join(arguments))
-        kwargs = []
-        for k, v in self.__kwargs:
-            kwargs.append('%s=%s' % (k,repr(v)))
-        if kwargs:
-            fragments.append(', '.join(kwargs))
         fragments.append(')')
         return ''.join(fragments)
 

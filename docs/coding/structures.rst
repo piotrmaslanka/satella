@@ -50,6 +50,14 @@ If you need quick __hash__ and __eq__ operators from listed fields of the class.
 .. autoclass:: satella.coding.structures.OmniHashableMixin
     :members:
 
+ReprableMixin
+=============
+
+If you need to provide a quick __repr__ for your classes:
+
+.. autoclass:: satella.coding.structures.ReprableMixin
+    :members:
+
 Singleton
 =========
 

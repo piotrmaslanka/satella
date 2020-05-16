@@ -9,12 +9,31 @@ import mock
 from satella.coding.structures import TimeBasedHeap, Heap, typednamedtuple, \
     OmniHashableMixin, DictObject, apply_dict_object, Immutable, frozendict, SetHeap, \
     DictionaryView, HashableWrapper, TwoWayDictionary, Ranking, SortedList, SliceableDeque, \
-    DirtyDict, KeyAwareDefaultDict, Proxy
+    DirtyDict, KeyAwareDefaultDict, Proxy, ReprableMixin
 
 logger = logging.getLogger(__name__)
 
 
 class TestMisc(unittest.TestCase):
+    def test_reprable_mixin(self):
+        class Test(ReprableMixin):
+            _REPR_FIELDS = ('v', )
+
+            def __init__(self, v):
+                self.v = v
+
+        self.assertEqual(repr(Test(2)), 'Test(2)')
+
+        class Test2(ReprableMixin):
+            _REPR_FIELDS = ('v', )
+            _REPR_FULL_CLASSNAME = True
+
+            def __init__(self, v):
+                self.v = v
+
+        self.assertEqual(repr(Test2(2)),
+                         'tests.test_coding.test_structures.TestMisc.test_reprable_mixin.<locals>.Test2(2)')
+
     def test_proxy(self):
         a = Proxy(5, wrap_operations=True)
         self.assertIsInstance(a+5, Proxy)
