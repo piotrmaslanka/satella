@@ -23,6 +23,9 @@ class TestConcurrent(unittest.TestCase):
         self.assertRaises(WouldWaitMore, lambda: an.wait_until_equal(2, timeout=2))
         an.wait_until_equal(1)
 
+        self.assertEqual(str(an), 'AtomicNumber(1)')
+        self.assertEqual(repr(an), 'AtomicNumber(1)')
+
     def test_atomic_number(self):
         a = AtomicNumber(4)
         a -= 1

@@ -42,6 +42,13 @@ class AtomicNumber(Monitor):
         """
         self.condition.wait(timeout)
 
+    def __repr__(self) -> str:
+        return str(self)
+
+    @Monitor.synchronized
+    def __str__(self) -> str:
+        return 'AtomicNumber(%s)' % (self.value, )
+
     @Monitor.synchronized
     def __gt__(self, other: Number):
         return self.value > other
