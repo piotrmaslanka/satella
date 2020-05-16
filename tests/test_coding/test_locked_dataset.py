@@ -21,7 +21,7 @@ class TestLockedDataset(unittest.TestCase):
 
         a = MyDataset()
         with a:
-            self.assertRaises(ResourceLocked,
+            self.assertRaises(WouldWaitMore,
                               lambda: a(blocking=False).__enter__())
             self.assertRaises(WouldWaitMore, lambda: a.increment())
 
@@ -46,9 +46,9 @@ class TestLockedDataset(unittest.TestCase):
                 self.counter += 1
 
         with MyDataset():
-            self.assertRaises(ResourceLocked,
+            self.assertRaises(WouldWaitMore,
                               lambda: MyDataset()(blocking=False).__enter__())
-            self.assertRaises(ResourceLocked, lambda: MyDataset().increment())
+            self.assertRaises(WouldWaitMore, lambda: MyDataset().increment())
 
         MyDataset().increment()
         with MyDataset():
