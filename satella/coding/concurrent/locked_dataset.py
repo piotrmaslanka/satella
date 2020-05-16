@@ -2,7 +2,7 @@ import inspect
 import threading
 
 from ..decorators import wraps
-from ...exceptions import ResourceLocked, ResourceNotLocked
+from ...exceptions import ResourceLocked, ResourceNotLocked, WouldWaitMore
 
 
 class LockedDataset:
@@ -28,7 +28,9 @@ class LockedDataset:
     >>>     print('Could not update the resource')
 
     If no lock is held, this class that derives from such will raise ResourceNotLocked upon
-    element access while a lock is not being held
+    element access while a lock is not being held.
+
+    Note that __enter__ will raise WouldWaitMore if timeout was given.
     """
 
     class InternalDataset(object):
@@ -44,6 +46,12 @@ class LockedDataset:
 
     @staticmethod
     def locked(blocking=True, timeout=-1):
+        """
+        Decorator to use for annotating methods that would lock
+        :param blocking:
+        :param timeout:
+        :return:
+        """
         def inner(f):
             @wraps(f)
             def in_ner(self, *args, **kwargs):
@@ -78,7 +86,7 @@ class LockedDataset:
         args = get_internal(self).args
 
         if not get_internal(self).lock.acquire(*args):
-            raise ResourceLocked('Could not acquire the lock on the object')
+            raise WouldWaitMore('Resource is still locked')
         get_internal(self).locked = True
         return self
 
