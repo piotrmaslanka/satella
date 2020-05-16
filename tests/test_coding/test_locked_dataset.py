@@ -3,7 +3,7 @@ import unittest
 from satella.coding.concurrent import LockedDataset
 from satella.coding.concurrent.locked_dataset import get_internal
 from satella.coding.structures import Singleton
-from satella.exceptions import ResourceLocked, ResourceNotLocked
+from satella.exceptions import WouldWaitMore, ResourceNotLocked
 
 
 class TestLockedDataset(unittest.TestCase):
@@ -23,7 +23,7 @@ class TestLockedDataset(unittest.TestCase):
         with a:
             self.assertRaises(ResourceLocked,
                               lambda: a(blocking=False).__enter__())
-            self.assertRaises(ResourceLocked, lambda: a.increment())
+            self.assertRaises(WouldWaitMore, lambda: a.increment())
 
         a.increment()
         with a:
