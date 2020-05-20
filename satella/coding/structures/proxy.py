@@ -24,6 +24,8 @@ class Proxy(tp.Generic[T]):
 
     >>> getattr(self, '_Proxy__obj')
 
+    Please note that this class does not overload the descriptor protocol!
+
     :param object_to_wrap: object to wrap
     :param wrap_operations: whether results of operations returning something else should be
         also proxied. This will be done by the following code:
