@@ -43,7 +43,7 @@ class Proxy(tp.Generic[T]):
 
     def __init__(self, object_to_wrap: T, wrap_operations: bool = False):
         self.__obj = object_to_wrap   # type: T
-        self.__wrap_operations = wrap_operations
+        self.__wrap_operations = wrap_operations    # type: bool
 
     def __call__(self, *args, **kwargs):
         return self.__obj(*args, **kwargs)
@@ -75,10 +75,10 @@ class Proxy(tp.Generic[T]):
     def __float__(self) -> float:
         return float(self.__obj)
 
-    def __complex__(self):
+    def __complex__(self) -> complex:
         return complex(self.__obj)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self.__obj)
 
     def __add__(self, other):
@@ -184,7 +184,7 @@ class Proxy(tp.Generic[T]):
     def __exit__(self, exc_type, exc_val, exc_tb):
         return self.__obj.__exit__(exc_type, exc_val, exc_tb)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return repr(self.__obj)
 
     def __abs__(self):
@@ -265,17 +265,17 @@ class Proxy(tp.Generic[T]):
         return self.__obj.__index__()
     
     def __round__(self, n=None):
+        result = self.__obj.__round__(n)
         if self.__wrap_operations:
-            result = self.__class__(self.__obj.__round__(n))
-        else:
-            result = self.__obj.__round__(n)
+            result = self.__class__(result)
+
         return result
     
     def __trunc__(self):
+        result = self.__obj.__trunc__()
         if self.__wrap_operations:
-            result = self.__class__(self.__obj.__trunc__())
-        else:
-            result = self.__obj.__trunc__()
+            result = self.__class__(result)
+
         return result
 
     def __floor__(self):
@@ -289,20 +289,19 @@ class Proxy(tp.Generic[T]):
         return result
 
     def __ceil__(self):
+        result = self.__obj.__ceil__()
+
         if self.__wrap_operations:
-            result = self.__class__(self.__obj.__ceil__())
-        else:
-            result = self.__obj.__ceil__()
+            result = self.__class__(result)
         return result
 
     def __dir__(self) -> tp.Iterable[str]:
         return dir(self.__obj)
 
     def __concat__(self, other):
+        result = self.__obj.__concat__(other)
         if self.__wrap_operations:
-            result = self.__class__(self.__obj.__concat__(other))
-        else:
-            result = self.__obj.__concat__(other)
+            result = self.__class__(result)
         return result
 
     def __iconcat__(self, other) -> 'Proxy':

@@ -86,7 +86,7 @@ class ReprableMixin:
 
     Example:
 
-    >>> class Test(ReprableObject):
+    >>> class Test(ReprableMixin):
     >>>     _REPR_FIELDS = ('v', )
     >>>     def __init__(self, v, **kwargs):
     >>>         self.v = v
