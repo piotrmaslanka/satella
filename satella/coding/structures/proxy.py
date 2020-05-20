@@ -209,16 +209,16 @@ class Proxy(tp.Generic[T]):
         self.__obj ^= other
         return self
 
-    def __await__(self) -> tp.Awaitable:
+    def __await__(self):
         return self.__obj.__await()
 
-    def __aenter__(self) -> tp.AsyncContextManager:
+    def __aenter__(self):
         return self.__obj.__aenter__()
 
     def __aexit__(self, exc_type, exc_val, exc_tb):
         return self.__obj.__aexit__(exc_type, exc_val, exc_tb)
 
-    def __aiter__(self) -> tp.AwaitableGenerator:
+    def __aiter__(self):
         return self.__obj.__aiter__()
 
     def __reversed__(self):
