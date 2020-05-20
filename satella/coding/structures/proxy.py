@@ -1,5 +1,6 @@
 import logging
 import typing as tp
+import math
 
 T = tp.TypeVar('T')
 logger = logging.getLogger(__name__)
@@ -278,10 +279,14 @@ class Proxy(tp.Generic[T]):
         return result
 
     def __floor__(self):
-        if self.__wrap_operations:
-            result = self.__class__(self.__obj.__floor__())
+        if hasattr(self.__obj, '__floor__'):
+            floorer = self.__obj.__floor__
         else:
-            result = self.__obj.__floor__()
+            floorer = lambda: math.floor(self.__obj)
+        if self.__wrap_operations:
+            result = self.__class__(floorer())
+        else:
+            result = floorer()
         return result
 
     def __ceil__(self):
