@@ -27,6 +27,9 @@ class Proxy(tp.Generic[T]):
     Please note that this class does not overload the descriptor protocol,
     not the pickle interface!
 
+    Note that this overloads both __repr__ and __str__, which may prove confusing.
+    Handle this in your descendant classes.
+
     :param object_to_wrap: object to wrap
     :param wrap_operations: whether results of operations returning something else should be
         also proxied. This will be done by the following code:
@@ -83,7 +86,7 @@ class Proxy(tp.Generic[T]):
             result = self.__class__(result)
         return result
 
-    def __iadd__(self, other):
+    def __iadd__(self, other) -> 'Proxy':
         self.__obj += other
         return self
 
@@ -93,7 +96,7 @@ class Proxy(tp.Generic[T]):
             result = self.__class__(result)
         return result
 
-    def __isub__(self, other):
+    def __isub__(self, other) -> 'Proxy':
         self.__obj -= other
         return self
 
@@ -121,23 +124,23 @@ class Proxy(tp.Generic[T]):
             result = self.__class__(result)
         return result
 
-    def __imul__(self, other):
+    def __imul__(self, other) -> 'Proxy':
         self.__obj *= other
         return self
 
-    def __itruediv__(self, other):
+    def __itruediv__(self, other) -> 'Proxy':
         self.obj /= other
         return self
 
-    def __ifloordiv__(self, other):
+    def __ifloordiv__(self, other) -> 'Proxy':
         self.obj //= other
         return self
 
-    def __ilshift__(self, other):
+    def __ilshift__(self, other) -> 'Proxy':
         self.obj <<= other
         return self
 
-    def __irshift__(self, other):
+    def __irshift__(self, other) -> 'Proxy':
         self.obj >>= other
         return self
 
@@ -198,7 +201,7 @@ class Proxy(tp.Generic[T]):
     def __xor__(self, other):
         return self.__obj ^ other
 
-    def __ior__(self, other):
+    def __ior__(self, other) -> 'Proxy':
         self.__obj |= other
         return self
 
@@ -232,7 +235,7 @@ class Proxy(tp.Generic[T]):
             result = self.__obj.__pow__(power, modulo)
         return result
 
-    def __ipow__(self, other):
+    def __ipow__(self, other) -> 'Proxy':
         self.__obj.__ipow__(other)
         return self
 
@@ -298,7 +301,7 @@ class Proxy(tp.Generic[T]):
             result = self.__obj.__concat__(other)
         return result
 
-    def __iconcat__(self, other):
+    def __iconcat__(self, other) -> 'Proxy':
         self.__obj.__iconcat__(other)
         return self
 
