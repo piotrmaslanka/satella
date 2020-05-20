@@ -178,7 +178,7 @@ class Proxy(tp.Generic[T]):
     def __gt__(self, other) -> bool:
         return self.__obj > other
 
-    def __enter__(self) -> tp.ContextManager:
+    def __enter__(self):
         return self.__obj.__enter__()
 
     def __exit__(self, exc_type, exc_val, exc_tb):
@@ -280,13 +280,12 @@ class Proxy(tp.Generic[T]):
 
     def __floor__(self):
         if hasattr(self.__obj, '__floor__'):
-            floorer = self.__obj.__floor__
+            result = self.__obj.__floor__()
         else:
-            floorer = lambda: math.floor(self.__obj)
+            result = math.floor(self.__obj)
+
         if self.__wrap_operations:
-            result = self.__class__(floorer())
-        else:
-            result = floorer()
+            result = self.__class__(result)
         return result
 
     def __ceil__(self):
