@@ -20,6 +20,10 @@ class Proxy(tp.Generic[T]):
     Note that proxies are considered to be the type of the object that they wrap,
     as well as considered to be of type Proxy.
 
+    Please access this object in your descendant classes via
+
+    >>> getattr(self, '_Proxy__obj')
+
     :param object_to_wrap: object to wrap
     :param wrap_operations: whether results of operations returning something else should be
         also proxied. This will be done by the following code:
@@ -29,7 +33,6 @@ class Proxy(tp.Generic[T]):
         If you want logical operations wrapped, file an issue.
     """
     __slots__ = ('__obj', '__wrap_operations')
-
 
     def __init__(self, object_to_wrap: T, wrap_operations: bool = False):
         self.__obj = object_to_wrap   # type: T
@@ -191,3 +194,95 @@ class Proxy(tp.Generic[T]):
 
     def __xor__(self, other):
         return self.__obj ^ other
+
+    def __ior__(self, other):
+        self.__obj |= other
+        return self
+
+    def __iand__(self, other):
+        self.__obj &= other
+        return self
+
+    def __ixor__(self, other):
+        self.__obj ^= other
+        return self
+
+    def __await__(self):
+        return self.__obj.__await()
+
+    def __aenter__(self):
+        return self.__obj.__aenter__()
+
+    def __aexit__(self, exc_type, exc_val, exc_tb):
+        return self.__obj.__aexit__(exc_type, exc_val, exc_tb)
+
+    def __aiter__(self):
+        return self.__obj.__aiter__()
+
+    def __reversed__(self):
+        return reversed(self.__obj)
+
+    def __pow__(self, power, modulo=None):
+        if self.__wrap_operations:
+            result = self.__class__(self.__obj.__pow__(power, modulo))
+        else:
+            result = self.__obj.__pow__(power, modulo)
+        return result
+
+    def __ipow__(self, other):
+        self.__obj.__ipow__(other)
+        return self
+
+    def __neg__(self):
+        if self.__wrap_operations:
+            result = self.__class__(self.__obj.__neg__())
+        else:
+            result = self.__obj.__neg__()
+        return result
+
+    def __pos__(self):
+        if self.__wrap_operations:
+            result = self.__class__(self.__obj.__pow__())
+        else:
+            result = self.__obj.__pow__()
+        return result
+
+    def __invert__(self):
+        if self.__wrap_operations:
+            result = self.__class__(self.__obj.__invert__())
+        else:
+            result = self.__obj.__invert__()
+        return result
+
+    def __index__(self):
+        return self.__obj.__index__()
+    
+    def __round__(self, n=None):
+        if self.__wrap_operations:
+            result = self.__class__(self.__obj.__round__(n))
+        else:
+            result = self.__obj.__round__(n)
+        return result
+    
+    def __trunc__(self):
+        if self.__wrap_operations:
+            result = self.__class__(self.__obj.__trunc__())
+        else:
+            result = self.__obj.__trunc__()
+        return result
+
+    def __floor__(self):
+        if self.__wrap_operations:
+            result = self.__class__(self.__obj.__floor__())
+        else:
+            result = self.__obj.__floor__()
+        return result
+
+    def __ceil__(self):
+        if self.__wrap_operations:
+            result = self.__class__(self.__obj.__ceil__())
+        else:
+            result = self.__obj.__ceil__()
+        return result
+
+

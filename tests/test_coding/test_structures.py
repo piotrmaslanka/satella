@@ -1,4 +1,5 @@
 import abc
+import math
 import collections
 import copy
 import logging
@@ -40,6 +41,10 @@ class TestMisc(unittest.TestCase):
 
         a = Proxy(5)
         self.assertNotIsInstance(a+5, Proxy)
+        self.assertIsInstance(a+5, int)
+
+        a = Proxy(5.5)
+        self.assertEqual(math.floor(a), 5)
 
     def test_key_aware_defaultdict(self):
         a = KeyAwareDefaultDict(int)
