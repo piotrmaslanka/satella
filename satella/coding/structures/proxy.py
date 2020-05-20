@@ -62,10 +62,10 @@ class Proxy(tp.Generic[T]):
     def __delattr__(self, item):
         delattr(self.__obj, item)
 
-    def __int__(self):
+    def __int__(self) -> int:
         return int(self.__obj)
 
-    def __float__(self):
+    def __float__(self) -> float:
         return float(self.__obj)
 
     def __complex__(self):
@@ -138,19 +138,19 @@ class Proxy(tp.Generic[T]):
         self.obj >>= other
         return self
 
-    def __iter__(self):
+    def __iter__(self) -> tp.Iterator:
         return iter(self.__obj)
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.__obj)
 
-    def __contains__(self, item):
+    def __contains__(self, item) -> bool:
         return item in self.__obj
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash(self.__obj)
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         return self.__obj == other
 
     def __or__(self, other):
@@ -159,19 +159,19 @@ class Proxy(tp.Generic[T]):
     def __and__(self, other):
         return self.__obj and other
 
-    def __le__(self, other):
+    def __le__(self, other) -> bool:
         return self.__obj <= other
 
-    def __lt__(self, other):
+    def __lt__(self, other) -> bool:
         return self.__obj < other
 
-    def __ge__(self, other):
+    def __ge__(self, other) -> bool:
         return self.__obj >= other
 
-    def __gt__(self, other):
+    def __gt__(self, other) -> bool:
         return self.__obj > other
 
-    def __enter__(self):
+    def __enter__(self) -> tp.ContextManager:
         return self.__obj.__enter__()
 
     def __exit__(self, exc_type, exc_val, exc_tb):
@@ -183,7 +183,7 @@ class Proxy(tp.Generic[T]):
     def __abs__(self):
         return abs(self.__obj)
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         return bool(self.__obj)
 
     def __format__(self, format_spec):
@@ -207,16 +207,16 @@ class Proxy(tp.Generic[T]):
         self.__obj ^= other
         return self
 
-    def __await__(self):
+    def __await__(self) -> tp.Awaitable:
         return self.__obj.__await()
 
-    def __aenter__(self):
+    def __aenter__(self) -> tp.AsyncContextManager:
         return self.__obj.__aenter__()
 
     def __aexit__(self, exc_type, exc_val, exc_tb):
         return self.__obj.__aexit__(exc_type, exc_val, exc_tb)
 
-    def __aiter__(self):
+    def __aiter__(self) -> tp.AwaitableGenerator:
         return self.__obj.__aiter__()
 
     def __reversed__(self):
@@ -254,7 +254,7 @@ class Proxy(tp.Generic[T]):
             result = self.__obj.__invert__()
         return result
 
-    def __index__(self):
+    def __index__(self) -> int:
         return self.__obj.__index__()
     
     def __round__(self, n=None):
@@ -285,4 +285,5 @@ class Proxy(tp.Generic[T]):
             result = self.__obj.__ceil__()
         return result
 
-
+    def __dir__(self) -> tp.Iterable[str]:
+        return dir(self.__obj)
