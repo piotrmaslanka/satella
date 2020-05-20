@@ -24,7 +24,8 @@ class Proxy(tp.Generic[T]):
 
     >>> getattr(self, '_Proxy__obj')
 
-    Please note that this class does not overload the descriptor protocol!
+    Please note that this class does not overload the descriptor protocol,
+    not the pickle interface!
 
     :param object_to_wrap: object to wrap
     :param wrap_operations: whether results of operations returning something else should be
@@ -289,3 +290,17 @@ class Proxy(tp.Generic[T]):
 
     def __dir__(self) -> tp.Iterable[str]:
         return dir(self.__obj)
+
+    def __concat__(self, other):
+        if self.__wrap_operations:
+            result = self.__class__(self.__obj.__concat__(other))
+        else:
+            result = self.__obj.__concat__(other)
+        return result
+
+    def __iconcat__(self, other):
+        self.__obj.__iconcat__(other)
+        return self
+
+    def __length_hint__(self):
+        return self.__obj.__length_hint__()
