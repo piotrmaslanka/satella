@@ -1,7 +1,4 @@
 import typing as tp
-import logging
-
-logger = logging.getLogger(__name__)
 
 
 class SelfClosingGenerator:
@@ -42,6 +39,8 @@ class SelfClosingGenerator:
                 for _ in self.generator:
                     pass
             except (StopIteration, GeneratorExit):
+                pass
+            except TypeError:
                 pass
             self.stopped = True
         raise GeneratorExit()
