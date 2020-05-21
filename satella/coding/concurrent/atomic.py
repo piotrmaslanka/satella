@@ -94,11 +94,13 @@ class AtomicNumber(Monitor):
     @Monitor.synchronized
     def __itruediv__(self, other: Number) -> 'AtomicNumber':
         self.value /= other
+        self.condition.notify_all()
         return self
 
     @Monitor.synchronized
     def __ifloordiv__(self, other: Number) -> 'AtomicNumber':
         self.value //= other
+        self.condition.notify_all()
         return self
 
     @Monitor.synchronized
