@@ -1,6 +1,19 @@
 import typing as tp
 
 
+def exhaust(iterator: tp.Iterator):
+    """
+    Iterate till the end of the iterator, discarding values as they go
+
+    :param iterator: iterator to exhaust
+    """
+    try:
+        while True:
+            next(iterator)
+    except (GeneratorExit, StopIteration):
+        pass
+
+
 class SelfClosingGenerator:
     """
     A wrapper to exhaust the generator in response to closing it.
@@ -36,10 +49,7 @@ class SelfClosingGenerator:
     def close(self):
         if not self.stopped:
             try:
-                for _ in self.generator:
-                    pass
-            except (StopIteration, GeneratorExit):
-                pass
+                exhaust(self.generator)
             except TypeError:
                 pass
             self.stopped = True

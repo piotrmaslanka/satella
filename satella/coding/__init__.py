@@ -9,10 +9,10 @@ from .decorators import precondition, for_argument, PreconditionError, short_non
 from .fun_static import static_var
 from .metaclasses import metaclass_maker, wrap_with, dont_wrap, wrap_property
 from .recast_exceptions import rethrow_as, silence_excs, catch_exception, log_exceptions
-from .iterators import hint_with_length, SelfClosingGenerator
+from .iterators import hint_with_length, SelfClosingGenerator, exhaust
 
 __all__ = [
-    'hint_with_length', 'SelfClosingGenerator',
+    'hint_with_length', 'SelfClosingGenerator', 'exhaust',
     'Monitor', 'RMonitor', 'merge_dicts',
     'for_argument', 'short_none', 'has_keys',
     'precondition', 'PreconditionError', 'attach_arguments',

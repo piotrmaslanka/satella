@@ -127,6 +127,8 @@ Multirun
 Generators
 ==========
 
+.. autofunction:: satella.coding.exhaust
+
 .. autoclass:: satella.coding.hint_with_length
     :members:
 
