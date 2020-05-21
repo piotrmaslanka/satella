@@ -88,6 +88,20 @@ class AtomicNumber(Monitor):
         return self.value / other
 
     @Monitor.synchronized
+    def __floordiv__(self, other: Number) -> Number:
+        return self.value // other
+
+    @Monitor.synchronized
+    def __itruediv__(self, other: Number) -> 'AtomicNumber':
+        self.value /= other
+        return self
+
+    @Monitor.synchronized
+    def __ifloordiv__(self, other: Number) -> 'AtomicNumber':
+        self.value //= other
+        return self
+
+    @Monitor.synchronized
     def __isub__(self, other: int) -> 'AtomicNumber':
         self.value -= other
         self.condition.notify_all()
@@ -122,6 +136,10 @@ class AtomicNumber(Monitor):
     @Monitor.synchronized
     def __abs__(self) -> Number:
         return abs(self.value)
+
+    @Monitor.synchronized
+    def __neg__(self) -> Number:
+        return -self.value
 
     def wait_until_equal(self, v: Number, timeout: tp.Optional[float] = None) -> None:
         """
