@@ -129,3 +129,17 @@ Generators
 
 .. autoclass:: satella.coding.hint_with_length
     :members:
+
+Sometimes, you need the entire body of the generator to
+run. It'd be a shame if someone decided to bail out on
+you in the middle of the for loop. That's what
+this class is for:
+
+.. autoclass:: satella.coding.SelfClosingGenerator
+    :members:
+
+Using it on your generator objects will assure that they
+will run to completion.
+
+**Take care**: this won't work on PyPy due to it's nondeterministic
+garbage collection!
