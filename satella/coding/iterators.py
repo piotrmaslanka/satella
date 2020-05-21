@@ -36,7 +36,7 @@ class SelfClosingGenerator:
             except (StopIteration, GeneratorExit):
                 pass
             self.stopped = True
-            raise GeneratorExit()
+        raise GeneratorExit()
 
     def __del__(self):
         try:
