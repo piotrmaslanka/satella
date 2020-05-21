@@ -78,6 +78,15 @@ class hint_with_length:
         self.generator = generator
         self.length = length
 
+    def __call__(self, *args, **kwargs):
+        return hint_with_length(self.generator(*args, **kwargs), self.length)
+
+    def close(self):
+        return self.generator.close()
+
+    def send(self, obj):
+        return self.generator.send(obj)
+
     def __iter__(self):
         return self.generator
 
