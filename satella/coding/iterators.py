@@ -11,6 +11,8 @@ class SelfClosingGenerator:
     This will allow generators to complete that don't provide a .close() method.
 
     This will additionally exhaust the generator upon deallocation of the generator.
+
+    You can feed it with either generators, or generator-functions, it will behave correctly each time.
     """
     __slots__ = ('generator', 'stopped')
 
@@ -20,6 +22,12 @@ class SelfClosingGenerator:
 
     def __iter__(self):
         return self.generator
+
+    def __call__(self, *args, **kwargs):
+        return SelfClosingGenerator(self.generator(*args, **kwargs))
+
+    def send(self, obj: tp.Any):
+        self.generator.send(obj)
 
     def __next__(self):
         try:
