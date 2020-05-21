@@ -62,7 +62,7 @@ class AtomicNumber(Monitor):
         return self.value < other
 
     @Monitor.synchronized
-    def __len__(self, other: Number):
+    def __le__(self, other: Number):
         return self.value <= other
 
     @Monitor.synchronized
