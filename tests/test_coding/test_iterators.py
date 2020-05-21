@@ -7,8 +7,7 @@ from satella.coding import SelfClosingGenerator, hint_with_length
 class TestIterators(unittest.TestCase):
     def test_hint_with_length(self):
         def generator():
-            for i in range(1000):
-                yield i
+            yield from range(1000)
 
         g = hint_with_length(generator, 1000)()
         self.assertEqual(g.__length_hint__(), 1000)
@@ -22,8 +21,8 @@ class TestIterators(unittest.TestCase):
                 yield i
             a['done'] = True
 
-        for a in SelfClosingGenerator(generator)():
-            if a == 2:
+        for b in SelfClosingGenerator(generator)():
+            if b == 2:
                 break
 
         self.assertTrue(a['done'])
