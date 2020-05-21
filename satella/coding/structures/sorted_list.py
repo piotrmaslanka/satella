@@ -19,9 +19,9 @@ class SortedList(tp.Generic[T]):
 
     def __init__(self, items: tp.Iterable[T] = (), key: tp.Callable[[T], int] = lambda a: a):
         sort = sorted((key(item), item) for item in items)
-        self.items = SliceableDeque(a[1] for a in sort)     # type: SliceableDeque[T]
-        self.keys = collections.deque(a[0] for a in sort)      # type: collections.deque[int]
-        self.key = key                                      # type: tp.Callable[[T], int]
+        self.items = SliceableDeque(a[1] for a in sort)  # type: SliceableDeque[T]
+        self.keys = collections.deque(a[0] for a in sort)  # type: collections.deque[int]
+        self.key = key  # type: tp.Callable[[T], int]
 
     def __contains__(self, item: T) -> bool:
         return item in self.items
@@ -61,7 +61,7 @@ class SortedList(tp.Generic[T]):
         :param other: element to remove
         :raises ValueError: element not in list
         """
-        index = self.items.index(other)     # throws ValueError
+        index = self.items.index(other)  # throws ValueError
         del self.items[index]
         del self.keys[index]
 
@@ -90,9 +90,9 @@ class SliceableDeque(collections.abc.MutableSequence, tp.Generic[T]):
     """
     A collections.deque that supports slicing.
 
-    Just note that it will return a generator upon being sliced!
+    Just note that it will return a p_gen upon being sliced!
     """
-    __slots__ = ('deque', )
+    __slots__ = ('deque',)
 
     def __bool__(self) -> bool:
         return bool(self.deque)
@@ -125,7 +125,7 @@ class SliceableDeque(collections.abc.MutableSequence, tp.Generic[T]):
         return getattr(self.deque, item)
 
     def __getitem__(self, item) -> tp.Union[tp.Iterator[T], T]:
-        """Return either one element, or a generator over a slice"""
+        """Return either one element, or a p_gen over a slice"""
         tot_length = len(self)
         if type(item) is slice:
             start, stop, step = item.indices(tot_length)
@@ -133,6 +133,7 @@ class SliceableDeque(collections.abc.MutableSequence, tp.Generic[T]):
             def generator():
                 for index in range(start, stop, step):
                     yield self.deque[index]
+
             return generator()
         else:
             return self.deque[item]

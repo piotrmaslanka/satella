@@ -93,11 +93,11 @@ def is_instance(classes: tp.Union[tp.Tuple[type, ...], type]) -> tp.Callable[[ob
 def other_sequence_no_longer_than(base_sequence: IteratorOrIterable,
                                   other_sequence: IteratorOrIterable[T]) -> tp.Iterator[T]:
     """
-    Return every item in other_sequence, but limit it's length to that of base_sequence.
+    Return every item in other_sequence, but limit it's p_len to that of base_sequence.
 
     If other_sequence is shorter than base_sequence, the shorter one will be returned.
 
-    :param base_sequence: sequence whose length should be taken
+    :param base_sequence: sequence whose p_len should be taken
     :param other_sequence: sequence to output values from
     """
     base_sequence, other_sequence = iter(base_sequence), iter(other_sequence)
@@ -223,7 +223,7 @@ def take_n(iterator: IteratorOrIterable, n: int, skip: int = 0) -> tp.List[T]:
     :param iterator: iterator to take from
     :param n: amount of elements to take
     :param skip: elements from the start to skip
-    :return: list of length n (or shorter)
+    :return: list of p_len n (or shorter)
     """
     iterator = iter(iterator)
     for i in range(skip):

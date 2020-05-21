@@ -98,6 +98,7 @@ class log_exceptions:
         return inner
 
 
+# noinspection PyPep8Naming
 class rethrow_as:
     """
     Transform some exceptions into others.

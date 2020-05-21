@@ -1,10 +1,9 @@
 import logging
-import typing as tp
 import math
+import typing as tp
 
 T = tp.TypeVar('T')
 logger = logging.getLogger(__name__)
-
 
 _SETTABLE_KEYS = {'_Proxy__obj', '_Proxy__wrap_operations'}
 
@@ -42,8 +41,8 @@ class Proxy(tp.Generic[T]):
     __slots__ = ('__obj', '__wrap_operations')
 
     def __init__(self, object_to_wrap: T, wrap_operations: bool = False):
-        self.__obj = object_to_wrap   # type: T
-        self.__wrap_operations = wrap_operations    # type: bool
+        self.__obj = object_to_wrap  # type: T
+        self.__wrap_operations = wrap_operations  # type: bool
 
     def __call__(self, *args, **kwargs):
         return self.__obj(*args, **kwargs)
@@ -263,14 +262,14 @@ class Proxy(tp.Generic[T]):
 
     def __index__(self) -> int:
         return self.__obj.__index__()
-    
+
     def __round__(self, n=None):
         result = self.__obj.__round__(n)
         if self.__wrap_operations:
             result = self.__class__(result)
 
         return result
-    
+
     def __trunc__(self):
         result = self.__obj.__trunc__()
         if self.__wrap_operations:

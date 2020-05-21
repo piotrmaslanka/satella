@@ -53,7 +53,7 @@ class MeasurableMixin:
         >>> def measure_my_execution(args):
         >>>     ...
 
-        If wrapped around generator, it will time it from the first element to the last,
+        If wrapped around p_gen, it will time it from the first element to the last,
         so beware that it will depend on the speed of the consumer.
 
         It also can be used as a context manager:

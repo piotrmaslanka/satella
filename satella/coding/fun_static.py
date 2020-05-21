@@ -1,4 +1,7 @@
-def static_var(var_name: str, starting_value=None):
+import typing as tp
+
+
+def static_var(var_name: str, starting_value: tp.Optional[tp.Any] = None):
     """
     Declare a static variable for given function
 

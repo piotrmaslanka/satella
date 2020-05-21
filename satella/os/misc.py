@@ -1,21 +1,5 @@
-"""
-POSIX things
-"""
-
 import os
 import sys
-
-from .daemon import daemonize
-from .pidlock import PIDFileLock
-from satella.exceptions import LockIsHeld
-from .signals import hang_until_sig
-
-__all__ = [
-    'daemonize',
-    'PIDFileLock', 'hang_until_sig',
-    'is_running_as_root',
-    'suicide'
-]
 
 
 def is_running_as_root() -> bool:

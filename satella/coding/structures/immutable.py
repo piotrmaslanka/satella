@@ -19,7 +19,7 @@ class Immutable(metaclass=ImmutableMetaType):
     >>>         self.attribute = 'value'
     """
 
-    __slots__ = ('__locked_for_writes', )
+    __slots__ = ('__locked_for_writes',)
 
     # Following make this class immutable
     def __setattr__(self, attr, value):

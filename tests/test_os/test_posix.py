@@ -6,7 +6,7 @@ import unittest
 from mock import patch, Mock
 
 from satella.exceptions import LockIsHeld
-from satella.posix import PIDFileLock
+from satella.os import PIDFileLock
 
 
 def acquire_lock_file_and_wait_for_signal(q, p):
@@ -51,7 +51,7 @@ class TestDaemon(unittest.TestCase):
                 patch('os.fork', return_value=0) as fork, patch('os.umask') as umask, patch(
             'os.setsid') as setsid, \
                 patch('os.chdir') as chdir, patch('sys.exit', new=lambda: 0) as exit:
-            from satella.posix import daemonize
+            from satella.os import daemonize
 
             stdin.close, stdout.close, stderr.close = Mock(), Mock(), Mock()
 

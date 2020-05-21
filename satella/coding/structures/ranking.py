@@ -3,7 +3,6 @@ import typing as tp
 
 from .sorted_list import SortedList
 
-
 T = tp.TypeVar('T')
 
 
@@ -33,8 +32,8 @@ class Ranking(tp.Generic[T]):
     def __init__(self, items: tp.List[T], key: tp.Callable[[T], int]):
         self.items = items
         self.key = key
-        self.ranking = SortedList(items, key=key)           # type: SortedList[T]
-        self.element_to_position = {}               # type: tp.Dict[int, int]
+        self.ranking = SortedList(items, key=key)  # type: SortedList[T]
+        self.element_to_position = {}  # type: tp.Dict[int, int]
         for position, item in enumerate(self.ranking):
             self.element_to_position[id(item)] = position
 
@@ -81,4 +80,3 @@ class Ranking(tp.Generic[T]):
         Return all the elements sorted from the least key value to the highest key value
         """
         yield from self.ranking
-

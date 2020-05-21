@@ -6,7 +6,6 @@ from satella.coding.recast_exceptions import rethrow_as
 from satella.configuration.schema import Descriptor, descriptor_from_dict
 from satella.exceptions import ConfigurationValidationError
 
-
 K, V, T = tp.TypeVar('K'), tp.TypeVar('V'), tp.TypeVar('T')
 
 

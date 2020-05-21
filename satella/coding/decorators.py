@@ -8,10 +8,12 @@ U = tp.TypeVar('U')
 Expression = tp.NewType('Expression', str)
 
 
+# noinspection PyPep8Naming
 def _NOP(x):
     return x
 
 
+# noinspection PyPep8Naming
 def _TRUE(x):
     return True
 

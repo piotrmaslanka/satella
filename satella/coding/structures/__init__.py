@@ -2,12 +2,12 @@ from .dictionaries import DictObject, apply_dict_object, DictionaryView, TwoWayD
     DirtyDict, KeyAwareDefaultDict
 from .hashable_objects import HashableWrapper
 from .immutable import Immutable, frozendict
-from .singleton import Singleton, SingletonWithRegardsTo
-from .structures import SetHeap, OmniHashableMixin, TimeBasedHeap, Heap, ReprableMixin
 from .proxy import Proxy
-from .typednamedtuple import typednamedtuple
 from .ranking import Ranking
+from .singleton import Singleton, SingletonWithRegardsTo
 from .sorted_list import SortedList, SliceableDeque
+from .structures import SetHeap, OmniHashableMixin, TimeBasedHeap, Heap, ReprableMixin
+from .typednamedtuple import typednamedtuple
 
 __all__ = [
     'KeyAwareDefaultDict',

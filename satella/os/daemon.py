@@ -18,8 +18,6 @@ except ImportError:
 
 DEVNULL = '/dev/null'
 
-__all__ = ['daemonize']
-
 
 def daemonize(exit_via: tp.Callable = sys.exit,
               redirect_std_to_devnull: bool = True,

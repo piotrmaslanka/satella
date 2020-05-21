@@ -123,3 +123,9 @@ Multirun
 --------
 
 .. autoclass:: satella.coding.sequences.Multirun
+
+Generators
+==========
+
+.. autoclass:: satella.coding.hint_with_length
+    :members:

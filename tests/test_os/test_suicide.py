@@ -2,7 +2,7 @@ import os
 import sys
 import unittest
 
-from satella.posix import suicide
+from satella.os.misc import suicide
 
 
 class TestSuicide(unittest.TestCase):

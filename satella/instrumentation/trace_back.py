@@ -25,7 +25,7 @@ class GenerationPolicy:
 
     :param enable_pickling: bool, whether to enable pickling at all
     :param compress_at: pickles longer than this (bytes) will be compressed
-    :param repr_length_limit: maximum length of __repr__. None for no limit.
+    :param repr_length_limit: maximum p_len of __repr__. None for no limit.
     :param compression_level: "1" is fastest, "9" is slowest
     """
     __slots__ = ('enable_pickling', 'compress_at', 'repr_length_limit', 'compression_level')
