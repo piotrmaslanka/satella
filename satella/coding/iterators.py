@@ -68,6 +68,8 @@ class hint_with_length:
     Accepting a generator, return it additionally providing
     a specified __length_hint__
 
+    You can provide generator-generating functions as well
+
     :param generator: generator to decorate
     :param length: length hint to provide
     """
