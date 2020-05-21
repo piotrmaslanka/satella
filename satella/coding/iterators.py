@@ -10,7 +10,7 @@ def exhaust(iterator: tp.Iterator):
     try:
         while True:
             next(iterator)
-    except (GeneratorExit, StopIteration):
+    except StopIteration:
         pass
 
 
@@ -42,7 +42,7 @@ class SelfClosingGenerator:
     def __next__(self):
         try:
             return next(self.generator)
-        except (StopIteration, GeneratorExit):
+        except StopIteration:
             self.stopped = True
             raise
 
@@ -51,15 +51,11 @@ class SelfClosingGenerator:
             try:
                 exhaust(self.generator)
             except TypeError:
-                pass
+                pass        # we got a generator-generating function as an argument
             self.stopped = True
-        raise GeneratorExit()
 
     def __del__(self):
-        try:
-            self.close()
-        except GeneratorExit:
-            pass
+        self.close()
 
 
 # noinspection PyPep8Naming

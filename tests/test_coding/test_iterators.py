@@ -22,8 +22,8 @@ class TestIterators(unittest.TestCase):
                 yield i
             a['done'] = True
 
-        for i in SelfClosingGenerator(generator)():
-            if i == 2:
+        for a in SelfClosingGenerator(generator)():
+            if a == 2:
                 break
 
         self.assertTrue(a['done'])
