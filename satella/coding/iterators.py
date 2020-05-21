@@ -31,7 +31,7 @@ class SelfClosingGenerator:
         self.stopped = False
 
     def __iter__(self):
-        return self.generator
+        return self
 
     def __call__(self, *args, **kwargs):
         return SelfClosingGenerator(self.generator(*args, **kwargs))
