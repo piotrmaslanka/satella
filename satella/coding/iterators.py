@@ -1,4 +1,48 @@
 import typing as tp
+import logging
+
+logger = logging.getLogger(__name__)
+
+
+class SelfClosingGenerator:
+    """
+    A wrapper to exhaust the generator in response to closing it.
+
+    This will allow generators to complete that don't provide a .close() method.
+
+    This will additionally exhaust the generator upon deallocation of the generator.
+    """
+    __slots__ = ('generator', 'stopped')
+
+    def __init__(self, generator: tp.Generator):
+        self.generator = generator
+        self.stopped = False
+
+    def __iter__(self):
+        return self.generator
+
+    def __next__(self):
+        try:
+            return next(self.generator)
+        except (StopIteration, GeneratorExit):
+            self.stopped = True
+            raise
+
+    def close(self):
+        if not self.stopped:
+            try:
+                for _ in self.generator:
+                    pass
+            except (StopIteration, GeneratorExit):
+                pass
+            self.stopped = True
+            raise GeneratorExit()
+
+    def __del__(self):
+        try:
+            self.close()
+        except GeneratorExit:
+            pass
 
 
 # noinspection PyPep8Naming

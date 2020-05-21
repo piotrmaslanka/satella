@@ -4,3 +4,4 @@
 * bugfix in `AtomicNumber`
     __le__ wouldn't work, because it was spelled
     __len__
+* added `SelfClosingGenerator`
