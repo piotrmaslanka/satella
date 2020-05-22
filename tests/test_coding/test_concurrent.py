@@ -62,13 +62,17 @@ class TestConcurrent(unittest.TestCase):
 
         dct = {'a': False}
         cond = Condition()
+        interlock_cond = Condition()
 
         class MyThread(TerminableThread):
             def run(self) -> None:
+                time.sleep(0.5)
+                interlock_cond.notify()
                 cond.wait()
                 dct['a'] = True
 
         MyThread().start()
+        interlock_cond.wait()
         self.assertFalse(dct['a'])
         cond.notify()
         time.sleep(0.1)
