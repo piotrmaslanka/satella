@@ -356,7 +356,7 @@ class TestHeap(unittest.TestCase):
         self.assertNotIn((10, 'ala'), tbh)
         self.assertNotIn((20, 'ma'), tbh)
 
-        item = tbh.pop_item(20, 'azomq')
+        item = tbh.pop_item((20, 'azomq'))
         self.assertNotIn((20, 'azomq'), tbh)
         self.assertEqual(item, (20, 'azomq'))
 
