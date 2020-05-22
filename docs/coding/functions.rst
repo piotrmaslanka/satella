@@ -15,6 +15,8 @@ Functions and decorators
 
 .. autofunction:: satella.coding.catch_exception
 
+.. autofunction:: satella.coding.raises_exception
+
 .. autofunction:: satella.coding.for_argument
 
 .. autofunction:: satella.coding.chain

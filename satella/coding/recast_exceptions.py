@@ -3,12 +3,6 @@ import logging
 import threading
 from .decorators import wraps
 
-__all__ = [
-    'rethrow_as',
-    'silence_excs',
-    'catch_exception',
-    'log_exceptions',
-]
 
 ExcType = tp.Type[Exception]
 T = tp.TypeVar('T')
@@ -178,7 +172,20 @@ class rethrow_as:
                         raise to(self.exception_preprocessor(exc_val))
 
 
-def catch_exception(exc_class: tp.Union[ExcType, tp.Tuple[ExcType]],
+def raises_exception(exc_class: tp.Union[ExcType, tp.Tuple[ExcType, ...]],
+                     clb: tp.Callable[[], None]):
+    """
+    Does the callable raise a given exception?
+    """
+    try:
+        clb()
+    except exc_class:
+        return True
+    else:
+        return False
+
+
+def catch_exception(exc_class: tp.Union[ExcType, tp.Tuple[ExcType, ...]],
                     clb: tp.Callable[[], T],
                     return_instead: tp.Optional[T] = None,
                     return_value_on_no_exception: bool = False) -> tp.Union[Exception, T]:

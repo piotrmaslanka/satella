@@ -1,12 +1,16 @@
 import unittest
 import logging
-from satella.coding import rethrow_as, silence_excs, catch_exception, log_exceptions
+from satella.coding import rethrow_as, silence_excs, catch_exception, log_exceptions, raises_exception
 
 
 logger = logging.getLogger(__name__)
 
 
 class TestStuff(unittest.TestCase):
+
+    def test_raises(self):
+        self.assertTrue(raises_exception(NameError, lambda: name_error))
+        self.assertFalse(raises_exception(NameError, lambda: None))
 
     def test_log_exceptions(self):
         a = 5
