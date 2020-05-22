@@ -350,16 +350,16 @@ class TestHeap(unittest.TestCase):
         self.assertIn((20, 'ma'), tbh)
 
         tbh.filter_map(filter_fun=lambda x: x[0] != 20,
-                       map_fun=lambda x: (x[0] + 10, 'azomg'))
+                       map_fun=lambda x: (x[0] + 10, 'test3'))
 
-        self.assertIn((20, 'azomg'), tbh)
+        self.assertIn((20, 'test3'), tbh)
         self.assertNotIn((10, 'ala'), tbh)
         self.assertNotIn((20, 'ma'), tbh)
 
-        item = tbh.pop_item((20, 'azomq'))
-        self.assertNotIn((20, 'azomq'), tbh)
-        self.assertEqual(item, (20, 'azomq'))
-
+        item = tbh.pop_item((20, 'test3'))
+        self.assertNotIn((20, 'test3'), tbh)
+        self.assertEqual(item, (20, 'test3'))
+        
 
 class TestImmutable(unittest.TestCase):
     def _test_an_instance(self, a):
