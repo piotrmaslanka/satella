@@ -26,3 +26,18 @@ class TestIterators(unittest.TestCase):
                 break
 
         self.assertTrue(a['done'])
+
+    def test_self_closing_generator_function(self):
+        a = {'done': False}
+
+        def generator():
+            for i in range(5):
+                yield i
+            a['done'] = True
+
+        with SelfClosingGenerator(generator)() as gen:
+            for b in gen:
+                if b == 2:
+                    break
+
+        self.assertTrue(a['done'])

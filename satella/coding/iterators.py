@@ -23,6 +23,8 @@ class SelfClosingGenerator:
     This will additionally exhaust the generator upon deallocation of the generator.
 
     You can feed it with either generators, or generator-functions, it will behave correctly each time.
+
+    You can also use it as a context manager, to decouple finalizing the generator from the GC collection:
     """
     __slots__ = ('generator', 'stopped')
 
@@ -45,6 +47,13 @@ class SelfClosingGenerator:
         except StopIteration:
             self.stopped = True
             raise
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.close()
+        return False
 
     def close(self):
         if not self.stopped:
