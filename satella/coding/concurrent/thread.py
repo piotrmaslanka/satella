@@ -23,7 +23,7 @@ class Condition(PythonCondition):
         Wait for condition to become true.
 
         :param timeout: timeout to wait. None is default and means infinity
-        :raises ResourceLocked: unable to acquire the lock within specified timeout.
+        :raises ResourceLocked: unable to acquire the underlying lock within specified timeout.
         :raises WouldWaitMore: wait's timeout has expired
         """
         with measure() as measurement:
