@@ -296,7 +296,7 @@ class TimeBasedHeap(Heap):
         self.default_clock_source = default_clock_source or time.monotonic
         super().__init__(from_list=())
 
-    def pop_timestamp(self, timestamp: Number) -> T:
+    def pop_timestamp(self, timestamp: Number) -> tp.Tuple[Number, T]:
         """
         Get first item with given timestamp, while maintaining the heap invariant
 
@@ -304,7 +304,20 @@ class TimeBasedHeap(Heap):
         """
         for item in self.data:
             if item[0] == timestamp:
-                return self.pop_item(item)
+                return super().pop_item(item)
+        raise ValueError('Element not found!')
+
+    def pop_item(self, item: T) -> tp.Tuple[Number, T]:
+        """
+        Pop an item off the heap, maintaining the heap invariant.
+
+        The item will be a second part of the tuple
+
+        :raise ValueError: element not found
+        """
+        for elem in self.data:
+            if elem[1] == item:
+                return super().pop_item(elem)
         raise ValueError('Element not found!')
 
     def put(self, timestamp_or_value: tp.Union[tp.Tuple[Number, T]],

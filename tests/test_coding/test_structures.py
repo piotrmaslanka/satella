@@ -228,6 +228,10 @@ class TestMisc(unittest.TestCase):
         self.assertEqual(item, 'ma')
         self.assertNotIn((20, 'ma'), tbh)
 
+        item = tbh.pop_item('ala')
+        self.assertEqual(item, (10, 'ala'))
+        self.assertNotIn((10, 'ala'), tbh)
+
     def test_imprv(self):
         tbh = TimeBasedHeap()
         tbh.put(10, 'ala')
