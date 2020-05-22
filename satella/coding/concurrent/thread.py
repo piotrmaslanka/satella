@@ -14,6 +14,8 @@ class Condition(PythonCondition):
     A wrapper to faciliate easier usage of Pythons' threading.Condition.
 
     There's no need to acquire the underlying lock, as wait/notify/notify_all do it for you.
+
+    This happens to sorta not work on PyPy. Use at your own peril. You have been warned.
     """
 
     def wait(self, timeout: tp.Optional[float] = None):

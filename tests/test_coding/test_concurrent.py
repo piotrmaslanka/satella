@@ -58,6 +58,7 @@ class TestConcurrent(unittest.TestCase):
         ml2 = copy.copy(ml)
         self.assertEqual(ml2, ml)
 
+    @unittest.skipUnless(sys.implementation.name == 'cpython', 'Does not work on PyPy :(')
     def test_condition(self):
 
         dct = {'a': False}
