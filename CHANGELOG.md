@@ -1,3 +1,2 @@
-# v2.7.37
+# v2.7.38
 
-* add `raises_exception`
