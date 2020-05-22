@@ -224,6 +224,10 @@ class TestMisc(unittest.TestCase):
         self.assertIsInstance(copy.copy(tbh), TimeBasedHeap)
         self.assertIsInstance(copy.deepcopy(tbh), TimeBasedHeap)
 
+        item = tbh.pop_timestamp(20)
+        self.assertEqual(item, 'ma')
+        self.assertNotIn((20, 'ma'), tbh)
+
     def test_imprv(self):
         tbh = TimeBasedHeap()
         tbh.put(10, 'ala')
@@ -347,6 +351,10 @@ class TestHeap(unittest.TestCase):
         self.assertIn((20, 'azomg'), tbh)
         self.assertNotIn((10, 'ala'), tbh)
         self.assertNotIn((20, 'ma'), tbh)
+
+        item = tbh.pop_item(20, 'azomq')
+        self.assertNotIn((20, 'azomq'), tbh)
+        self.assertEqual(item, (20, 'azomq'))
 
 
 class TestImmutable(unittest.TestCase):

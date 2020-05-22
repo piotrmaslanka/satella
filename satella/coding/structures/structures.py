@@ -132,6 +132,16 @@ class Heap(collections.UserList, tp.Generic[T]):
         for item in items:
             self.push(item)
 
+    def pop_item(self, item: T) -> T:
+        """
+        Pop an item off the heap, maintaining the heap invariant
+
+        :raise ValueError: element not found
+        """
+        self.data.remove(item)      # raises: ValueError
+        heapq.heapify(self.data)
+        return item
+
     @_extras_to_one
     def push(self, item: T) -> None:
         """
@@ -285,6 +295,17 @@ class TimeBasedHeap(Heap):
         """
         self.default_clock_source = default_clock_source or time.monotonic
         super().__init__(from_list=())
+
+    def pop_timestamp(self, timestamp: Number) -> T:
+        """
+        Get first item with given timestamp, while maintaining the heap invariant
+
+        :raise ValueError: element not found
+        """
+        for item in self.data:
+            if item[0] == timestamp:
+                return self.pop_item(item)
+        raise ValueError('Element not found!')
 
     def put(self, timestamp_or_value: tp.Union[tp.Tuple[Number, T]],
             value: tp.Optional[T] = None) -> None:
