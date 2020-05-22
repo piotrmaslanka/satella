@@ -82,7 +82,6 @@ class TerminableThread(threading.Thread):
     >>>     ...
     >>> self.assertFalse(a.is_alive())
     """
-    __slots__ = ('_terminating',)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

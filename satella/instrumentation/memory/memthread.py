@@ -41,9 +41,6 @@ class MemoryPressureManager(TerminableThread):
     :param check_interval: amount of seconds of pause between consecutive checks
     :param log_transitions: whether to log to logger when a transition takes place
     """
-    __slots__ = ('process', 'maximum_available', 'severity_levels', 'callbacks_on_entered',
-                 'callbacks_on_remains', 'current_severity_level', 'check_interval',
-                 'log_transitions')
 
     def __init__(self, maximum_available: tp.Optional[int] = None,
                  severity_levels: tp.List[BaseCondition] = None,
