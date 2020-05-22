@@ -320,7 +320,7 @@ class TimeBasedHeap(Heap):
                 return super().pop_item(elem)
         raise ValueError('Element not found!')
 
-    def put(self, timestamp_or_value: tp.Union[tp.Tuple[Number, T]],
+    def put(self, timestamp_or_value: tp.Union[T, Number],
             value: tp.Optional[T] = None) -> None:
         """
         Put an item on heap.
