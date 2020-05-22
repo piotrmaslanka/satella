@@ -17,6 +17,7 @@ class HashableWrapper(Proxy):
 
     def __hash__(self):
         my_object = getattr(self, '_Proxy__obj')
-        if hasattr(my_object, '__hash__'):
+        try:
             return hash(my_object)
-        return hash(id(my_object))
+        except TypeError:
+            return hash(id(my_object))
