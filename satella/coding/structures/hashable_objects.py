@@ -3,7 +3,7 @@ from .proxy import Proxy
 
 class HashableWrapper(Proxy):
     """
-    A class that makes given objects hashable by their id.
+    A class that makes given objects hashable by their id, if the object is already not hashable.
 
     Note that this class will return a proxy to the object, and not the object itself.
 
@@ -16,4 +16,7 @@ class HashableWrapper(Proxy):
     __slots__ = ()
 
     def __hash__(self):
-        return hash(id(self))
+        my_object = getattr(self, '_Proxy__obj')
+        if hasattr(my_object, '__hash__'):
+            return hash(my_object)
+        return hash(id(my_object))
