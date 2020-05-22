@@ -224,13 +224,9 @@ class TestMisc(unittest.TestCase):
         self.assertIsInstance(copy.copy(tbh), TimeBasedHeap)
         self.assertIsInstance(copy.deepcopy(tbh), TimeBasedHeap)
 
-        item = tbh.pop_timestamp(20)
-        self.assertEqual(item, 'ma')
-        self.assertNotIn((20, 'ma'), tbh)
-
-        item = tbh.pop_item('ala')
-        self.assertEqual(item, (10, 'ala'))
-        self.assertNotIn((10, 'ala'), tbh)
+        item = tbh.pop_timestamp(30)
+        self.assertEqual(item, 'kota')
+        self.assertNotIn((30, 'kota'), tbh)
 
     def test_imprv(self):
         tbh = TimeBasedHeap()

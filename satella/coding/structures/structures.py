@@ -296,15 +296,16 @@ class TimeBasedHeap(Heap):
         self.default_clock_source = default_clock_source or time.monotonic
         super().__init__(from_list=())
 
-    def pop_timestamp(self, timestamp: Number) -> tp.Tuple[Number, T]:
+    def pop_timestamp(self, timestamp: Number) -> T:
         """
         Get first item with given timestamp, while maintaining the heap invariant
 
         :raise ValueError: element not found
         """
         for item in self.data:
+            print('Considering', item)
             if item[0] == timestamp:
-                return super().pop_item(item)
+                return super().pop_item(item)[1]
         raise ValueError('Element not found!')
 
     def pop_item(self, item: T) -> tp.Tuple[Number, T]:
@@ -335,8 +336,7 @@ class TimeBasedHeap(Heap):
         assert timestamp is not None
         self.push((timestamp, item))
 
-    def pop_less_than(self, less: tp.Optional[Number] = None) -> tp.Generator[
-        T, None, None]:
+    def pop_less_than(self, less: tp.Optional[Number] = None) -> tp.Iterator[tp.Tuple[Number, T]]:
         """
         Return all elements less (sharp inequality) than particular value.
 
