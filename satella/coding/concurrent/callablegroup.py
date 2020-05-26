@@ -41,7 +41,7 @@ class CallableGroup(tp.Generic[T]):
         :param callable_: callable
         :param one_shot: if True, callable will be unregistered after single call
         """
-        from ..structures.hashable_objects import HashableWrapper
+        from ..structures.hashables import HashableWrapper
         callable_ = HashableWrapper(callable_)
         if callable_ in self.callables:
             return

@@ -1,5 +1,6 @@
 import unittest
 
+from satella.coding.sequences import n_th
 from satella.instrumentation.metrics import getMetric
 
 import time
@@ -23,11 +24,11 @@ class TestThreadPoolExecutor(unittest.TestCase):
 
         mtpe.submit(wait)
         time.sleep(0.1)
-        self.assertEqual(next(iter(callable_metric.to_metric_data().values)).value, 0)
+        self.assertEqual(n_th(n_th(callable_metric.to_metric_data())).value, 0)
         mtpe.submit(wait)
         fr = mtpe.submit(wait)
         time.sleep(0.1)
-        self.assertEqual(next(iter(callable_metric.to_metric_data().values)).value, 1)
+        self.assertEqual(n_th(n_th(callable_metric.to_metric_data())).value, 1)
         fr.result()
-        self.assertIn(choose('.count', executing_summary.to_metric_data().values).value, {2, 3})
-        self.assertEqual(choose('.count', waiting_summary.to_metric_data().values).value, 3)
+        self.assertIn(choose('.count', executing_summary.to_metric_data()).value, {2, 3})
+        self.assertEqual(choose('.count', waiting_summary.to_metric_data()).value, 3)

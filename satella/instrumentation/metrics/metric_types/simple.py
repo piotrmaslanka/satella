@@ -13,7 +13,8 @@ class SimpleMetric(EmbeddedSubmetrics):
     CONSTRUCTOR = str
 
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, metric_type='gauge', **kwargs)
+        kwargs.update(metric_type='gauge')
+        super().__init__(*args, **kwargs)
         self.data = None                # type: tp.Any
 
     def _handle(self, value, **labels) -> None:
@@ -25,7 +26,7 @@ class SimpleMetric(EmbeddedSubmetrics):
         if self.embedded_submetrics_enabled:
             return super().to_metric_data_container()
         mdc = super().to_metric_data_container()
-        return mdc + MetricData(self.name, self.data, self.labels)
+        return mdc + MetricData(self.get_fully_qualified_name(), self.data, self.labels)
 
 
 @register_metric

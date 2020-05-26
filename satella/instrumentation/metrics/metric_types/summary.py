@@ -57,8 +57,8 @@ class SummaryMetric(EmbeddedSubmetrics, MeasurableMixin):
         super().__init__(name, root_metric, metric_level, *args,
                          last_calls=last_calls,  quantiles=quantiles,
                          aggregate_children=aggregate_children, count_calls=count_calls,
-                         metric_type='summary',
                          **kwargs)
+        kwargs.update(metric_type='summary')
         self.last_calls = last_calls                    # type: int
         self.calls_queue = collections.deque()          # type: tp.List[float]
         self.quantiles = quantiles                      # type: tp.List[float]
@@ -83,8 +83,8 @@ class SummaryMetric(EmbeddedSubmetrics, MeasurableMixin):
     def to_metric_data_container(self) -> MetricDataCollection:
         k = self._to_metric_data_container()
         if self.count_calls:
-            k += MetricData(self.name+'.count', self.tot_calls, self.labels)
-            k += MetricData(self.name+'.sum', self.tot_time, self.labels)
+            k += MetricData(self.get_fully_qualified_name()+'.count', self.tot_calls, self.labels)
+            k += MetricData(self.get_fully_qualified_name()+'.sum', self.tot_time, self.labels)
         return k
 
     def _to_metric_data_container(self) -> MetricDataContainer:
@@ -101,22 +101,22 @@ class SummaryMetric(EmbeddedSubmetrics, MeasurableMixin):
                 k.extend(q)
 
             if self.count_calls:
-                k += MetricData(self.name+'.count', self.tot_calls, self.labels)
-                k += MetricData(self.name+'.sum', self.tot_time, self.labels)
+                k += MetricData(self.get_fully_qualified_name()+'.count', self.tot_calls, self.labels)
+                k += MetricData(self.get_fully_qualified_name()+'.sum', self.tot_time, self.labels)
 
             return k
         else:
             return self.calculate_quantiles(self.calls_queue)
 
     def calculate_quantiles(self, calls_queue) -> MetricDataContainer:
-        output = MetricDataContainer(self.name, [], self.description,
+        output = MetricDataContainer(self.get_fully_qualified_name(), [], self.description,
                                      self.type, self.internal, self.timestamp)
         sorted_calls = sorted(calls_queue)
         for p_val in self.quantiles:
             if not sorted_calls:
-                output += MetricData(self.name, 0.0, {'quantile': p_val, **self.labels})
+                output += MetricData(self.get_fully_qualified_name(), 0.0, {'quantile': p_val, **self.labels})
             else:
-                output += MetricData(self.name, percentile(sorted_calls, p_val),
+                output += MetricData(self.get_fully_qualified_name(), percentile(sorted_calls, p_val),
                                      {'quantile': p_val, **self.labels})
         return output
 

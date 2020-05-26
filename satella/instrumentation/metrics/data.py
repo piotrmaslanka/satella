@@ -3,10 +3,10 @@ import typing as tp
 import copy
 import logging
 
-from satella.coding.sequences import Multirun
+from satella.coding.sequences import Multirun, n_th
 from satella.json import JSONAble
-from satella.coding.structures import frozendict
-from satella.coding.structures import ReprableObject
+from satella.coding.structures import frozendict, OmniHashableMixin
+from satella.coding.structures import ReprableMixin
 
 logger = logging.getLogger(__name__)
 
@@ -20,11 +20,12 @@ def join_metric_data_name(prefix: str, name: str):
         return prefix+'.'+name
 
 
-class MetricData(ReprableObject, JSONAble):
+class MetricData(ReprableMixin, OmniHashableMixin, JSONAble):
+    _REPR_FIELDS = ('name', 'value', 'labels')
+    _HASH_FIELDS_TO_USE = ('name', 'labels')
     __slots__ = ('name', 'value', 'labels')
 
     def __init__(self, name: str, value: float, labels: tp.Optional[dict] = None):
-        super().__init__(name, value)
         self.name = name                    # type: str
         self.value = value                  # type: tp.Any
         self.labels = frozendict(labels or ())                # type: frozendict
@@ -34,17 +35,11 @@ class MetricData(ReprableObject, JSONAble):
         new_labels.update(labels)
         self.labels = frozendict(new_labels)
 
-    def __eq__(self, other: 'MetricData') -> bool:
-        return self.name == other.name and self.labels == other.labels
-
     def prefix_with(self, prefix: str) -> None:
         self.name = join_metric_data_name(prefix, self.name)
 
     def postfix_with(self, postfix: str) -> None:
         self.name = join_metric_data_name(self.name, postfix)
-
-    def __hash__(self):
-        return hash(self.name) ^ hash(self.labels)
 
     def to_json(self, prefix: str = '') -> list:
         return [join_metric_data_name(prefix, self.name), self.value, self.labels]
@@ -53,19 +48,17 @@ class MetricData(ReprableObject, JSONAble):
     def from_json(cls, x: list) -> 'MetricData':
         return MetricData(*x)
 
-    def __repr__(self):
-        return '%s %s' % (id(self), self.name)
 
-
-class MetricDataContainer(ReprableObject, JSONAble):
+class MetricDataContainer(ReprableMixin, OmniHashableMixin, JSONAble):
+    _REPR_FIELDS = ('name', 'entries', 'description', 'type', 'internal', 'timestamp')
     __slots__ = ('name', 'entries', 'description', 'type', 'internal', 'timestamp')
+    _HASH_FIELDS_TO_USE = ('name', 'entries')
 
     def __init__(self, principal_name: str, entries: tp.Optional[tp.Sequence[MetricData]] = None,
                  description: tp.Optional[str] = None,
                  metric_type: tp.Optional[str] = None,
                  internal: bool = False,
                  timestamp: tp.Optional[float] = None):
-        super().__init__(principal_name, entries, description, metric_type, internal, timestamp)
         self.name = principal_name
         self.entries = set(entries or ())
         self.description = description
@@ -79,20 +72,36 @@ class MetricDataContainer(ReprableObject, JSONAble):
     def __len__(self):
         return len(self.entries)
 
-    def prefix_with(self, val: str):
+    def rehash(self):   # to be invoked after each metricdata-altering operation
+        items = self.entries
+        self.entries = set()
+        for item in items:
+            self.entries.add(item)
+
+    def prefix_with(self, val: str) -> 'MetricDataContainer':
         self.entries = set(Multirun(self).prefix_with(val))
-        logger.warning(f'self.entries={self.entries}')
+        self.rehash()
+        return self
 
-    def postfix_with(self, val: str):
+    def postfix_with(self, val: str) -> 'MetricDataContainer':
         self.entries = set(Multirun(self).postfix_with(val))
+        self.rehash()
+        return self
 
-    def add_labels(self, labels: tp.Dict[str, tp.Any]):
+    def add_labels(self, labels: tp.Dict[str, tp.Any]) -> 'MetricDataContainer':
         self.entries = set(Multirun(self).add_labels(labels))
+        self.rehash()
+        return self
 
-    def extend(self, other: 'MetricDataContainer') -> None:
-        self.entries.update(other.entries)
+    def extend(self, other: tp.Union['MetricDataContainer', tp.List[MetricData]]) -> None:
+        if isinstance(other, MetricDataContainer):
+            self.entries.update(other.entries)
+        else:
+            for elem in other:
+                self.entries.add(elem)
 
     def __add__(self, other: MetricData) -> 'MetricDataContainer':
+        assert not isinstance(other, MetricDataContainer), 'Use .extend()'
         my = copy.copy(self)
         if other in my.entries:
             my.entries.remove(other)
@@ -100,19 +109,11 @@ class MetricDataContainer(ReprableObject, JSONAble):
         return my
 
     def __iadd__(self, other: MetricData) -> 'MetricDataContainer':
+        assert not isinstance(other, MetricDataContainer), 'Use .extend()'
         if other in self.entries:
             self.entries.remove(other)
         self.entries.add(other)
         return self
-
-    def __eq__(self, other: 'MetricDataContainer'):
-        return self.entries == other.entries and self.name == other.name
-
-    def __hash__(self) -> int:
-        hash_value = 0
-        for entry in self.entries:
-            hash_value ^= hash(entry)
-        return hash_value
 
     def to_json(self) -> dict:
         x = {
@@ -139,12 +140,24 @@ class MetricDataContainer(ReprableObject, JSONAble):
         entries = [MetricData.from_json(y) for y in x.pop('entries')]
         return MetricDataContainer(name, entries, description, metric_type, internal, timestamp)
 
+    def copy(self) -> 'MetricDataContainer':
+        return copy.copy(self)
 
-class MetricDataCollection(ReprableObject, JSONAble):
+
+class MetricDataCollection(ReprableMixin, JSONAble):
     __slots__ = ('values', )
+    _REPR_FIELDS = ('values', )
+
+    def flatten(self) -> 'MetricDataCollection':
+        """Make all MetricData in a single MetricDataContainer"""
+        mdc = n_th(self.values).copy()
+        mdc.entries = set()
+        for child in self.values:
+            for item in child.entries:
+                mdc.entries.add(item)
+        return MetricDataCollection([mdc])
 
     def __init__(self, values: tp.Optional[tp.Iterable[tp.Union[MetricDataContainer]]] = None):
-        super().__init__(values)
         self.values = set(values or ())     # type: tp.Set[MetricDataContainer]
 
     def __iter__(self):
@@ -153,26 +166,30 @@ class MetricDataCollection(ReprableObject, JSONAble):
     def __len__(self):
         return len(self.values)
 
+    def rehash(self):
+        """To be called after any hash-changing operation"""
+        entries = self.values
+        self.values = set()
+        for item in entries:
+            self.values.add(item)
+
     def to_json(self) -> tp.Union[list, dict, str, int, float, None]:
         return [x.to_json() for x in self]
 
     def add_labels(self, labels: tp.Dict[str, tp.Any]) -> None:
         self.__apply_to_children('add_labels', labels)
+        self.rehash()
 
     def strict_eq(self, other: 'MetricDataCollection') -> bool:
         """
         Do values in other MetricDataCollection match also?
         """
         values_found = 0
-        logger.warning(f'Comparing {list(self.values)} against {list(other.values)}')
         for value, value_2 in itertools.product(self, other):
             if value == value_2:
                 values_found += 1
                 if value.entries != value_2.entries:
                     return False
-                break
-            else:
-                return False
         return values_found == len(other.values)
 
     @classmethod
@@ -188,13 +205,13 @@ class MetricDataCollection(ReprableObject, JSONAble):
 
     def __apply_to_children(self, operation_name: str, *args, **kwargs) -> 'MetricDataCollection':
         # note that we need to update it this way as we are changing the hashes of the children
-        self.values = set(getattr(Multirun(self), operation_name)(*args, **kwargs))
+        getattr(Multirun(self, dont_return_list=True), operation_name)(*args, **kwargs)
+        self.rehash()
         return self
 
     def prefix_with(self, prefix: str) -> 'MetricDataCollection':
         """Prefix every child with given prefix and return self"""
         s = self.__apply_to_children('prefix_with', prefix)
-        logger.warning(f'Append resulted in {list(self)}')
         return s
 
     def postfix_with(self, postfix: str) -> 'MetricDataCollection':

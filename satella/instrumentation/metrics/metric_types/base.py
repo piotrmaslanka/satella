@@ -2,10 +2,14 @@ import abc
 import enum
 import time
 import typing as tp
+import logging
 
 from satella.coding.decorators import for_argument
 
-from ..data import MetricData, MetricDataContainer, MetricDataCollection
+from ..data import MetricDataContainer, MetricDataCollection
+
+
+logger = logging.getLogger(__name__)
 
 
 class MetricLevel(enum.IntEnum):
@@ -40,12 +44,23 @@ class Metric:
     CLASS_NAME = 'base'
 
     def get_fully_qualified_name(self):
-        data = []
         metric = self
-        while metric.root_metric is not None:
-            data.append(metric.name)
-            metric = metric.root_metric
-        return '.'.join(reversed(data))
+        data = []
+        if metric.root_metric is None:
+            return metric.name
+
+        if metric.root_metric.name == '':
+            return metric.name
+
+        if isinstance(metric.root_metric, EmbeddedSubmetrics):
+            if metric.root_metric.embedded_submetrics_enabled:
+                metric = metric.root_metric
+
+        fq_prefix = metric.root_metric.get_fully_qualified_name()
+        if fq_prefix:
+            return metric.root_metric.get_fully_qualified_name()+'.'+metric.name
+        else:
+            return metric.name
 
     def reset(self) -> None:
         """
@@ -117,7 +132,6 @@ class Metric:
         mdc = MetricDataCollection()
         for child in self.children:
             mdc += child.to_metric_data()
-        mdc.prefix_with(self.name)
 
         return mdc
 
@@ -158,11 +172,11 @@ class LeafMetric(Metric, metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
     def to_metric_data_container(self) -> MetricDataContainer:
-        return MetricDataContainer(self.name, [], description=self.description, metric_type=self.type,
+        return MetricDataContainer(self.get_fully_qualified_name(), [], description=self.description, metric_type=self.type,
                                    internal=self.internal, timestamp=self.timestamp)
 
     def to_metric_data(self) -> MetricDataCollection:
-        return MetricDataCollection([self.to_metric_data_container()])
+        return MetricDataCollection([self.to_metric_data_container()]).flatten()
 
     def append_child(self, metric: 'Metric'):
         raise TypeError('This metric cannot contain children!')
@@ -195,7 +209,7 @@ class EmbeddedSubmetrics(LeafMetric):
 
     def _handle(self, *args, **labels):
         if self.enable_timestamp:
-            self.last_updated = time.time()
+            self.timestamp = time.time()
 
         key = tuple(sorted(labels.items()))
         if key:
@@ -216,14 +230,14 @@ class EmbeddedSubmetrics(LeafMetric):
     @abc.abstractmethod
     def to_metric_data_container(self) -> MetricDataContainer:
         if self.embedded_submetrics_enabled:
-            mdc = MetricDataContainer(self.name, [], self.description,
+            mdc = MetricDataContainer(self.get_fully_qualified_name(), [], self.description,
                                       self.type, self.internal, self.timestamp)
             for child in self.children:
                 for entry in child.to_metric_data_container().entries:
                     mdc += entry
             return mdc
         else:
-            return MetricDataContainer(self.name, [], self.description, self.type, self.internal, self.timestamp)
+            return MetricDataContainer(self.get_fully_qualified_name(), [], self.description, self.type, self.internal, self.timestamp)
 
     def get_specific_metric_data(self, labels: dict) -> MetricDataCollection:
         """

@@ -87,7 +87,6 @@ class RendererObject(io.StringIO):
             self.write('# TYPE %s %s\n' % (c.name.replace('.', '_'), c.type, ))
 
         for entry in c:
-            logger.warning(f'Rendering entry {entry}')
             self.render_entry(entry, c.timestamp)
         self.write('\n')
 

@@ -12,6 +12,15 @@ def mk_metric_data_collection(*metric_data: MetricData):
 
 class TestMetricData(unittest.TestCase):
 
+    def test_contains(self):
+        a = MetricDataContainer('', [MetricData('root', 2, {})])
+        self.assertIn(MetricData('root', 4, {}), a.entries)
+
+    def test_equal(self):
+        a = MetricData('root', 2, {})
+        b = MetricData('root', 3, {})
+        self.assertEqual(a, b)
+
     def test_update_labels_2(self):
         a = MetricDataCollection([MetricDataContainer('', [MetricData('root', 2, {'labels': 'key'})])])
         a.add_labels({'service': 'wtf'})
@@ -29,17 +38,9 @@ class TestMetricData(unittest.TestCase):
 
     def test_update_3(self):
         a1 = mk_metric_data_collection(MetricData('root.metric', 2, {'service': 'my_service'}))
-        a1 += MetricData('root.metric', 10, {'service': 'my_service'}, 10)
+        a1 += MetricDataContainer('', [MetricData('root.metric', 10, {'service': 'my_service'})])
         self.assertTrue(mk_metric_data_collection(
-            MetricData('root.metric', 10, {'service': 'my_service'}, 10)).strict_eq(a1))
-
-    def test_update_4(self):
-        a1 = mk_metric_data_collection(
-            MetricData('root.metric', 2, {'service': 'my_service', 'slot': 1}))
-        a1 += mk_metric_data_collection(
-            MetricData('root.metric', 10, {'service': 'my_service', 'slot': 1}, 10))
-        self.assertTrue(mk_metric_data_collection(
-            MetricData('root.metric', 10, {'service': 'my_service', 'slot': 1}, 10)).strict_eq(a1))
+            MetricData('root.metric', 10, {'service': 'my_service'})).strict_eq(a1))
 
     def test_postfix_and_prefix(self):
         a = MetricDataCollection([MetricDataContainer('', [MetricData('root', 3)])])
@@ -52,6 +53,6 @@ class TestMetricData(unittest.TestCase):
 
     def test_update_2(self):
         a = mk_metric_data_collection(MetricData('root', 3, {'a': 5}), MetricData('root.sum', 3, {'a': 5}))
-        b = mk_metric_data_collection(MetricData('root', 7, {'a': 5}), MetricData('root.sum', 8, {'a': 3}))
+        b = mk_metric_data_collection(MetricData('root', 7, {'a': 5}), MetricData('root.sum', 8, {'a': 5}))
         a += b
         self.assertTrue(b.strict_eq(a))

@@ -3,6 +3,7 @@ import logging
 import time
 import unittest
 
+from satella.coding.sequences import n_th
 from satella.exceptions import MetricAlreadyExists
 from satella.instrumentation.metrics import getMetric, MetricLevel, MetricData, \
     MetricDataCollection, AggregateMetric
@@ -12,9 +13,10 @@ logger = logging.getLogger(__name__)
 
 
 def choose(postfix: str, mdc: MetricDataCollection, labels=None) -> MetricData:
-    for child in mdc.values:
-        if child.name.endswith(postfix) and child.labels == (labels or {}):
-            return child
+    for entry in mdc.values:
+        for child in entry.entries:
+            if child.name.endswith(postfix) and child.labels == (labels or {}):
+                return child
 
 
 class TestMetric(unittest.TestCase):
@@ -31,7 +33,7 @@ class TestMetric(unittest.TestCase):
 
     def test_callable(self):
         callable_ = getMetric('callable', 'callable', value_getter=lambda: 5.0)
-        self.assertEqual(list(callable_.to_metric_data().entries)[0].value, 5.0)
+        self.assertEqual(n_th(list(callable_.to_metric_data().values)[0].entries).value, 5.0)
 
     def test_linkfail(self):
         d = {'online': False, 'offline': False}
@@ -62,10 +64,18 @@ class TestMetric(unittest.TestCase):
     def setUp(self) -> None:
         getMetric('').reset()
 
+    def test_fqn(self):
+        metric = getMetric('my_test_metric', 'int')
+        self.assertEqual(metric.get_fully_qualified_name(), 'my_test_metric')
+
     def test_embedded_submetrics_labels_getter(self):
         metric = getMetric('embedded_submetrics_test', 'int')
         metric.runtime(1, label='value')
-        self.assertTrue(metric.get_specific_metric_data({'label': 'value'}).entries)
+        self.assertTrue(metric.get_specific_metric_data({'label': 'value'}).strict_eq(
+            MetricDataCollection([MetricDataContainer('embedded_submetrics_test', [
+                MetricData('embedded_submetrics_test', 1, {'label': 'value'})
+            ])])
+        ))
 
     def test_histogram(self):
         metric = getMetric('test_histogram', 'histogram')
@@ -85,12 +95,12 @@ class TestMetric(unittest.TestCase):
         self.assertEqual(choose('sum', metric_data, {'label': 'value'}).value, 3.6)
         self.assertEqual(choose('count', metric_data, {'label': 'value'}).value, 2)
         self.assertEqual(choose('total', metric_data, {'le': 2.5, 'ge': 1.0}).value, 1)
-        self.assertEqual(choose('total.sum', metric_data).value, 3.6)
-        self.assertEqual(choose('total.count', metric_data).value, 2)
+        self.assertEqual(choose('sum.total', metric_data).value, 3.6)
+        self.assertEqual(choose('count.total', metric_data).value, 2)
 
     def test_empty(self):
         metric = getMetric('empty', 'empty')
-        self.assertEqual(len(metric.to_metric_data().entries), 0)
+        self.assertFalse(len(metric.to_metric_data().values), 0)
 
     def test_metric_already_exists(self):
         getMetric('testmetric2', 'cps')
@@ -106,8 +116,8 @@ class TestMetric(unittest.TestCase):
     def test_int_children(self):
         metric = getMetric('test_children_int', 'int')
         metric.runtime(1, label='value')
-        should_be_equal_to = MetricDataCollection(
-            MetricData('test_children_int', 1, {'label': 'value'}))
+        should_be_equal_to = MetricDataCollection([MetricDataContainer('test_children_int', [
+            MetricData('test_children_int', 1, {'label': 'value'})])])
         self.assertTrue(metric.to_metric_data().strict_eq(should_be_equal_to))
 
     def test_quantile_measure_generator(self):
@@ -122,7 +132,7 @@ class TestMetric(unittest.TestCase):
         for v in generator():
             pass
         self.assertTrue(inspect.isgeneratorfunction(generator))
-        self.assertGreaterEqual(next(iter(metric.to_metric_data().entries)).value, 1)
+        self.assertGreaterEqual(n_th(n_th(metric.to_metric_data())).value, 1)
 
     def test_aggregate_metric_measure_generator(self):
         my_metric = getMetric('my_metric', 'summary', quantiles=[0.5])
@@ -137,19 +147,19 @@ class TestMetric(unittest.TestCase):
         for _ in generator():
             pass
         self.assertTrue(inspect.isgeneratorfunction(generator))
-        self.assertGreaterEqual(next(iter(my_metric.to_metric_data().entries)).value, 1)
+        self.assertGreaterEqual(choose('', my_metric.to_metric_data()).value, 1)
 
     def test_quantile_context_manager(self):
         metric = getMetric('test_metric', 'summary', quantiles=[0.5])
         with metric.measure():
             time.sleep(1)
-        self.assertGreaterEqual(next(iter(metric.to_metric_data().entries)).value, 1)
+        self.assertGreaterEqual(n_th(n_th(metric.to_metric_data())).value, 1)
 
     def test_counter_measure(self):
         metric = getMetric('test2', 'counter')
         with metric.measure():
             time.sleep(2)
-        self.assertGreaterEqual(next(iter(metric.to_metric_data().entries)).value, 1)
+        self.assertGreaterEqual(n_th(n_th(metric.to_metric_data())).value, 1)
 
     def test_quantile_children(self):
         metric = getMetric('my_metric', 'summary', quantiles=[0.5], enable_timestamp=True)
@@ -159,7 +169,7 @@ class TestMetric(unittest.TestCase):
         self.assertEqual(choose('sum', metr).value, 30.0)
         self.assertEqual(choose('count', metr).value, 2)
         self.assertEqual(choose('total', metr, {'quantile': 0.5}).value, 15.0)
-        self.assertTrue(all(x.timestamp is not None for x in metr.entries))
+        self.assertTrue(all(x.timestamp is not None for x in metr.values))
 
     def test_quantile(self):
         metric = getMetric('root.test.ExecutionTime', 'summary', quantiles=[0.5, 0.95],
@@ -168,9 +178,9 @@ class TestMetric(unittest.TestCase):
             metric.runtime(10.0)
         metric.runtime(15.0)
 
-        self.assertTrue(MetricDataCollection(MetricData('ExecutionTime', 10.0, {'quantile': 0.5}),
-                                             MetricData('ExecutionTime', 12.749999999999995,
-                                                        {'quantile': 0.95})).strict_eq(
+        self.assertTrue(MetricDataCollection([MetricDataContainer('root.test.ExecutionTime', [MetricData('root.test.ExecutionTime', 10.0, {'quantile': 0.5}),
+                                             MetricData('root.test.ExecutionTime', 12.749999999999995,
+                                                        {'quantile': 0.95})])]).strict_eq(
             metric.to_metric_data()))
 
     def test_labels(self):
@@ -179,8 +189,8 @@ class TestMetric(unittest.TestCase):
         metric.runtime(3, label='key')
 
         self.assertTrue(
-            MetricDataCollection(MetricData('root.test.FloatValue', 2, {'label': 'value'}),
-                                 MetricData('root.test.FloatValue', 3, {'label': 'key'})).strict_eq(
+            MetricDataCollection([MetricDataContainer('root.test.FloatValue', [MetricData('root.test.FloatValue', 2, {'label': 'value'}),
+                                 MetricData('root.test.FloatValue', 3, {'label': 'key'})])]).strict_eq(
                 metric.to_metric_data()))
 
     def test_base_metric(self):
@@ -208,16 +218,16 @@ class TestMetric(unittest.TestCase):
         wait()
         self.assertFalse(inspect.isgeneratorfunction(wait))
         self.assertRaises(ValueError, lambda: wait(throw=True))
-        self.assertGreaterEqual(next(iter(metric.to_metric_data().entries)).value, 1)
+        self.assertGreaterEqual(n_th(n_th(metric.to_metric_data())).value, 1)
 
     def test_counter(self):
         counter = getMetric('counter', 'counter', enable_timestamp=False)
         counter.runtime(1, service='user')
         counter.runtime(2, service='session')
         counter.runtime(1, service='user')
-        self.assertTrue(MetricDataCollection(MetricData('counter', 2, {'service': 'user'}),
+        self.assertTrue(MetricDataCollection([MetricDataContainer('counter', [MetricData('counter', 2, {'service': 'user'}),
                                              MetricData('counter', 2, {'service': 'session'}),
-                                             MetricData('counter.sum', 4)).strict_eq(
+                                             MetricData('counter.total', 4)])]).strict_eq(
             counter.to_metric_data()))
 
     def test_counter_count_calls(self):
@@ -225,12 +235,12 @@ class TestMetric(unittest.TestCase):
         counter.runtime(1, service='user')
         counter.runtime(2, service='session')
         counter.runtime(1, service='user')
-        self.assertTrue(MetricDataCollection(MetricData('counter', 2, {'service': 'user'}),
+        self.assertTrue(MetricDataCollection([MetricDataContainer('counter', [MetricData('counter', 2, {'service': 'user'}),
                                              MetricData('counter.count', 2, {'service': 'user'}),
                                              MetricData('counter', 2, {'service': 'session'}),
                                              MetricData('counter.count', 1, {'service': 'session'}),
-                                             MetricData('counter.sum', 4),
-                                             MetricData('counter.count', 3)).strict_eq(
+                                             MetricData('counter.total', 4),
+                                             MetricData('counter.count', 3)])]).strict_eq(
             counter.to_metric_data()))
 
     def test_base_metric(self):
@@ -246,9 +256,9 @@ class TestMetric(unittest.TestCase):
         root_metric = getMetric('')
 
         self.assertTrue(
-            MetricDataCollection(
-                MetricData('root.test.FloatValue', 1.0),
-                MetricData('root.test.IntValue', 3)).strict_eq(root_metric.to_metric_data()))
+            MetricDataCollection([MetricDataContainer('root.test.FloatValue', [
+                MetricData('root.test.FloatValue', 1.0)], None, 'gauge'),
+                MetricDataContainer('root.test.IntValue', [MetricData('root.test.IntValue', 3)], None, 'gauge')]).strict_eq(root_metric.to_metric_data()))
 
     def testInheritance(self):
         metric = getMetric('root.test.FloatValue', 'float', MetricLevel.INHERIT,
@@ -257,41 +267,41 @@ class TestMetric(unittest.TestCase):
         metric_parent = getMetric('root.test', enable_timestamp=False)
         self.assertEqual(metric_parent.get_fully_qualified_name(), 'root.test')
         self.assertTrue(getMetric().to_metric_data().strict_eq(
-            MetricDataCollection([MetricDataContainer('', [MetricData('root.test.FloatValue', 2.0)])])))
+            MetricDataCollection([MetricDataContainer('root.test.FloatValue', [MetricData('root.test.FloatValue', 2.0)], None, 'gauge')])))
 
         metric_parent.level = MetricLevel.RUNTIME
         metric.debug(3.0)
 
         self.assertTrue(getMetric('', enable_timestamp=False).to_metric_data().strict_eq(
-            MetricDataCollection([MetricDataContainer('', [MetricData('root.test.FloatValue', 2.0)])])))
+            MetricDataCollection([MetricDataContainer('root.test.FloatValue', [MetricData('root.test.FloatValue', 2.0)])])))
 
     def test_labels(self):
         metric = getMetric('root.IntValue', 'int', labels={'k': 2}, enable_timestamp=False)
         metric.runtime(3)
-        self.assertTrue(MetricDataCollection(MetricData('IntValue', 3, {'k': 2})).strict_eq(
+        self.assertTrue(MetricDataCollection([MetricDataContainer('root.IntValue', [MetricData('root.IntValue', 3, {'k': 2})])]).strict_eq(
             metric.to_metric_data()))
 
     def test_cps(self):
-        metric = getMetric('root.CPSValue', 'cps', time_unit_vectors=[1, 2], enable_timestamp=False)
+        metric = getMetric('root.CPSValue', 'cps', time_unit_vectors=[1, 2])
         self.assertEqual(metric.name, 'CPSValue')
         metric.runtime()
         self.assertEqual([1, 2], metric.time_unit_vectors)
-        self.assertTrue(MetricDataCollection(MetricData('CPSValue', 1, {'period': 1}),
-                                             MetricData('CPSValue', 1, {'period': 2})).strict_eq(
+        self.assertTrue(MetricDataCollection([MetricDataContainer('root.CPSValue', [MetricData('root.CPSValue', 1, {'period': 1}),
+                                             MetricData('root.CPSValue', 1, {'period': 2})])]).strict_eq(
             metric.to_metric_data()))
         metric.runtime()
-        self.assertTrue(MetricDataCollection(MetricData('CPSValue', 2, {'period': 1}),
-                                             MetricData('CPSValue', 2, {'period': 2})).strict_eq(
+        self.assertTrue(MetricDataCollection([MetricDataContainer('root.CPSValue', [MetricData('root.CPSValue', 2, {'period': 1}),
+                                             MetricData('root.CPSValue', 2, {'period': 2})])]).strict_eq(
             metric.to_metric_data()))
         time.sleep(1.2)
-        self.assertTrue(MetricDataCollection(MetricData('CPSValue', 0, {'period': 1}),
-                                             MetricData('CPSValue', 2, {'period': 2})).strict_eq(
+        self.assertTrue(MetricDataCollection([MetricDataContainer('root.CPSValue', [MetricData('root.CPSValue', 0, {'period': 1}),
+                                             MetricData('root.CPSValue', 2, {'period': 2})])]).strict_eq(
             metric.to_metric_data()))
 
     def test_cps_labels(self):
         metric = getMetric('root.CPSValue', 'cps', time_unit_vectors=[1], enable_timestamp=False)
         metric.runtime(key='value')
         self.assertTrue(
-            MetricDataCollection(MetricData('CPSValue', 1, {'period': 1, 'key': 'value'}),
-                                 MetricData('CPSValue.total', 1, {'period': 1})).strict_eq(
+            MetricDataCollection([MetricDataContainer('root.CPSValue', [MetricData('root.CPSValue', 1, {'period': 1, 'key': 'value'}),
+                                 MetricData('root.CPSValue.total', 1, {'period': 1})])]).strict_eq(
                 metric.to_metric_data()))

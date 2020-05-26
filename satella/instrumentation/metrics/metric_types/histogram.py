@@ -1,10 +1,14 @@
 import math
 import typing as tp
+import logging
 import itertools
 from .base import EmbeddedSubmetrics, MetricLevel
 from .measurable_mixin import MeasurableMixin
 from .registry import register_metric
-from ..data import MetricData, MetricDataCollection, MetricDataContainer
+from ..data import MetricData, MetricDataContainer
+
+
+logger = logging.getLogger(__name__)
 
 
 @register_metric
@@ -28,8 +32,9 @@ class HistogramMetric(EmbeddedSubmetrics, MeasurableMixin):
                  buckets: tp.Sequence[float] = (.005, .01, .025, .05, .075, .1, .25, .5,
                                                 .75, 1.0, 2.5, 5.0, 7.5, 10.0),
                  aggregate_children: bool = True, *args, **kwargs):
+        kwargs.update(metric_type='histogram')
         super().__init__(name, root_metric, metric_level, internal=internal, buckets=buckets,
-                         aggregate_children=aggregate_children, metric_type='histogram', *args, **kwargs)
+                         aggregate_children=aggregate_children, *args, **kwargs)
         self.bucket_limits = list(buckets)                   # type: tp.List[float]
         self.buckets = [0] * (len(buckets) + 1)              # type: tp.List[int]
         self.aggregate_children = aggregate_children         # type: bool
@@ -58,32 +63,28 @@ class HistogramMetric(EmbeddedSubmetrics, MeasurableMixin):
             k = super().to_metric_data_container()
             if self.aggregate_children:
                 mdc = self.containers_to_metric_data()
-                for entry in mdc:
-                    entry.postfix_with('bucket')
-                    mdc += entry
-
                 mdc += MetricData(self.name+'.sum', self.sum, {})
                 mdc += MetricData(self.name+'.count', self.count, {})
-                k += mdc
+                mdc.postfix_with('total')
+                k.extend(mdc)
             return k
         else:
             mdc = super().to_metric_data_container()
-            for entry in self.containers_to_metric_data():
-                entry.postfix_with('bucket')
-                mdc += entry
+            mdc.extend(self.containers_to_metric_data())
 
             mdc += MetricData(self.name+'.sum', self.sum, self.labels)
             mdc += MetricData(self.name+'.count', self.count, self.labels)
+            logger.warning(f'histogram returning {mdc}')
             return mdc
 
-    def containers_to_metric_data(self) -> tp.List[MetricData]:
-        output = []
+    def containers_to_metric_data(self) -> MetricDataContainer:
+        output = super().to_metric_data_container()
         lower_bound = 0.0
         for amount, upper_bound in zip(self.buckets,
                                        self.bucket_limits + [math.inf]):
             labels = self.labels.copy()
             labels.update(le=upper_bound,
                           ge=lower_bound)
-            output.append(MetricData(self.name, amount, labels))
+            output += MetricData(self.name+'.bucket', amount, labels)
             lower_bound = upper_bound
         return output
