@@ -24,12 +24,11 @@ class HistogramMetric(EmbeddedSubmetrics, MeasurableMixin):
 
     def __init__(self, name: str, root_metric: 'Metric' = None,
                  metric_level: tp.Optional[MetricLevel] = None,
-                 internal: bool = False,
                  buckets: tp.Sequence[float] = (.005, .01, .025, .05, .075, .1, .25, .5,
                                                 .75, 1.0, 2.5, 5.0, 7.5, 10.0),
                  aggregate_children: bool = True, *args, **kwargs):
         kwargs.update(metric_type='histogram')
-        super().__init__(name, root_metric, metric_level, internal=internal, buckets=buckets,
+        super().__init__(name, root_metric, metric_level, buckets=buckets,
                          aggregate_children=aggregate_children, *args, **kwargs)
         self.bucket_limits = list(buckets)                   # type: tp.List[float]
         self.buckets = [0] * (len(buckets) + 1)              # type: tp.List[int]
