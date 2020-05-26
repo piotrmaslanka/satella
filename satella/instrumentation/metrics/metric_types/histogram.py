@@ -1,14 +1,10 @@
 import math
 import typing as tp
-import logging
 import itertools
 from .base import EmbeddedSubmetrics, MetricLevel
 from .measurable_mixin import MeasurableMixin
 from .registry import register_metric
 from ..data import MetricData, MetricDataContainer
-
-
-logger = logging.getLogger(__name__)
 
 
 @register_metric
@@ -74,7 +70,6 @@ class HistogramMetric(EmbeddedSubmetrics, MeasurableMixin):
 
             mdc += MetricData(self.name+'.sum', self.sum, self.labels)
             mdc += MetricData(self.name+'.count', self.count, self.labels)
-            logger.warning(f'histogram returning {mdc}')
             return mdc
 
     def containers_to_metric_data(self) -> MetricDataContainer:
