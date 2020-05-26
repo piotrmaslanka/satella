@@ -1,14 +1,10 @@
 import collections
-import logging
 import time
 import typing as tp
 
 from .base import EmbeddedSubmetrics
 from .registry import register_metric
 from ..data import MetricData, MetricDataContainer
-
-
-logger = logging.getLogger(__name__)
 
 
 @register_metric
@@ -39,13 +35,11 @@ class ClicksPerTimeUnitMetric(EmbeddedSubmetrics):
 
         mono_time = time.monotonic()
         self.last_clicks.append(time.monotonic())
-        logger.warning(f'Handling')
         try:
             while self.last_clicks[0] <= mono_time - self.cutoff_period:
                 self.last_clicks.popleft()
         except IndexError:
             pass
-        logger.warning(f'Last clicks is {self.last_clicks}')
 
     def to_metric_data_container(self) -> MetricDataContainer:
         k = super().to_metric_data_container()

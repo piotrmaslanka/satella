@@ -2,14 +2,10 @@ import abc
 import enum
 import time
 import typing as tp
-import logging
 
 from satella.coding.decorators import for_argument
 
 from ..data import MetricDataContainer, MetricDataCollection
-
-
-logger = logging.getLogger(__name__)
 
 
 class MetricLevel(enum.IntEnum):
@@ -45,7 +41,6 @@ class Metric:
 
     def get_fully_qualified_name(self):
         metric = self
-        data = []
         if metric.root_metric is None:
             return metric.name
 
