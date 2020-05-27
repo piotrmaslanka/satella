@@ -87,6 +87,7 @@ class Monitor:
         >>>         .. do some I/O that doesn't need mutual exclusion ..
         >>>     .. back to protected stuff ..
         """
+        __slots__ = ('foo', )
 
         def __init__(self, foo: 'Monitor'):
             self.foo = foo
@@ -111,6 +112,7 @@ class Monitor:
         >>> with Monitor.acquire(foo):
         >>>     .. do operations on foo that need mutual exclusion ..
         """
+        __slots__ = ('foo', )
 
         def __init__(self, foo: 'Monitor'):
             self.foo = foo
@@ -155,6 +157,7 @@ class RMonitor(Monitor):
     """
     Monitor, but using an reentrant lock instead of a normal one
     """
+    __slots__ = ()
 
     def __init__(self):
         self._monitor_lock = threading.RLock()  # type: threading.RLock
