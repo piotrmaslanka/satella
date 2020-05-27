@@ -210,10 +210,37 @@ def short_none(clb: tp.Union[Expression, tp.Callable[[T], U]]) -> tp.Callable[
     return inner
 
 
+def postcondition(condition: tp.Callable[[T], bool]):
+    """
+    Return a decorator, asserting that result of this function, called with provided callable, is True.
+
+    Else, the function will raise PreconditionError. Note that this is active only with __debug__, else
+    it short-circuits and returns the provided function.
+
+    :param condition: callable that accepts a single argument, the return value of the function.
+    """
+    if __debug__:
+        def outer(fun):
+            @wraps(fun)
+            def inner(*args, **kwargs):
+                v = fun(*args, **kwargs)
+                if not condition(v):
+                    raise PreconditionError('Condition not true')
+                return v
+
+            return inner
+
+        return outer
+    else:
+        return lambda x: x
+
+
 def precondition(*t_ops: tp.Union[tp.Callable[[T], bool], Expression],
                  **kw_opts: tp.Union[tp.Callable[[T], bool], Expression]):
     """
     Check that a precondition happens for given parameter.
+
+    Active only if __debug__ is True.
 
     You can do it like this:
 
@@ -286,7 +313,10 @@ def precondition(*t_ops: tp.Union[tp.Callable[[T], bool], Expression],
 
         return inner
 
-    return outer
+    if __debug__:
+        return outer
+    else:
+        return lambda x: x
 
 
 def for_argument(*t_ops: tp.Callable[[T], U], **t_kwops: tp.Callable[[T], U]):

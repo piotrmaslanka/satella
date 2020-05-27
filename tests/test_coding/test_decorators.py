@@ -1,9 +1,18 @@
 import unittest
 from socket import socket
-from satella.coding import attach_arguments, wraps, chain, auto_adapt_to_methods
+from satella.coding import attach_arguments, wraps, chain, auto_adapt_to_methods, postcondition
+from satella.exceptions import PreconditionError
 
 
 class TestDecorators(unittest.TestCase):
+
+    def test_postcondition(self):
+        @postcondition(lambda x: x == 2)
+        def return_a_value(x):
+            return x
+
+        self.assertEqual(return_a_value(2), 2)
+        self.assertRaises(PreconditionError, lambda: return_a_value(3))
 
     def test_auto_adapt_to_methods(self):
         @auto_adapt_to_methods
