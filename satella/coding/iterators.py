@@ -78,7 +78,6 @@ class hint_with_length:
     :param generator: generator to decorate
     :param length: length hint to provide
     """
-
     __slots__ = ('generator', 'length')
 
     def __init__(self, generator: tp.Generator, length: int):
@@ -102,5 +101,3 @@ class hint_with_length:
 
     def __length_hint__(self) -> int:
         return self.length
-
-

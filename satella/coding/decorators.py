@@ -18,7 +18,9 @@ def _TRUE(x):
     return True
 
 
-class _MethodDecoratorAdaptor(object):
+class _MethodDecoratorAdaptor:
+    __slots__ = ('decorator', 'func')
+
     def __init__(self, decorator, func):
         self.decorator = decorator
         self.func = func
