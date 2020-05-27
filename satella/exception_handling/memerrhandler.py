@@ -14,15 +14,14 @@ class MemoryErrorExceptionHandler(BaseExceptionHandler):
     `custom_hook` is an exception callable to implement you own behavior. If it returns True,
     then MemoryErrorExceptionHandler won't kill anyone. You can also provide a CallableGroup
     with gather=True - if any of callables returns True, the process won't be killed.
+
+    :param kill_pg: whether to kill entire process group, if applicable
     """
     __slots__ = ('priority', '_free_on_memory_error', 'custom_hook', 'kill_pg', 'installed')
 
     def __init__(self,
                  custom_hook: ExceptionHandlerCallable = lambda type_, value, traceback: False,
                  kill_pg: bool = False):
-        """
-        :param kill_pg: whether to kill entire process group, if applicable
-        """
         super().__init__(ALWAYS_FIRST)
         # so that we have some spare space in case a MemoryError is thrown
         self._free_on_memory_error = {'a': bytearray(1024 * 2)} # type: tp.Dict[str, bytearray]
