@@ -3,7 +3,7 @@ from os.path import join
 import tempfile
 import unittest
 import shutil
-from satella.files import read_re_sub_and_write, find_files, split
+from satella.files import read_re_sub_and_write, find_files, split, read_in_file, write_to_file
 
 
 def putfile(path: str) -> None:
@@ -12,6 +12,13 @@ def putfile(path: str) -> None:
 
 
 class TestFiles(unittest.TestCase):
+
+    def test_read_in_and_write_to(self):
+        data = 'żażółć gęślą jaźń'
+        write_to_file('temp.tmp', data, 'UTF-8')
+        data2 = read_in_file('temp.tmp', 'UTF-8')
+        self.assertEqual(data, data2)
+
     def test_split(self):
         self.assertIn(split('c:/windows/system32/system32.exe'), [['c:', 'windows', 'system32',
                                                                      'system32.exe'],

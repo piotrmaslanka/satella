@@ -15,3 +15,13 @@ split
 -----
 
 .. autofuction:: satella.files.split
+
+read_in_file
+------------
+
+.. autofunction:: satella.files.read_in_file
+
+write_to_file
+-------------
+
+.. autofunction:: satella.files.write_to_file

@@ -1,7 +1,9 @@
 import typing as tp
 import re
 import os
-__all__ = ['read_re_sub_and_write', 'find_files', 'split']
+import codecs
+
+__all__ = ['read_re_sub_and_write', 'find_files', 'split', 'read_in_file', 'write_to_file']
 
 SEPARATORS = {'\\', '/'}
 SEPARATORS.add(os.path.sep)
@@ -27,6 +29,41 @@ def split(path: str) -> tp.List[str]:
     while _has_separator(data[0]):
         data = list(os.path.split(data[0])) + data[1:]
     return data
+
+
+def write_to_file(path: str, data: tp.Union[bytes, str], encoding: tp.Optional[str] = None) -> None:
+    """
+    Write provided content as a file, applying given encoding (or data is bytes, if none given)
+
+    :param path: Path to put the file under
+    :param data: Data to write. Must be bytes if no encoding is given, str otherwise
+    :param encoding: Encoding. Default is None, which means no encoding (bytes will be written)
+    """
+    if encoding is None:
+        file = open(path, 'wb')
+    else:
+        file = codecs.open(path, 'wb', encoding)
+
+    try:
+        file.write(data)
+    finally:
+        file.close()
+
+
+def read_in_file(path: str, encoding: tp.Optional[str] = None) -> tp.Union[bytes, str]:
+    """
+    Opens a file for reading, reads it in, converts to given encoding (or returns as bytes if not given),
+    and closes it.
+    """
+    if encoding is None:
+        file = open(path, 'rb')
+    else:
+        file = codecs.open(path, 'rb', encoding)
+
+    try:
+        return file.read()
+    finally:
+        file.close()
 
 
 def read_re_sub_and_write(path: str, pattern: tp.Union[re.compile, str],
