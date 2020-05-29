@@ -102,6 +102,7 @@ class ExpiringEntryDict(Monitor, collections.UserDict, tp.Generic[K, V]):
     :param expiration_timeout: number of seconds after which entries will expire
     :param time_getter: a callable/0 that returns the current timestamp
     :param external_cleanup: whether to spawn a single thread that will clean up the dictionary.
+        The thread is spawned once per program, and no additional threads are spawned for next dictionaries.
     """
     def __init__(self, expiration_timeout: float, *args, time_getter: tp.Callable[[], float] = time.monotonic,
                  external_cleanup: bool = False, **kwargs):
