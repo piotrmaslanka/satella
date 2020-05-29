@@ -4,7 +4,7 @@ import heapq
 import time
 import typing as tp
 
-from satella.coding import rethrow_as
+from ..recast_exceptions import rethrow_as
 
 T = tp.TypeVar('T')
 Number = tp.Union[int, float]
