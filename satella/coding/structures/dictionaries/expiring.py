@@ -63,20 +63,20 @@ class SelfCleaningDefaultDict(Monitor, collections.UserDict, tp.Generic[K, V]):
 
         ExpiringEntryDictThread().add_dict(self)
 
-    def __iter__(self):
+    def __iter__(self) -> tp.Iterator[K]:
         self.cleanup()
         return super().__iter__()
 
-    def __delitem__(self, key):
+    def __delitem__(self, key: K):
         if key in self.data:
             del self[key]
 
-    def __getitem__(self, item):
+    def __getitem__(self, item: K) -> V:
         if item not in self.data:
             self.data[item] = self.default_factory()
         return self.data[item]
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key: K, value: V):
         if key in self.data:
             if value == self.default_value:
                 del self.data[key]
