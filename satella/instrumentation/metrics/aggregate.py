@@ -2,6 +2,7 @@ import typing as tp
 
 from .metric_types import Metric, MetricLevel
 from .metric_types.measurable_mixin import MeasurableMixin
+from ...coding.sequences import Multirun
 
 
 class AggregateMetric(Metric, MeasurableMixin):
@@ -27,5 +28,4 @@ class AggregateMetric(Metric, MeasurableMixin):
         self.metrics = metrics
 
     def handle(self, level: tp.Union[int, MetricLevel], *args, **kwargs) -> None:
-        for metric in self.metrics:
-            metric.handle(level, *args, **kwargs)
+        Multirun(self.metrics).handle(level, *args, **kwargs)
