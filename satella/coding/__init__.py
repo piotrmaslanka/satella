@@ -10,7 +10,7 @@ from .fun_static import static_var
 from .metaclasses import metaclass_maker, wrap_with, dont_wrap, wrap_property
 from .recast_exceptions import rethrow_as, silence_excs, catch_exception, log_exceptions, raises_exception
 from .iterators import hint_with_length, SelfClosingGenerator, exhaust
-from .deleters import ListDeleter
+from .deleters import ListDeleter, DictDeleter
 
 
 __all__ = [
@@ -22,5 +22,5 @@ __all__ = [
     'static_var', 'metaclass_maker',
     'catch_exception', 'wraps', 'wrap_with', 'dont_wrap', 'wrap_property', 'log_exceptions', 'chain',
     'auto_adapt_to_methods',
-    'ListDeleter'
+    'ListDeleter', 'DictDeleter'
 ]

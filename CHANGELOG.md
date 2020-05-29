@@ -2,5 +2,6 @@
 
 * more bulletproof `SelfCleaningDefaultDict`
 * refactored `OmniHashableMixin`
-* added `ListDeleter
+* added `ListDeleter` and `DictDeleter`
+
 `

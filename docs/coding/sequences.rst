@@ -151,3 +151,9 @@ ListDeleter
 
 .. autoclass:: satella.coding.ListDeleter
     :members:
+
+DictDeleter
+===========
+
+.. autoclass:: satella.coding.DictDeleter
+    :members:

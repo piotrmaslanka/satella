@@ -1,6 +1,79 @@
 import collections
 from satella.coding.recast_exceptions import rethrow_as
 
+ITER_KEYS = 0
+ITER_VALUES = 1
+ITER_ITEMS = 2
+
+
+class DictDeleter:
+    """
+    Having problems deleting entries from your dict while iterating on them? No problem. Just swap the following:
+
+    >>> keys_to_delete = []
+    >>> for key, value in my_dict.items():
+    >>>     if value.should_delete():
+    >>>         keys_to_delete.append(key)
+    >>> for key in keys_to_delete:
+    >>>     del my_dict[key]
+
+    With the following:
+
+    >>> with DictDeleter(my_list) as ld:
+    >>>     for key, value in ld:
+    >>>         if value.should_delete():
+    >>>             ld.delete()
+
+    Note that a single DictDeleter running from a single context must be iterated on by only a single
+    Thread as it keeps the state of iterator in itself, to prevent allocating new objects and slowing
+    things down too much.
+
+    This allocates only a single object per a call to delete().
+    """
+    __slots__ = ('dict_to_process', 'current_iterator', 'keys_to_delete', 'iter_mode', 'current_key')
+
+    def __init__(self, dict_to_process: collections.abc.MutableMapping):
+        self.dict_to_process = dict_to_process
+        self.iter_mode = None
+
+    def __enter__(self):
+        self.keys_to_delete = set()
+        return self
+
+    def __iter__(self):
+        self.current_iterator = iter(self.dict_to_process.items())
+        return self
+
+    def __next__(self):
+        key, value = next(self.current_iterator)
+        self.current_key = key
+        if self.iter_mode == ITER_ITEMS:
+            return key, value
+        elif self.iter_mode == ITER_VALUES:
+            return value
+        elif self.iter_mode == ITER_KEYS:
+            return key
+
+    def items(self):
+        self.iter_mode = ITER_ITEMS
+        return self
+
+    def keys(self):
+        self.iter_mode = ITER_KEYS
+        return self
+
+    def values(self):
+        self.iter_mode = ITER_VALUES
+        return self
+
+    def delete(self):
+        self.keys_to_delete.add(self.current_key)
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        for key in self.keys_to_delete:
+            del self.dict_to_process[key]
+        return False
+
 
 class ListDeleter:
     """

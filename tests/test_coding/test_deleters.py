@@ -1,9 +1,18 @@
 import unittest
 
-from satella.coding import ListDeleter
+from satella.coding import ListDeleter, DictDeleter
 
 
 class TestDeleters(unittest.TestCase):
+    def test_dict_deleter(self):
+        a = {1: 2, 2: 3, 3: 4, 4: 5, 5: 6}
+        with DictDeleter(a) as ld:
+            for key, value in ld.items():
+                if key % 2 == 0:
+                    ld.delete()
+
+        self.assertEqual(a, {1: 2, 3: 4, 5: 6})
+
     def test_list_deleter(self):
         a = [1, 2, 3, 4, 5, 6, 7, 8]
 
