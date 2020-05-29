@@ -109,7 +109,7 @@ class ExpiringEntryDict(Monitor, collections.UserDict, tp.Generic[K, V]):
         self.expire_on = {}
         self.time_getter = time_getter
         self.expiration_timeout = expiration_timeout
-        self.key_to_expiration_time: TimeBasedSetHeap[K] = TimeBasedSetHeap()
+        self.key_to_expiration_time = TimeBasedSetHeap()
 
         if external_cleanup:
             ExpiringEntryDictThread().add_dict(self)
