@@ -10,7 +10,7 @@ import mock
 from satella.coding.structures import TimeBasedHeap, Heap, typednamedtuple, \
     OmniHashableMixin, DictObject, apply_dict_object, Immutable, frozendict, SetHeap, \
     DictionaryView, HashableWrapper, TwoWayDictionary, Ranking, SortedList, SliceableDeque, \
-    DirtyDict, KeyAwareDefaultDict, Proxy, ReprableMixin
+    DirtyDict, KeyAwareDefaultDict, Proxy, ReprableMixin, TimeBasedSetHeap
 
 logger = logging.getLogger(__name__)
 
@@ -207,6 +207,28 @@ class TestMisc(unittest.TestCase):
 
         self.assertEqual(a[e1], '1')
         self.assertEqual(hash(e1), hash(2))
+
+    def test_tbsh(self):
+        tbh = TimeBasedSetHeap()
+
+        tbh.put(10, 'ala')
+        tbh.put(20, 'ma')
+        tbh.put(30, 'kota')
+        tbh.put(30, 'ala')
+        self.assertIn((30, 'ala'), tbh)
+        self.assertNotIn((10, 'ala'), tbh)
+
+        q = set(tbh.pop_less_than(25))
+
+        self.assertIn((20, 'ma'), q)
+        self.assertNotIn((30, 'ala'), q)
+        self.assertNotIn((30, 'kota'), q)
+
+        self.assertIsInstance(copy.copy(tbh), TimeBasedSetHeap)
+        self.assertIsInstance(copy.deepcopy(tbh), TimeBasedSetHeap)
+
+        item = tbh.pop_timestamp(30)
+        self.assertTrue(item == 'kota' or item == 'ala')
 
     def test_tbh(self):
         tbh = TimeBasedHeap()
