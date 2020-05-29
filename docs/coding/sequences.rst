@@ -145,3 +145,9 @@ will run to completion.
 
 **Take care**: this won't work on PyPy due to it's nondeterministic
 garbage collection!
+
+ListDeleter
+===========
+
+.. autoclass:: satella.coding.ListDeleter
+    :members:
