@@ -30,9 +30,12 @@ class OmniHashableMixin(metaclass=ABCMeta):
 
     @property
     @abstractmethod
-    def _HASH_FIELDS_TO_USE(self) -> tp.List[str]:
-        """Return the names of properties that will be used for __eq__ and __hash__"""
-        return []
+    def _HASH_FIELDS_TO_USE(self) -> tp.Sequence[str]:
+        """
+        Return the sequence of names of properties and attributes
+        that will be used for __eq__ and __hash__
+        """
+        return ()
 
     def __hash__(self):
         return functools.reduce(operator.xor, (hash(getattr(self, field_name))
@@ -44,15 +47,13 @@ class OmniHashableMixin(metaclass=ABCMeta):
         """
 
         def con(p):
-            return [getattr(p, field_name) for field_name in self._HASH_FIELDS_TO_USE]
+            return tuple(getattr(p, field_name) for field_name in self._HASH_FIELDS_TO_USE)
 
-        if con(self) == con(other):
-            return True
-
-        if not isinstance(other, OmniHashableMixin):
-            return str(self) == str(other)
+        if isinstance(other, OmniHashableMixin):
+            if con(self) == con(other):
+                return True
         else:
-            return False
+            return super().__eq__(other)
 
     def __ne__(self, other: 'OmniHashableMixin') -> bool:
         return not self.__eq__(other)
