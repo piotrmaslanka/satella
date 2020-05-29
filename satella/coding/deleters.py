@@ -20,7 +20,7 @@ class DictDeleter:
     With the following:
 
     >>> with DictDeleter(my_list) as ld:
-    >>>     for key, value in ld:
+    >>>     for key, value in ld.items():
     >>>         if value.should_delete():
     >>>             ld.delete()
 
@@ -34,7 +34,7 @@ class DictDeleter:
 
     def __init__(self, dict_to_process: collections.abc.MutableMapping):
         self.dict_to_process = dict_to_process
-        self.iter_mode = None
+        self.iter_mode = ITER_KEYS
 
     def __enter__(self):
         self.keys_to_delete = set()
