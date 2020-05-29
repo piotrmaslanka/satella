@@ -1,5 +1,5 @@
 from .dictionaries import DictObject, apply_dict_object, DictionaryView, TwoWayDictionary, \
-    DirtyDict, KeyAwareDefaultDict
+    DirtyDict, KeyAwareDefaultDict, ExpiringEntryDict, SelfCleaningDefaultDict
 from .hashable_objects import HashableWrapper
 from .immutable import Immutable, frozendict
 from .proxy import Proxy
@@ -15,8 +15,10 @@ __all__ = [
     'ReprableMixin',
     'DirtyDict',
     'SortedList',
+    'SelfCleaningDefaultDict',
     'SliceableDeque',
     'Ranking',
+    'ExpiringEntryDict',
     'TwoWayDictionary',
     'typednamedtuple',
     'HashableWrapper',

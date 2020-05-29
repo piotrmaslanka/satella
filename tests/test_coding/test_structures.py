@@ -3,6 +3,7 @@ import math
 import collections
 import copy
 import logging
+import time
 import unittest
 
 import mock
@@ -10,12 +11,35 @@ import mock
 from satella.coding.structures import TimeBasedHeap, Heap, typednamedtuple, \
     OmniHashableMixin, DictObject, apply_dict_object, Immutable, frozendict, SetHeap, \
     DictionaryView, HashableWrapper, TwoWayDictionary, Ranking, SortedList, SliceableDeque, \
-    DirtyDict, KeyAwareDefaultDict, Proxy, ReprableMixin, TimeBasedSetHeap
+    DirtyDict, KeyAwareDefaultDict, Proxy, ReprableMixin, TimeBasedSetHeap, ExpiringEntryDict, SelfCleaningDefaultDict
 
 logger = logging.getLogger(__name__)
 
 
 class TestMisc(unittest.TestCase):
+    def test_expiration_dict_manual_expiring(self):
+        eed = ExpiringEntryDict(expiration_timeout=5)
+        eed['test'] = 2
+        time.sleep(2)
+        self.assertEqual(eed['test'], 2)
+        time.sleep(4)
+        self.assertRaises(KeyError, lambda: eed['test'])
+
+    def test_expiration_dict_self_expiring(self):
+        eed = ExpiringEntryDict(expiration_timeout=5, external_cleanup=True)
+        eed['test'] = 2
+        time.sleep(2)
+        self.assertEqual(eed['test'], 2)
+        time.sleep(10)
+        self.assertRaises(KeyError, lambda: eed.data['test'])
+
+    def test_self_cleaning_default_dict(self):
+        sc_dd = SelfCleaningDefaultDict(list)
+        sc_dd['test'].append(2)
+        sc_dd['test'].pop()
+        time.sleep(10)
+        self.assertEqual(len(sc_dd), 0)
+
     def test_reprable_mixin(self):
         class Test(ReprableMixin):
             _REPR_FIELDS = ('v', )

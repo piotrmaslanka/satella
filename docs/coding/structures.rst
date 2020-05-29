@@ -34,6 +34,14 @@ time in the future. It functions very like a normal Heap.
 .. autoclass:: satella.coding.structures.TimeBasedHeap
     :members:
 
+TimeBasedSetHeap
+================
+
+A combination of `TimeBasedHeap` and `SetHeap`:
+
+.. autoclass:: satella.coding.structures.TimeBasedSetHeap
+    :members:
+
 typednamedtuple
 ===============
 
@@ -136,6 +144,18 @@ TwoWayDictionary
 ================
 
 .. autoclass:: satella.coding.structures.TwoWayDictionary
+    :members:
+
+SelfCleaningDefaultDict
+=======================
+
+.. autoclass:: satella.coding.structures.SelfCleaningDefaultDict
+    :members:
+
+ExpiringEntryDict
+=======================
+
+.. autoclass:: satella.coding.structures.ExpiringEntryDict
     :members:
 
 Ranking

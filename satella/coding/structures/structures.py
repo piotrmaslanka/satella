@@ -7,6 +7,7 @@ import time
 import typing as tp
 from abc import ABCMeta, abstractmethod
 
+from ..recast_exceptions import rethrow_as
 from ..decorators import wraps
 
 T = tp.TypeVar('T')
@@ -310,6 +311,14 @@ class TimeBasedHeap(Heap):
                 return item
         raise ValueError('Element not found!')
 
+    def get_timestamp(self, item: T) -> Number:
+        """
+        Return the timestamp for given item
+        """
+        for ts, elem in self.data:
+            if elem[1] == item:
+                return ts
+
     def pop_item(self, item: T) -> tp.Tuple[Number, T]:
         """
         Pop an item off the heap, maintaining the heap invariant.
@@ -391,6 +400,15 @@ class TimeBasedSetHeap(Heap):
 
     def __repr__(self):
         return '<satella.coding.TimeBasedSetHeap with %s elements>' % (len(self.data),)
+
+    @rethrow_as(KeyError, ValueError)
+    def get_timestamp(self, item: T) -> Number:
+        """
+        Return the timestamp for given item
+
+        :raises ValueError: item not found
+        """
+        return self.item_to_timestamp[item]
 
     def items(self) -> tp.Iterable[T]:
         """
