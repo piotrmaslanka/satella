@@ -3,23 +3,33 @@ import time
 import typing as tp
 import threading
 import weakref
+from abc import ABCMeta, abstractmethod
 
 from ..singleton import Singleton
 from ...concurrent.monitor import Monitor
-from ...recast_exceptions import rethrow_as
+from ...recast_exceptions import rethrow_as, silence_excs
 from ..structures import TimeBasedSetHeap
 
 K, V = tp.TypeVar('K'), tp.TypeVar('V')
 
 
+class Cleanupable(metaclass=ABCMeta):
+    @abstractmethod
+    def cleanup(self):
+        ...
+
+
 @Singleton
 class ExpiringEntryDictThread(threading.Thread, Monitor):
-    """A background thread providing maintenance for expiring entry dicts"""
+    """
+    A background thread providing maintenance for expiring entry dicts
+    and self-cleaning default dicts
+    """
     def __init__(self):
         super().__init__(name='ExpiringEntryDict cleanup thread', daemon=True)
         Monitor.__init__(self)
-        self.entries = []
-        self.started = False
+        self.entries = []       # type: tp.List[weakref.ref[Cleanupable]]
+        self.started = False    # type: bool
 
     def start(self):
         if self.started:
@@ -31,27 +41,34 @@ class ExpiringEntryDictThread(threading.Thread, Monitor):
     def run(self):
         while True:
             time.sleep(5)
-            with Monitor.acquire(self):
-                new_entries = []
-                for index, ref in enumerate(self.entries):
-                    obj = ref()
-                    if obj is not None:
-                        obj.cleanup()
-                        new_entries.append(ref)
-                self.entries = new_entries
+            self.cleanup()
 
     @Monitor.synchronized
-    def add_dict(self, ed):
+    def cleanup(self):
+        new_entries = []
+        for index, ref in enumerate(self.entries):
+            obj = ref()
+            if obj is not None:
+                obj.cleanup()
+                new_entries.append(ref)
+        self.entries = new_entries
+
+    @Monitor.synchronized
+    def add_dict(self, ed: Cleanupable):
         self.entries.append(weakref.ref(ed))
         self.start()
 
 
-class SelfCleaningDefaultDict(Monitor, collections.UserDict, tp.Generic[K, V]):
+class SelfCleaningDefaultDict(Monitor, collections.UserDict, tp.Generic[K, V], Cleanupable):
     """
     A defaultdict with the property that if it detects that a value is equal to it's default value,
     it will automatically remove it from the dict.
 
-    It is preferable to :py:meth:`satella.coding.concurrent.Monitor.acquire` it before iterating, since
+    Please note that this will spawn a cleanup thread in the background, one per program. The thread
+    is shared between :class:`satella.coding.structures.SelfCleaningDefaultDict` and
+    :class:`satella.coding.structures.ExpiringEntryDict`
+
+    It is preferable to :meth:`satella.coding.concurrent.Monitor.acquire` it before iterating, since
     it is cleaned up both by __iter__ and by an external worker thread, so it's important to acquire
     it, because it can mutate in an undefined way.
     """
@@ -83,20 +100,21 @@ class SelfCleaningDefaultDict(Monitor, collections.UserDict, tp.Generic[K, V]):
         self.data[key] = value
 
     @Monitor.synchronized
+    @silence_excs(KeyError)     # because entries may disappear without warning
     def cleanup(self):
         for key in list(self.data.keys()):
             if self.data[key] == self.default_value:
                 del self.data[key]
 
 
-class ExpiringEntryDict(Monitor, collections.UserDict, tp.Generic[K, V]):
+class ExpiringEntryDict(Monitor, collections.UserDict, tp.Generic[K, V], Cleanupable):
     """
     A dictionary whose entries expire automatically after a predefined period of time.
 
     Note that cleanup is invoked only when iterating over the dicts, or automatically if you specify
-    external_cleanup to be True.
+    external_cleanup to be True each approximately 5 seconds.
 
-    Note that it's preferential to :py:meth:`satella.coding.concurrent.Monitor.acquire` it if you're
+    Note that it's preferential to :meth:`satella.coding.concurrent.Monitor.acquire` it if you're
     using an external cleanup thread, because the dict may mutate at any time.
 
     :param expiration_timeout: number of seconds after which entries will expire
