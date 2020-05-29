@@ -6,7 +6,8 @@ from .proxy import Proxy
 from .ranking import Ranking
 from .singleton import Singleton, SingletonWithRegardsTo
 from .sorted_list import SortedList, SliceableDeque
-from .structures import SetHeap, OmniHashableMixin, TimeBasedHeap, Heap, ReprableMixin, TimeBasedSetHeap
+from .structures import OmniHashableMixin, ReprableMixin
+from .heaps import Heap, SetHeap, TimeBasedHeap, TimeBasedSetHeap
 from .typednamedtuple import typednamedtuple
 
 __all__ = [
@@ -22,12 +23,8 @@ __all__ = [
     'TwoWayDictionary',
     'typednamedtuple',
     'HashableWrapper',
-    'Heap',
-    'SetHeap',
     'DictionaryView',
     'frozendict',
-    'TimeBasedHeap',
-    'TimeBasedSetHeap',
     'OmniHashableMixin',
     'Singleton',
     'SingletonWithRegardsTo',

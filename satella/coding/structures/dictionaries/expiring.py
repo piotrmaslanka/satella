@@ -8,7 +8,7 @@ from abc import ABCMeta, abstractmethod
 from ..singleton import Singleton
 from ...concurrent.monitor import Monitor
 from ...recast_exceptions import rethrow_as, silence_excs
-from ..structures import TimeBasedSetHeap
+from ..heaps import TimeBasedSetHeap
 
 K, V = tp.TypeVar('K'), tp.TypeVar('V')
 
