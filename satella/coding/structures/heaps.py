@@ -5,6 +5,7 @@ import time
 import typing as tp
 
 from ..recast_exceptions import rethrow_as
+from ..decorators import wraps
 
 T = tp.TypeVar('T')
 Number = tp.Union[int, float]
