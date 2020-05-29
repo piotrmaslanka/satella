@@ -1,5 +1,4 @@
 import collections
-import typing as tp
 from satella.coding.recast_exceptions import rethrow_as
 
 
@@ -34,10 +33,10 @@ class ListDeleter:
     def __init__(self, list_to_process: collections.abc.MutableSequence):
         self.list_to_process = list_to_process
 
-    def __enter__(self):
+    def __enter__(self) -> 'ListDeleter':
         return self
 
-    def __iter__(self):
+    def __iter__(self) -> 'ListDeleter':
         self.current_index = 0
         self.indices_to_delete = set()
         return self
@@ -47,7 +46,7 @@ class ListDeleter:
         self.current_index += 1
         return self.list_to_process[self.current_index-1]
 
-    def delete(self):
+    def delete(self) -> None:
         self.indices_to_delete.add(self.current_index-1)
 
     def __exit__(self, exc_type, exc_val, exc_tb):
