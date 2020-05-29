@@ -50,8 +50,11 @@ class OmniHashableMixin(metaclass=ABCMeta):
             return tuple(getattr(p, field_name) for field_name in self._HASH_FIELDS_TO_USE)
 
         if isinstance(other, OmniHashableMixin):
-            if con(self) == con(other):
-                return True
+            try:
+                if con(self) == con(other):
+                    return True
+            except AttributeError:
+                return False
         else:
             return super().__eq__(other)
 
