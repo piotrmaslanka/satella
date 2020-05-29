@@ -45,7 +45,7 @@ class DictDeleter:
         return self
 
     def __next__(self):
-        key, value = next(self.current_iterator)
+        key, value = next(self.current_iterator)        # raises StopIteration
         self.current_key = key
         if self.iter_mode == ITER_ITEMS:
             return key, value
