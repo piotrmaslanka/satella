@@ -58,8 +58,6 @@ class OmniHashableMixin(metaclass=ABCMeta):
         return not self.__eq__(other)
 
 
-
-
 class ReprableMixin:
     """
     A sane __repr__ default.
