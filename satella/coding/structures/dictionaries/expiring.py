@@ -147,6 +147,14 @@ class ExpiringEntryDict(Monitor, collections.UserDict, tp.Generic[K, V], Cleanup
 
         return True
 
+    def get_timestamp(self, key: K) -> float:
+        """
+        Return the timestamp at which given key was inserted in the dict
+
+        :raises KeyError: key not found in the dictionary
+        """
+        return self.key_to_expiration_time.item_to_timestamp[key]
+
     def __iter__(self) -> tp.Iterator[K]:
         self.cleanup()
         return super().__iter__(self)
