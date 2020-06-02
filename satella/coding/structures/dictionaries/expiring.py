@@ -86,7 +86,7 @@ class SelfCleaningDefaultDict(Monitor, collections.UserDict, tp.Generic[K, V], C
 
     def __delitem__(self, key: K):
         if key in self.data:
-            del self[key]
+            del self.data[key]
 
     def __getitem__(self, item: K) -> V:
         if item not in self.data:

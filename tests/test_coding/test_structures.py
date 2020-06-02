@@ -39,6 +39,10 @@ class TestMisc(unittest.TestCase):
         sc_dd['test'].pop()
         time.sleep(10)
         self.assertEqual(len(sc_dd), 0)
+        sc_dd['test'] = '2'
+        self.assertEqual(len(sc_dd), 1)
+        del sc_dd['test']
+        self.assertEqual(len(sc_dd), 0)
 
     def test_reprable_mixin(self):
         class Test(ReprableMixin):
