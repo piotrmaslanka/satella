@@ -72,8 +72,7 @@ class log_exceptions:
                 if self.locals is not None:
                     format_dict.update(self.locals)
                 format_dict['e'] = exc_val
-                self.logger.log(self.severity, self.format_string.format(format_dict),
-                                exc_info=exc_val)
+                self.logger.log(self.severity, self.format_string.format(**format_dict), exc_info=exc_val)
         return False
 
     def __call__(self, fun):

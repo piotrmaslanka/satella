@@ -1,10 +1,24 @@
 import unittest
+import logging
 from socket import socket
-from satella.coding import attach_arguments, wraps, chain, auto_adapt_to_methods, postcondition
+from satella.coding import attach_arguments, wraps, chain, auto_adapt_to_methods, postcondition, \
+    log_exceptions
 from satella.exceptions import PreconditionError
 
 
+logger = logging.getLogger(__name__)
+
+
 class TestDecorators(unittest.TestCase):
+
+    def test_log_exceptions(self):
+        try:
+            with log_exceptions(logger):
+                int('a')
+        except ValueError:
+            pass
+        else:
+            self.fail('exception swallowed!')
 
     def test_postcondition(self):
         @postcondition(lambda x: x == 2)
