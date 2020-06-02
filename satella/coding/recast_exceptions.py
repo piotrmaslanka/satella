@@ -48,7 +48,7 @@ class log_exceptions:
     """
     __slots__ = ('logger', 'severity', 'format_string', 'locals', 'exc_types')
 
-    def __init__(self, logger, severity=logging.ERROR, format_string='{exc_val}',
+    def __init__(self, logger, severity=logging.ERROR, format_string='{e}',
                  locals_: tp.Optional[tp.Dict] = None,
                  exc_types: tp.Optional[tp.Union[ExcType, tp.Sequence[ExcType]]] = None):
         self.logger = logger
