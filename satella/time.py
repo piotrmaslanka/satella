@@ -100,6 +100,13 @@ class measure:
         """
         return self() > value
 
+    def raise_if_exceeded(self, value: float, exc_class: tp.Type[Exception] = TimeoutError):
+        """
+        Raise provided exception, with no arguments, if timer has clocked more than provided value
+        """
+        if self.has_exceeded(value):
+            raise exc_class()
+
     def reset(self):
         """
         Reset the counter, enabling it to start counting after a .stop() call.
