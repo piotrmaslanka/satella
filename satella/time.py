@@ -102,7 +102,9 @@ class measure:
 
     def raise_if_exceeded(self, value: float, exc_class: tp.Type[Exception] = TimeoutError):
         """
-        Raise provided exception, with no arguments, if timer has clocked more than provided value
+        Raise provided exception, with no arguments, if timer has clocked more than provided value.
+
+        If no exc_class is provided, TimeoutError will be raised by default.
         """
         if self.has_exceeded(value):
             raise exc_class()
