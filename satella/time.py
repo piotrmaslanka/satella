@@ -1,3 +1,4 @@
+import inspect
 import typing as tp
 import time
 import copy
@@ -148,16 +149,30 @@ class measure:
 
             @auto_adapt_to_methods
             def outer(func):
-                @wraps(func)
-                def inner(*args, **kwargs):
-                    s = copy.copy(self)
-                    if not s.create_stopped:
-                        s.reset()
-                        with s:
+                if inspect.isgeneratorfunction(func):
+                    @wraps(func)
+                    def inner(*args, **kwargs):
+                        s = copy.copy(self)
+                        if not s.create_stopped:
+                            s.reset()
+                            with s:
+                                yield from func(s, *args, **kwargs)
+                        else:
+                            yield from func(s, *args, **kwargs)
+
+                    return inner
+                else:
+                    @wraps(func)
+                    def inner(*args, **kwargs):
+                        s = copy.copy(self)
+                        if not s.create_stopped:
+                            s.reset()
+                            with s:
+                                return func(s, *args, **kwargs)
+                        else:
                             return func(s, *args, **kwargs)
-                    else:
-                        return func(s, *args, **kwargs)
-                return inner
+                    return inner
+
             return outer(fun)
 
     def __enter__(self):

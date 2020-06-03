@@ -1,3 +1,4 @@
+import inspect
 import typing as tp
 import logging
 import threading
@@ -76,21 +77,35 @@ class log_exceptions:
         return False
 
     def __call__(self, fun):
-        @wraps(fun)
-        def inner(*args, **kwargs):
-            try:
-                return fun(*args, **kwargs)
-            except Exception as e:
-                if isinstance(e, self.exc_types):
-                    format_dict = {'args': args,
-                                   'kwargs': kwargs}
-                    if self.locals is not None:
-                        format_dict.update(self.locals)
-                    format_dict['e'] = e
-                    self.logger.log(self.severity, self.format_string.format(format_dict),
-                                    exc_info=e)
-                raise e
-        return inner
+
+        def analyze_exception(e, args, kwargs):
+            if isinstance(e, self.exc_types):
+                format_dict = {'args': args,
+                               'kwargs': kwargs}
+                if self.locals is not None:
+                    format_dict.update(self.locals)
+                format_dict['e'] = e
+                self.logger.log(self.severity, self.format_string.format(format_dict),
+                                exc_info=e)
+
+            raise e
+
+        if inspect.isgeneratorfunction(fun):
+            @wraps(fun)
+            def inner(*args, **kwargs):
+                try:
+                    yield from fun(*args, **kwargs)
+                except Exception as e:
+                    analyze_exception(e, args, kwargs)
+            return inner
+        else:
+            @wraps(fun)
+            def inner(*args, **kwargs):
+                try:
+                    return fun(*args, **kwargs)
+                except Exception as e:
+                    analyze_exception(e, args, kwargs)
+            return inner
 
 
 # noinspection PyPep8Naming

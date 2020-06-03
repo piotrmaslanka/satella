@@ -12,6 +12,23 @@ class TestStuff(unittest.TestCase):
         self.assertTrue(raises_exception(NameError, lambda: name_error))
         self.assertFalse(raises_exception(NameError, lambda: None))
 
+    def test_log_exceptions_decorator(self):
+
+        @log_exceptions(logger, logging.CRITICAL)
+        def get_me():
+            yield 2
+            yield 4
+            raise KeyError()
+
+        try:
+            with log_exceptions(logger, exc_types=KeyError):
+                for i in get_me():
+                    pass
+        except KeyError:
+            pass
+        else:
+            self.fail('KeyError not raised')
+
     def test_log_exceptions(self):
         a = 5
 
