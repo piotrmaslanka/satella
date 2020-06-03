@@ -1,4 +1,2 @@
-# v2.7.44
+# v2.7.45
 
-* add `get_timestamp` to `ExpiringEntryDict`
-* added `enumerate`
