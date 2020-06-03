@@ -236,10 +236,7 @@ def enumerate(iterator: IteratorOrIterable, start: int = 0) -> tp.Iterator[tp.Tu
     """
     i = start
     for row in iterator:
-        if isinstance(row, tuple):
-            yield (i, ) + row
-        else:
-            yield (i,) + tuple(row)
+        yield i, *row
         i += 1
 
 
