@@ -134,6 +134,8 @@ class SetHeap(Heap):
     """
     A heap with additional invariant that no two elements are the same.
 
+    Note that elements you insert in this must be eq-able and hashable, ie. you can put them in a dict.
+
     Optimized for fast insertions and fast __contains__
 
     #notthreadsafe
@@ -282,6 +284,8 @@ class TimeBasedHeap(Heap):
 class TimeBasedSetHeap(Heap):
     """
     A heap of items sorted by timestamps, with such invariant that every item can appear at most once.
+
+    Note that elements you insert in this must be eq-able and hashable, ie. you can put them in a dict.
 
     It is easy to ask for items, whose timestamps are LOWER than a value, and
     easy to remove them.

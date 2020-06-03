@@ -216,6 +216,33 @@ def n_th(iterator: IteratorOrIterable, n: int = 0) -> T:
         raise IndexError('Iterable was too short')
 
 
+def enumerate(iterator: IteratorOrIterable, start: int = 0) -> tp.Iterator[tp.Tuple]:
+    """
+    An enumerate that talks pretty with lists of tuples. Consider
+
+    >>> a = [(1, 2), (3, 4), (5, 6)]
+    >>> for i, b in enumerate(a):
+    >>>     c, d = b
+    >>>     ...
+
+    This function allows you just to write:
+    >>> for i, c, d in enumerate(a):
+    >>>     ...
+
+    Note that elements in your iterable must be either a list of a tuple for that to work,
+    or need to be able to be coerced to a tuple. Otherwise, TypeError will be thrown.
+
+    :raise TypeError: could not coerce the elements in your iterable to a tuple
+    """
+    i = start
+    for row in iterator:
+        if isinstance(row, tuple):
+            yield (i, ) + row
+        else:
+            yield (i,) + tuple(row)
+        i += 1
+
+
 def take_n(iterator: IteratorOrIterable, n: int, skip: int = 0) -> tp.List[T]:
     """
     Take (first) n elements of an iterator, or the entire iterator, whichever comes first

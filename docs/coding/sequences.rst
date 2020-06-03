@@ -47,6 +47,11 @@ is_last
 
 .. autofunction:: satella.coding.sequences.is_last
 
+enumerate
+---------
+
+.. autofunction:: satella.coding.sequences.enumerate
+
 add_next
 --------
 

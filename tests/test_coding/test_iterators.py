@@ -2,9 +2,15 @@ import sys
 import unittest
 
 from satella.coding import SelfClosingGenerator, hint_with_length
+from satella.coding.sequences import enumerate
 
 
 class TestIterators(unittest.TestCase):
+    def test_enumerate(self):
+        a = [(1, 2), (3, 4), (5, 6)]
+        b = list(enumerate(a))
+        self.assertEqual([(0, 1, 2), (1, 3, 4), (2, 5, 6)], b)
+
     def test_hint_with_length(self):
         def generator():
             yield from range(1000)
