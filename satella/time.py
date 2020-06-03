@@ -94,6 +94,12 @@ class measure:
         self.reset()
         self.start()
 
+    def has_exceeded(self, value: float) -> bool:
+        """
+        Return whether the timer has exceeded provided value
+        """
+        return self() > value
+
     def reset(self):
         """
         Reset the counter, enabling it to start counting after a .stop() call.
