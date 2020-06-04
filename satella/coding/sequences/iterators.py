@@ -37,7 +37,8 @@ def odd(sq: IteratorOrIterable) -> tp.Iterator[T]:
         return
 
 
-def count(sq: IteratorOrIterable, start: tp.Optional[int] = None, step: int = 1) -> tp.Iterator[int]:
+def count(sq: IteratorOrIterable, start: tp.Optional[int] = None, step: int = 1,
+          start_at: tp.Optional[int] = None) -> tp.Iterator[int]:
     """
     Return a sequence of integers, for each entry in the sequence with provided step.
 
@@ -46,11 +47,13 @@ def count(sq: IteratorOrIterable, start: tp.Optional[int] = None, step: int = 1)
     >>> (i for i, x in enumerate(sq, start=start_at))
 
     :param sq: sequence to enumerate
-    :param start: alias for start_at. Prefer it in regards to start_at
+    :param start: alias for start_at. Prefer it in regards to start_at. Default is 0
     :param step: number to add to internal counter after each element
     :return: an iterator of subsequent integers
     """
-    num = start
+    if start_at:
+        start = start_at
+    num = start or 0
     for _ in sq:
         yield num
         num += step

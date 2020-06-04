@@ -46,6 +46,9 @@ class TestSequences(unittest.TestCase):
     def test_count(self):
         self.assertEqual(list(count([None, None, None], 5, -2)), [5, 3, 1])
 
+    def test_count_without_start(self):
+        self.assertEqual(list(count([None, None, None])), [0, 1, 2])
+
     def test_other_sequence_no_longer_than(self):
         s1 = [1, 2, 3]
         s2 = [3, 4, 5, 6]
