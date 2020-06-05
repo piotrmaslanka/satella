@@ -24,6 +24,7 @@ Visit the project's page at GitHub_!
            posix
            import
            files
+           random
            time
            exceptions
            processes
