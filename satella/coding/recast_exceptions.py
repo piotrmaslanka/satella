@@ -38,8 +38,8 @@ class log_exceptions:
     :param severity: a severity level
     :param format_string: a format string with fields:
         - e      : the exception instance itself
-        - args   : arguments with which the function was called, unavailable if context manager
-        - kwargs : arguments with which the function was called, unavailable if context manager
+        - args   : positional arguments with which the function was called, unavailable if context manager
+        - kwargs : keyword arguments with which the function was called, unavailable if context manager
         You can specify additional fields providing the locals_ argument
         Example: "{exc_type} occurred with message {exc_val} with traceback {exc_tb}"
     :param locals_: local variables to add to the format string. args and kwargs will be overwritten
@@ -68,35 +68,29 @@ class log_exceptions:
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         if exc_type is not None:
-            if issubclass(exc_type, self.exc_types):
-                format_dict = {}
-                if self.locals is not None:
-                    format_dict.update(self.locals)
-                format_dict['e'] = exc_val
-                self.logger.log(self.severity, self.format_string.format(**format_dict), exc_info=exc_val)
+            self.analyze_exception(exc_val, (), {})
         return False
 
+    def analyze_exception(self, e, args, kwargs):
+        if isinstance(e, self.exc_types):
+            format_dict = {'args': args,
+                           'kwargs': kwargs}
+            if self.locals is not None:
+                format_dict.update(self.locals)
+            format_dict['e'] = e
+            self.logger.log(self.severity, self.format_string.format(**format_dict),
+                            exc_info=e)
+
+        raise e
+
     def __call__(self, fun):
-
-        def analyze_exception(e, args, kwargs):
-            if isinstance(e, self.exc_types):
-                format_dict = {'args': args,
-                               'kwargs': kwargs}
-                if self.locals is not None:
-                    format_dict.update(self.locals)
-                format_dict['e'] = e
-                self.logger.log(self.severity, self.format_string.format(format_dict),
-                                exc_info=e)
-
-            raise e
-
         if inspect.isgeneratorfunction(fun):
             @wraps(fun)
             def inner(*args, **kwargs):
                 try:
                     yield from fun(*args, **kwargs)
                 except Exception as e:
-                    analyze_exception(e, args, kwargs)
+                    self.analyze_exception(e, args, kwargs)
             return inner
         else:
             @wraps(fun)
@@ -104,7 +98,7 @@ class log_exceptions:
                 try:
                     return fun(*args, **kwargs)
                 except Exception as e:
-                    analyze_exception(e, args, kwargs)
+                    self.analyze_exception(e, args, kwargs)
             return inner
 
 
