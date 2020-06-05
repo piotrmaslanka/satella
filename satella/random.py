@@ -13,14 +13,17 @@ def shuffle_together(*args: tp.Sequence) -> tp.List[tp.List]:
 
     >>> a = [1, 2, 3]
     >>> b = ['a', 'b', 'c']
-    >>> c = permute_together(a, b)
+    >>> c = shuffle_together(a, b)
 
     Might equal
 
     >>> c == [[3, 1, 2], ['c', 'a', 'b']]
-    """
 
-    indices = list(range(len(args[0])))
+    """
+    try:
+        indices = list(range(len(args[0])))
+    except IndexError:
+        return []  # empty array
 
     random.shuffle(indices)
-    return [[arg[i] for arg, i in zip(arg, indices)] for arg in args]
+    return [[arg[i] for i in indices] for arg in args]
