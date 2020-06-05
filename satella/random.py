@@ -4,7 +4,7 @@ import typing as tp
 __all__ = ['shuffle_together']
 
 
-def shuffle_together(*args: tp.Sequence) -> tp.List:
+def shuffle_together(*args: tp.Sequence) -> tp.List[tp.List]:
     """
     args, being sequences of equal length, will be permuted in such a way
     that their indices will still correspond to each other.
@@ -17,7 +17,7 @@ def shuffle_together(*args: tp.Sequence) -> tp.List:
 
     Might equal
 
-    >>> c == ([3, 1, 2], ['c', 'a', 'b'])
+    >>> c == [[3, 1, 2], ['c', 'a', 'b']]
     """
 
     indices = list(range(len(args[0])))
