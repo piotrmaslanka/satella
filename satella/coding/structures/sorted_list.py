@@ -23,6 +23,9 @@ class SortedList(tp.Generic[T]):
         self.keys = collections.deque(a[0] for a in sort)  # type: collections.deque[int]
         self.key = key  # type: tp.Callable[[T], int]
 
+    def __bool__(self) -> bool:
+        return bool(self.items)
+
     def __contains__(self, item: T) -> bool:
         return item in self.items
 
