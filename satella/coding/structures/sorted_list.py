@@ -10,7 +10,9 @@ class SortedList(tp.Generic[T]):
 
     It is assumed that keys of constituent elements don't change.
 
-    list[0] will have the smallest element, and list[-1] the biggest
+    list[0] will have the smallest element, and list[-1] the biggest.
+
+    Addition is O(n) worst-case, so is deletion.
 
     :param items: items to construct the list with
     :param key: a callable[T]->int that builds the key of the sort
