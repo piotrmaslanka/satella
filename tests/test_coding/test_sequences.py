@@ -32,6 +32,7 @@ class TestSequences(unittest.TestCase):
         a = [Counter(2), Counter(3)]
 
         b = Multirun(a)
+        self.assertTrue(b)
         b.add(3)
         self.assertEqual(a, [Counter(5), Counter(6)])
 

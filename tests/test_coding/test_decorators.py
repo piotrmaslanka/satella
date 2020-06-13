@@ -1,8 +1,9 @@
+import queue
 import unittest
 import logging
 from socket import socket
 from satella.coding import attach_arguments, wraps, chain, auto_adapt_to_methods, postcondition, \
-    log_exceptions
+    log_exceptions, queue_get
 from satella.exceptions import PreconditionError
 
 
@@ -10,6 +11,20 @@ logger = logging.getLogger(__name__)
 
 
 class TestDecorators(unittest.TestCase):
+
+    def test_queue_get(self):
+        class Queue:
+            def __init__(self):
+                self.queue = queue.Queue()
+
+            @queue_get('queue', timeout=0)
+            def process(self, item):
+                pass
+
+        q = Queue()
+        q.queue.put(True)
+        q.process()
+        q.process()
 
     def test_log_exceptions(self):
         try:

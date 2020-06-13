@@ -1,4 +1,5 @@
 import itertools
+import queue
 import typing as tp
 
 from ..exceptions import PreconditionError
@@ -16,6 +17,64 @@ def _NOP(x):
 # noinspection PyPep8Naming
 def _TRUE(x):
     return True
+
+Queue = tp.TypeVar('Queue')
+
+
+def queue_get(queue_getter: tp.Callable[[object], Queue], timeout: tp.Optional[float] = None,
+              exception_empty=queue.Empty,
+              queue_get_method: tp.Callable[[Queue, tp.Optional[float]], tp.Any] = lambda x, timeout: x.get(timeout=timeout)):
+    """
+    A decorator for class methods that consume from a queue.
+
+    Timeout of None means block forever.
+
+    First attribute of the decorator-given function must be a normal instance method accepting an element
+    taken from the queue, so it must accepts two arguments - first is self, second is the element from the queue.
+
+    :param queue_getter: a callable that will render us the queue, or a string, which will be translated
+        to a property name
+    :param timeout: a timeout to wait. If timeout happens, simple no-op will be done and None will be returned.
+    :param exception_empty: exception (or a tuple of exceptions) that are raised on queue being empty.
+    :param queue_get_method: a method to invoke on this queue. Accepts two arguments - the first is the
+        queue, the second is the timeout. It has to follow the type signature given.
+
+    Use instead of:
+
+    >>> class QueueProcessor:
+    >>>     def __init__(self, queue):
+    >>>         self.queue = queue
+    >>>     def do(self):
+    >>>         try:
+    >>>             msg = self.queue.get(timeout=TIMEOUT)
+    >>>         except queue.Empty:
+    >>>             return
+
+    Instead of aforementioned code, please use:
+
+    >>> class QueueProcessor:
+    >>>     def __init__(self, queue):
+    >>>         self.queue = queue
+    >>>     @queue_get(lambda self: self.queue, timeout=TIMEOUT)
+    >>>     def do(self, msg):
+    >>>         ...
+    """
+    if isinstance(queue_getter, str):
+        my_queue_getter = lambda x: getattr(x, queue_getter)
+    else:
+        my_queue_getter = queue_getter
+
+    def outer(fun):
+        @wraps(fun)
+        def inner(self):
+            try:
+                que = my_queue_getter(self)
+                item = queue_get_method(que, timeout)
+            except exception_empty:
+                return
+            return fun(self, item)
+        return inner
+    return outer
 
 
 class _MethodDecoratorAdaptor:
