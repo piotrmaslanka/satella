@@ -221,6 +221,7 @@ class StackFrame(JSONAble):
         sv.lineno = x['line_no'],
         sv.locals = {k: StoredVariableValue.from_json(v) for k, v in x['locals'].items()}
         sv.globals = {k: StoredVariableValue.from_json(v) for k, v in x['globals'].items()}
+        return sv
 
     def to_json(self) -> dict:
         return {
@@ -299,7 +300,7 @@ class Traceback(JSONAble):
         tb = Traceback.__new__(Traceback)
         tb.frames = [StackFrame.from_json(y) for y in x['frames']]
         tb.formatted_traceback = x['formatted_traceback']
-        return x
+        return tb
 
     def pretty_format(self) -> str:
         """
