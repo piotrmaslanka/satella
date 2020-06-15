@@ -19,7 +19,7 @@ Functions and decorators
 
 .. autofunction:: satella.coding.for_argument
 
-.. autofunction:: satella.coding.chain
+.. autofunction:: satella.coding.chain_functions
 
 .. autofunction:: satella.coding.auto_adapt_to_methods
 

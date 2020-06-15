@@ -1,6 +1,22 @@
 import typing as tp
 
 
+def chain(*args):
+    """
+    Construct an iterator out of provided elements.
+
+    If an element is an iterator, or an iterable it will be yielded-from. If it's not, it will
+    just be yielded.
+
+    A cast to iter() is used to determine iteratorness
+    """
+    for elem in args:
+        try:
+            yield from iter(elem)
+        except TypeError:
+            yield elem
+
+
 def exhaust(iterator: tp.Iterator):
     """
     Iterate till the end of the iterator, discarding values as they go

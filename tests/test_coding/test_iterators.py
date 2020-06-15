@@ -1,11 +1,17 @@
 import sys
 import unittest
 
-from satella.coding import SelfClosingGenerator, hint_with_length
+from satella.coding import SelfClosingGenerator, hint_with_length, chain
 from satella.coding.sequences import enumerate
 
 
 class TestIterators(unittest.TestCase):
+
+    def test_chain(self):
+        a = chain(1, 2, [3, 4, 5], 6, (i for i in range(2)))
+        a = list(a)
+        self.assertEqual(a, [1,2, 3, 4, 5, 6, 0, 1])
+
     def test_enumerate(self):
         a = [(1, 2), (3, 4), (5, 6)]
         b = list(enumerate(a))

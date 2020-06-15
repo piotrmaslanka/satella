@@ -119,7 +119,7 @@ def auto_adapt_to_methods(decorator):
     return adapt
 
 
-def chain(fun_first: tp.Callable[..., tp.Union[tp.Tuple[tp.Tuple, tp.Dict], tp.Dict, tp.Tuple]]) -> tp.Callable:
+def chain_functions(fun_first: tp.Callable[..., tp.Union[tp.Tuple[tp.Tuple, tp.Dict], tp.Dict, tp.Tuple]]) -> tp.Callable:
     """
     A decorator to chain function calls.
     This function is expected to return:
@@ -141,7 +141,7 @@ def chain(fun_first: tp.Callable[..., tp.Union[tp.Tuple[tp.Tuple, tp.Dict], tp.D
     >>> v = test(a, b, c)
 
     Is equivalent to this:
-    >>> @chain
+    >>> @chain_functions
     >>> def test2(...):
     >>>     ...
     >>> @test2

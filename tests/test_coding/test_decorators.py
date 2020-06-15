@@ -2,7 +2,7 @@ import queue
 import unittest
 import logging
 from socket import socket
-from satella.coding import attach_arguments, wraps, chain, auto_adapt_to_methods, postcondition, \
+from satella.coding import attach_arguments, wraps, chain_functions, auto_adapt_to_methods, postcondition, \
     log_exceptions, queue_get
 from satella.exceptions import PreconditionError
 
@@ -63,7 +63,7 @@ class TestDecorators(unittest.TestCase):
         self.assertEqual(twice(2), 8)
 
     def test_chain_kwargs(self):
-        @chain
+        @chain_functions
         def double_arguments(**kwargs):
             kwargs['a'] = kwargs['a']*2
             return kwargs
@@ -75,7 +75,7 @@ class TestDecorators(unittest.TestCase):
         self.assertEqual(multiply_times_two(a=2), 8)
 
     def test_chain(self):
-        @chain
+        @chain_functions
         def double_arguments(a):
             return a*2
 
