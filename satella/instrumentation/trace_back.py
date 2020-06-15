@@ -1,11 +1,11 @@
 import base64
+import gzip
 import inspect
 import io
 import sys
 import traceback
 import types
 import typing as tp
-import zlib
 
 from satella.json import JSONAble
 
@@ -88,6 +88,9 @@ class GenerationPolicy:
                 return r
 
 
+_default_generation_policy = GenerationPolicy()
+
+
 class StoredVariableValue(JSONAble):
     """
     Class used to store a variable value. Picklable.
@@ -100,7 +103,7 @@ class StoredVariableValue(JSONAble):
         .pickle_type - what is stored in .pickle?
             None - nothing
             "pickle" - normal Python pickle
-            "pickle/gzip" - Python pickle treated with zlib.compress
+            "pickle/gzip" - Python pickle treated with gzip.compress
             "failed" - could not pickle, pickle contains a UTF-8 text with
                 human-readable exception reason
             "failed/gzip" - compression failed, pickle contains a UTF-8 text with
@@ -138,7 +141,7 @@ class StoredVariableValue(JSONAble):
         self.repr = repr(value)             # type: str
         self.type_ = repr(type(value))      # type: str
 
-        policy = policy or GenerationPolicy()
+        policy = policy or _default_generation_policy
 
         self.repr = policy.process_repr(self.repr)
 
@@ -156,12 +159,12 @@ class StoredVariableValue(JSONAble):
             else:
                 if policy.should_compress(self.pickle):
                     try:
-                        self.pickle = zlib.compress(
+                        self.pickle = gzip.compress(
                             self.pickle,
                             policy.get_compression_level(
                                  self.pickle))
                         self.pickle_type = "pickle/gzip"
-                    except zlib.error as e:
+                    except Exception as e:
                         self.pickle = ('failed to gzip, reason is %s' % (repr(e),)).encode('utf8')
                         self.pickle_type = "failed/gzip"
 
@@ -181,7 +184,7 @@ class StoredVariableValue(JSONAble):
             raise ValueError(
                 'MemoryCondition has failed to be pickled, reason is %s' % (self.pickle,))
         elif self.pickle_type == 'pickle/gzip':
-            pickle_ = zlib.decompress(self.pickle)
+            pickle_ = gzip.decompress(self.pickle)
         elif self.pickle_type == 'pickle':
             pickle_ = self.pickle
         else:
