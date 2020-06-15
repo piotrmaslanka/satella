@@ -1,7 +1,7 @@
 import typing as tp
 
 
-def chain(*args):
+def chain(*args) -> tp.Iterator:
     """
     Construct an iterator out of provided elements.
 
@@ -17,7 +17,7 @@ def chain(*args):
             yield elem
 
 
-def exhaust(iterator: tp.Iterator):
+def exhaust(iterator: tp.Iterator) -> None:
     """
     Iterate till the end of the iterator, discarding values as they go
 
@@ -46,15 +46,15 @@ class SelfClosingGenerator:
 
     def __init__(self, generator: tp.Generator):
         self.generator = generator
-        self.stopped = False
+        self.stopped = False        # type: bool
 
-    def __iter__(self):
+    def __iter__(self) -> 'SelfClosingGenerator':
         return self
 
     def __call__(self, *args, **kwargs):
         return SelfClosingGenerator(self.generator(*args, **kwargs))
 
-    def send(self, obj: tp.Any):
+    def send(self, obj: tp.Any) -> None:
         self.generator.send(obj)
 
     def __next__(self):
@@ -64,14 +64,14 @@ class SelfClosingGenerator:
             self.stopped = True
             raise
 
-    def __enter__(self):
+    def __enter__(self) -> 'SelfClosingGenerator':
         return self
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
+    def __exit__(self, exc_type, exc_val, exc_tb) -> bool:
         self.close()
         return False
 
-    def close(self):
+    def close(self) -> None:
         if not self.stopped:
             try:
                 exhaust(self.generator)
@@ -109,7 +109,7 @@ class hint_with_length:
     def send(self, obj):
         return self.generator.send(obj)
 
-    def __iter__(self):
+    def __iter__(self) -> tp.Generator:
         return self.generator
 
     def __next__(self):
