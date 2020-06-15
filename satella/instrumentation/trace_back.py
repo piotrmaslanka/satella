@@ -323,8 +323,7 @@ class Traceback(JSONAble):
         output.write(self.formatted_traceback)
         output.write(u'\n* Stack trace, innermost first\n')
         for frame in self.frames:
-            output.write(u'** %s at %s:%s\n' % (
-                frame.name, frame.filename, frame.lineno))
+            output.write(u'** %s at %s:%s\n' % (frame.name, frame.filename, frame.lineno))
             for name, value in frame.locals.items():
                 try:
                     output.write(u'*** %s: %s\n' % (name, value.repr))
