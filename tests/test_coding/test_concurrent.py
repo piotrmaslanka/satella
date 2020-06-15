@@ -1,9 +1,9 @@
-import platform
-import unittest
 import copy
+import platform
 import sys
 import threading
 import time
+import unittest
 
 from satella.coding.concurrent import TerminableThread, CallableGroup, Condition, MonitorList, \
     LockedStructure, AtomicNumber
@@ -19,7 +19,7 @@ class TestConcurrent(unittest.TestCase):
             time.sleep(3)
             a += 1
 
-        threading.Thread(target=process_atomic_number, args=(an, )).start()
+        threading.Thread(target=process_atomic_number, args=(an,)).start()
         self.assertRaises(WouldWaitMore, lambda: an.wait_until_equal(2, timeout=2))
         an.wait_until_equal(1)
 
@@ -32,7 +32,7 @@ class TestConcurrent(unittest.TestCase):
         self.assertIsInstance(a, AtomicNumber)
         self.assertEqual(a, 3)
 
-        self.assertIsInstance(a+2, int)
+        self.assertIsInstance(a + 2, int)
 
     def test_locked_structure(self):
         class MyLockedStructure:
@@ -54,13 +54,12 @@ class TestConcurrent(unittest.TestCase):
             self.assertEqual(mls(), 5)
 
     def test_copy_monitor_list(self):
-        ml = MonitorList([1,2,3])
+        ml = MonitorList([1, 2, 3])
         ml2 = copy.copy(ml)
         self.assertEqual(ml2, ml)
 
     @unittest.skipUnless(sys.implementation.name == 'cpython', 'Does not work on PyPy :(')
     def test_condition(self):
-
         dct = {'a': False}
         cond = Condition()
         interlock_cond = Condition()

@@ -1,7 +1,7 @@
-import unittest
 import logging
-from satella.coding import rethrow_as, silence_excs, catch_exception, log_exceptions, raises_exception
+import unittest
 
+from satella.coding import rethrow_as, silence_excs, catch_exception, log_exceptions, raises_exception
 
 logger = logging.getLogger(__name__)
 
@@ -47,6 +47,7 @@ class TestStuff(unittest.TestCase):
         @silence_excs(ValueError, returns=5)
         def throw_value_error():
             raise ValueError()
+
         self.assertEqual(5, throw_value_error())
 
     def test_catching(self):

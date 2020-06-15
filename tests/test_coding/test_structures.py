@@ -1,8 +1,8 @@
 import abc
-import math
 import collections
 import copy
 import logging
+import math
 import time
 import unittest
 
@@ -46,7 +46,7 @@ class TestMisc(unittest.TestCase):
 
     def test_reprable_mixin(self):
         class Test(ReprableMixin):
-            _REPR_FIELDS = ('v', )
+            _REPR_FIELDS = ('v',)
 
             def __init__(self, v):
                 self.v = v
@@ -54,7 +54,7 @@ class TestMisc(unittest.TestCase):
         self.assertEqual(repr(Test(2)), 'Test(2)')
 
         class Test2(ReprableMixin):
-            _REPR_FIELDS = ('v', )
+            _REPR_FIELDS = ('v',)
             _REPR_FULL_CLASSNAME = True
 
             def __init__(self, v):
@@ -65,11 +65,11 @@ class TestMisc(unittest.TestCase):
 
     def test_proxy(self):
         a = Proxy(5, wrap_operations=True)
-        self.assertIsInstance(a+5, Proxy)
+        self.assertIsInstance(a + 5, Proxy)
 
         a = Proxy(5)
-        self.assertNotIsInstance(a+5, Proxy)
-        self.assertIsInstance(a+5, int)
+        self.assertNotIsInstance(a + 5, Proxy)
+        self.assertIsInstance(a + 5, int)
 
         a = Proxy(5.5)
         self.assertEqual(math.floor(a), 5)
@@ -405,7 +405,7 @@ class TestHeap(unittest.TestCase):
         item = tbh.pop_item((20, 'test3'))
         self.assertNotIn((20, 'test3'), tbh)
         self.assertEqual(item, (20, 'test3'))
-        
+
 
 class TestImmutable(unittest.TestCase):
     def _test_an_instance(self, a):

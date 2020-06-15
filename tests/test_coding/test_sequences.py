@@ -1,12 +1,9 @@
 import itertools
-import logging
 import unittest
 
 from satella.coding.sequences import choose, infinite_counter, take_n, is_instance, is_last, \
     add_next, half_cartesian, skip_first, zip_shifted, stop_after, group_quantity, \
     iter_dict_of_list, shift, other_sequence_no_longer_than, count, even, odd, Multirun, n_th
-
-logger = logging.getLogger(__name__)
 
 
 class TestSequences(unittest.TestCase):
@@ -17,7 +14,7 @@ class TestSequences(unittest.TestCase):
 
     def test_multirun(self):
         class Counter:
-            def __init__(self, value = 0):
+            def __init__(self, value=0):
                 self.value = value
 
             def add(self, value):
@@ -68,7 +65,7 @@ class TestSequences(unittest.TestCase):
                          [[1, 2, 3], [4, 5, 6], [7, 8, 9], [10]])
 
     def test_stop_after(self):
-        a = [1,2,3,4,5,6,7]
+        a = [1, 2, 3, 4, 5, 6, 7]
         a = list(stop_after(a, 2))
         self.assertEqual([1, 2], a)
 

@@ -21,6 +21,7 @@ class TestTypecheck(unittest.TestCase):
         @precondition(a=None)
         def do_any(a):
             return a
+
         self.assertEqual(do_any(a=5), 5)
 
     def test_precondition_kwargs(self):

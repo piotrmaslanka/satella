@@ -1,10 +1,7 @@
-import unittest
 import abc
-import logging
-from satella.coding import metaclass_maker, wrap_with, dont_wrap, rethrow_as, wraps, wrap_property
+import unittest
 
-
-logger = logging.getLogger(__name__)
+from satella.coding import metaclass_maker, wrap_with, dont_wrap, rethrow_as, wrap_property
 
 
 class MetaA(type):
@@ -29,7 +26,7 @@ class AB(A, B, metaclass=metaclass_maker):
 
 class TestMetaclasses(unittest.TestCase):
     def test_metaclasses(self):
-        a = AB()
+        AB()
 
     def test_wrap_all_methods_with(self):
         def double(fun):
@@ -74,11 +71,13 @@ class TestMetaclasses(unittest.TestCase):
                     return fun(slf) * 2
                 except TypeError:
                     return fun(slf) * 2
+
             return inner
 
         def wrap_setter(fun):
             def inner(slf, value):
-                return fun(slf, value*2)
+                return fun(slf, value * 2)
+
             return inner
 
         def wrap_deleter(fun):
@@ -110,4 +109,3 @@ class TestMetaclasses(unittest.TestCase):
         self.assertEqual(mc.x, 80)
         del mc.x
         self.assertEqual(mc.x, 80)
-

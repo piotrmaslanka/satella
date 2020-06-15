@@ -1,11 +1,11 @@
+import logging
 import queue
 import unittest
-import logging
 from socket import socket
+
 from satella.coding import attach_arguments, wraps, chain_functions, auto_adapt_to_methods, postcondition, \
     log_exceptions, queue_get
 from satella.exceptions import PreconditionError
-
 
 logger = logging.getLogger(__name__)
 
@@ -47,17 +47,18 @@ class TestDecorators(unittest.TestCase):
         @auto_adapt_to_methods
         def times_two(fun):
             def outer(a):
-                return fun(a*2)
+                return fun(a * 2)
+
             return outer
 
         class Test:
             @times_two
             def twice(self, a):
-                return a*2
+                return a * 2
 
         @times_two
         def twice(a):
-            return a*2
+            return a * 2
 
         self.assertEqual(Test().twice(2), 8)
         self.assertEqual(twice(2), 8)
@@ -65,23 +66,23 @@ class TestDecorators(unittest.TestCase):
     def test_chain_kwargs(self):
         @chain_functions
         def double_arguments(**kwargs):
-            kwargs['a'] = kwargs['a']*2
+            kwargs['a'] = kwargs['a'] * 2
             return kwargs
 
         @double_arguments
         def multiply_times_two(**kwargs):
-            return kwargs['a']*2
+            return kwargs['a'] * 2
 
         self.assertEqual(multiply_times_two(a=2), 8)
 
     def test_chain(self):
         @chain_functions
         def double_arguments(a):
-            return a*2
+            return a * 2
 
         @double_arguments
         def multiply_times_two(a):
-            return a*2
+            return a * 2
 
         self.assertEqual(multiply_times_two(2), 8)
 

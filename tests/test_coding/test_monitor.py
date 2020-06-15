@@ -18,6 +18,7 @@ class MonitorTest(unittest.TestCase):
                     @Monitor.synchronize_on(self)
                     def get_value(self2):
                         self.value += 1
+
                 return LockingClass()
 
         msc = TestedMasterClass()
@@ -65,7 +66,6 @@ class MonitorTest(unittest.TestCase):
                 tt.start()
                 sleep(0.4)
                 self.assertEqual(cq.qsize(), 2)
-
 
     def test_release_contextmanager_syntax(self):
         class TestedClass(Monitor):
