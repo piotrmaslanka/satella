@@ -1,6 +1,3 @@
-# v2.8
+# v2.8.1
 
-**API breaking change!**
 
-* add `chain_functions`
-* `chain` renamed to `chain_functions`
