@@ -1,3 +1,4 @@
+import base64
 import inspect
 import io
 import sys
@@ -5,6 +6,8 @@ import traceback
 import types
 import typing as tp
 import zlib
+
+from satella.json import JSONAble
 
 try:
     # noinspection PyPep8Naming
@@ -85,7 +88,7 @@ class GenerationPolicy:
                 return r
 
 
-class StoredVariableValue:
+class StoredVariableValue(JSONAble):
     """
     Class used to store a variable value. Picklable.
 
@@ -109,6 +112,27 @@ class StoredVariableValue:
     :param policy: policy to use (instance)
     """
     __slots__ = ('repr', 'type_', 'pickle', 'pickle_type')
+
+    @classmethod
+    def from_json(cls, x: dict) -> 'StoredVariableValue':
+        sv = StoredVariableValue.__new__(StoredVariableValue)
+        sv.repr = x['repr']
+        sv.type_ = x['type']
+        sv.pickle_type = x['pickle_type']
+        if 'pickle' in x:
+            sv.pickle = base64.b64decode(x['pickle'].encode('utf8'))
+        sv.pickle = None
+        return sv
+
+    def to_json(self) -> dict:
+        dct = {
+            'repr': self.repr,
+            'type': self.type_,
+            'pickle_type': self.pickle_type
+        }
+        if self.pickle:
+            dct['pickle'] = base64.b64encode(self.pickle).decode('utf8')
+        return dct
 
     def __init__(self, value: tp.Any, policy: tp.Optional[GenerationPolicy] = None):
         self.repr = repr(value)             # type: str
@@ -135,7 +159,7 @@ class StoredVariableValue:
                         self.pickle = zlib.compress(
                             self.pickle,
                             policy.get_compression_level(
-                                self.pickle))
+                                 self.pickle))
                         self.pickle_type = "pickle/gzip"
                     except zlib.error as e:
                         self.pickle = ('failed to gzip, reason is %s' % (repr(e),)).encode('utf8')
@@ -170,7 +194,7 @@ class StoredVariableValue:
                 'object picklable, but cannot load in this environment')
 
 
-class StackFrame:
+class StackFrame(JSONAble):
     """
     Class used to verily preserve stack frames. Picklable.
     """
@@ -189,13 +213,35 @@ class StackFrame:
         for key, value in frame.f_globals.items():
             self.globals[key] = StoredVariableValue(value, policy)
 
+    @classmethod
+    def from_json(cls, x: dict) -> 'StackFrame':
+        sv = StackFrame.__new__(StackFrame)
+        sv.name = x['name']
+        sv.filename = x['filename']
+        sv.lineno = x['line_no'],
+        sv.locals = {k: StoredVariableValue.from_json(v) for k, v in x['locals'].items()}
+        sv.globals = {k: StoredVariableValue.from_json(v) for k, v in x['globals'].items()}
 
-class Traceback:
+    def to_json(self) -> dict:
+        return {
+            'name': self.name,
+            'filename': self.filename,
+            'line_no': self.lineno,
+            'locals': {k: v.to_json() for k, v in self.locals.items()},
+            'globals': {k: v.to_json() for k, v in self.globals.items()}
+        }
+
+
+class Traceback(JSONAble):
     """
     Class used to preserve exceptions and chains of stack frames.
      Picklable.
 
     If starting frame is not given, an exception must be in progress.
+
+    You can also convert it to a secure representation, ie. one that will be completely JSON
+    and thus safe to load from untrusted sources. You will not lose the unpicklability of them by doing
+    so, as they can be safely reconstructed (pickle will be encoded as base64 string).
 
     :param starting_frame: frame to start tracking the traceback from.
         Must be either None, in which case an exception must be in progress and will be taken
@@ -241,6 +287,19 @@ class Traceback:
         bio = io.BytesIO()
         self.pickle_to(bio)
         return bio.getvalue()
+
+    def to_json(self) -> dict:
+        return {
+            'frames': [frame.to_json() for frame in self.frames],
+            'formatted_traceback': self.formatted_traceback
+        }
+
+    @classmethod
+    def from_json(cls, x: dict) -> 'Traceback':
+        tb = Traceback.__new__(Traceback)
+        tb.frames = [StackFrame.from_json(y) for y in x['frames']]
+        tb.formatted_traceback = x['formatted_traceback']
+        return x
 
     def pretty_format(self) -> str:
         """

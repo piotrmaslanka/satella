@@ -9,6 +9,17 @@ class TestTraceback(unittest.TestCase):
     def test_no_exc(self):
         self.assertRaises(ValueError, Traceback)
 
+    def test_json(self):
+        try:
+            raise ValueError(u'hello')
+        except ValueError:
+            tb = Traceback()
+
+        js = tb.to_json()
+        self.assertIn('frames', js)
+        self.assertIn('formatted_traceback', js)
+        Traceback.from_json(js)
+
     def test_tb(self):
 
         try:
