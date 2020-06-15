@@ -18,7 +18,7 @@ class TestTraceback(unittest.TestCase):
         js = tb.to_json()
         self.assertIn('frames', js)
         self.assertIn('formatted_traceback', js)
-        Traceback.from_json(js)
+        self.assertIsInstance(Traceback.from_json(js), Traceback)
 
     def test_tb(self):
 
