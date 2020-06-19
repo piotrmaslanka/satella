@@ -16,6 +16,7 @@ Visit the project's page at GitHub_!
            coding/structures
            coding/concurrent
            coding/sequences
+           coding/transforms
            instrumentation/traceback
            instrumentation/memory
            instrumentation/metrics
