@@ -1,3 +1,1 @@
-# v2.8.4
-
-* added `stringify`
+# v2.8.5
