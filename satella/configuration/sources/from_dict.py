@@ -34,7 +34,7 @@ EXTRA_TYPES = {
 @for_argument(copy.copy)  # since we are modyfing that dict
 def load_source_from_dict(dct: dict) -> BaseSource:
     """
-    dct has a form of
+    obj has a form of
 
     {
         "type": "BaseSource",
