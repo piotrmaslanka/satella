@@ -1,10 +1,14 @@
 import unittest
 import time
-from satella.time import measure
+from satella.time import measure, time_as_int, time_ms
 from concurrent.futures import Future
 
 
 class TestTime(unittest.TestCase):
+
+    def test_times(self):
+        self.assertIsInstance(time_as_int(), int)
+        self.assertIsInstance(time_ms(), int)
 
     def test_measure_future(self):
         future = Future()

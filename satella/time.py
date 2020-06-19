@@ -6,7 +6,32 @@ from concurrent.futures import Future
 
 from functools import wraps
 
-__all__ = ['measure']
+__all__ = ['measure', 'time_as_int', 'time_ms']
+
+
+def time_as_int() -> int:
+    """
+    Syntactic sugar for
+
+    >>> from time import time
+    >>> int(time())
+    """
+    return int(time.time())
+
+
+def time_ms() -> int:
+    """
+    Syntactic sugar for
+
+    >>> from time import time
+    >>> int(time()*1000)
+
+    This will try to use time.time_ns() if available
+    """
+    try:
+        return time.time_ns() // 1000000
+    except AttributeError:
+        return int(time.time()*1000)
 
 
 class measure:

@@ -1,6 +1,8 @@
 time
 ====
 
+measure
+-------
 Sometimes you just need to measure how long does a routine call take.
 
 .. autoclass:: satella.time.measure
@@ -8,3 +10,16 @@ Sometimes you just need to measure how long does a routine call take.
 
 Note that you might specify other things to represent as time,
 such as "get the amount of free memory" value.
+
+time_as_int
+-----------
+
+Syntactic sugar for `int(time.time())`.
+
+.. autofunction:: satella.time.time_as_int
+
+time_ms
+----------
+Syntactic sugar for `int(time.time()*1000)`
+
+.. autofunction:: satella.time.time_ms
