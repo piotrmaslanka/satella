@@ -16,3 +16,6 @@ class MyTestCase(unittest.TestCase):
 
         dct2 = {1: [1, 2, 3]}
         self.assertEqual(stringify(dct2, recursively=True), {'1': ['1', '2', '3']})
+
+        self.assertIsNone(stringify(None))
+        self.assertEqual(stringify(None, str_none=True), str(None))

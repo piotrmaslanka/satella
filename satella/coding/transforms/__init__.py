@@ -5,7 +5,8 @@ __all__ = ['stringify']
 
 
 def stringify(obj: tp.Union[tp.Any], stringifier: tp.Callable[[tp.Any], str] = str,
-              recursively: bool = False) -> tp.Dict[str, str]:
+              recursively: bool = False,
+              str_none: bool = False) -> tp.Dict[str, str]:
     """
     Stringify all object:
 
@@ -19,6 +20,7 @@ def stringify(obj: tp.Union[tp.Any], stringifier: tp.Callable[[tp.Any], str] = s
     :param obj: a list or a dict
     :param stringifier: function that accepts any arguments and returns a string representation
     :param recursively: whether to recursively stringify elements, ie. stringify will be called on all the children
+    :param str_none: whether to return None if given a None. If True, "None" will be returned instead
     :return: stringified object
     """
     if isinstance(obj, collections.abc.Mapping):
@@ -27,5 +29,10 @@ def stringify(obj: tp.Union[tp.Any], stringifier: tp.Callable[[tp.Any], str] = s
     elif isinstance(obj, collections.abc.Sequence):
         make_str = (lambda obj2: stringify(obj2, stringifier, True)) if recursively else stringifier
         return [make_str(v) for v in obj]
+    elif obj is None:
+        if str_none:
+            return stringifier(None)
+        else:
+            return None
     else:
         return stringifier(obj)
