@@ -9,3 +9,7 @@ class MyTestCase(unittest.TestCase):
 
         lst = [1, 2, 3, 4, 5]
         self.assertEqual(stringify(lst), ['1', '2', '3', '4', '5'])
+
+        lst2 = [[1, 2, 3], 3, 4, 5]
+        self.assertEqual(stringify(lst2), ['[1, 2, 3]', '3', '4', '5'])
+        self.assertEqual(stringify(lst2, recursively=True), [['1', '2', '3'], '3', '4', '5'])
