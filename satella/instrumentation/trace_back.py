@@ -53,14 +53,14 @@ class GenerationPolicy:
         """
         return self.enable_pickling
 
-    def should_compress(self, pickledata: bytes) -> bool:
+    def should_compress(self, pickle_data: bytes) -> bool:
         """
         Should this pickle undergo compression?
 
-        :param pickledata: pickle value
+        :param pickle_data: pickle value
         :return: bool
         """
-        return len(pickledata) > self.compress_at
+        return len(pickle_data) > self.compress_at
 
     def get_compression_level(self, pickledata: bytes) -> int:
         """
