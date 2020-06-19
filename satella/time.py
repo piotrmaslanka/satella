@@ -34,6 +34,13 @@ def time_ms() -> int:
         return int(time.time()*1000)
 
 
+def time_us() -> int:
+    try:
+        return time.time_ns() // 1000
+    except AttributeError:
+        return int(time.time()*1000000)
+
+
 class measure:
     """
     A class used to measure time elapsed. Use for example like this:

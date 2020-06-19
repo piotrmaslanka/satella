@@ -23,3 +23,10 @@ time_ms
 Syntactic sugar for `int(time.time()*1000)`
 
 .. autofunction:: satella.time.time_ms
+
+
+time_us
+----------
+Syntactic sugar for `int(time.time()*1000000)`
+
+.. autofunction:: satella.time.time_us
