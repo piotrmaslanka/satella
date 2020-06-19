@@ -4,7 +4,7 @@ import typing as tp
 __all__ = ['stringify']
 
 
-def stringify(dct: tp.Union[dict, list], stringifier: tp.Callable[[tp.Any], str]) -> tp.Dict[str, str]:
+def stringify(dct: tp.Union[dict, list], stringifier: tp.Callable[[tp.Any], str] = str) -> tp.Dict[str, str]:
     """
     Stringify all object, ie. put every item and key (if a dict is given) through stringify.
 
