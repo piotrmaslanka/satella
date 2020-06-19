@@ -13,3 +13,6 @@ class MyTestCase(unittest.TestCase):
         lst2 = [[1, 2, 3], 3, 4, 5]
         self.assertEqual(stringify(lst2), ['[1, 2, 3]', '3', '4', '5'])
         self.assertEqual(stringify(lst2, recursively=True), [['1', '2', '3'], '3', '4', '5'])
+
+        dct2 = {1: [1, 2, 3]}
+        self.assertEqual(stringify(dct2, recursively=True), {'1': ['1', '2', '3']})
