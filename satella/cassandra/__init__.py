@@ -12,7 +12,7 @@ def parallel_for(cursor, query: str, arguments: tp.Iterable[tuple]) -> tp.Iterat
     >>> for future in futures:
     >>>     yield future.result()
 
-    :param cursor: the Cassandra cursor to use
+    :param cursor: the Cassandra cursor to use (obtained using connection.session())
     :param query: base query
     :param arguments: iterable yielding arguments to use in execute_async
     """
