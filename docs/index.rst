@@ -29,6 +29,7 @@ Visit the project's page at GitHub_!
            time
            exceptions
            processes
+           cassandra
 
 
 Indices and tables

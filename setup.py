@@ -16,6 +16,7 @@ setup(keywords=['ha', 'high availability', 'scalable', 'scalability', 'server', 
       extras_require={
             'HTTPJSONSource': ['requests'],
             'YAMLSource': ['pyyaml'],
-            'TOMLSource': ['toml']
+            'TOMLSource': ['toml'],
+            'satella.cassandra': ['cassandra-driver']
       }
       )
