@@ -30,5 +30,6 @@ __all__ = [
     'SingletonWithRegardsTo',
     'DictObject',
     'apply_dict_object',
-    'Immutable'
+    'Immutable',
+    'SetHeap', 'TimeBasedHeap', 'TimeBasedSetHeap', 'Heap'
 ]
