@@ -1,4 +1,4 @@
 # v2.8.7
 
-* added setdefault to `DictObject`
+* added setdefault and get to `DictObject`
 

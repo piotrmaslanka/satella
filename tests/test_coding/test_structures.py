@@ -22,6 +22,9 @@ class TestMisc(unittest.TestCase):
         self.assertEqual(a.setdefault('k', 2), 2)
         self.assertEqual(a.k, 2)
 
+        self.assertIsNone(a.get('v'))
+        self.assertEqual(a.get('k'), 2)
+
     def test_expiration_dict_manual_expiring(self):
         eed = ExpiringEntryDict(expiration_timeout=5)
         eed['test'] = 2
