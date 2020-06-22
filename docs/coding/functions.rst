@@ -2,6 +2,8 @@
 Functions and decorators
 ========================
 
+.. autofunction:: satella.coding.update_if_not_none
+
 .. autofunction:: satella.coding.merge_dicts
 
 .. autofunction:: satella.coding.static_var
