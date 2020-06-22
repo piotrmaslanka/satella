@@ -17,6 +17,11 @@ logger = logging.getLogger(__name__)
 
 
 class TestMisc(unittest.TestCase):
+    def test_dictobject_setdefault(self):
+        a = DictObject()
+        self.assertEqual(a.setdefault('k', 2), 2)
+        self.assertEqual(a.k, 2)
+
     def test_expiration_dict_manual_expiring(self):
         eed = ExpiringEntryDict(expiration_timeout=5)
         eed['test'] = 2
