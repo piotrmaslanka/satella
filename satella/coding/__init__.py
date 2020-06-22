@@ -11,9 +11,10 @@ from .metaclasses import metaclass_maker, wrap_with, dont_wrap, wrap_property
 from .recast_exceptions import rethrow_as, silence_excs, catch_exception, log_exceptions, raises_exception
 from .iterators import hint_with_length, SelfClosingGenerator, exhaust, chain
 from .deleters import ListDeleter, DictDeleter
-
+from .misc import update_if_not_none
 
 __all__ = [
+    'update_if_not_none',
     'hint_with_length', 'SelfClosingGenerator', 'exhaust', 'chain',
     'Monitor', 'RMonitor', 'merge_dicts',
     'for_argument', 'short_none', 'has_keys',

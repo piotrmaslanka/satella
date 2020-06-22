@@ -1,6 +1,7 @@
 # v2.8.8
 
-* special-cased passing a DictObject to another DictObject
-* added str and repr to DictObject
-* added items, keys and values to DictObject
-* added __contains__ to DictObject
+* special-cased passing a `DictObject` to another `DictObject`
+* added str and repr to `DictObject`
+* added items, keys and values to `DictObject`
+* added __contains__ to `DictObject`
+* added `update_if_not_none`

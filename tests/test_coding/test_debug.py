@@ -1,10 +1,15 @@
 import unittest
 
-from satella.coding import for_argument, precondition, short_none, has_keys
+from satella.coding import for_argument, precondition, short_none, has_keys, update_if_not_none
 from satella.exceptions import PreconditionError
 
 
 class TestTypecheck(unittest.TestCase):
+
+    def test_update_if_not_none(self):
+        a = {}
+        update_if_not_none(a, 'k', 2)
+        self.assertEqual(a['k'], 2)
 
     def test_has_keys(self):
         p = has_keys(['a', 'b'])
