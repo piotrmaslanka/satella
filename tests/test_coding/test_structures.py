@@ -25,6 +25,9 @@ class TestMisc(unittest.TestCase):
         self.assertEqual(b.k, 3)
         self.assertEqual(b.c, 4)
 
+        self.assertIn('DictObject', str(b))
+        self.assertIn('DictObject', repr(b))
+
     def test_dictobject_setdefault(self):
         a = DictObject()
         self.assertEqual(a.setdefault('k', 2), 2)

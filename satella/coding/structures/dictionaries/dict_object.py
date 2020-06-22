@@ -21,6 +21,12 @@ class DictObject(tp.MutableMapping[str, T]):
     >>> self.assertEqual(a.test, 5)
     """
 
+    def __str__(self) -> str:
+        return 'DictObject(%s)' % (str(self.__data), )
+
+    def __repr__(self) -> str:
+        return 'DictObject(%s)' % (repr(self.__data), )
+
     def setdefault(self, k: str, default: tp.Any) -> tp.Any:
         try:
             return self.__data[k]
