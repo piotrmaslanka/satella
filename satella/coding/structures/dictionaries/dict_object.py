@@ -29,6 +29,9 @@ class DictObject(tp.MutableMapping[str, T]):
             return default
 
     def __init__(self, *args, **kwargs):
+        if len(args) == 1:
+            if isinstance(args[0], DictObject):
+                args = args[0].__data,
         self.__data = dict(*args, **kwargs)
 
     def __delitem__(self, k: str) -> None:

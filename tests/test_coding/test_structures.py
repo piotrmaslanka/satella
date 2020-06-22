@@ -17,6 +17,14 @@ logger = logging.getLogger(__name__)
 
 
 class TestMisc(unittest.TestCase):
+    def test_dictobject_dictobject(self):
+        a = DictObject(a=5, k=3)
+        b = DictObject(a)
+        b.c = 4
+        self.assertEqual(b.a, 5)
+        self.assertEqual(b.k, 3)
+        self.assertEqual(b.c, 4)
+
     def test_dictobject_setdefault(self):
         a = DictObject()
         self.assertEqual(a.setdefault('k', 2), 2)
