@@ -2,3 +2,5 @@
 
 * special-cased passing a DictObject to another DictObject
 * added str and repr to DictObject
+* added items, keys and values to DictObject
+* added __contains__ to DictObject

@@ -21,6 +21,9 @@ class DictObject(tp.MutableMapping[str, T]):
     >>> self.assertEqual(a.test, 5)
     """
 
+    def __contains__(self, item: str) -> bool:
+        return item in self.__data
+
     def __str__(self) -> str:
         return 'DictObject(%s)' % (str(self.__data), )
 
@@ -116,6 +119,15 @@ class DictObject(tp.MutableMapping[str, T]):
             return self.__data[k]
         except KeyError:
             return v
+
+    def keys(self):
+        return self.__data.keys()
+
+    def values(self):
+        return self.__data.values()
+
+    def items(self):
+        return self.__data.items()
 
 
 def apply_dict_object(v: tp.Union[tp.Any, tp.Dict[str, T]]) -> tp.Union[DictObject, tp.Any]:

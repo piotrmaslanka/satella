@@ -27,6 +27,9 @@ class TestMisc(unittest.TestCase):
 
         self.assertIn('DictObject', str(b))
         self.assertIn('DictObject', repr(b))
+        self.assertIn('a', b.keys())
+        self.assertIn(5, b.values())
+        self.assertIn(('a', 5), b.items())
 
     def test_dictobject_setdefault(self):
         a = DictObject()
@@ -35,6 +38,7 @@ class TestMisc(unittest.TestCase):
 
         self.assertIsNone(a.get('v'))
         self.assertEqual(a.get('k'), 2)
+        self.assertIn('k', a)
 
     def test_expiration_dict_manual_expiring(self):
         eed = ExpiringEntryDict(expiration_timeout=5)
