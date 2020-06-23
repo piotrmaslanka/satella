@@ -93,7 +93,7 @@ class DictObject(tp.MutableMapping[str, T]):
         Check if this dictionary conforms to particular schema.
 
         Schema is either a Descriptor, or a JSON-based schema. See satella.configuration.schema for details.
-        Schema can be passed as well using kwargs. It will be preferred to the one passed as schema.
+        Schema can be passed as well using kwargs. Note that the schema argument will be ignored if kwargs are passed.
 
         :param schema: schema to verify against
         :return: whether is conformant
