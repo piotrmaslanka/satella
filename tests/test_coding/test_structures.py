@@ -25,6 +25,8 @@ class TestMisc(unittest.TestCase):
                 self.value = 2
 
             def __call__(self, key):
+                if self.value is None:
+                    raise KeyError('no value available')
                 self.called_on[key] = time.monotonic()
                 return self.value
 
@@ -49,6 +51,15 @@ class TestMisc(unittest.TestCase):
         self.assertGreaterEqual(cg.called_on[2], now)
         del cd[2]
         self.assertEqual(len(cd), 0)
+        cg.value = None
+        self.assertRaises(KeyError, lambda: cd[2])
+        cg.value = 2
+        self.assertEqual(cd[2], 2)
+        cg.value = None
+        time.sleep(1.5)
+        self.assertEqual(cd[2], 2)
+        time.sleep(0.6)
+        self.assertRaises(KeyError, lambda: cd[2])
 
     def test_dictobject_dictobject(self):
         a = DictObject(a=5, k=3)
