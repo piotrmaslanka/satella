@@ -146,6 +146,12 @@ TwoWayDictionary
 .. autoclass:: satella.coding.structures.TwoWayDictionary
     :members:
 
+CacheDict
+=========
+
+.. autoclass:: satella.coding.structures.CacheDict
+    :members:
+
 SelfCleaningDefaultDict
 =======================
 

@@ -11,12 +11,45 @@ import mock
 from satella.coding.structures import TimeBasedHeap, Heap, typednamedtuple, \
     OmniHashableMixin, DictObject, apply_dict_object, Immutable, frozendict, SetHeap, \
     DictionaryView, HashableWrapper, TwoWayDictionary, Ranking, SortedList, SliceableDeque, \
-    DirtyDict, KeyAwareDefaultDict, Proxy, ReprableMixin, TimeBasedSetHeap, ExpiringEntryDict, SelfCleaningDefaultDict
+    DirtyDict, KeyAwareDefaultDict, Proxy, ReprableMixin, TimeBasedSetHeap, ExpiringEntryDict, SelfCleaningDefaultDict, \
+    CacheDict
 
 logger = logging.getLogger(__name__)
 
 
 class TestMisc(unittest.TestCase):
+    def test_cache_dict(self):
+        class TestCacheGetter:
+            def __init__(self):
+                self.called_on = {}
+                self.value = 2
+
+            def __call__(self, key):
+                self.called_on[key] = time.monotonic()
+                return self.value
+
+        cg = TestCacheGetter()
+        cd = CacheDict(1, 2, cg)
+        now = time.monotonic()
+        self.assertEqual(cd[2], 2)
+        self.assertGreaterEqual(cg.called_on[2], now)
+        time.sleep(0.2)
+        now = time.monotonic()
+        self.assertLessEqual(cg.called_on[2], now)
+        time.sleep(0.9)
+        now = time.monotonic()
+        self.assertEqual(cd[2], 2)
+        time.sleep(0.2)
+        self.assertGreaterEqual(cg.called_on[2], now)
+        self.assertEqual(cd[2], 2)
+        time.sleep(2.9)
+        cg.value = 3
+        now = time.monotonic()
+        self.assertEqual(cd[2], 3)
+        self.assertGreaterEqual(cg.called_on[2], now)
+        del cd[2]
+        self.assertEqual(len(cd), 0)
+
     def test_dictobject_dictobject(self):
         a = DictObject(a=5, k=3)
         b = DictObject(a)
