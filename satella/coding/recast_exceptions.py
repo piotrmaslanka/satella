@@ -196,7 +196,7 @@ def raises_exception(exc_class: tp.Union[ExcType, tp.Tuple[ExcType, ...]],
 
 
 def catch_exception(exc_class: tp.Union[ExcType, tp.Tuple[ExcType, ...]],
-                    clb: tp.Callable[[], T],
+                    clb: tp.Callable[[], tp.Optional[T]],
                     return_instead: tp.Optional[T] = None,
                     return_value_on_no_exception: bool = False) -> tp.Union[Exception, T]:
     """
