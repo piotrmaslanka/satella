@@ -12,12 +12,14 @@ Expression = tp.NewType('Expression', str)
 def _TRUE(x):
     return True
 
+
 Queue = tp.TypeVar('Queue')
 
 
 def queue_get(queue_getter: tp.Callable[[object], Queue], timeout: tp.Optional[float] = None,
               exception_empty=queue.Empty,
-              queue_get_method: tp.Callable[[Queue, tp.Optional[float]], tp.Any] = lambda x, timeout: x.get(timeout=timeout)):
+              queue_get_method: tp.Callable[[Queue, tp.Optional[float]], tp.Any] = lambda x, timeout: x.get(
+                  timeout=timeout)):
     """
     A decorator for class methods that consume from a queue.
 
@@ -67,7 +69,9 @@ def queue_get(queue_getter: tp.Callable[[object], Queue], timeout: tp.Optional[f
             except exception_empty:
                 return
             return fun(self, item)
+
         return inner
+
     return outer
 
 
@@ -103,6 +107,7 @@ def chain_functions(fun_first: tp.Callable[..., tp.Union[tp.Tuple[tp.Tuple, tp.D
     >>>     ...
     >>> v = test3(a, b, c)
     """
+
     def outer(fun_next):
         @wraps(fun_next)
         def inner(*args, **kwargs):
@@ -119,7 +124,9 @@ def chain_functions(fun_first: tp.Callable[..., tp.Union[tp.Tuple[tp.Tuple, tp.D
                 args = ret,
                 kwargs = {}
             return fun_next(*args, **kwargs)
+
         return inner
+
     return outer
 
 
@@ -170,7 +177,7 @@ def has_keys(keys: tp.List[str]):
 
 
 def short_none(clb: tp.Union[Expression, tp.Callable[[T], U]]) -> tp.Callable[
-        [tp.Optional[T]], tp.Optional[U]]:
+    [tp.Optional[T]], tp.Optional[U]]:
     """
     Accept a callable. Return a callable that executes it only if passed a no-None arg, and returns
     its result.
@@ -194,5 +201,3 @@ def short_none(clb: tp.Union[Expression, tp.Callable[[T], U]]) -> tp.Callable[
             return clb(arg)
 
     return inner
-
-

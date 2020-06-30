@@ -6,6 +6,7 @@ from .decorators import wraps
 T = tp.TypeVar('T')
 U = tp.TypeVar('U')
 
+
 # noinspection PyPep8Naming
 def _NOP(x):
     return x
@@ -33,8 +34,10 @@ def auto_adapt_to_methods(decorator):
     >>> assert Test().twice(2) == 4
     >>> assert twice(2) == 4
     """
+
     def adapt(func):
         return _MethodDecoratorAdaptor(decorator, func)
+
     return adapt
 
 

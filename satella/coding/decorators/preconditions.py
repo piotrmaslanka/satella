@@ -1,5 +1,6 @@
 import itertools
 import typing as tp
+
 from satella.exceptions import PreconditionError
 from .decorators import wraps
 
