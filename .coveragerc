@@ -2,9 +2,15 @@
 branch=1
 source=
   satella
+
 omit=
   tests/*
   .eggs/*
   setup.py
   satella/__init__.py
   satella/posix/signals.py
+
+[report]
+include=
+    satella/*
+
