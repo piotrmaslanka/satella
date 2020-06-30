@@ -18,7 +18,7 @@ Queue = tp.TypeVar('Queue')
 
 def queue_get(queue_getter: tp.Callable[[object], Queue], timeout: tp.Optional[float] = None,
               exception_empty=queue.Empty,
-              queue_get_method: tp.Callable[[Queue, tp.Optional[float]], tp.Any] = \
+              queue_get_method: tp.Callable[[Queue, tp.Optional[float]], tp.Any] =
                       lambda x, timeout: x.get(
                   timeout=timeout)):
     """
