@@ -1,11 +1,32 @@
 import unittest
 
-from satella.coding import precondition, short_none, has_keys, update_if_not_none
+from satella.coding import precondition, short_none, has_keys, update_if_not_none, postcondition
 from satella.coding.decorators import for_argument
 from satella.exceptions import PreconditionError
 
 
 class TestTypecheck(unittest.TestCase):
+
+    def test_postcondition(self):
+        @postcondition(lambda x: x)
+        def return_nothing():
+            pass
+
+        return_nothing()
+
+    def test_postcondition_2(self):
+        @postcondition('x')
+        def return_nothing():
+            pass
+
+        return_nothing()
+
+    def test_postcondition_3(self):
+        @postcondition(lambda x: False)
+        def return_nothing():
+            pass
+
+        self.assertRaises(PreconditionError, return_nothing)
 
     def test_update_if_not_none(self):
         a = {}

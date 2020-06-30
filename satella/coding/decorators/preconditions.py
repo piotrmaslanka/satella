@@ -40,7 +40,8 @@ def precondition(*t_ops: tp.Union[tp.Callable[[T], bool], Expression],
     A precondition of None will always be true.
 
     Keyword arguments are supported as well. Note that precondition for them will be checked
-    only if they are passed, so make your default arguments obey the precondition, because it won't
+    only if they are passed, so make your default arguments obey the precondition, because
+    it won't
     be checked if the default value is used.
     """
 
@@ -97,21 +98,28 @@ def precondition(*t_ops: tp.Union[tp.Callable[[T], bool], Expression],
         return lambda x: x
 
 
-def postcondition(condition: tp.Callable[[T], bool]):
+def postcondition(condition: tp.Union[tp.Callable[[T], bool], str]):
     """
-    Return a decorator, asserting that result of this function, called with provided callable, is True.
+    Return a decorator, asserting that result of this function, called with provided callable,
+    is True.
 
-    Else, the function will raise PreconditionError. Note that this is active only with __debug__, else
-    it short-circuits and returns the provided function.
+    Else, the function will raise PreconditionError. Note that this is active only with
+    __debug__, else it short-circuits and returns the provided function.
 
     :param condition: callable that accepts a single argument, the return value of the function.
+        Can be also a string, in which case it is an expression about the value x of return
     """
     if __debug__:
+        if isinstance(condition, str):
+            q = dict(globals())
+            exec('_precond = lambda x: ' + condition, q)
+            condition = q['_precond']
+
         def outer(fun):
             @wraps(fun)
             def inner(*args, **kwargs):
                 v = fun(*args, **kwargs)
-                if not condition(v):
+                if condition(v) is False:
                     raise PreconditionError('Condition not true')
                 return v
 
