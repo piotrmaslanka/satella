@@ -18,22 +18,26 @@ Queue = tp.TypeVar('Queue')
 
 def queue_get(queue_getter: tp.Callable[[object], Queue], timeout: tp.Optional[float] = None,
               exception_empty=queue.Empty,
-              queue_get_method: tp.Callable[[Queue, tp.Optional[float]], tp.Any] = lambda x, timeout: x.get(
+              queue_get_method: tp.Callable[[Queue, tp.Optional[float]], tp.Any] = \
+                      lambda x, timeout: x.get(
                   timeout=timeout)):
     """
     A decorator for class methods that consume from a queue.
 
     Timeout of None means block forever.
 
-    First attribute of the decorator-given function must be a normal instance method accepting an element
-    taken from the queue, so it must accepts two arguments - first is self, second is the element from the queue.
+    First attribute of the decorator-given function must be a normal instance method
+    accepting an element taken from the queue, so it must accepts two arguments - first is
+    self, second is the element from the queue.
 
-    :param queue_getter: a callable that will render us the queue, or a string, which will be translated
-        to a property name
-    :param timeout: a timeout to wait. If timeout happens, simple no-op will be done and None will be returned.
-    :param exception_empty: exception (or a tuple of exceptions) that are raised on queue being empty.
-    :param queue_get_method: a method to invoke on this queue. Accepts two arguments - the first is the
-        queue, the second is the timeout. It has to follow the type signature given.
+    :param queue_getter: a callable that will render us the queue, or a string, which will be
+        translated to a property name
+    :param timeout: a timeout to wait. If timeout happens, simple no-op will be done and None
+        will be returned.
+    :param exception_empty: exception (or a tuple of exceptions) that are raised on queue being
+        empty.
+    :param queue_get_method: a method to invoke on this queue. Accepts two arguments - the first
+        is the queue, the second is the timeout. It has to follow the type signature given.
 
     Use instead of:
 
@@ -158,7 +162,8 @@ def has_keys(keys: tp.List[str]):
     A decorator for asserting that a dictionary has given keys. Will raise PreconditionError if
     it doesn't.
 
-    This outputs a callable that accepts a dict and returns True if it has all the keys necessary.
+    This outputs a callable that accepts a dict and returns True if it has all the keys
+    necessary.
 
     Returns True if the dict has all necessary keys.
 
@@ -179,9 +184,8 @@ def has_keys(keys: tp.List[str]):
 def short_none(clb: tp.Union[Expression, tp.Callable[[T], U]]) -> tp.Callable[
     [tp.Optional[T]], tp.Optional[U]]:
     """
-    Accept a callable. Return a callable that executes it only if passed a no-None arg, and returns
-    its result.
-    If passed a None, return a None
+    Accept a callable. Return a callable that executes it only if passed a no-None arg,
+    and returns its result. If passed a None, return a None
 
     callable can also be a string, in this case it will be appended to lambda x: and eval'd
 

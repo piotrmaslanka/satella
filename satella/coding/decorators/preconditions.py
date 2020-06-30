@@ -81,7 +81,8 @@ def precondition(*t_ops: tp.Union[tp.Callable[[T], bool], Expression],
             for kwarg in kwargs:
                 if kwarg in kw_ops:
                     if not kw_ops[kwarg](kwargs[kwarg]):
-                        raise PreconditionError('Argument %s failed precondition check' % (kwarg,))
+                        raise PreconditionError('Argument %s failed precondition check' %
+                                                (kwarg,))
 
             with rethrow_as(TypeError, PreconditionError):
                 for arg, precond in itertools.zip_longest(args, tn_ops, fillvalue=_TRUE):
@@ -100,7 +101,8 @@ def precondition(*t_ops: tp.Union[tp.Callable[[T], bool], Expression],
 
 def postcondition(condition: tp.Union[tp.Callable[[T], bool], str]):
     """
-    Return a decorator, asserting that result of this function, called with provided callable,
+    Return a decorator, asserting that result of this function, called with provided
+    callable,
     is True.
 
     Else, the function will raise PreconditionError. Note that this is active only with

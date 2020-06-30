@@ -32,7 +32,8 @@ def split(path: str) -> tp.List[str]:
     return data
 
 
-def write_to_file(path: str, data: tp.Union[bytes, str], encoding: tp.Optional[str] = None) -> None:
+def write_to_file(path: str, data: tp.Union[bytes, str],
+                  encoding: tp.Optional[str] = None) -> None:
     """
     Write provided content as a file, applying given encoding (or data is bytes, if none given)
 
@@ -53,8 +54,8 @@ def write_to_file(path: str, data: tp.Union[bytes, str], encoding: tp.Optional[s
 
 def read_in_file(path: str, encoding: tp.Optional[str] = None) -> tp.Union[bytes, str]:
     """
-    Opens a file for reading, reads it in, converts to given encoding (or returns as bytes if not given),
-    and closes it.
+    Opens a file for reading, reads it in, converts to given encoding (or returns as bytes
+    if not given), and closes it.
     """
     if encoding is None:
         file = open(path, 'rb')
@@ -105,8 +106,9 @@ def find_files(path: str, wildcard: str = r'(.*)',
     Look at given path's files and all subdirectories and return an iterator of
     file names (paths included) that conform to given wildcard.
 
-    Note that wildcard is only applied to the file name if apply_wildcard_to_entire_path is False,
-    else the wildcard is applied to entire path (including the application of prefix_with!).
+    Note that wildcard is only applied to the file name if apply_wildcard_to_entire_path
+    is False, else the wildcard is applied to entire path (including the application of
+    prefix_with!).
 
     Files will be additionally prefixed with path, but only if prefix_with_path is True
 
@@ -125,7 +127,8 @@ def find_files(path: str, wildcard: str = r'(.*)',
     for filename in os.listdir(path):
         if scan_subdirectories and os.path.isdir(os.path.join(path, filename)):
             new_prefix = _cond_join(prefix_with, filename)
-            yield from find_files(os.path.join(path, filename), wildcard, prefix_with=new_prefix,
+            yield from find_files(os.path.join(path, filename), wildcard,
+                                  prefix_with=new_prefix,
                                   prefix_with_path=False)
         else:
             if apply_wildcard_to_entire_path:
@@ -136,7 +139,8 @@ def find_files(path: str, wildcard: str = r'(.*)',
                 yield _cond_join(prefix_with, filename)
 
 
-def write_out_file_if_different(path: str, data: tp.Union[bytes, str], encoding: tp.Optional[str] = None) -> bool:
+def write_out_file_if_different(path: str, data: tp.Union[bytes, str],
+                                encoding: tp.Optional[str] = None) -> bool:
     """
     Syntactic sugar for
 
