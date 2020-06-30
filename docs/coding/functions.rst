@@ -105,7 +105,7 @@ that accept a None value as well.
 Example:
 
 >>> @precondition(short_none('x == 2'))
->>> def expect_two(x=None):
+>>> def expect_two(x):
 >>>     ...
 >>> expect_two(None)
 >>> expect_two(2)

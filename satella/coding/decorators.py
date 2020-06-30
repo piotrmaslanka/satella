@@ -245,7 +245,7 @@ def has_keys(keys: tp.List[str]):
 
 
 def short_none(clb: tp.Union[Expression, tp.Callable[[T], U]]) -> tp.Callable[
-    [tp.Optional[T]], tp.Optional[U]]:
+        [tp.Optional[T]], tp.Optional[U]]:
     """
     Accept a callable. Return a callable that executes it only if passed a no-None arg, and returns
     its result.
@@ -367,7 +367,7 @@ def precondition(*t_ops: tp.Union[tp.Callable[[T], bool], Expression],
 
             with rethrow_as(TypeError, PreconditionError):
                 for arg, precond in itertools.zip_longest(args, tn_ops, fillvalue=_TRUE):
-                    if not precond(arg):
+                    if precond(arg) is False:
                         raise PreconditionError(
                             'Argument of value %s failed precondition check' % (arg,))
             return fun(*args, **kwargs)

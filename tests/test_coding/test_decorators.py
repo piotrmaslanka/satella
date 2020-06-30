@@ -4,13 +4,21 @@ import unittest
 from socket import socket
 
 from satella.coding import attach_arguments, wraps, chain_functions, auto_adapt_to_methods, postcondition, \
-    log_exceptions, queue_get
+    log_exceptions, queue_get, precondition, short_none
 from satella.exceptions import PreconditionError
 
 logger = logging.getLogger(__name__)
 
 
 class TestDecorators(unittest.TestCase):
+
+    def test_precondition_none(self):
+        @precondition(short_none('x == 2'))
+        def x(y):
+            return y
+        x(2)
+        x(None)
+        self.assertRaises(PreconditionError, lambda: x(3))
 
     def test_queue_get(self):
         class Queue:
