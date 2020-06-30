@@ -3,8 +3,9 @@ import queue
 import unittest
 from socket import socket
 
-from satella.coding import attach_arguments, wraps, chain_functions, auto_adapt_to_methods, postcondition, \
+from satella.coding import wraps, chain_functions, postcondition, \
     log_exceptions, queue_get, precondition, short_none
+from satella.coding.decorators import auto_adapt_to_methods, attach_arguments
 from satella.exceptions import PreconditionError
 
 logger = logging.getLogger(__name__)

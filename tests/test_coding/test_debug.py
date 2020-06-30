@@ -1,6 +1,7 @@
 import unittest
 
-from satella.coding import for_argument, precondition, short_none, has_keys, update_if_not_none
+from satella.coding import precondition, short_none, has_keys, update_if_not_none
+from satella.coding.decorators import for_argument
 from satella.exceptions import PreconditionError
 
 
