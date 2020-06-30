@@ -33,17 +33,22 @@ class CacheDict(tp.Mapping[K, V]):
         If value_getter raises KeyError, then given entry will be evicted from the cache
     :param value_getter_executor: an executor to execute the value_getter function in background.
         If None is passed, a ThreadPoolExecutor will be used with max_workers of 4.
+    :param cache_failures_interval: if any other than None is defined, this is the timeout
+        for which failed lookups will be cached. By default they won't be cached at all.
+    :param time_getter: a routine used to get current time in seconds
     """
 
     def __len__(self) -> int:
         return len(self.data)
 
-    def __iter__(self):
+    def __iter__(self) -> tp.Iterator[K]:
         return iter(self.data)
 
     def __init__(self, stale_interval: float, expiration_interval: float,
                  value_getter: tp.Callable[[K], V],
-                 value_getter_executor: tp.Optional[Executor] = None):
+                 value_getter_executor: tp.Optional[Executor] = None,
+                 cache_failures_interval: tp.Optional[float] = None,
+                 time_getter: tp.Callable[[], float] = time.monotonic):
         assert stale_interval <= expiration_interval, 'Stale interval may not be larger than expiration interval!'
         self.stale_interval = stale_interval
         self.expiration_interval = expiration_interval
@@ -53,7 +58,10 @@ class CacheDict(tp.Mapping[K, V]):
         self.value_getter_executor = value_getter_executor
         self.data = {}              # type: tp.Dict[K, V]
         self.timestamp_data = {}    # type: tp.Dict[K, float]
-        self.missed_cache = {}      # type: tp.Dict[K, bool]
+        self.cache_missed = set()      # type: tp.Set[K]
+        self.cache_failures = cache_failures_interval is not None
+        self.cache_failures_interval = cache_failures_interval
+        self.time_getter = time_getter
 
     def get_value_block(self, key: K) -> V:
         """
@@ -64,9 +72,18 @@ class CacheDict(tp.Mapping[K, V]):
             value = future.result()
         except KeyError:
             self.try_delete(key)
+            self._on_failure(key)
             raise
         self[key] = value
         return value
+
+    def _on_failure(self, key: K) -> None:
+        """Called internally when a KeyError occurs"""
+        if self.cache_failures:
+            with silence_excs(KeyError):
+                del self.data[key]
+            self.cache_missed.add(key)
+            self.timestamp_data[key] = self.time_getter()
 
     def schedule_a_fetch(self, key: K) -> None:
         """
@@ -79,7 +96,9 @@ class CacheDict(tp.Mapping[K, V]):
                 result = fut.result()
             except KeyError:
                 self.try_delete(key)
-            self[key] = result
+                self._on_failure(key)
+            else:
+                self[key] = result
 
         future.add_done_callback(on_done_callback)
 
@@ -96,27 +115,38 @@ class CacheDict(tp.Mapping[K, V]):
         """
         del self[key]
 
-    def __getitem__(self, item: K) -> V:
-        if item not in self.data:
-            return self.get_value_block(item)
+    def __getitem__(self, key: K) -> V:
+        if key not in self.data and key not in self.cache_missed:
+            return self.get_value_block(key)
 
-        timestamp = self.timestamp_data[item]
+        timestamp = self.timestamp_data[key]
         now = time.monotonic()
-        if now - timestamp > self.expiration_interval:
-            return self.get_value_block(item)
-        elif now - timestamp > self.stale_interval:
-            self.schedule_a_fetch(item)
-            return self.data[item]
-        else:
-            return self.data[item]
 
-    def __delitem__(self, key):
+        if key in self.cache_missed:
+            if now - timestamp > self.cache_failures_interval:
+                return self.get_value_block(key)
+            else:
+                raise KeyError('Cached a miss')
+
+        if now - timestamp > self.expiration_interval:
+            return self.get_value_block(key)
+        elif now - timestamp > self.stale_interval:
+            self.schedule_a_fetch(key)
+            return self.data[key]
+        else:
+            return self.data[key]
+
+    def __delitem__(self, key: K) -> None:
         del self.data[key]
         del self.timestamp_data[key]
+        with silence_excs(KeyError):
+            self.cache_missed.remove(key)
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key: K, value: V) -> None:
         """
         Store a value with current timestamp
         """
         self.data[key] = value
-        self.timestamp_data[key] = time.monotonic()
+        self.timestamp_data[key] = self.time_getter()
+        with silence_excs(KeyError):
+            self.cache_missed.remove(key)

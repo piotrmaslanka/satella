@@ -61,6 +61,13 @@ class TestMisc(unittest.TestCase):
         time.sleep(0.6)
         self.assertRaises(KeyError, lambda: cd[2])
 
+        cd = CacheDict(1, 2, cg, cache_failures_interval=1)
+        self.assertRaises(KeyError, lambda: cd[2])
+        cg.value = 2
+        self.assertRaises(KeyError, lambda: cd[2])
+        time.sleep(1.1)
+        self.assertEqual(cd[2], 2)
+
     def test_dictobject_dictobject(self):
         a = DictObject(a=5, k=3)
         b = DictObject(a)
