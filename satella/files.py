@@ -148,8 +148,12 @@ def write_out_file_if_different(path: str, data: tp.Union[bytes, str], encoding:
 
     :returns: if write has happened
     """
-    if read_in_file(path, encoding) != data:
+    try:
+        if read_in_file(path, encoding) != data:
+            write_to_file(path, data, encoding)
+            return True
+        else:
+            return False
+    except OSError:
         write_to_file(path, data, encoding)
         return True
-    else:
-        return False
