@@ -140,11 +140,15 @@ def write_out_file_if_different(path: str, data: tp.Union[bytes, str], encoding:
     """
     Syntactic sugar for
 
-    >>> if read_in_file(path, encoding) != data:
+    >>> try:
+    >>>     if read_in_file(path, encoding) != data:
+    >>>         write_to_file(path, data, encoding)
+    >>>         return True
+    >>>     else:
+    >>>         return False
+    >>> except OSError:
     >>>     write_to_file(path, data, encoding)
     >>>     return True
-    >>> else:
-    >>>     return False
 
     :returns: if write has happened
     """
