@@ -3,7 +3,8 @@ from os.path import join
 import tempfile
 import unittest
 import shutil
-from satella.files import read_re_sub_and_write, find_files, split, read_in_file, write_to_file
+from satella.files import read_re_sub_and_write, find_files, split, read_in_file, write_to_file, \
+    write_out_file_if_different
 
 
 def putfile(path: str) -> None:
@@ -12,6 +13,13 @@ def putfile(path: str) -> None:
 
 
 class TestFiles(unittest.TestCase):
+
+    def test_write_out_file_if_different(self):
+        try:
+            self.assertTrue(write_out_file_if_different('test', 'test', 'UTF-8'))
+            self.assertFalse(write_out_file_if_different('test', 'test', 'UTF-8'))
+        finally:
+            os.unlink('test')
 
     def test_read_in_and_write_to(self):
         data = 'żażółć gęślą jaźń'
