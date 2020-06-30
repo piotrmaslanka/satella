@@ -9,7 +9,7 @@ before_script:
   - chmod +x ./cc-test-reporter
   - ./cc-test-reporter before-build
   - pip install -r requirements.txt
-  - pip install coverage nose2 requests
+  - pip install coverage nose2
 jobs:
   include:
     - stage: test

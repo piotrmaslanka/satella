@@ -37,6 +37,10 @@ Then there are abstract sources of configuration.
 
 In order to actually load the configuration, use the method ``provide()``.
 
+Note that `FileSource` will try parsing the file with any modules, available, so if you
+want parsing for **yaml** and **toml**, you better install `pyyaml` and `toml` respectively.
+
+Note that JSON will be parsed using `ujson` if the module is available.
 
 JSON schema
 -----------

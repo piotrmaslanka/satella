@@ -1,6 +1,5 @@
 import binascii
 import codecs
-import json
 import typing as tb
 
 from satella.coding.recast_exceptions import rethrow_as
@@ -60,14 +59,26 @@ class FormatSource(BaseSource):
             else:
                 return ret_val
 
+try:
+    import ujson
 
-@register_format_source
-class JSONSource(FormatSource):
-    """
-    Loads JSON strings
-    """
-    TRANSFORM = json.loads
-    EXTRA_EXCEPTIONS = [json.JSONDecodeError]
+    @register_format_source
+    class JSONSource(FormatSource):
+        """
+        Loads JSON strings
+        """
+        TRANSFORM = ujson.loads
+        EXTRA_EXCEPTIONS = [ValueError]
+except ImportError:
+    import json
+
+    @register_format_source
+    class JSONSource(FormatSource):
+        """
+        Loads JSON strings
+        """
+        TRANSFORM = json.loads
+        EXTRA_EXCEPTIONS = [json.JSONDecodeError]
 
 
 try:

@@ -1,3 +1,5 @@
 psutil
 pyyaml
 toml
+requests
+ujson
