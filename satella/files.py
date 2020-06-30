@@ -150,3 +150,6 @@ def write_out_file_if_different(path: str, data: tp.Union[bytes, str], encoding:
     """
     if read_in_file(path, encoding) != data:
         write_to_file(path, data, encoding)
+        return True
+    else:
+        return False
