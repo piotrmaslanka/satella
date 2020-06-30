@@ -3,7 +3,8 @@ import re
 import os
 import codecs
 
-__all__ = ['read_re_sub_and_write', 'find_files', 'split', 'read_in_file', 'write_to_file']
+__all__ = ['read_re_sub_and_write', 'find_files', 'split', 'read_in_file', 'write_to_file',
+           'write_out_file_if_different']
 
 SEPARATORS = {'\\', '/'}
 SEPARATORS.add(os.path.sep)
@@ -133,3 +134,19 @@ def find_files(path: str, wildcard: str = r'(.*)',
                 fn_path = filename
             if re.match(wildcard, fn_path):
                 yield _cond_join(prefix_with, filename)
+
+
+def write_out_file_if_different(path: str, data: tp.Union[bytes, str], encoding: tp.Optional[str] = None) -> bool:
+    """
+    Syntactic sugar for
+
+    >>> if read_in_file(path, encoding) != data:
+    >>>     write_to_file(path, data, encoding)
+    >>>     return True
+    >>> else:
+    >>>     return False
+
+    :returns: if write has happened
+    """
+    if read_in_file(path, encoding) != data:
+        write_to_file(path, data, encoding)

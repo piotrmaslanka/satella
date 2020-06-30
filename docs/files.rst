@@ -25,3 +25,8 @@ write_to_file
 -------------
 
 .. autofunction:: satella.files.write_to_file
+
+write_out_file_if_different
+---------------------------
+
+.. autofunction:: satella.files.write_out_file_if_different
