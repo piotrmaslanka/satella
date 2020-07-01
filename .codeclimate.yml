@@ -20,10 +20,10 @@ ratings:
 checks:
   argument-count:
     config:
-      threshold: 10
+      threshold: 15
   method-complexity:
     config:
-      threshold: 40
+      threshold: 50
   method-count:
     config:
       threshold: 70
