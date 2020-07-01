@@ -16,7 +16,8 @@ def _adjust(q):
 def typednamedtuple(cls_name: str, *arg_name_type: type) -> tp.Type[tp.Tuple]:
     """
     Returns a new subclass of tuple with named fields.
-    Fields will be coerced to type passed in the pair.
+    Fields will be coerced to type passed in the pair, if they are not already
+    of given type.
 
     Parameters are tuples of (field name, class/constructor as callable/1)
 
@@ -44,6 +45,7 @@ def typednamedtuple(cls_name: str, *arg_name_type: type) -> tp.Type[tp.Tuple]:
         __name__ = MyCls.__name__
 
         def __new__(cls, *args, **kwargs):
+
             nargs = list(map(_adjust, zip(args, typeops[:len(args)])))
 
             for next_field_name in fieldnames[len(nargs):]:

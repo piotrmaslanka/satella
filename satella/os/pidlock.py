@@ -37,7 +37,7 @@ class PIDFileLock:
         self.path = os.path.join(base_dir, pid_file)
         self.file_no = None
 
-    def release(self):
+    def release(self) -> None:
         """
         Free the lock
         """
@@ -45,7 +45,7 @@ class PIDFileLock:
             os.unlink(self.path)
             self.file_no = None
 
-    def acquire(self):
+    def acquire(self) -> None:
         """
         Acquire the PID lock
 
@@ -74,7 +74,7 @@ class PIDFileLock:
         fd.write(str(os.getpid()) + '\n')
         fd.close()
 
-    def __enter__(self):
+    def __enter__(self) -> None:
         self.acquire()
 
     def __exit__(self, exc_type, exc_val, exc_tb):
