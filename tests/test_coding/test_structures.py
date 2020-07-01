@@ -18,6 +18,18 @@ logger = logging.getLogger(__name__)
 
 
 class TestMisc(unittest.TestCase):
+
+    def test_proxy(self):
+        a = Proxy(2)
+        self.assertEqual(int(a), 2)
+        self.assertEqual(a, 2)
+        self.assertEqual(a+2, 4)
+        self.assertEqual(a*2, 4)
+        self.assertEqual(a-2, 0)
+
+        b = Proxy(list)
+        self.assertEqual(b((1, 2, 3)), [1, 2, 3])
+
     def test_cache_dict(self):
         class TestCacheGetter:
             def __init__(self):
