@@ -9,7 +9,8 @@ __all__ = ['call_and_return_stdout']
 
 def read_nowait(process: subprocess.Popen, output_list: tp.List[str]) -> None:
     """
-    To be launched as a daemon thread. This reads stdout and appends it's entries to a list
+    To be launched as a daemon thread. This reads stdout and appends it's entries to a list.
+    This should finish as soon as the process exits or closes it's stdout.
     """
     try:
         while True:
@@ -56,7 +57,10 @@ def call_and_return_stdout(args: tp.Union[str, tp.List[str]],
     stdout_list = []
 
     proc = subprocess.Popen(args, **kwargs)
-    reader_thread = threading.Thread(target=read_nowait, args=(proc, stdout_list), daemon=True)
+    reader_thread = threading.Thread(name='stdout reader',
+                                     target=read_nowait,
+                                     args=(proc, stdout_list),
+                                     daemon=True)
     reader_thread.start()
 
     try:
@@ -65,7 +69,8 @@ def call_and_return_stdout(args: tp.Union[str, tp.List[str]],
         proc.kill()
         proc.wait()
         raise TimeoutError('Process did not complete within %s seconds' % (timeout, ))
-    reader_thread.join()
+    finally:
+        reader_thread.join()
 
     if encoding is None:
         result = b''.join(stdout_list)

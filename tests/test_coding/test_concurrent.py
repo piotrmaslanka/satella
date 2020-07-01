@@ -33,6 +33,29 @@ class TestConcurrent(unittest.TestCase):
         self.assertEqual(a, 3)
 
         self.assertIsInstance(a + 2, int)
+        self.assertTrue(a > 1)
+        self.assertFalse(a < 4)
+        self.assertTrue(a >= 1)
+        self.assertFalse(a <= 4)
+        self.assertEqual(a+1, 4)
+        self.assertEqual(a-1, 2)
+        self.assertEqual(a*1, 3)
+        self.assertEqual(a/1, 3.0)
+        self.assertEqual(a//1, 3)
+        a *= 1
+        self.assertEqual(a, 3)
+        a /= 1
+        self.assertEqual(a, 3.0)
+        a //= 1
+        self.assertEqual(a, 3)
+        self.assertEqual(a**2, 9)
+        a **= 2
+        self.assertEqual(a, 9)
+        self.assertTrue(bool(a))
+        self.assertEqual(int(a), 9)
+        self.assertEqual(float(a), 9.0)
+        self.assertEqual(-a, -9)
+        self.assertEqual(abs(a), 9)
 
     def test_locked_structure(self):
         class MyLockedStructure:

@@ -73,6 +73,15 @@ class AtomicNumber(Monitor):
         return self
 
     @Monitor.synchronized
+    def __pow__(self, power, modulo=None):
+        return self.value.__pow__(power, modulo)
+
+    @Monitor.synchronized
+    def __ipow__(self, other):
+        self.value **= other
+        return self
+
+    @Monitor.synchronized
     def __add__(self, other: Number) -> Number:
         return self.value + other
 
