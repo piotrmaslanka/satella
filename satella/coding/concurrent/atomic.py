@@ -35,13 +35,19 @@ class AtomicNumber(Monitor):
         self.value = v
         self.condition = Condition()
 
-    def wait(self, timeout: tp.Optional[float] = None):
+    def wait(self, timeout: tp.Optional[float] = None, throw_exception: bool = True):
         """
         Block until the atomic number changes it's value.
 
+        :param timeout: maximum time to wait. None means wait indefinitely
+        :param throw_exception: whether to throw WouldWaitMore on timeout
         :raises WouldWaitMore: the value hasn't changed within the timeout
         """
-        self.condition.wait(timeout)
+        try:
+            self.condition.wait(timeout)
+        except WouldWaitMore:
+            if throw_exception:
+                raise
 
     def __repr__(self) -> str:
         return str(self)
@@ -172,7 +178,7 @@ class AtomicNumber(Monitor):
                     time_remaining = timeout - measurement()
                     if self == v:
                         break
-                    self.wait(time_remaining)
+                    self.wait(time_remaining, throw_exception=False)
 
                 with Monitor.acquire(self):
                     if self.value != v:
