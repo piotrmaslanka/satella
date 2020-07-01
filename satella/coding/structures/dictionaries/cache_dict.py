@@ -116,6 +116,13 @@ class CacheDict(tp.Mapping[K, V]):
         """
         del self[key]
 
+    def _on_cache_miss(self, key: K, timestamp: float, now: float) -> V:
+        if key in self.cache_missed:
+            if now - timestamp > self.cache_failures_interval:
+                return self.get_value_block(key)
+            else:
+                raise KeyError('Cached a miss')
+
     def __getitem__(self, key: K) -> V:
         if key not in self.data and key not in self.cache_missed:
             return self.get_value_block(key)
@@ -124,11 +131,11 @@ class CacheDict(tp.Mapping[K, V]):
         now = time.monotonic()
 
         if key in self.cache_missed:
-            if now - timestamp > self.cache_failures_interval:
-                return self.get_value_block(key)
-            else:
-                raise KeyError('Cached a miss')
+            return self._on_cache_miss(key, timestamp, now)
+        else:
+            return self._on_cache_hit(key, timestamp, now)
 
+    def _on_cache_hit(self, key: K, timestamp: float, now: float) -> V:
         if now - timestamp > self.expiration_interval:
             return self.get_value_block(key)
         elif now - timestamp > self.stale_interval:
