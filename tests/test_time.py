@@ -25,6 +25,15 @@ class TestTime(unittest.TestCase):
         finally:
             os.wait()
 
+        multiprocessing.Process(target=runner).start()
+
+        try:
+            with measure() as measurement:
+                sleep(3, True)
+            self.assertLessEqual(measurement(), 3)
+        finally:
+            os.wait()
+
     def test_times(self):
         self.assertIsInstance(time_as_int(), int)
         self.assertIsInstance(time_ms(), int)
