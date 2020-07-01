@@ -13,6 +13,13 @@ before_script:
 jobs:
   include:
     - stage: test
+      python: "3.4"
+      script:
+        - coverage run -m nose2 -v
+      after_script:
+        - coverage xml
+        - ./cc-test-reporter after-build -t coverage.py --exit-code $TRAVIS_TEST_RESULT
+    - stage: test
       python: "3.5"
       script:
         - coverage run -m nose2 -v
