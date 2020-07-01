@@ -56,7 +56,9 @@ class TestMisc(unittest.TestCase):
         a = Proxy(2)
         self.assertEqual(a ** 2, 4)
         a **= 2
-        self.assertEqual(a, 2)
+        self.assertEqual(a, 4)
+        self.assertEqual(-a, 4)
+        self.assertEqual(+a, 4)
 
         b = Proxy(list)
         self.assertEqual(b((1, 2, 3)), [1, 2, 3])
