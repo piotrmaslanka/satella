@@ -15,7 +15,6 @@ jobs:
     - stage: test
       python: "3.5"
       script:
-        - bash tests/test_os/test_hang_until_sig.sh
         - coverage run -m nose2 -v
       after_script:
         - coverage xml
@@ -23,7 +22,6 @@ jobs:
     - stage: test
       python: "3.6"
       script:
-        - bash tests/test_os/test_hang_until_sig.sh
         - coverage run -m nose2 -v
       after_script:
         - coverage xml
@@ -31,7 +29,6 @@ jobs:
     - stage: test
       python: "3.7"
       script:
-        - bash tests/test_os/test_hang_until_sig.sh
         - coverage run -m nose2 -v
       after_script:
         - coverage xml
@@ -39,7 +36,6 @@ jobs:
     - stage: test
       python: "3.8"
       script:
-        - bash tests/test_os/test_hang_until_sig.sh
         - coverage run -m nose2 -v
       after_script:
         - coverage xml
@@ -47,7 +43,6 @@ jobs:
     - stage: test
       python: "nightly"
       script:
-        - bash tests/test_os/test_hang_until_sig.sh
         - coverage run -m nose2 -v
       after_script:
         - coverage xml
@@ -55,7 +50,6 @@ jobs:
     - stage: test
       python: "pypy3.5"
       script:
-        - bash tests/test_os/test_hang_until_sig.sh
         - coverage run -m nose2 -v
       after_script:
         - coverage xml
