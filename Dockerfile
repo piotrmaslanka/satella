@@ -9,4 +9,4 @@ ADD tests /app/tests
 
 WORKDIR /app
 
-CMD ["coverage", "run", "-m", "nose2", "-vv"]
+CMD ["coverage", "run", "--multiprocessing", "-m", "nose2", "-vv"]
