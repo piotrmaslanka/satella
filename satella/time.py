@@ -3,9 +3,35 @@ import inspect
 import time
 import typing as tp
 from concurrent.futures import Future
-from functools import wraps
+from satella.coding.decorators import wraps
 
-__all__ = ['measure', 'time_as_int', 'time_ms']
+__all__ = ['measure', 'time_as_int', 'time_ms', 'sleep']
+
+
+def sleep(x: float, abort_on_interrupt: bool = False) -> bool:
+    """
+    Sleep for given interval.
+
+    This won't be interrupted by KeyboardInterrupted, and always will sleep for given time interval.
+    This will return at once if x is negative
+
+    :param x: the interval to wait
+    :param abort_on_interrupt: whether to abort at once when KeyboardInterrupt is seen
+    :returns: whether the function has completed its sleep naturally. False is seen on
+        aborts thanks to KeyboardInterrupt only if abort_on_interrupt is True
+    """
+    if x < 0:
+        return
+
+    with measure() as measurement:
+        while measurement() < x:
+            try:
+                time.sleep(x - measurement())
+            except KeyboardInterrupt:
+                if abort_on_interrupt:
+                    return False
+                pass
+    return True
 
 
 def time_as_int() -> int:

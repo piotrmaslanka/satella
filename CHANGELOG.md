@@ -5,3 +5,5 @@
     within given timeout
 * added power support to `AtomicNumber`
 * slight refactor in `AtomicNumber`
+* removed `end_on_keyboard_interrupt` from `hang_until_sig`
+* unit test for `hang_until_sig` at last

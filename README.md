@@ -34,3 +34,9 @@ is available for the brave souls that do decide to use this library.
 
 See [LICENSE](LICENSE) for text of the license. This library may contain
 code taken from elsewhere on the internets, so this is copyright (c) respective authors.
+
+# Running unit tests
+
+Just build and run the attached 
+[Dockerfile](Dockerfile). 
+These tests run on Python 3.8
