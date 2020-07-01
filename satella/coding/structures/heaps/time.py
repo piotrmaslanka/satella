@@ -2,8 +2,12 @@ import heapq
 import time
 import typing as tp
 
-from .base import Heap
 from satella.coding.recast_exceptions import rethrow_as
+
+from .base import Heap
+
+Number = tp.Union[int, float]
+T = tp.TypeVar('T')
 
 
 class TimeBasedHeap(Heap):
