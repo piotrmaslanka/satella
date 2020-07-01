@@ -15,42 +15,42 @@ jobs:
     - stage: test
       python: "3.5"
       script:
-        - coverage run --multiprocessing -m nose2 -v
+        - coverage run -m nose2 -v
       after_script:
         - coverage xml
         - ./cc-test-reporter after-build -t coverage.py --exit-code $TRAVIS_TEST_RESULT
     - stage: test
       python: "3.6"
       script:
-        - coverage run --multiprocessing -m nose2 -v
+        - coverage run -m nose2 -v
       after_script:
         - coverage xml
         - ./cc-test-reporter after-build -t coverage.py --exit-code $TRAVIS_TEST_RESULT
     - stage: test
       python: "3.7"
       script:
-        - coverage run --multiprocessing -m nose2 -v
+        - coverage run -m nose2 -v
       after_script:
         - coverage xml
         - ./cc-test-reporter after-build -t coverage.py --exit-code $TRAVIS_TEST_RESULT
     - stage: test
       python: "3.8"
       script:
-        - coverage run --multiprocessing -m nose2 -v
+        - coverage run -m nose2 -v
       after_script:
         - coverage xml
         - ./cc-test-reporter after-build -t coverage.py --exit-code $TRAVIS_TEST_RESULT
     - stage: test
       python: "nightly"
       script:
-        - coverage run --multiprocessing -m nose2 -v
+        - coverage run -m nose2 -v
       after_script:
         - coverage xml
         - ./cc-test-reporter after-build -t coverage.py --exit-code $TRAVIS_TEST_RESULT
     - stage: test
       python: "pypy3.5"
       script:
-        - coverage run --multiprocessing -m nose2 -v
+        - coverage run -m nose2 -v
       after_script:
         - coverage xml
         - ./cc-test-reporter after-build -t coverage.py --exit-code $TRAVIS_TEST_RESULT
