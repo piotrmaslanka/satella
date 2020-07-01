@@ -38,8 +38,10 @@ class log_exceptions:
     :param severity: a severity level
     :param format_string: a format string with fields:
         - e      : the exception instance itself
-        - args   : positional arguments with which the function was called, unavailable if context manager
-        - kwargs : keyword arguments with which the function was called, unavailable if context manager
+        - args   : positional arguments with which the function was called, unavailable if context
+                   manager
+        - kwargs : keyword arguments with which the function was called, unavailable if context
+                   manager
         You can specify additional fields providing the locals_ argument
         Example: "{exc_type} occurred with message {exc_val} with traceback {exc_tb}"
     :param locals_: local variables to add to the format string. args and kwargs will be overwritten

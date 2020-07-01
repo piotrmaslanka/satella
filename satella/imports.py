@@ -39,12 +39,12 @@ def import_from(path: tp.List[str], package_prefix: str, all_: tp.List[str],
     :param package_prefix: package prefix to import from. Use __name__
     :param all_: module's __all__ to append to
     :param recursive: whether to import packages as well
-    :param fail_on_attributerror: whether to fail if a module reports something in their __all__ that
-        is physically not there (ie. getattr() raised AttributeError
+    :param fail_on_attributerror: whether to fail if a module reports something in their __all__
+        that is physically not there (ie. getattr() raised AttributeError
     :param locals: module's locals, obtain them by calling locals() in importing module's context
     :param create_all: whether to create artificial __all__'s for modules that don't have them
-    :param skip_single_underscores: whether to refrain from importing things that are preceded with a single underscore.
-        Pertains to modules, as well as items
+    :param skip_single_underscores: whether to refrain from importing things that are preceded with
+        a single underscore. Pertains to modules, as well as items
     :param skip_not_having_all: skip module's not having an __all__ entry
     :raise AttributeError: module's __all__ contained entry that was not in this module
     """

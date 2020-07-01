@@ -8,7 +8,8 @@ ITER_ITEMS = 2
 
 class DictDeleter:
     """
-    Having problems deleting entries from your dict while iterating on them? No problem. Just swap the following:
+    Having problems deleting entries from your dict while iterating on them? No problem. Just swap
+    the following:
 
     >>> keys_to_delete = []
     >>> for key, value in my_dict.items():
@@ -24,13 +25,14 @@ class DictDeleter:
     >>>         if value.should_delete():
     >>>             ld.delete()
 
-    Note that a single DictDeleter running from a single context must be iterated on by only a single
-    Thread as it keeps the state of iterator in itself, to prevent allocating new objects and slowing
-    things down too much.
+    Note that a single DictDeleter running from a single context must be iterated on by only a
+    single Thread as it keeps the state of iterator in itself, to prevent allocating new objects
+    and slowing things down too much.
 
     This allocates only a single object per a call to delete().
     """
-    __slots__ = ('dict_to_process', 'current_iterator', 'keys_to_delete', 'iter_mode', 'current_key')
+    __slots__ = ('dict_to_process', 'current_iterator', 'keys_to_delete', 'iter_mode',
+                 'current_key')
 
     def __init__(self, dict_to_process: collections.abc.MutableMapping):
         self.dict_to_process = dict_to_process
@@ -77,7 +79,8 @@ class DictDeleter:
 
 class ListDeleter:
     """
-    Having problems deleting entries from your list while iterating on them? No problem. Just swap the following:
+    Having problems deleting entries from your list while iterating on them? No problem. Just swap
+    the following:
 
     >>> entries_to_delete = []
     >>> for entry in my_list:
@@ -93,9 +96,9 @@ class ListDeleter:
     >>>         if entry.should_delete():
     >>>             ld.delete()
 
-    Note that a single ListDeleter running from a single context must be iterated on by only a single
-    Thread as it keeps the state of iterator in itself, to prevent allocating new objects and slowing
-    things down too much.
+    Note that a single ListDeleter running from a single context must be iterated on by only a
+    single Thread as it keeps the state of iterator in itself, to prevent allocating new objects
+    and slowing things down too much.
 
     This allocates only a single object per a call to delete().
 

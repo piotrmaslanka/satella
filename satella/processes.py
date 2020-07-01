@@ -46,10 +46,11 @@ def call_and_return_stdout(args: tp.Union[str, tp.List[str]],
     :param args: arguments to run the program with. Can be either a string or a list of strings.
     :param timeout: amount of seconds to wait for the process result. If process does not complete
         within this time, it will be sent a SIGKILL
-    :param encoding: encoding with which to decode stdout. If none is passed, it will be returned as a bytes object
-    :param expected_return_code: an expected return code of this process. 0 is the default. If process
-        returns anything else, ProcessFailed will be raise. If left default (None) return code won't be checked
-        at all
+    :param encoding: encoding with which to decode stdout. If none is passed, it will be returned as
+        a bytes object
+    :param expected_return_code: an expected return code of this process. 0 is the default. If
+        process returns anything else, ProcessFailed will be raise. If left default (None) return
+        code won't be checked at all
     :raises ProcessFailed: process' result code was different from the requested
     """
     kwargs['stdout'] = subprocess.PIPE

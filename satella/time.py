@@ -69,7 +69,8 @@ class measure:
     >>> def measuring(measurement_object: measure, *args, **kwargs):
     >>>     ...
 
-    This will also correctly work on methods, correctly inserting the measurement object after self/cls:
+    This will also correctly work on methods, correctly inserting the measurement object after
+    self/cls:
 
     >>> class Test:
     >>>     @measure()
@@ -91,8 +92,8 @@ class measure:
 
     Note that if you're using the decorator form, this object will be first copied and then
     passed to the function/future. This is to prevent undefined behaviour during multithreading.
-    Also, the timer that you pass to this function will be started/not started, depending on what you
-    set earlier. .reset() will be called on a copy of this object.
+    Also, the timer that you pass to this function will be started/not started, depending on what
+    you set earlier. .reset() will be called on a copy of this object.
 
     :param stop_on_stop: stop elapsing time upon calling .stop()/exiting the context manager.
         If this is set to False then .start() and .stop() won't work and calling them will raise a
