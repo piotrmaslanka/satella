@@ -3,7 +3,7 @@ import inspect
 import time
 import typing as tp
 from concurrent.futures import Future
-from satella.coding.decorators import wraps
+from functools import wraps     # import from functools to prevent circular import exception
 
 __all__ = ['measure', 'time_as_int', 'time_ms', 'sleep']
 
