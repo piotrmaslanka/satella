@@ -18,3 +18,13 @@ exclude_paths:
 ratings:
   paths:
     - satella/**
+checks:
+  argument-count:
+    config:
+      threshold: 10
+  method-complexity:
+    config:
+      threshold: 15
+  method-count:
+    config:
+      threshold: 70
