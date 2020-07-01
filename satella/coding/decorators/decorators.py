@@ -79,7 +79,8 @@ def queue_get(queue_getter: tp.Callable[[object], Queue], timeout: tp.Optional[f
     return outer
 
 
-# taken from https://stackoverflow.com/questions/1288498/using-the-same-decorator-with-arguments-with-functions-and-methods
+# taken from https://stackoverflow.com/questions/1288498/using-the-same-decorator-with-arguments-wi\
+# th-functions-and-methods
 def chain_functions(fun_first: tp.Callable[..., tp.Union[tp.Tuple[tp.Tuple, tp.Dict],
                                                          tp.Dict, tp.Tuple]]) -> tp.Callable:
     """

@@ -18,10 +18,10 @@ class LockedStructure(Proxy, tp.Generic[T]):
     >>> locked_dict = LockedStructure(dict)
     >>> with locked_dict:
     >>>     locked_dict[5] = 2
-    
+
     Also, please note that operations such as addition will strip this object of being a locked
     structure, ie. they will return object that participated in locked structure plus some other.
-    
+
     Note that in-place operations return the locked structure.
     """
     __slots__ = ('__lock',)
