@@ -6,11 +6,22 @@ import time
 import unittest
 
 from satella.coding.concurrent import TerminableThread, CallableGroup, Condition, MonitorList, \
-    LockedStructure, AtomicNumber
+    LockedStructure, AtomicNumber, Monitor
 from satella.exceptions import WouldWaitMore
 
 
 class TestConcurrent(unittest.TestCase):
+
+    def test_atomic_number_timeout(self):
+        a = AtomicNumber(2)
+
+        def process_atomic_number():
+            with Monitor.acquire(a):
+                time.sleep(5)
+            
+        threading.Thread(target=process_atomic_number).start()
+
+        self.assertRaises(WouldWaitMore, lambda: a.wait_until_equal(3, timeout=2))
 
     def test_atomic_number_wait_equal(self):
         an = AtomicNumber()
