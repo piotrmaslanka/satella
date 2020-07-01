@@ -1,7 +1,5 @@
 import os
 import signal
-import sys
-import threading
 import unittest
 import time
 import multiprocessing
@@ -21,3 +19,4 @@ class TestHangUntilSig(unittest.TestCase):
         mp.start()
 
         hang_until_sig()
+        os.wait()

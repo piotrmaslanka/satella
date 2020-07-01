@@ -1,20 +1,16 @@
 import signal
 import time
-import logging
-
 import typing as tp
 
-logger = logging.getLogger(__name__)
 end = False
 
 
 def __sighandler(a, b):
-    logger.warning('Handling a signal')
     global end
     end = True
 
 
-def hang_until_sig(extra_signals: tp.Optional[tp.List[int]] = None) -> None:
+def hang_until_sig(extra_signals: tp.Optional[tp.Sequence[int]] = None) -> None:
     """
     Will hang until this process receives SIGTERM or SIGINT.
     If you pass extra signal IDs (signal.SIG*) with extra_signals,
