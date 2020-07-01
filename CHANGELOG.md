@@ -4,3 +4,4 @@
 * officially supporting Python 3.9
 * fixed a bug in `postcondition`
 * added `write_out_file_if_different`
+* `suicide` works on Windows
