@@ -21,11 +21,8 @@ def read_nowait(process: subprocess.Popen, output_list: tp.List[str]) -> None:
                 line = process.stdout.read(2048)
                 if line:
                     output_list.append(line)
-                break
-            line = process.stdout.read(2048)
-            if line == '':
-                break
-            output_list.append(line)
+                else:
+                    break
     except (IOError, OSError):
         pass
 
@@ -52,6 +49,7 @@ def call_and_return_stdout(args: tp.Union[str, tp.List[str]],
         process returns anything else, ProcessFailed will be raise. If left default (None) return
         code won't be checked at all
     :raises ProcessFailed: process' result code was different from the requested
+    :raises TimeoutError: timeout was specified and the process didn't complete
     """
     kwargs['stdout'] = subprocess.PIPE
 
@@ -66,6 +64,7 @@ def call_and_return_stdout(args: tp.Union[str, tp.List[str]],
     except subprocess.TimeoutExpired:
         proc.kill()
         proc.wait()
+        raise TimeoutError('Process did not complete within %s seconds' % (timeout, ))
     reader_thread.join()
 
     if encoding is None:

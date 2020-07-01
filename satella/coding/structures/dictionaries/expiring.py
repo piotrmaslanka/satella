@@ -15,7 +15,7 @@ K, V = tp.TypeVar('K'), tp.TypeVar('V')
 
 class Cleanupable(metaclass=ABCMeta):
     @abstractmethod
-    def cleanup(self):
+    def cleanup(self) -> None:
         ...
 
 
@@ -32,20 +32,20 @@ class ExpiringEntryDictThread(threading.Thread, Monitor):
         self.entries = []  # type: tp.List[weakref.ref[Cleanupable]]
         self.started = False  # type: bool
 
-    def start(self):
+    def start(self) -> None:
         if self.started:
             return
 
         self.started = True
         super().start()
 
-    def run(self):
+    def run(self) -> None:
         while True:
             time.sleep(5)
             self.cleanup()
 
     @Monitor.synchronized
-    def cleanup(self):
+    def cleanup(self) -> None:
         new_entries = []
         for index, ref in enumerate(self.entries):
             obj = ref()
@@ -55,7 +55,7 @@ class ExpiringEntryDictThread(threading.Thread, Monitor):
         self.entries = new_entries
 
     @Monitor.synchronized
-    def add_dict(self, ed: Cleanupable):
+    def add_dict(self, ed: Cleanupable) -> None:
         self.entries.append(weakref.ref(ed))
         self.start()
 
@@ -86,7 +86,7 @@ class SelfCleaningDefaultDict(Monitor, collections.UserDict, tp.Generic[K, V], C
         self.cleanup()
         return super().__iter__()
 
-    def __delitem__(self, key: K):
+    def __delitem__(self, key: K) -> None:
         if key in self.data:
             del self.data[key]
 
@@ -95,7 +95,7 @@ class SelfCleaningDefaultDict(Monitor, collections.UserDict, tp.Generic[K, V], C
             self.data[item] = self.default_factory()
         return self.data[item]
 
-    def __setitem__(self, key: K, value: V):
+    def __setitem__(self, key: K, value: V) -> None:
         if key in self.data:
             if value == self.default_value:
                 del self.data[key]
@@ -140,7 +140,7 @@ class ExpiringEntryDict(Monitor, collections.UserDict, tp.Generic[K, V], Cleanup
 
         collections.UserDict.__init__(self, *args, **kwargs)
 
-    def __contains__(self, item):
+    def __contains__(self, item) -> bool:
         try:
             ts = self.key_to_expiration_time.item_to_timestamp[item]
         except KeyError:
@@ -165,17 +165,17 @@ class ExpiringEntryDict(Monitor, collections.UserDict, tp.Generic[K, V], Cleanup
         return super().__iter__(self)
 
     @Monitor.synchronized
-    def cleanup(self):
+    def cleanup(self) -> None:
         """Remove entries that are later than given time"""
         for ts, key in self.key_to_expiration_time.pop_less_than(self.time_getter()):
             del self.data[key]
 
-    def __setitem__(self, key: K, value: V):
+    def __setitem__(self, key: K, value: V) -> None:
         self.key_to_expiration_time.put(self.time_getter() + self.expiration_timeout, key)
         super().__setitem__(key, value)
 
     @rethrow_as(ValueError, KeyError)
-    def __getitem__(self, item: K):
+    def __getitem__(self, item: K) -> V:
         ts = self.key_to_expiration_time.get_timestamp(item)
         if ts < self.time_getter():
             del self[item]
@@ -183,6 +183,6 @@ class ExpiringEntryDict(Monitor, collections.UserDict, tp.Generic[K, V], Cleanup
 
         return super().__getitem__(item)
 
-    def __delitem__(self, key: K):
+    def __delitem__(self, key: K) -> None:
         self.key_to_expiration_time.pop_item(key)
         super().__delitem__(key)
