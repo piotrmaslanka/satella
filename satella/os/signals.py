@@ -1,5 +1,5 @@
 import signal
-import time
+from satella.time import sleep
 import typing as tp
 
 end = False
@@ -27,6 +27,6 @@ def hang_until_sig(extra_signals: tp.Optional[tp.Sequence[int]] = None) -> None:
         signal.signal(s, __sighandler)
 
     while not end:
-        time.sleep(0.5)
+        sleep(0.5, True)
 
     end = False  # reset for next use
