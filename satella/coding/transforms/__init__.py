@@ -7,8 +7,7 @@ __all__ = ['stringify']
 def _stringify_none(str_none, stringifier):
     if str_none:
         return stringifier(None)
-    else:
-        return None
+    return None
 
 
 def stringify(obj: tp.Union[tp.Any], stringifier: tp.Callable[[tp.Any], str] = str,
@@ -31,10 +30,12 @@ def stringify(obj: tp.Union[tp.Any], stringifier: tp.Callable[[tp.Any], str] = s
     :return: stringified object
     """
     if isinstance(obj, collections.abc.Mapping):
-        make_str = (lambda obj2: stringify(obj2, stringifier, True, str_none)) if recursively else stringifier
+        make_str = (lambda obj2: stringify(obj2, stringifier, True, str_none)) if recursively else \
+            stringifier
         return {make_str(k): make_str(v) for k, v in obj.items()}
     elif isinstance(obj, collections.abc.Sequence):
-        make_str = (lambda obj2: stringify(obj2, stringifier, True, str_none)) if recursively else stringifier
+        make_str = (lambda obj2: stringify(obj2, stringifier, True, str_none)) if recursively else \
+            stringifier
         return [make_str(v) for v in obj]
     elif obj is None:
         return _stringify_none(str_none, stringifier)
