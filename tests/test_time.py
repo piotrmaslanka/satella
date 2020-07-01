@@ -12,6 +12,8 @@ class TestTime(unittest.TestCase):
 
     @unittest.skipIf('win' in sys.platform, 'Needs POSIX to run')
     def test_sleep(self):
+        sleep(-2)
+
         def runner():
             time.sleep(1)
             os.kill(os.getppid(), signal.SIGINT)
