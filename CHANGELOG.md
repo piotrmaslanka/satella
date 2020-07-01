@@ -7,3 +7,4 @@
 * slight refactor in `AtomicNumber`
 * removed `end_on_keyboard_interrupt` from `hang_until_sig`
 * unit test for `hang_until_sig` at last
+* added `satella.time.sleep`
