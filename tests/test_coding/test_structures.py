@@ -26,9 +26,50 @@ class TestMisc(unittest.TestCase):
         self.assertEqual(a+2, 4)
         self.assertEqual(a*2, 4)
         self.assertEqual(a-2, 0)
+        self.assertIsNotNone(hash(a))
+        self.assertIsNotNone(repr(a))
+        self.assertEqual(str(a), '2')
+        self.assertEqual(abs(a), 2)
+        self.assertEqual(a/2, 1)
+        self.assertEqual(a//2, 1)
+        a += 1
+        self.assertEqual(a, 3)
+        a -= 1
+        self.assertEqual(a, 2)
+        a *= 2
+        self.assertEqual(a, 4)
+        a /= 2
+        self.assertEqual(a, 1.0)
+        a = Proxy(2)
+        a //= 2
+        self.assertEqual(a, 1)
+        a <<= 1
+        self.assertEqual(a, 2)
+        a >>= 1
+        self.assertEqual(a, 1)
+        a ^= 1
+        self.assertEqual(a, 0)
+        self.assertEqual(a ^ 2, 2)
+        a = Proxy(2)
+        self.assertEqual(a << 1, 4)
+        self.assertEqual(a >> 1, 1)
+        a = Proxy(2)
+        self.assertEqual(a ** 2, 4)
+        a **= 2
+        self.assertEqual(a, 2)
 
         b = Proxy(list)
         self.assertEqual(b((1, 2, 3)), [1, 2, 3])
+        self.assertIsNotNone(b.insert)
+
+        c = Proxy([1, 2, 3])
+        self.assertEqual(len(c), 3)
+        self.assertEqual(list(iter(c)), [1, 2, 3])
+        self.assertEqual(c[0], 1)
+        del c[0]
+        self.assertEqual(c, [2, 3])
+        c.append(4)
+        self.assertEqual(c, [2, 3, 4])
 
     def test_cache_dict(self):
         class TestCacheGetter:
