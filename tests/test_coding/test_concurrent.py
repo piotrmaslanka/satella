@@ -18,7 +18,7 @@ class TestConcurrent(unittest.TestCase):
         def process_atomic_number():
             with Monitor.acquire(a):
                 time.sleep(5)
-            
+
         threading.Thread(target=process_atomic_number).start()
 
         self.assertRaises(WouldWaitMore, lambda: a.wait_until_equal(3, timeout=2))
@@ -45,9 +45,9 @@ class TestConcurrent(unittest.TestCase):
 
         self.assertIsInstance(a + 2, int)
         self.assertTrue(a > 1)
-        self.assertFalse(a < 4)
+        self.assertTrue(a < 4)
         self.assertTrue(a >= 1)
-        self.assertFalse(a <= 4)
+        self.assertTrue(a <= 4)
         self.assertEqual(a+1, 4)
         self.assertEqual(a-1, 2)
         self.assertEqual(a*1, 3)
