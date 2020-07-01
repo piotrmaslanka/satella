@@ -4,18 +4,21 @@ import sys
 import threading
 import unittest
 import time
+import multiprocessing
 
 from satella.os import hang_until_sig
 
 
 class TestHangUntilSig(unittest.TestCase):
 
-    @unittest.skipIf('win' in sys.platform, 'Cannot test on Windows')
     def test_hang_until_sig(self):
 
-        def send_sig():
-            time.sleep(1)
-            os.kill(0, signal.SIGTERM)
+        def child_process():
+            hang_until_sig()
 
-        threading.Thread(target=send_sig).start()
-        hang_until_sig()
+        mp = multiprocessing.Process(target=child_process)
+        mp.start()
+
+        os.kill(mp.pid, signal.SIGTERM)
+        time.sleep(2)
+        os.wait()
