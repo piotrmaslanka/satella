@@ -13,6 +13,7 @@ from satella.exceptions import WouldWaitMore
 class TestConcurrent(unittest.TestCase):
 
     def test_atomic_number_timeout(self):
+        """Test comparison while the lock is held all the time"""
         a = AtomicNumber(2)
 
         def process_atomic_number():
@@ -32,6 +33,7 @@ class TestConcurrent(unittest.TestCase):
 
         threading.Thread(target=process_atomic_number, args=(an,)).start()
         self.assertRaises(WouldWaitMore, lambda: an.wait_until_equal(2, timeout=2))
+        an.wait_until_equal(1, timeout=2)
         an.wait_until_equal(1)
 
         self.assertEqual(str(an), 'AtomicNumber(1)')
