@@ -21,10 +21,10 @@ Satella contains, among other things:
 * a fully equipped [metrics library](satella/instrumentation/metrics)
     * alongside a fully metricized [ThreadPoolExecutor](satella/instrumentation/metrics/structures/threadpool.py)
 * helpful [exception handlers](satella/exception_handling)
-* common programming [idioms](satella/coding)
+* common programming [idioms and structures](satella/coding)
 
-Most Satella objects make heavy use of `__slots__`, so they are memory friendly and usable on embedded systems,
-where memory is at premium.
+Most Satella objects make heavy use of `__slots__`, so they are memory friendly and usable on
+embedded systems, where memory is at premium.
 
 Change log is kept as part of [release notes](https://github.com/piotrmaslanka/satella/releases).
 The [CHANGELOG.md](CHANGELOG.md) file is only to track changes since last release.
@@ -37,6 +37,11 @@ code taken from elsewhere on the internets, so this is copyright (c) respective 
 
 # Running unit tests
 
+Tests run by default on 
+[Travis CI](https://travis-ci.org/github/piotrmaslanka/satella).
 Just build and run the attached 
 [Dockerfile](Dockerfile). 
 These tests run on Python 3.8
+
+They pass on Windows too, but some tests 
+requiring POSIX-like functionality are skipped.

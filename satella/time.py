@@ -60,6 +60,14 @@ def time_ms() -> int:
 
 
 def time_us() -> int:
+    """
+    Syntactic sugar for
+
+    >>> from time import time
+    >>> int(time()*1000000)
+
+    This will try to use time.time_ns() if available
+    """
     try:
         return time.time_ns() // 1000
     except AttributeError:
