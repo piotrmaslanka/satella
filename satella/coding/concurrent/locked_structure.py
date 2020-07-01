@@ -2,6 +2,7 @@ import threading
 import typing as tp
 
 from ..structures.proxy import Proxy
+
 T = tp.TypeVar('T')
 
 

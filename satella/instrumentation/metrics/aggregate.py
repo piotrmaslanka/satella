@@ -7,8 +7,8 @@ from ...coding.sequences import Multirun
 
 class AggregateMetric(Metric, MeasurableMixin):
     """
-    A virtual metric grabbing a few other metrics and having a single .handle() call represent a bunch of
-    calls to other metrics. Ie, the following:
+    A virtual metric grabbing a few other metrics and having a single .handle() call represent a
+    bunch of calls to other metrics. Ie, the following:
 
     >>> m1 = getMetric('summary', 'summary')
     >>> m2 = getMetric('histogram', 'histogram')
@@ -22,7 +22,7 @@ class AggregateMetric(Metric, MeasurableMixin):
 
     Note that this class supports only reporting. It doesn't read data, or read/write metric levels.
     """
-    __slots__ = ('metrics', )
+    __slots__ = ('metrics',)
 
     def __init__(self, *metrics):
         self.metrics = metrics

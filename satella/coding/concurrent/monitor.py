@@ -1,6 +1,5 @@
 import collections
 import copy
-
 import threading
 import typing as tp
 
@@ -11,7 +10,6 @@ __all__ = [
 ]
 
 K, V, T = tp.TypeVar('K'), tp.TypeVar('V'), tp.TypeVar('T')
-
 
 
 class Monitor:
@@ -87,7 +85,7 @@ class Monitor:
         >>>         .. do some I/O that doesn't need mutual exclusion ..
         >>>     .. back to protected stuff ..
         """
-        __slots__ = ('foo', )
+        __slots__ = ('foo',)
 
         def __init__(self, foo: 'Monitor'):
             self.foo = foo
@@ -112,7 +110,7 @@ class Monitor:
         >>> with Monitor.acquire(foo):
         >>>     .. do operations on foo that need mutual exclusion ..
         """
-        __slots__ = ('foo', )
+        __slots__ = ('foo',)
 
         def __init__(self, foo: 'Monitor'):
             self.foo = foo

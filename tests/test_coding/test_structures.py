@@ -1,7 +1,6 @@
 import abc
 import collections
 import copy
-import logging
 import math
 import time
 import unittest
@@ -13,8 +12,6 @@ from satella.coding.structures import TimeBasedHeap, Heap, typednamedtuple, \
     DictionaryView, HashableWrapper, TwoWayDictionary, Ranking, SortedList, SliceableDeque, \
     DirtyDict, KeyAwareDefaultDict, Proxy, ReprableMixin, TimeBasedSetHeap, ExpiringEntryDict, SelfCleaningDefaultDict, \
     CacheDict
-
-logger = logging.getLogger(__name__)
 
 
 class TestMisc(unittest.TestCase):
@@ -59,6 +56,10 @@ class TestMisc(unittest.TestCase):
         self.assertEqual(a, 4)
         self.assertEqual(-a, 4)
         self.assertEqual(+a, 4)
+        self.assertTrue(a > 1)
+        self.assertFalse(a < 1)
+        self.assertTrue(a >= 1)
+        self.assertFalse(a <= 1)
 
         b = Proxy(list)
         self.assertEqual(b((1, 2, 3)), [1, 2, 3])
@@ -72,6 +73,7 @@ class TestMisc(unittest.TestCase):
         self.assertEqual(c, [2, 3])
         c.append(4)
         self.assertEqual(c, [2, 3, 4])
+        self.assertIn(2, c)
 
     def test_cache_dict(self):
         class TestCacheGetter:

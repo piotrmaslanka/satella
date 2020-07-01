@@ -40,7 +40,7 @@ class Heap(collections.UserList, tp.Generic[T]):
 
         :raise ValueError: element not found
         """
-        self.data.remove(item)      # raises: ValueError
+        self.data.remove(item)  # raises: ValueError
         heapq.heapify(self.data)
         return item
 

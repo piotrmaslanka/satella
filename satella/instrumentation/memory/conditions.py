@@ -1,14 +1,15 @@
-from abc import ABCMeta, abstractmethod
-import typing as tp
 import functools
+import typing as tp
+from abc import ABCMeta, abstractmethod
+
 import psutil
 
 __all__ = ['GB', 'MB', 'KB', 'Any', 'All', 'GlobalAbsoluteValue', 'GlobalRelativeValue',
            'LocalRelativeValue', 'LocalAbsoluteValue', 'BaseCondition', 'ZerothSeverity',
            'CustomCondition', 'Not']
 
-GB = 1024*1024*1024
-MB = 1024*1024
+GB = 1024 * 1024 * 1024
+MB = 1024 * 1024
 KB = 1024
 
 
@@ -21,7 +22,7 @@ class BaseCondition(metaclass=ABCMeta):
 
 
 class MemoryCondition(BaseCondition, metaclass=ABCMeta):
-    __slots__ = ('value', )
+    __slots__ = ('value',)
 
     def __init__(self, value: int):
         self.value = value
@@ -35,7 +36,7 @@ class ZerothSeverity(BaseCondition):
 
 
 class OperationJoin(BaseCondition):
-    __slots__ = ('conditions', )
+    __slots__ = ('conditions',)
 
     def __init__(self, *conditions: BaseCondition):
         self.conditions = conditions
@@ -70,7 +71,7 @@ class All(OperationJoin):
 
 class Not(BaseCondition):
     """True only if provided condition is false"""
-    __slots__ = ('condition', )
+    __slots__ = ('condition',)
 
     def __init__(self, condition: BaseCondition):
         self.condition = condition
@@ -117,7 +118,7 @@ class LocalRelativeValue(MemoryCondition):
     __slots__ = ()
 
     def can_fire(self, local_memory_data, local_maximum_consume: tp.Optional[int]) -> bool:
-        return local_memory_data.rss / local_maximum_consume < (1-self.value / 100)
+        return local_memory_data.rss / local_maximum_consume < (1 - self.value / 100)
 
 
 class CustomCondition(BaseCondition):
@@ -127,11 +128,10 @@ class CustomCondition(BaseCondition):
     :param callable_: callable to call upon asking whether this condition is valid. This
         should be relatively cheap to compute.
     """
-    __slots__ = ('callable', )
+    __slots__ = ('callable',)
 
     def __init__(self, callable_: tp.Callable[[], bool]):
         self.callable = callable_
 
     def can_fire(self, local_memory_data, local_maximum_consume: tp.Optional[int]) -> bool:
         return self.callable()
-

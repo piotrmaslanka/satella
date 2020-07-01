@@ -1,8 +1,8 @@
 import importlib
 import os
 import pkgutil
-import warnings
 import typing as tp
+import warnings
 
 __all__ = ['import_from', 'import_class']
 
@@ -75,7 +75,7 @@ def import_from(path: tp.List[str], package_prefix: str, all_: tp.List[str],
                 package_ref = module.__all__
             except AttributeError:
                 warnings.warn('Module %s does not contain __all__, enumerating it instead' %
-                              (package_prefix + '.' + modname, ), RuntimeWarning)
+                              (package_prefix + '.' + modname,), RuntimeWarning)
                 package_ref = dir(module)
 
             for item in package_ref:

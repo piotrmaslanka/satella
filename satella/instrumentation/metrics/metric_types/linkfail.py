@@ -1,10 +1,9 @@
-
+import collections
 import typing as tp
 
-from ..data import MetricDataCollection, MetricData
 from .base import EmbeddedSubmetrics, MetricLevel
 from .registry import register_metric
-import collections
+from ..data import MetricDataCollection, MetricData
 
 
 @register_metric
@@ -40,13 +39,13 @@ class LinkfailMetric(EmbeddedSubmetrics):
                          callback_on_offline=callback_on_offline,
                          callback_on_online=callback_on_online,
                          **kwargs)
-        self.working = collections.defaultdict(lambda: True)             # type: tp.Dict[int, bool]
-        self.consecutive_failures = collections.defaultdict(lambda: 0)   # type: tp.Dict[int, int]
+        self.working = collections.defaultdict(lambda: True)  # type: tp.Dict[int, bool]
+        self.consecutive_failures = collections.defaultdict(lambda: 0)  # type: tp.Dict[int, int]
         self.consecutive_successes = collections.defaultdict(lambda: 0)  # type: tp.Dict[int, int]
-        self.callback_on_online = callback_on_online                     # type: tp.Callable
-        self.callback_on_offline = callback_on_offline                   # type: tp.Callable
-        self.consecutive_failures_to_offline = consecutive_failures_to_offline      # type: int
-        self.consecutive_successes_to_online = consecutive_successes_to_online      # type: int
+        self.callback_on_online = callback_on_online  # type: tp.Callable
+        self.callback_on_offline = callback_on_offline  # type: tp.Callable
+        self.consecutive_failures_to_offline = consecutive_failures_to_offline  # type: int
+        self.consecutive_successes_to_online = consecutive_successes_to_online  # type: int
 
     def _handle(self, success: bool, address: int = 0, *args, **labels):
         if self.embedded_submetrics_enabled or labels:
@@ -75,9 +74,11 @@ class LinkfailMetric(EmbeddedSubmetrics):
             labels = self.labels.copy()
             if keys != {0}:
                 labels.update(address=address)
-            mdc += MetricData(self.name+'.consecutive_failures', self.consecutive_failures[address],
+            mdc += MetricData(self.name + '.consecutive_failures',
+                              self.consecutive_failures[address],
                               labels, self.get_timestamp(), self.internal)
-            mdc += MetricData(self.name+'.consecutive_successes', self.consecutive_successes[address],
+            mdc += MetricData(self.name + '.consecutive_successes',
+                              self.consecutive_successes[address],
                               labels, self.get_timestamp(), self.internal)
             mdc += MetricData(self.name + '.status', int(self.working[address]),
                               self.labels, self.get_timestamp(), self.internal)

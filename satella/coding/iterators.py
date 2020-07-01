@@ -48,7 +48,7 @@ class SelfClosingGenerator:
 
     def __init__(self, generator: tp.Generator):
         self.generator = generator
-        self.stopped = False        # type: bool
+        self.stopped = False  # type: bool
 
     def __iter__(self) -> 'SelfClosingGenerator':
         return self
@@ -78,7 +78,7 @@ class SelfClosingGenerator:
             try:
                 exhaust(self.generator)
             except TypeError:
-                pass        # we got a generator-generating function as an argument
+                pass  # we got a generator-generating function as an argument
             self.stopped = True
 
     def __del__(self):

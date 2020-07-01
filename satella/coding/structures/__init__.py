@@ -2,13 +2,13 @@ from .dictionaries import DictObject, apply_dict_object, DictionaryView, TwoWayD
     DirtyDict, KeyAwareDefaultDict, ExpiringEntryDict, SelfCleaningDefaultDict, \
     CacheDict
 from .hashable_objects import HashableWrapper
+from .heaps import Heap, SetHeap, TimeBasedHeap, TimeBasedSetHeap
 from .immutable import Immutable, frozendict
+from .mixins import OmniHashableMixin, ReprableMixin
 from .proxy import Proxy
 from .ranking import Ranking
 from .singleton import Singleton, SingletonWithRegardsTo
 from .sorted_list import SortedList, SliceableDeque
-from .mixins import OmniHashableMixin, ReprableMixin
-from .heaps import Heap, SetHeap, TimeBasedHeap, TimeBasedSetHeap
 from .typednamedtuple import typednamedtuple
 
 __all__ = [

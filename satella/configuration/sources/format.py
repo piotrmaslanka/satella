@@ -39,8 +39,8 @@ class FormatSource(BaseSource):
         :type root: if bytes, will be decoded with given encoding'
         """
         super().__init__()
-        self.root = root                # type: BaseSource
-        self.encoding = encoding        # type: str
+        self.root = root  # type: BaseSource
+        self.encoding = encoding  # type: str
 
     def provide(self) -> dict:
         cls = self.__class__
@@ -59,8 +59,10 @@ class FormatSource(BaseSource):
             else:
                 return ret_val
 
+
 try:
     import ujson
+
 
     @register_format_source
     class JSONSource(FormatSource):
@@ -72,6 +74,7 @@ try:
 except ImportError:
     import json
 
+
     @register_format_source
     class JSONSource(FormatSource):
         """
@@ -79,7 +82,6 @@ except ImportError:
         """
         TRANSFORM = json.loads
         EXTRA_EXCEPTIONS = [json.JSONDecodeError]
-
 
 try:
     import yaml

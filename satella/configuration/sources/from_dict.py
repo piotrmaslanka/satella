@@ -1,8 +1,8 @@
 import copy
 import importlib
 
-from satella.coding.recast_exceptions import rethrow_as
 from satella.coding.decorators import for_argument
+from satella.coding.recast_exceptions import rethrow_as
 from satella.configuration import sources
 from satella.configuration.sources.base import BaseSource
 from satella.exceptions import ConfigurationError
@@ -19,6 +19,7 @@ def handle_import(dct: dict):
             v = EXTRA_TYPES[dct['cast_before']['type']](dct['cast_before'])(v)
 
         return getattr(importlib.import_module(dct['module']), dct['attribute'])(v)
+
     return convert
 
 
@@ -44,9 +45,9 @@ def load_source_from_dict(dct: dict) -> BaseSource:
 
     :raises ConfigurationError: upon failure to instantiate
     """
-    type_ = dct.pop('type')                     # type: str
-    args = dct.pop('args', [])                  # type: tp.List
-    optional = dct.pop('optional', False)       # type: bool
+    type_ = dct.pop('type')  # type: str
+    args = dct.pop('args', [])  # type: tp.List
+    optional = dct.pop('optional', False)  # type: bool
 
     def to_arg(arg):
         if isinstance(arg, dict) and 'type' in arg:

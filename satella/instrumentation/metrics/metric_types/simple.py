@@ -7,14 +7,14 @@ from ..data import MetricData, MetricDataCollection
 
 
 class SimpleMetric(EmbeddedSubmetrics):
-    __slots__ = ('data', )
+    __slots__ = ('data',)
 
     CLASS_NAME = 'string'
     CONSTRUCTOR = str
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.data = None                # type: tp.Any
+        self.data = None  # type: tp.Any
 
     def _handle(self, value, **labels) -> None:
         if self.embedded_submetrics_enabled or labels:

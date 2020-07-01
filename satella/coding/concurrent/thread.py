@@ -1,5 +1,4 @@
 import ctypes
-
 import platform
 import threading
 import typing as tp

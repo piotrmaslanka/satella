@@ -2,10 +2,9 @@ import typing as tp
 
 from satella.exceptions import ConfigurationSchemaError
 from satella.imports import import_class
-
 from .base import Descriptor
-from .structs import create_key, Dict
 from .registry import BASE_LOOKUP_TABLE
+from .structs import create_key, Dict
 
 
 def _get_descriptor_for(key: str, value: tp.Any) -> Descriptor:

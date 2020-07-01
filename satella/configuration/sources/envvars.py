@@ -26,13 +26,13 @@ class EnvironmentSource(BaseSource):
 
     def __init__(self, env_name: str, config_name: tp.Optional[str] = None, cast_to=None):
         super(EnvironmentSource, self).__init__()
-        self.env_name = env_name                        # type: str
-        self.config_name = config_name or env_name      # type: str
+        self.env_name = env_name  # type: str
+        self.config_name = config_name or env_name  # type: str
         if cast_to is not None:
             warnings.warn(
                 'Use .schema module to cast values to target type. '
                 'This module is only concerned with loading the configuration', DeprecationWarning)
-            self.cast_to = cast_to                          # type: tp.Callable[[tp.Any], tp.Any]
+            self.cast_to = cast_to  # type: tp.Callable[[tp.Any], tp.Any]
         else:
             self.cast_to = lambda x: x
 
@@ -47,12 +47,12 @@ class EnvVarsSource(JSONSource):
     """
     Return a dictionary that is the JSON encoded within a particular environment variable
     """
-    __slots__ = ('env_name', )
+    __slots__ = ('env_name',)
 
     def __init__(self, env_name: str):
         super(EnvVarsSource, self).__init__('',
                                             encoding=sys.getfilesystemencoding())
-        self.env_name = env_name            # type: str
+        self.env_name = env_name  # type: str
 
     @rethrow_as(KeyError, ConfigurationError)
     def provide(self) -> dict:

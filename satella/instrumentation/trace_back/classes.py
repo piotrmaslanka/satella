@@ -1,4 +1,5 @@
 import base64
+
 try:
     # noinspection PyPep8Naming
     import cPickle as pickle
@@ -32,10 +33,10 @@ class GenerationPolicy:
                  compression_level: int = 6):
         assert isinstance(compression_level, int) and 1 <= compression_level <= 9
 
-        self.enable_pickling = enable_pickling          # type: bool
-        self.compress_at = compress_at                  # type: int
-        self.repr_length_limit = repr_length_limit      # type: int
-        self.compression_level = compression_level      # type: int
+        self.enable_pickling = enable_pickling  # type: bool
+        self.compress_at = compress_at  # type: int
+        self.repr_length_limit = repr_length_limit  # type: int
+        self.compression_level = compression_level  # type: int
 
     def should_pickle(self, value: tp.Any) -> bool:
         """
@@ -130,15 +131,15 @@ class StoredVariableValue(JSONAble):
         return dct
 
     def __init__(self, value: tp.Any, policy: tp.Optional[GenerationPolicy] = None):
-        self.repr = repr(value)             # type: str
-        self.type_ = repr(type(value))      # type: str
+        self.repr = repr(value)  # type: str
+        self.type_ = repr(type(value))  # type: str
 
         policy = policy or GenerationPolicy()
 
         self.repr = policy.process_repr(self.repr)
 
-        self.pickle = None              # type: bytes
-        self.pickle_type = None         # type: str
+        self.pickle = None  # type: bytes
+        self.pickle_type = None  # type: str
 
         if policy.should_pickle(value):
             try:
@@ -154,7 +155,7 @@ class StoredVariableValue(JSONAble):
                         self.pickle = zlib.compress(
                             self.pickle,
                             policy.get_compression_level(
-                                 self.pickle))
+                                self.pickle))
                         self.pickle_type = "pickle/gzip"
                     except zlib.error as e:
                         self.pickle = ('failed to gzip, reason is %s' % (repr(e),)).encode('utf8')
@@ -196,15 +197,15 @@ class StackFrame(JSONAble):
     __slots__ = ('locals', 'globals', 'name', 'filename', 'lineno')
 
     def __init__(self, frame: types.FrameType, policy: GenerationPolicy):
-        self.name = frame.f_code.co_name                # type: str
-        self.filename = frame.f_code.co_filename        # type: str
-        self.lineno = frame.f_lineno                    # type: int
+        self.name = frame.f_code.co_name  # type: str
+        self.filename = frame.f_code.co_filename  # type: str
+        self.lineno = frame.f_lineno  # type: int
 
-        self.locals = {}                                # type: tp.Dict[str, StoredVariableValue]
+        self.locals = {}  # type: tp.Dict[str, StoredVariableValue]
         for key, value in frame.f_locals.items():
             self.locals[key] = StoredVariableValue(value, policy)
 
-        self.globals = {}                               # type: tp.Dict[str, StoredVariableValue]
+        self.globals = {}  # type: tp.Dict[str, StoredVariableValue]
         for key, value in frame.f_globals.items():
             self.globals[key] = StoredVariableValue(value, policy)
 

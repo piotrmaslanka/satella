@@ -1,14 +1,14 @@
-
 import typing as tp
-from satella.json import JSONAble
+
 from satella.coding.structures import frozendict
+from satella.json import JSONAble
 
 
 def join_metric_data_name(prefix: str, name: str):
     if prefix == '':
         return name
     else:
-        return prefix+'.'+name
+        return prefix + '.' + name
 
 
 class MetricData(JSONAble):
@@ -17,11 +17,11 @@ class MetricData(JSONAble):
     def __init__(self, name: str, value: float, labels: dict = None,
                  timestamp: tp.Optional[float] = None,
                  internal: bool = False):
-        self.name = name                    # type: str
-        self.internal = internal            # type: bool
-        self.value = value                  # type: tp.Any
+        self.name = name  # type: str
+        self.internal = internal  # type: bool
+        self.value = value  # type: tp.Any
         self.labels = frozendict(labels) if labels is not None else frozendict()
-        self.timestamp = timestamp          # type: tp.Optional[float]
+        self.timestamp = timestamp  # type: tp.Optional[float]
 
     def add_labels(self, labels: dict) -> None:
         labels_current = dict(self.labels)
@@ -69,7 +69,7 @@ class MetricData(JSONAble):
 
 
 class MetricDataCollection(JSONAble):
-    __slots__ = ('values', )
+    __slots__ = ('values',)
 
     def add_labels(self, labels: dict) -> None:
         output = set()
@@ -122,7 +122,7 @@ class MetricDataCollection(JSONAble):
             return self.__add_metric_data_collection(other)
         elif isinstance(other, MetricData):
             return self.__add_metric_data(other)
-        raise TypeError('Unsupported addition with %s' % (other, ))
+        raise TypeError('Unsupported addition with %s' % (other,))
 
     def prefix_with(self, prefix: str) -> 'MetricDataCollection':
         """Prefix every child with given prefix and return self"""

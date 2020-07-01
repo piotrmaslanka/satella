@@ -1,6 +1,6 @@
 import subprocess
-import typing as tp
 import threading
+import typing as tp
 
 from .exceptions import ProcessFailed
 
@@ -78,4 +78,3 @@ def call_and_return_stdout(args: tp.Union[str, tp.List[str]],
             raise ProcessFailed(proc.returncode, result)
 
     return result
-

@@ -2,12 +2,12 @@ import itertools
 import threading
 import typing as tp
 
-from .metric_types import METRIC_NAMES_TO_CLASSES, MetricLevel, Metric, DEBUG, DISABLED, \
-    INHERIT, RUNTIME
-from .data import MetricDataCollection, MetricData
 from satella.exceptions import MetricAlreadyExists
 from .aggregate import AggregateMetric
+from .data import MetricDataCollection, MetricData
 from .labeled import LabeledMetric
+from .metric_types import METRIC_NAMES_TO_CLASSES, MetricLevel, Metric, DEBUG, DISABLED, \
+    INHERIT, RUNTIME
 
 __all__ = ['getMetric', 'MetricLevel', 'MetricDataCollection',
            'MetricData', 'Metric', 'DISABLED', 'DEBUG', 'INHERIT', 'RUNTIME',

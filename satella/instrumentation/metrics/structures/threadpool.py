@@ -5,6 +5,7 @@ import weakref
 from concurrent.futures import _base
 from concurrent.futures import thread
 from concurrent.futures.thread import ThreadPoolExecutor, _WorkItem
+
 try:
     from concurrent.futures.thread import BrokenThreadPool
 except ImportError:
@@ -73,12 +74,15 @@ class MetrifiedThreadPoolExecutor(ThreadPoolExecutor):
     """
     A thread pool executor that provides execution statistics as metrics.
 
-    This class will also backport some of Python 3.8's characteristics of the thread pool executor to earlier Pythons,
-    thread name prefix, initializer, initargs and BrokenThreadPool behaviour.
+    This class will also backport some of Python 3.8's characteristics of the thread pool executor
+    to earlier Pythons, thread name prefix, initializer, initargs and BrokenThreadPool behaviour.
 
-    :param time_spent_waiting: a metric (can be aggregate) to which times spent waiting in the queue will be deposited
-    :param time_spent_executing: a metric (can be aggregate) to which times spent executing will be deposited
-    :param waiting_tasks: a fresh CallableMetric that will be patched to yield the number of currently waiting tasks
+    :param time_spent_waiting: a metric (can be aggregate) to which times spent waiting in the
+        queue will be deposited
+    :param time_spent_executing: a metric (can be aggregate) to which times spent executing will
+        be deposited
+    :param waiting_tasks: a fresh CallableMetric that will be patched to yield the number of
+        currently waiting tasks
     :param metric_level: a level with which to log to these two metrics
     """
 
@@ -118,7 +122,7 @@ class MetrifiedThreadPoolExecutor(ThreadPoolExecutor):
                           DeprecationWarning, stacklevel=2)
         else:
             raise TypeError('submit expected at least 1 positional argument, '
-                            'got %d' % (len(args)-1))
+                            'got %d' % (len(args) - 1))
 
         with self._shutdown_lock:
             if self._broken:
@@ -136,7 +140,6 @@ class MetrifiedThreadPoolExecutor(ThreadPoolExecutor):
             self._work_queue.put(w)
             self._adjust_thread_count()
             return f
-
 
     def _adjust_thread_count(self):
         # if idle threads are available, don't spin new threads

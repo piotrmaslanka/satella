@@ -100,5 +100,3 @@ class ReprableMixin:
         fragments.append(', '.join(arguments))
         fragments.append(')')
         return ''.join(fragments)
-
-

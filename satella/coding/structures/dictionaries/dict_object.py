@@ -25,10 +25,10 @@ class DictObject(tp.MutableMapping[str, T]):
         return item in self.__data
 
     def __str__(self) -> str:
-        return 'DictObject(%s)' % (str(self.__data), )
+        return 'DictObject(%s)' % (str(self.__data),)
 
     def __repr__(self) -> str:
-        return 'DictObject(%s)' % (repr(self.__data), )
+        return 'DictObject(%s)' % (repr(self.__data),)
 
     def setdefault(self, k: str, default: tp.Any) -> tp.Any:
         try:

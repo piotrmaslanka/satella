@@ -1,6 +1,7 @@
+import itertools
 import math
 import typing as tp
-import itertools
+
 from .base import EmbeddedSubmetrics, MetricLevel
 from .measurable_mixin import MeasurableMixin
 from .registry import register_metric
@@ -30,11 +31,11 @@ class HistogramMetric(EmbeddedSubmetrics, MeasurableMixin):
                  aggregate_children: bool = True, *args, **kwargs):
         super().__init__(name, root_metric, metric_level, internal=internal, buckets=buckets,
                          aggregate_children=aggregate_children, *args, **kwargs)
-        self.bucket_limits = list(buckets)                   # type: tp.List[float]
-        self.buckets = [0] * (len(buckets) + 1)              # type: tp.List[int]
-        self.aggregate_children = aggregate_children         # type: bool
-        self.count = 0                                       # type: int
-        self.sum = 0.0                                       # type: float
+        self.bucket_limits = list(buckets)  # type: tp.List[float]
+        self.buckets = [0] * (len(buckets) + 1)  # type: tp.List[int]
+        self.aggregate_children = aggregate_children  # type: bool
+        self.count = 0  # type: int
+        self.sum = 0.0  # type: float
 
     def _handle(self, value, **labels):
         self.count += 1
@@ -59,14 +60,14 @@ class HistogramMetric(EmbeddedSubmetrics, MeasurableMixin):
             if self.aggregate_children:
                 mdc = self.containers_to_metric_data()
                 mdc.postfix_with('total')
-                mdc += MetricData(self.name+'.total.sum', self.sum, {}, self.get_timestamp())
-                mdc += MetricData(self.name+'.total.count', self.count, {}, self.get_timestamp())
+                mdc += MetricData(self.name + '.total.sum', self.sum, {}, self.get_timestamp())
+                mdc += MetricData(self.name + '.total.count', self.count, {}, self.get_timestamp())
                 k += mdc
             return k
 
         mdc = self.containers_to_metric_data()
-        mdc += MetricData(self.name+'.sum', self.sum, self.labels, self.get_timestamp())
-        mdc += MetricData(self.name+'.count', self.count, self.labels, self.get_timestamp())
+        mdc += MetricData(self.name + '.sum', self.sum, self.labels, self.get_timestamp())
+        mdc += MetricData(self.name + '.count', self.count, self.labels, self.get_timestamp())
         return mdc
 
     def containers_to_metric_data(self) -> MetricDataCollection:
@@ -77,6 +78,7 @@ class HistogramMetric(EmbeddedSubmetrics, MeasurableMixin):
             labels = self.labels.copy()
             labels.update(le=upper_bound,
                           ge=lower_bound)
-            output.append(MetricData(self.name, amount, labels, self.get_timestamp(), self.internal))
+            output.append(
+                MetricData(self.name, amount, labels, self.get_timestamp(), self.internal))
             lower_bound = upper_bound
         return MetricDataCollection(output)

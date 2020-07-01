@@ -3,7 +3,6 @@ import time
 import typing as tp
 
 from satella.coding.decorators import for_argument
-
 from ..data import MetricData, MetricDataCollection
 
 
@@ -84,7 +83,7 @@ class Metric:
 
         assert not (
                 self.name == '' and self.level == MetricLevel.INHERIT), 'Unable to set INHERIT for root metric!'
-        self.children = []      # type: tp.List[Metric]
+        self.children = []  # type: tp.List[Metric]
 
     def get_timestamp(self) -> tp.Optional[float]:
         """Return this timestamp, or None if no timestamp support is enabled"""
@@ -104,7 +103,7 @@ class Metric:
     @for_argument(None, MetricLevel)
     def level(self, value: MetricLevel) -> None:
         assert not (
-                    value == MetricLevel.INHERIT and self.name == ''), 'Cannot set INHERIT for the root metric!'
+                value == MetricLevel.INHERIT and self.name == ''), 'Cannot set INHERIT for the root metric!'
         self._level = value
 
     def append_child(self, metric: 'Metric'):

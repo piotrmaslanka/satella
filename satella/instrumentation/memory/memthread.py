@@ -47,11 +47,11 @@ class MemoryPressureManager(TerminableThread):
                  check_interval: int = 10,
                  log_transitions: bool = True):
         super().__init__(daemon=True)
-        self.log_transitions = log_transitions          # type: bool
-        self.process = psutil.Process(os.getpid())      # type: psutil.Process
-        self.maximum_available = maximum_available      # type: int
+        self.log_transitions = log_transitions  # type: bool
+        self.process = psutil.Process(os.getpid())  # type: psutil.Process
+        self.maximum_available = maximum_available  # type: int
         self.severity_levels = [ZerothSeverity()] + (
-                severity_levels or [])                  # type: tp.List[BaseCondition]
+                severity_levels or [])  # type: tp.List[BaseCondition]
 
         self.callbacks_on_entered = [CallableGroup(gather=False) for _ in
                                      range(len(
@@ -62,9 +62,9 @@ class MemoryPressureManager(TerminableThread):
         self.callbacks_on_left = [CallableGroup(gather=False) for _ in
                                   range(len(
                                       self.severity_levels))]  # type: tp.List[CallableGroup]
-        self.current_severity_level = 0             # type: int
-        self.stopped = False                        # type: bool
-        self.check_interval = check_interval        # type: int
+        self.current_severity_level = 0  # type: int
+        self.stopped = False  # type: bool
+        self.check_interval = check_interval  # type: int
         self.start()
 
     def advance_to_severity_level(self, target_level: int):
@@ -77,12 +77,12 @@ class MemoryPressureManager(TerminableThread):
                 self.current_severity_level += delta
                 self.callbacks_on_entered[self.current_severity_level]()
                 if self.log_transitions:
-                    logger.warning('Entered severity level %s' % (self.current_severity_level, ))
+                    logger.warning('Entered severity level %s' % (self.current_severity_level,))
             elif delta < 0:
                 # Means we are LEAVING a severity level
                 self.callbacks_on_left[self.current_severity_level]()
                 if self.log_transitions:
-                    logger.warning('Left severity level %s' % (self.current_severity_level, ))
+                    logger.warning('Left severity level %s' % (self.current_severity_level,))
                 self.current_severity_level += delta
 
     def stop(self):
@@ -152,9 +152,11 @@ class MemoryPressureManager(TerminableThread):
 
         :param severity: severity level to leave
         """
+
         def outer(fun):
             MemoryPressureManager().callbacks_on_left[severity].add(fun)
             return fun
+
         return outer
 
     @staticmethod

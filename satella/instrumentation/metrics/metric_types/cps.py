@@ -2,7 +2,6 @@ import collections
 import time
 import typing as tp
 
-
 from .base import EmbeddedSubmetrics
 from .registry import register_metric
 from ..data import MetricData, MetricDataCollection
@@ -24,10 +23,10 @@ class ClicksPerTimeUnitMetric(EmbeddedSubmetrics):
                  aggregate_children: bool = True, internal: bool = False, **kwargs):
         super().__init__(*args, internal=internal, time_unit_vectors=time_unit_vectors, **kwargs)
         time_unit_vectors = time_unit_vectors or [1]
-        self.last_clicks = collections.deque()          # type: tp.List[float]
-        self.aggregate_children = aggregate_children    # type: bool
-        self.cutoff_period = max(time_unit_vectors)     # type: int
-        self.time_unit_vectors = time_unit_vectors      # type: tp.List[int]
+        self.last_clicks = collections.deque()  # type: tp.List[float]
+        self.aggregate_children = aggregate_children  # type: bool
+        self.cutoff_period = max(time_unit_vectors)  # type: int
+        self.time_unit_vectors = time_unit_vectors  # type: tp.List[int]
 
     def _handle(self, **labels) -> None:
         if labels or self.embedded_submetrics_enabled:

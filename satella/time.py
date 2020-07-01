@@ -1,9 +1,8 @@
-import inspect
-import typing as tp
-import time
 import copy
+import inspect
+import time
+import typing as tp
 from concurrent.futures import Future
-
 from functools import wraps
 
 __all__ = ['measure', 'time_as_int', 'time_ms']
@@ -31,14 +30,14 @@ def time_ms() -> int:
     try:
         return time.time_ns() // 1000000
     except AttributeError:
-        return int(time.time()*1000)
+        return int(time.time() * 1000)
 
 
 def time_us() -> int:
     try:
         return time.time_ns() // 1000
     except AttributeError:
-        return int(time.time()*1000000)
+        return int(time.time() * 1000000)
 
 
 class measure:
@@ -204,6 +203,7 @@ class measure:
                                 return func(s, *args, **kwargs)
                         else:
                             return func(s, *args, **kwargs)
+
                     return inner
 
             return outer(fun)

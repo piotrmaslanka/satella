@@ -1,5 +1,6 @@
 import inspect
 import io
+
 try:
     # noinspection PyPep8Naming
     import cPickle as pickle
@@ -43,7 +44,7 @@ class Traceback(JSONAble):
 
         tb = sys.exc_info()[2]
 
-        self.frames = []        # type: tp.List[StackFrame]
+        self.frames = []  # type: tp.List[StackFrame]
 
         if starting_frame is None:
             if tb is None:

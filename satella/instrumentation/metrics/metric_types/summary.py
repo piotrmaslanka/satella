@@ -1,9 +1,7 @@
 import collections
-import warnings
-
-import typing as tp
-
 import math
+import typing as tp
+import warnings
 
 from .base import EmbeddedSubmetrics, MetricLevel
 from .measurable_mixin import MeasurableMixin
@@ -56,16 +54,16 @@ class SummaryMetric(EmbeddedSubmetrics, MeasurableMixin):
                  count_calls: bool = True, *args,
                  **kwargs):
         super().__init__(name, root_metric, metric_level, *args, internal=internal,
-                         last_calls=last_calls,  quantiles=quantiles,
+                         last_calls=last_calls, quantiles=quantiles,
                          aggregate_children=aggregate_children, count_calls=count_calls,
                          **kwargs)
-        self.last_calls = last_calls                    # type: int
-        self.calls_queue = collections.deque()          # type: tp.List[float]
-        self.quantiles = quantiles                      # type: tp.List[float]
-        self.aggregate_children = aggregate_children    # type: bool
-        self.count_calls = count_calls                  # type: bool
-        self.tot_calls = 0                              # type: int
-        self.tot_time = 0                               # type: float
+        self.last_calls = last_calls  # type: int
+        self.calls_queue = collections.deque()  # type: tp.List[float]
+        self.quantiles = quantiles  # type: tp.List[float]
+        self.aggregate_children = aggregate_children  # type: bool
+        self.count_calls = count_calls  # type: bool
+        self.tot_calls = 0  # type: int
+        self.tot_time = 0  # type: float
 
     def _handle(self, time_taken: float, **labels) -> None:
         if self.count_calls:
@@ -83,9 +81,9 @@ class SummaryMetric(EmbeddedSubmetrics, MeasurableMixin):
     def to_metric_data(self) -> MetricDataCollection:
         k = self._to_metric_data()
         if self.count_calls:
-            k += MetricData(self.name+'.count', self.tot_calls, self.labels, self.get_timestamp(),
+            k += MetricData(self.name + '.count', self.tot_calls, self.labels, self.get_timestamp(),
                             self.internal)
-            k += MetricData(self.name+'.sum', self.tot_time, self.labels, self.get_timestamp(),
+            k += MetricData(self.name + '.sum', self.tot_time, self.labels, self.get_timestamp(),
                             self.internal)
         return k
 
@@ -103,9 +101,10 @@ class SummaryMetric(EmbeddedSubmetrics, MeasurableMixin):
                 k += q
 
             if self.count_calls:
-                k += MetricData(self.name+'.count', self.tot_calls, self.labels,
+                k += MetricData(self.name + '.count', self.tot_calls, self.labels,
                                 self.get_timestamp(), self.internal)
-                k += MetricData(self.name+'.sum', self.tot_time, self.labels, self.get_timestamp(),
+                k += MetricData(self.name + '.sum', self.tot_time, self.labels,
+                                self.get_timestamp(),
                                 self.internal)
 
             return k

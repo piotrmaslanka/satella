@@ -3,8 +3,8 @@ import time
 import typing as tp
 
 from satella.coding.recast_exceptions import silence_excs
-from ..os.misc import suicide
 from .exception_handlers import BaseExceptionHandler, ALWAYS_FIRST, ExceptionHandlerCallable
+from ..os.misc import suicide
 
 
 class MemoryErrorExceptionHandler(BaseExceptionHandler):
@@ -24,10 +24,10 @@ class MemoryErrorExceptionHandler(BaseExceptionHandler):
                  kill_pg: bool = False):
         super().__init__(ALWAYS_FIRST)
         # so that we have some spare space in case a MemoryError is thrown
-        self._free_on_memory_error = {'a': bytearray(1024 * 2)} # type: tp.Dict[str, bytearray]
-        self.custom_hook = custom_hook                  # type: ExceptionHandlerCallable
-        self.kill_pg = kill_pg                          # type: bool
-        self.installed = False                          # type: bool
+        self._free_on_memory_error = {'a': bytearray(1024 * 2)}  # type: tp.Dict[str, bytearray]
+        self.custom_hook = custom_hook  # type: ExceptionHandlerCallable
+        self.kill_pg = kill_pg  # type: bool
+        self.installed = False  # type: bool
 
     def install(self):
         if self.installed:

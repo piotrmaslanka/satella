@@ -29,11 +29,11 @@ class FileSource(BaseSource):
         """
         super().__init__()
         from .. import sources
-        self.source_classes = [         # type: tp.List[tp.Type[FormatSource]]
+        self.source_classes = [  # type: tp.List[tp.Type[FormatSource]]
             (p if not isinstance(p, str) else getattr(sources, p)) for p in
             interpret_as]
-        self.path = path                # type: str
-        self.encoding = encoding        # type: str
+        self.path = path  # type: str
+        self.encoding = encoding  # type: str
 
     def __repr__(self):
         return '<FileSource %s, %s, ..>' % (repr(self.path), repr(self.encoding))
@@ -79,8 +79,8 @@ class DirectorySource(FileSource):
         super().__init__(path, encoding, interpret_as)
         self.filter = lambda files: filter(fname_filter,
                                            files)  # type: tp.Callable[[tp.List[str]], tp.List[str]]
-        self.scan_subdirectories = scan_subdirectories      # type: bool
-        self.on_fail = on_fail                              # type: int
+        self.scan_subdirectories = scan_subdirectories  # type: bool
+        self.on_fail = on_fail  # type: int
 
     def __repr__(self):
         return '<DirectorySource %s, %s, ..>' % (repr(self.path), repr(self.encoding))
@@ -131,9 +131,9 @@ else:
             :param kwargs: these will be passed to requests.request(..)
             """
             super(HTTPJSONSource, self).__init__()
-            self.url = url              # type: str
-            self.method = method        # type: str
-            self.kwargs = kwargs        # type: tp.Dict[str, tp.Any]
+            self.url = url  # type: str
+            self.method = method  # type: str
+            self.kwargs = kwargs  # type: tp.Dict[str, tp.Any]
 
         @rethrow_as(requests.RequestException, ConfigurationError)
         def provide(self) -> dict:
@@ -143,5 +143,6 @@ else:
                     'Target responded with HTTP %s' % (r.status_code,))
 
             return r.json()
+
 
     __all__.append('HTTPJSONSource')

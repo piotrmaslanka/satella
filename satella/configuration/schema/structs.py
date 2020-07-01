@@ -2,8 +2,8 @@ import copy
 import typing as tp
 
 from satella.coding.recast_exceptions import rethrow_as
-from .base import Descriptor, must_be_type, ConfigDictValue
 from satella.exceptions import ConfigurationValidationError
+from .base import Descriptor, must_be_type, ConfigDictValue
 from .registry import register_custom_descriptor
 
 
@@ -12,14 +12,14 @@ class List(Descriptor):
     """
     This must be a list, made of entries of a descriptor (this is optional)
     """
-    __slots__ = ('type_descriptor', )
+    __slots__ = ('type_descriptor',)
 
     CHECKERS = [must_be_type(list, tuple)]
     BASIC_MAKER = list
 
     def __init__(self, type_descriptor: tp.Optional[Descriptor] = None):
         super().__init__()
-        self.type_descriptor = type_descriptor or Descriptor()      # type: Descriptor
+        self.type_descriptor = type_descriptor or Descriptor()  # type: Descriptor
 
     def __call__(self, value: ConfigDictValue) -> tp.List:
         value = super().__call__(value)
@@ -27,7 +27,7 @@ class List(Descriptor):
         return [self.type_descriptor(p) for p in value]
 
     def __str__(self):
-        return 'List(%s)' % (self.type_descriptor, )
+        return 'List(%s)' % (self.type_descriptor,)
 
 
 DictDescriptorKey = tp.NewType('DictDescriptorKey', Descriptor)
@@ -93,7 +93,7 @@ class Dict(Descriptor):
         self.unknown_key_mapper = unknown_key_mapper  # Dict.UnknownKeyHandlerType
 
     def __str__(self):
-        return 'Dict(%s)' % (self.keys, )
+        return 'Dict(%s)' % (self.keys,)
 
     def __call__(self, value: ConfigDictValue) -> dict:
         value = copy.copy(value)
@@ -133,7 +133,7 @@ class Union(Descriptor):
 
     then value can be either a list or a dict
     """
-    __slots__ = ('descriptors', )
+    __slots__ = ('descriptors',)
 
     def __init__(self, *descriptors: tp.List[Descriptor]):
         super().__init__()

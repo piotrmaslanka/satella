@@ -1,5 +1,5 @@
-import warnings
 import typing as tp
+import warnings
 
 __all__ = ['BaseSatellaError', 'ResourceLockingError', 'ResourceNotLocked', 'ResourceLocked',
            'ConfigurationValidationError', 'ConfigurationError', 'ConfigurationSchemaError',
@@ -18,6 +18,7 @@ class CustomException(Exception):
     It passed all arguments that your exception received via super().
     Just remember to actually pass these arguments in your inheriting classes!
     """
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args)
         self.kwargs = kwargs
@@ -52,7 +53,7 @@ class CodedCustomExceptionMetaclass(type):
     """
     Metaclass implementing the isinstance check for coded custom exceptions
     """
-    code = None     # type: tp.Optional[tp.Any]
+    code = None  # type: tp.Optional[tp.Any]
 
     def __instancecheck__(cls, instance):
         if super().__instancecheck__(instance):
@@ -61,11 +62,11 @@ class CodedCustomExceptionMetaclass(type):
         if cls is CodedCustomException:
             return super().__instancecheck__(instance)
 
-        class_base = (cls, )
+        class_base = (cls,)
         while CodedCustomException not in get_base_of_bases(class_base) and class_base:
             class_base = get_base_of_bases(class_base)
 
-        inst_base = (instance.__class__, )
+        inst_base = (instance.__class__,)
         while CodedCustomException not in get_base_of_bases(inst_base) and inst_base:
             inst_base = get_base_of_bases(inst_base)
 
@@ -82,7 +83,7 @@ class CodedCustomExceptionMetaclass(type):
 class CodedCustomException(CustomException, metaclass=CodedCustomExceptionMetaclass):
     def __init__(self, message, code=None, *args, **kwargs):
         super().__init__(message, code, *args, **kwargs)
-        self.message = message      # type: str
+        self.message = message  # type: str
         if code is not None:
             self.code = code
 
@@ -174,4 +175,4 @@ class ProcessFailed(BaseSatellaError, OSError):
         self.stdout_so_far = stdout_so_far
 
     def __str__(self):
-        return 'ProcessFailed(%s)' % (self.rc, )
+        return 'ProcessFailed(%s)' % (self.rc,)

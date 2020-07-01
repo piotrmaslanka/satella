@@ -12,11 +12,11 @@ class AlternativeSource(BaseSource):
     If first source of configuration fails with ConfigurationError, use the next one instead, ad
     nauseam.
     """
-    __slots__ = ('sources', )
+    __slots__ = ('sources',)
 
     def __init__(self, *sources: BaseSource):
         super().__init__()
-        self.sources = sources      # type: tp.List[BaseSource]
+        self.sources = sources  # type: tp.List[BaseSource]
 
     def __repr__(self) -> str:
         return 'AlternativeSource(%s)' % (repr(self.sources),)

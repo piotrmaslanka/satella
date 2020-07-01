@@ -9,9 +9,6 @@ modified
 from abc import ABCMeta
 import typing as tp
 
-
-
-
 __all__ = ['metaclass_maker', 'wrap_with', 'dont_wrap', 'wrap_property']
 
 

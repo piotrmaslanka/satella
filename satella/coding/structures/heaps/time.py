@@ -3,7 +3,6 @@ import time
 import typing as tp
 
 from satella.coding.recast_exceptions import rethrow_as
-
 from .base import Heap
 
 Number = tp.Union[int, float]

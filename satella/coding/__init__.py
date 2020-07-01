@@ -7,12 +7,13 @@ from .concurrent import Monitor, RMonitor
 from .decorators import precondition, short_none, has_keys, \
     wraps, chain_functions, postcondition, queue_get, auto_adapt_to_methods, \
     attach_arguments, for_argument
-from .fun_static import static_var
-from .metaclasses import metaclass_maker, wrap_with, dont_wrap, wrap_property
-from .recast_exceptions import rethrow_as, silence_excs, catch_exception, log_exceptions, raises_exception
-from .iterators import hint_with_length, SelfClosingGenerator, exhaust, chain
 from .deleters import ListDeleter, DictDeleter
+from .fun_static import static_var
+from .iterators import hint_with_length, SelfClosingGenerator, exhaust, chain
+from .metaclasses import metaclass_maker, wrap_with, dont_wrap, wrap_property
 from .misc import update_if_not_none
+from .recast_exceptions import rethrow_as, silence_excs, catch_exception, log_exceptions, \
+    raises_exception
 
 __all__ = [
     'update_if_not_none',
@@ -22,6 +23,7 @@ __all__ = [
     'precondition', 'postcondition', 'queue_get',
     'rethrow_as', 'silence_excs', 'raises_exception',
     'static_var', 'metaclass_maker',
-    'catch_exception', 'wraps', 'wrap_with', 'dont_wrap', 'wrap_property', 'log_exceptions', 'chain_functions',
+    'catch_exception', 'wraps', 'wrap_with', 'dont_wrap', 'wrap_property', 'log_exceptions',
+    'chain_functions',
     'ListDeleter', 'DictDeleter'
 ]

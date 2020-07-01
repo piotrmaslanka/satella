@@ -14,7 +14,7 @@ except AttributeError:
 def dump_frames_on(sig_no: SIG_TYPE, stack_frame: types.FrameType, output: tp.TextIO):
     from satella.instrumentation import Traceback
 
-    output.write("Stack frame dump requested in response to signal %s\n" % (sig_no, ))
+    output.write("Stack frame dump requested in response to signal %s\n" % (sig_no,))
     # noinspection PyProtectedMember
     for frame_no, frame in sys._current_frames().items():
         output.write("For stack frame %s" % (frame_no,))

@@ -1,14 +1,14 @@
 import collections
+import threading
 import time
 import typing as tp
-import threading
 import weakref
 from abc import ABCMeta, abstractmethod
 
+from ..heaps import TimeBasedSetHeap
 from ..singleton import Singleton
 from ...concurrent.monitor import Monitor
 from ...recast_exceptions import rethrow_as, silence_excs
-from ..heaps import TimeBasedSetHeap
 
 K, V = tp.TypeVar('K'), tp.TypeVar('V')
 
@@ -25,11 +25,12 @@ class ExpiringEntryDictThread(threading.Thread, Monitor):
     A background thread providing maintenance for expiring entry dicts
     and self-cleaning default dicts
     """
+
     def __init__(self):
         super().__init__(name='ExpiringEntryDict cleanup thread', daemon=True)
         Monitor.__init__(self)
-        self.entries = []       # type: tp.List[weakref.ref[Cleanupable]]
-        self.started = False    # type: bool
+        self.entries = []  # type: tp.List[weakref.ref[Cleanupable]]
+        self.started = False  # type: bool
 
     def start(self):
         if self.started:
@@ -72,6 +73,7 @@ class SelfCleaningDefaultDict(Monitor, collections.UserDict, tp.Generic[K, V], C
     it is cleaned up both by __iter__ and by an external worker thread, so it's important to acquire
     it, because it can mutate in an undefined way.
     """
+
     def __init__(self, default_factory: tp.Callable[[], V], *args, **kwargs):
         super().__init__()
         collections.UserDict.__init__(self, *args, **kwargs)
@@ -100,7 +102,7 @@ class SelfCleaningDefaultDict(Monitor, collections.UserDict, tp.Generic[K, V], C
         self.data[key] = value
 
     @Monitor.synchronized
-    @silence_excs(KeyError)     # because entries may disappear without warning
+    @silence_excs(KeyError)  # because entries may disappear without warning
     def cleanup(self):
         for key in list(self.data.keys()):
             if self.data[key] == self.default_value:
@@ -120,9 +122,12 @@ class ExpiringEntryDict(Monitor, collections.UserDict, tp.Generic[K, V], Cleanup
     :param expiration_timeout: number of seconds after which entries will expire
     :param time_getter: a callable/0 that returns the current timestamp
     :param external_cleanup: whether to spawn a single thread that will clean up the dictionary.
-        The thread is spawned once per program, and no additional threads are spawned for next dictionaries.
+        The thread is spawned once per program, and no additional threads are spawned for next
+        dictionaries.
     """
-    def __init__(self, expiration_timeout: float, *args, time_getter: tp.Callable[[], float] = time.monotonic,
+
+    def __init__(self, expiration_timeout: float, *args,
+                 time_getter: tp.Callable[[], float] = time.monotonic,
                  external_cleanup: bool = False, **kwargs):
         super().__init__()
         self.expire_on = {}
@@ -166,7 +171,7 @@ class ExpiringEntryDict(Monitor, collections.UserDict, tp.Generic[K, V], Cleanup
             del self.data[key]
 
     def __setitem__(self, key: K, value: V):
-        self.key_to_expiration_time.put(self.time_getter()+self.expiration_timeout, key)
+        self.key_to_expiration_time.put(self.time_getter() + self.expiration_timeout, key)
         super().__setitem__(key, value)
 
     @rethrow_as(ValueError, KeyError)

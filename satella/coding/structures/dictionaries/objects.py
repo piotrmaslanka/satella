@@ -2,7 +2,6 @@ import collections.abc
 import copy
 import typing as tp
 
-
 K, V, T = tp.TypeVar('K'), tp.TypeVar('V'), tp.TypeVar('T')
 
 

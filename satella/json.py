@@ -4,7 +4,6 @@ from abc import ABCMeta, abstractmethod
 
 __all__ = ['JSONEncoder', 'JSONAble', 'json_encode']
 
-
 Jsonable = tp.TypeVar('Jsonable', list, dict, str, int, float, None)
 
 
@@ -20,6 +19,7 @@ class JSONEncoder(json.JSONEncoder):
     """
     This encoder will encode everything!
     """
+
     def default(self, o: tp.Any) -> Jsonable:
         if hasattr(o, 'to_json'):
             return o.to_json()

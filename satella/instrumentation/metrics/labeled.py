@@ -1,13 +1,14 @@
 import typing as tp
 
 from .metric_types import CallableMetric
-from .metric_types.measurable_mixin import MeasurableMixin
 from .metric_types.base import Metric, MetricLevel
+from .metric_types.measurable_mixin import MeasurableMixin
 
 
 class LabeledMetric(Metric, MeasurableMixin):
     """
-    A wrapper to another metric that will always call it's .runtime and .handle with some predefined labels
+    A wrapper to another metric that will always call it's .runtime and .handle with some
+    predefined labels
 
     Use like:
 
@@ -35,5 +36,3 @@ class LabeledMetric(Metric, MeasurableMixin):
     def handle(self, level: tp.Union[int, MetricLevel], *args, **kwargs) -> None:
         kwargs.update(self.labels)
         self.metric_to_wrap.handle(level, *args, **kwargs)
-
-

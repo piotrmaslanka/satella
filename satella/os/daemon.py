@@ -1,7 +1,7 @@
 import os
 import sys
-import typing as tp
 import types
+import typing as tp
 
 try:
     import pwd
@@ -13,6 +13,7 @@ except ImportError:
 
         def __getattr__(self, item):
             return lambda q: 0
+
 
     pwd = grp = L()
 

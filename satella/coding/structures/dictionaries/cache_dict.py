@@ -49,16 +49,17 @@ class CacheDict(tp.Mapping[K, V]):
                  value_getter_executor: tp.Optional[Executor] = None,
                  cache_failures_interval: tp.Optional[float] = None,
                  time_getter: tp.Callable[[], float] = time.monotonic):
-        assert stale_interval <= expiration_interval, 'Stale interval may not be larger than expiration interval!'
+        assert stale_interval <= expiration_interval, 'Stale interval may not be larger ' \
+                                                      'than expiration interval!'
         self.stale_interval = stale_interval
         self.expiration_interval = expiration_interval
         self.value_getter = value_getter
         if value_getter_executor is None:
             value_getter_executor = ThreadPoolExecutor(max_workers=4)
         self.value_getter_executor = value_getter_executor
-        self.data = {}              # type: tp.Dict[K, V]
-        self.timestamp_data = {}    # type: tp.Dict[K, float]
-        self.cache_missed = set()      # type: tp.Set[K]
+        self.data = {}  # type: tp.Dict[K, V]
+        self.timestamp_data = {}  # type: tp.Dict[K, float]
+        self.cache_missed = set()  # type: tp.Set[K]
         self.cache_failures = cache_failures_interval is not None
         self.cache_failures_interval = cache_failures_interval
         self.time_getter = time_getter

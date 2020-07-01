@@ -52,6 +52,7 @@ class LockedDataset:
         :param timeout:
         :return:
         """
+
         def inner(f):
             @wraps(f)
             def in_ner(self, *args, **kwargs):

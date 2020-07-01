@@ -1,5 +1,4 @@
 import itertools
-
 import typing as tp
 import warnings
 
@@ -240,7 +239,7 @@ def enumerate(iterator: IteratorOrIterable, start: int = 0) -> tp.Iterator[tp.Tu
     i = start
     for row in iterator:
         if isinstance(row, tuple):
-            yield (i, ) + row
+            yield (i,) + row
         else:
             yield (i,) + tuple(row)
         i += 1

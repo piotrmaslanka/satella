@@ -1,9 +1,9 @@
 import inspect
-import typing as tp
 import logging
 import threading
-from .decorators import wraps
+import typing as tp
 
+from .decorators import wraps
 
 ExcType = tp.Type[Exception]
 T = tp.TypeVar('T')
@@ -93,6 +93,7 @@ class log_exceptions:
                     yield from fun(*args, **kwargs)
                 except Exception as e:
                     self.analyze_exception(e, args, kwargs)
+
             return inner
         else:
             @wraps(fun)
@@ -101,6 +102,7 @@ class log_exceptions:
                     return fun(*args, **kwargs)
                 except Exception as e:
                     self.analyze_exception(e, args, kwargs)
+
             return inner
 
 

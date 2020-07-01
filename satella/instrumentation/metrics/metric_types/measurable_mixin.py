@@ -1,8 +1,6 @@
 import inspect
-
-import typing as tp
 import time
-
+import typing as tp
 from concurrent.futures import Future
 
 from satella.coding import wraps
@@ -21,8 +19,8 @@ class MeasurableMixin:
         A function to measure a difference between some value after the method call
         and before it.
 
-        The value will be taken at the moment this function executes, and the moment the future completes
-        (with or without an exception)
+        The value will be taken at the moment this function executes, and the moment the future
+        completes (with or without an exception)
 
         :param future: future that is considered
         :param logging_level: one of RUNTIME or DEBUG
@@ -69,7 +67,8 @@ class MeasurableMixin:
         """
 
         class MeasurableMixinInternal:
-            def __init__(self, metric_class, include_exceptions, value_getter, logging_level, labels):
+            def __init__(self, metric_class, include_exceptions, value_getter,
+                         logging_level, labels):
                 self.metric_class = metric_class
                 self.value_getter = value_getter
                 self.logging_level = logging_level
@@ -132,4 +131,5 @@ class MeasurableMixin:
 
                 return False
 
-        return MeasurableMixinInternal(self, include_exceptions, value_getter, logging_level, labels)
+        return MeasurableMixinInternal(self, include_exceptions, value_getter,
+                                       logging_level, labels)

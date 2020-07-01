@@ -1,5 +1,6 @@
-from .memthread import MemoryPressureManager
 import gc
+
+from .memthread import MemoryPressureManager
 
 
 def install_force_gc_collect(severity_level: int = 1) -> None:

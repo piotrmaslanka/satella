@@ -1,7 +1,7 @@
-import typing as tp
-import re
-import os
 import codecs
+import os
+import re
+import typing as tp
 
 __all__ = ['read_re_sub_and_write', 'find_files', 'split', 'read_in_file', 'write_to_file',
            'write_out_file_if_different']

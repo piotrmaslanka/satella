@@ -2,7 +2,6 @@ import re
 import typing as tp
 
 from satella.exceptions import ConfigurationValidationError
-
 from .base import Descriptor, ConfigDictValue
 from .registry import register_custom_descriptor
 
@@ -61,7 +60,7 @@ class Regexp(String):
     >>> class IPv6(Regexp):
     >>>     REGEXP = '(([0-9a-f]{1,4}:)' ...
     """
-    __slots__ = ('regexp', )
+    __slots__ = ('regexp',)
 
     REGEXP = r'.*'
 
@@ -83,7 +82,7 @@ class Regexp(String):
         return match.group(0)
 
     def __str__(self):
-        return 'Regexp(%s)' % (self.REGEXP.pattern, )
+        return 'Regexp(%s)' % (self.REGEXP.pattern,)
 
 
 @register_custom_descriptor('ipv4')

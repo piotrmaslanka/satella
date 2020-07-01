@@ -1,5 +1,5 @@
-from .registry import register_metric
 from .base import Metric
+from .registry import register_metric
 from ..data import MetricDataCollection
 
 

@@ -1,4 +1,5 @@
 import typing as tp
+
 from .monitor import Monitor
 from .thread import Condition
 from ...exceptions import WouldWaitMore
@@ -47,7 +48,7 @@ class AtomicNumber(Monitor):
 
     @Monitor.synchronized
     def __str__(self) -> str:
-        return 'AtomicNumber(%s)' % (self.value, )
+        return 'AtomicNumber(%s)' % (self.value,)
 
     @Monitor.synchronized
     def __gt__(self, other: Number):

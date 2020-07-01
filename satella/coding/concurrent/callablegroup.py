@@ -3,7 +3,6 @@ import copy
 import time
 import typing as tp
 
-
 T = tp.TypeVar('T')
 
 
@@ -33,8 +32,8 @@ class CallableGroup(tp.Generic[T]):
                                    silently ignored. If gather is set,
                                    result will be the exception instance
         """
-        self.callables = collections.OrderedDict()    # type: tp.Dict[tp.Callable, bool]
-        self.gather = gather                          # type: bool
+        self.callables = collections.OrderedDict()  # type: tp.Dict[tp.Callable, bool]
+        self.gather = gather  # type: bool
         self.swallow_exceptions = swallow_exceptions  # type: bool
 
     def add(self, callable_: tp.Callable[[], T], one_shot: bool = False):
@@ -90,9 +89,9 @@ class CallNoOftenThan:
     __slots__ = ('interval', 'callable', 'last_called')
 
     def __init__(self, interval: float, callable_: tp.Callable[[], None]):
-        self.interval = interval            # type: float
-        self.callable = callable_           # type: tp.Callable[[], None]
-        self.last_called = 0                # type: float
+        self.interval = interval  # type: float
+        self.callable = callable_  # type: tp.Callable[[], None]
+        self.last_called = 0  # type: float
 
     def __call__(self, *args, **kwargs):
         if time.monotonic() - self.last_called >= self.interval:

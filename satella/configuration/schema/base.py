@@ -4,7 +4,6 @@ from satella.coding.concurrent import CallableGroup
 from satella.exceptions import ConfigurationValidationError
 from .registry import register_custom_descriptor
 
-
 ConfigDictValue = tp.Optional[tp.Union[int, float, str, dict, list, bool]]
 CheckerConditionType = tp.Callable[[ConfigDictValue], bool]
 ObjectMakerType = tp.Callable[
@@ -26,7 +25,6 @@ class CheckerCondition:
     def __call__(self, value):
         if not self.condition(value):
             raise ConfigurationValidationError(self.description, value)
-
 
 
 def must_be_type(*cls_or_tuple):
@@ -53,11 +51,11 @@ class Descriptor:
     CHECKERS = []  # a list of CheckerCondition
 
     def __init__(self):
-        self.pre_checkers = CallableGroup()     # type: tp.Callable[[bool], None]
-        self.post_checkers = CallableGroup()    # type: tp.Callable[[bool], None]
-        self.name = None                        # type: tp.Optional[str]
-        self.optional = None                    # type: tp.Optional[bool]
-        self.default = None                     # type: tp.Optional[tp.Any]
+        self.pre_checkers = CallableGroup()  # type: tp.Callable[[bool], None]
+        self.post_checkers = CallableGroup()  # type: tp.Callable[[bool], None]
+        self.name = None  # type: tp.Optional[str]
+        self.optional = None  # type: tp.Optional[bool]
+        self.default = None  # type: tp.Optional[tp.Any]
 
         for checker in self.__class__.CHECKERS:
             self.add_checker(checker)
@@ -65,7 +63,7 @@ class Descriptor:
         self.my_exceptions = tuple(self.MY_EXCEPTIONS)  # type: tp.Tuple[tp.Type[Exception], ...]
 
     def __str__(self):
-        return '%s()' % (self.__class__.__qualname__, )
+        return '%s()' % (self.__class__.__qualname__,)
 
     def __call__(self, value: ConfigDictValue) -> tp.Any:
         """
@@ -76,7 +74,7 @@ class Descriptor:
         try:
             value = self.BASIC_MAKER(value)
         except self.my_exceptions as e:
-            raise ConfigurationValidationError('could not pass to maker due to %s' % (e, ), value)
+            raise ConfigurationValidationError('could not pass to maker due to %s' % (e,), value)
 
         self.post_checkers(value)
 

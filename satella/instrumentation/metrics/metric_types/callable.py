@@ -1,10 +1,10 @@
 import copy
-import typing as tp
 import time
+import typing as tp
 
-from ..data import MetricDataCollection, MetricData
 from .base import LeafMetric, MetricLevel
 from .registry import register_metric
+from ..data import MetricDataCollection, MetricData
 
 
 @register_metric
@@ -39,7 +39,8 @@ class CallableMetric(LeafMetric):
         for labeled_metric in self.labeled_metrics:
             labels = copy.copy(self.labels)
             labels.update(labeled_metric.labels)
-            mdc += MetricData(self.name, labeled_metric.callable(), labels, time.time(), self.internal)
+            mdc += MetricData(self.name, labeled_metric.callable(), labels, time.time(),
+                              self.internal)
 
         if self.callable:
             mdc += MetricData(self.name, self.callable(), self.labels, time.time(), self.internal)

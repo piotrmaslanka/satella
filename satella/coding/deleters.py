@@ -1,4 +1,5 @@
 import collections
+
 from satella.coding.recast_exceptions import rethrow_as
 
 ITER_KEYS = 0
@@ -47,7 +48,7 @@ class DictDeleter:
         return self
 
     def __next__(self):
-        key, value = next(self.current_iterator)        # raises StopIteration
+        key, value = next(self.current_iterator)  # raises StopIteration
         self.current_key = key
         if self.iter_mode == ITER_ITEMS:
             return key, value
@@ -120,16 +121,16 @@ class ListDeleter:
     @rethrow_as(IndexError, StopIteration)
     def __next__(self):
         self.current_index += 1
-        return self.list_to_process[self.current_index-1]
+        return self.list_to_process[self.current_index - 1]
 
     def delete(self) -> None:
-        self.indices_to_delete.add(self.current_index-1)
+        self.indices_to_delete.add(self.current_index - 1)
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         index_delta = 0
         for index, element in enumerate(self.list_to_process[:]):
             if index in self.indices_to_delete:
-                self.list_to_process.pop(index-index_delta)
+                self.list_to_process.pop(index - index_delta)
                 index_delta += 1
 
         return False

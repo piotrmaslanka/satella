@@ -1,12 +1,10 @@
-
+import http.server
 import io
 import typing as tp
+
 from satella.coding.concurrent import TerminableThread
-import http.server
 from .. import getMetric
 from ..data import MetricData, MetricDataCollection
-
-
 
 __all__ = ['metric_data_collection_to_prometheus', 'PrometheusHTTPExporterThread']
 
@@ -49,8 +47,8 @@ class PrometheusHTTPExporterThread(TerminableThread):
     def __init__(self, interface: str, port: int, extra_labels: tp.Optional[dict] = None,
                  enable_metric: bool = False):
         super().__init__(daemon=True)
-        self.interface = interface          # type: str
-        self.port = port                    # type: int
+        self.interface = interface  # type: str
+        self.port = port  # type: int
         self.httpd = http.server.HTTPServer((self.interface, self.port), PrometheusHandler,
                                             bind_and_activate=False)
         self.httpd.extra_labels = extra_labels or {}
@@ -80,18 +78,19 @@ class RendererObject(io.StringIO):
 
     def render(self, md: MetricData):
 
-        if md.internal:     # Don't output internal metrics
+        if md.internal:  # Don't output internal metrics
             return
 
         self.write(md.name.replace('.', '_'))
         if md.labels:
             self.write('{')
             self.write(','.join('%s="%s"' % (
-                key, str(value).replace('\\', '\\\\').replace('"', '\\"')) for key, value in md.labels.items()))
+                key, str(value).replace('\\', '\\\\').replace('"', '\\"')) for
+                                key, value in md.labels.items()))
             self.write('}')
-        self.write(' %s' % (md.value, ))
+        self.write(' %s' % (md.value,))
         if md.timestamp is not None:
-            self.write(' %s' % (int(md.timestamp*1000), ))
+            self.write(' %s' % (int(md.timestamp * 1000),))
         self.write('\n')
 
 
