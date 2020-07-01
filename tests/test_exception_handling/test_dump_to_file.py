@@ -2,14 +2,40 @@ import io
 import os
 import pickle
 import tempfile
+import threading
 
 from satella.coding import silence_excs
-from satella.exception_handling import DumpToFileHandler
+from satella.exception_handling import DumpToFileHandler, exception_handler
 from satella.instrumentation import Traceback
 from . import ExceptionHandlingTestCase
 
 
 class TestDumpToFile(ExceptionHandlingTestCase):
+
+    def test_exception_handler(self):
+
+        test = False
+
+        def raise_exception():
+            raise KeyError()
+
+        @exception_handler(priority=0)
+        def handle_exception(type_, value, traceback):
+            nonlocal test
+            test = True
+            return True
+
+        handle_exception.install()
+
+        try:
+            t = threading.Thread(target=raise_exception)
+            t.start()
+            t.join()
+
+            self.assertTrue(test)
+        finally:
+            handle_exception.uninstall()
+
     def setUp(self):
         self.sq, self.sa, self.tf = io.StringIO(), io.StringIO(), tempfile.mktemp()
         self.op = io.BytesIO()

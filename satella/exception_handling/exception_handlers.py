@@ -1,5 +1,6 @@
 import types
 import typing as tp
+import warnings
 from abc import abstractmethod
 
 __all__ = [
@@ -86,11 +87,21 @@ def exception_handler(priority: int = NORMAL_PRIORITY):
     >>> def handle_exc(type_, val, traceback):
     >>>     ...
 
+    You can use also:
+
+    >>> @exception_handler
+    >>> def handle_exc(type_, val, traceback):
+    >>>     ...
+
+    The default priority is 0. But this way of calling it is not recommended, and will
+    result in a UserWarning.
+
     :return: ExceptionHandler instance
     """
 
     if not isinstance(priority, int):
-        raise TypeError('Did you forget to use it as @exception_handler() ?')
+        warnings.warn('Please specify priority, using default of 0', UserWarning)
+        return FunctionExceptionHandler(priority, priority=NORMAL_PRIORITY)
 
     def outer(fun: ExceptionHandlerCallable) -> FunctionExceptionHandler:
         return FunctionExceptionHandler(fun, priority=priority)
