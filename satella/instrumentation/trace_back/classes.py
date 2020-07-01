@@ -99,7 +99,9 @@ class StoredVariableValue(JSONAble):
             "failed/gzip" - compression failed, pickle contains a UTF-8 text with
                 human-readable exception reason
 
-    If value cannot be pickled, it's repr will be at least preserved
+    If value cannot be pickled, it's repr will be at least preserved.
+
+    Note that the value itself won't be preserved.
 
     :param value: any Python value to preserve
     :param policy: policy to use (instance)
