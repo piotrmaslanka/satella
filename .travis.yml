@@ -60,14 +60,6 @@ jobs:
       after_script:
         - coverage xml
         - ./cc-test-reporter after-build -t coverage.py --exit-code $TRAVIS_TEST_RESULT
-    - stage: test
-      python: "pypy3.6"
-      script:
-        - bash tests/test_os/test_hang_until_sig.sh
-        - coverage run -m nose2 -v
-      after_script:
-        - coverage xml
-        - ./cc-test-reporter after-build -t coverage.py --exit-code $TRAVIS_TEST_RESULT
     - stage: deploy
       python: "3.8"
       script:
