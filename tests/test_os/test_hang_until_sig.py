@@ -19,6 +19,7 @@ class TestHangUntilSig(unittest.TestCase):
         mp = multiprocessing.Process(target=child_process)
         mp.start()
 
+        time.sleep(1)
         os.kill(mp.pid, signal.SIGTERM)
         time.sleep(2)
         os.wait()
