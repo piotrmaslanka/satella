@@ -14,12 +14,10 @@ class TestHangUntilSig(unittest.TestCase):
     def test_hang_until_sig(self):
 
         def child_process():
-            hang_until_sig()
+            time.sleep(1)
+            os.kill(os.getppid(), signal.SIGTERM)
 
         mp = multiprocessing.Process(target=child_process)
         mp.start()
 
-        time.sleep(1)
-        os.kill(mp.pid, signal.SIGTERM)
-        time.sleep(2)
-        os.wait()
+        hang_until_sig()
