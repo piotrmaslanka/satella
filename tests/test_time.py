@@ -1,10 +1,29 @@
+import signal
 import unittest
 import time
-from satella.time import measure, time_as_int, time_ms
+import multiprocessing
+import os
+import sys
+from satella.time import measure, time_as_int, time_ms, sleep
 from concurrent.futures import Future
 
 
 class TestTime(unittest.TestCase):
+
+    @unittest.skipIf('win' in sys.platform, 'Needs POSIX to run')
+    def test_sleep(self):
+        def runner():
+            time.sleep(1)
+            os.kill(os.getppid(), signal.SIGINT)
+
+        multiprocessing.Process(target=runner).start()
+
+        try:
+            with measure() as measurement:
+                sleep(3)
+            self.assertGreaterEqual(measurement(), 3)
+        finally:
+            os.wait()
 
     def test_times(self):
         self.assertIsInstance(time_as_int(), int)
