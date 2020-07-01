@@ -21,8 +21,8 @@ def hang_until_sig(extra_signals: tp.Optional[tp.List[int]] = None,
     :param extra_signals: a list of extra signals to listen to
     :param end_on_keyboard_interrupt: whether to consider receiving a KeyboardInterrupt as
         a signal to finish
-    global end
     """
+    global end
     extra_signals = extra_signals or []
 
     signal.signal(signal.SIGTERM, __sighandler)
