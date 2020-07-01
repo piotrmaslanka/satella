@@ -62,7 +62,8 @@ class FunctionExceptionHandler(BaseExceptionHandler):
     """
     A exception handler to make callables of given signature into Satella's exception handlers.
 
-    Your exception handler must return a bool, whether to intercept the exception and not propagate it.
+    Your exception handler must return a bool, whether to intercept the exception and not
+    propagate it.
     """
     __slots__ = ('fun', )
 
