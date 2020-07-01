@@ -7,6 +7,9 @@ from mock import patch, Mock
 
 from satella.exceptions import LockIsHeld
 from satella.os import PIDFileLock
+from satella import posix   # test importing
+
+__all__ = ['posix']     # so that PyCharm doesn't complain
 
 
 def acquire_lock_file_and_wait_for_signal(q, p):
