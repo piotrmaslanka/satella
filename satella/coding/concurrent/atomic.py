@@ -170,7 +170,7 @@ class AtomicNumber(Monitor):
             with measure() as measurement:
                 while measurement() < timeout:
                     time_remaining = timeout - measurement()
-                    if self == v:
+                    if self.value == v:
                         break
                     self.wait(time_remaining)
 
