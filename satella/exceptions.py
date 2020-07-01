@@ -75,9 +75,10 @@ class CodedCustomExceptionMetaclass(type):
             return False
 
         try:
-            return cls.code == instance.code
+            a = cls.code == instance.code
         except AttributeError:
-            return super().__instancecheck__(instance)
+            a = super().__instancecheck__(instance)
+        return a
 
 
 class CodedCustomException(CustomException, metaclass=CodedCustomExceptionMetaclass):

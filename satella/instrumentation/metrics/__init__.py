@@ -17,6 +17,16 @@ metrics = {}
 metrics_lock = threading.Lock()
 
 
+def adjust_metric_level_for_root(metric_level: tp.Optional[MetricLevel],
+                                 metric_level_to_set_for_children: tp.Optional[MetricLevel]):
+    if metric_level is None:
+        return MetricLevel.RUNTIME
+    elif metric_level_to_set_for_children == MetricLevel.INHERIT:
+        return MetricLevel.RUNTIME
+    else:
+        return metric_level_to_set_for_children
+
+
 # noinspection PyPep8Naming
 def getMetric(metric_name: str = '',
               metric_type: str = 'base',
@@ -49,14 +59,11 @@ def getMetric(metric_name: str = '',
             tentative_name = '.'.join(name[:name_index])
             if tentative_name not in metrics:
                 if tentative_name == '':
-                    # initialize the root metric
-                    if metric_level is None:
-                        metric_level_to_set_for_root = MetricLevel.RUNTIME
-                    elif metric_level_to_set_for_children == MetricLevel.INHERIT:
-                        metric_level_to_set_for_root = MetricLevel.RUNTIME
-                    else:
-                        metric_level_to_set_for_root = metric_level_to_set_for_children
-                    metric = Metric('', None, metric_level_to_set_for_root, **kwargs)
+                    metric = Metric('',
+                                    None,
+                                    adjust_metric_level_for_root(metric_level,
+                                                                 metric_level_to_set_for_children),
+                                    **kwargs)
                     metric.level = MetricLevel.RUNTIME
                     root_metric = metric
                 elif metric_name == tentative_name:
