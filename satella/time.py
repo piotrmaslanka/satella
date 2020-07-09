@@ -5,7 +5,7 @@ import typing as tp
 from concurrent.futures import Future
 from functools import wraps     # import from functools to prevent circular import exception
 
-__all__ = ['measure', 'time_as_int', 'time_ms', 'sleep']
+__all__ = ['measure', 'time_as_int', 'time_ms', 'sleep', 'time_us']
 
 
 def sleep(x: float, abort_on_interrupt: bool = False) -> bool:
