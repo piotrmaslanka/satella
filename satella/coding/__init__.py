@@ -25,5 +25,5 @@ __all__ = [
     'static_var', 'metaclass_maker',
     'catch_exception', 'wraps', 'wrap_with', 'dont_wrap', 'wrap_property', 'log_exceptions',
     'chain_functions',
-    'ListDeleter', 'DictDeleter'
+    'ListDeleter', 'DictDeleter', 'for_argument', 'attach_arguments', 'auto_adapt_to_methods',
 ]
