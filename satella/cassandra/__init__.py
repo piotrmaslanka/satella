@@ -29,12 +29,16 @@ def parallel_for(cursor, query: tp.Union[tp.List[str], str, 'Statement', tp.List
     :param query: base query or a list of queries, if a different one is to be used
     :param arguments: iterable yielding arguments to use in execute_async
     """
-    from cassandra.query import Statement
+    try:
+        from cassandra.query import Statement
+        query_classes = (str, Statement)
+    except ImportError:
+        query_classes = str
 
-    if isinstance(query, (str, Statement)):
+    if isinstance(query, query_classes):
         query = itertools.repeat(query)
-    futures = []
 
+    futures = []
     for query, args in zip(query, arguments):
         if args is None:
             future = cursor.execute_async(query)

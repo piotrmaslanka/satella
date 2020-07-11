@@ -1,6 +1,7 @@
 import signal
-from satella.time import sleep
 import typing as tp
+
+from satella.time import sleep
 
 end = False
 
