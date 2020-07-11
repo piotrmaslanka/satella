@@ -14,13 +14,16 @@ def parallel_for(cursor, query: tp.Union[tp.List[str], str, 'Statement', tp.List
     >>> for future in futures:
     >>>     yield future.result()
 
-    If query is a string, or else
+    If query is a string or a Cassandra Statement, or else
 
     >>> futures = []
     >>> for query, args in zip(query, arguments):
     >>>     futures.append(cursor.execute_async(query, args))
     >>> for future in futures:
     >>>     yield future.result()
+
+    Note that if None is encountered in the argument iterable, session.execute() will
+    be called with a single argument. You better have it as a BoundStatement then!
 
     :param cursor: the Cassandra cursor to use (obtained using connection.session())
     :param query: base query or a list of queries, if a different one is to be used
@@ -30,8 +33,14 @@ def parallel_for(cursor, query: tp.Union[tp.List[str], str, 'Statement', tp.List
 
     if isinstance(query, (str, Statement)):
         query = itertools.repeat(query)
+    futures = []
 
-    futures = [cursor.execute_async(query, args) for query, args in zip(query, arguments)]
+    for query, args in zip(query, arguments):
+        if args is None:
+            future = cursor.execute_async(query)
+        else:
+            future = cursor.execute_async(query, args)
+        futures.append(future)
 
     for future in futures:
         yield future.result()

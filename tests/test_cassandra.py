@@ -8,12 +8,15 @@ class TestCassandra(unittest.TestCase):
             def __init__(self):
                 self.execute_times_called = 0
                 self.result_times_called = 0
+                self.execute_without_args_called = 0
 
             def result(self):
                 self.result_times_called += 1
                 return []
 
-            def execute_async(self, query, args):
+            def execute_async(self, query, args=None):
+                if args is None:
+                    self.execute_without_args_called += 1
                 self.execute_times_called += 1
                 return self
 
@@ -29,3 +32,10 @@ class TestCassandra(unittest.TestCase):
 
         self.assertEqual(cur.execute_times_called, 6)
         self.assertEqual(cur.result_times_called, 6)
+
+        list(parallel_for(cur, ['SELECT * FROM table',
+                                'SELECT * FROM table2',
+                                'SELECT * FROM table3'], [None, None, None]))
+
+        self.assertEqual(cur.execute_without_args_called, 3)
+
