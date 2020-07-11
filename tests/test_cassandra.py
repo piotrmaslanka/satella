@@ -18,8 +18,14 @@ class TestCassandra(unittest.TestCase):
                 return self
 
         cur = Cursor()
-        for row in parallel_for(cur, 'SELECT * FROM table', [(1,), (2, ), (3, )]):
-            pass
+        list(parallel_for(cur, 'SELECT * FROM table', [(1,), (2, ), (3, )]))
 
         self.assertEqual(cur.execute_times_called, 3)
         self.assertEqual(cur.result_times_called, 3)
+
+        list(parallel_for(cur, ['SELECT * FROM table',
+                                'SELECT * FROM table2',
+                                'SELECT * FROM table3'], [(1,), (2, ), (3, )]))
+
+        self.assertEqual(cur.execute_times_called, 6)
+        self.assertEqual(cur.result_times_called, 6)
