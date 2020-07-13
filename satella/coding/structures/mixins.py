@@ -9,6 +9,8 @@ class StrEqHashableMixin(metaclass=ABCMeta):
     A mix-in that outfits your class with an __eq__ and __hash__ operator that take
     their values from __str__ representation of your class.
     """
+    __slots__ = ()
+
     def __eq__(self, other) -> bool:
         return str(self) == str(other)
 
