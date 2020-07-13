@@ -58,6 +58,16 @@ If you need quick __hash__ and __eq__ operators from listed fields of the class.
 .. autoclass:: satella.coding.structures.OmniHashableMixin
     :members:
 
+StrEqHashableMixin
+==================
+
+A class that outfits your class with __eq__ and __hash__ based off the str() value of the
+class. So you got to define __str__ at the very least!
+
+.. autoclass:: satella.coding.structures.StrEqHashableMixin
+    :members:
+
+
 ReprableMixin
 =============
 

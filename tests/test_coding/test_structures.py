@@ -11,10 +11,22 @@ from satella.coding.structures import TimeBasedHeap, Heap, typednamedtuple, \
     OmniHashableMixin, DictObject, apply_dict_object, Immutable, frozendict, SetHeap, \
     DictionaryView, HashableWrapper, TwoWayDictionary, Ranking, SortedList, SliceableDeque, \
     DirtyDict, KeyAwareDefaultDict, Proxy, ReprableMixin, TimeBasedSetHeap, ExpiringEntryDict, SelfCleaningDefaultDict, \
-    CacheDict
+    CacheDict, StrEqHashableMixin
 
 
 class TestMisc(unittest.TestCase):
+
+    def test_str_eq_hashable_mixin(self):
+        class MyClass(StrEqHashableMixin):
+            def __init__(self, v: str):
+                self.v = v
+
+            def __str__(self) -> str:
+                return self.v
+
+        a = MyClass('a')
+        self.assertEqual(hash('a'), hash(a))
+        self.assertEqual(a, 'a')
 
     def test_proxy(self):
         a = Proxy(2)
