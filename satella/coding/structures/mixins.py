@@ -4,16 +4,20 @@ import typing as tp
 from abc import ABCMeta, abstractmethod
 
 
-class StrEqHashableMixin:
+class StrEqHashableMixin(metaclass=ABCMeta):
     """
     A mix-in that outfits your class with an __eq__ and __hash__ operator that take
     their values from __str__ representation of your class.
     """
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         return str(self) == str(other)
 
     def __hash__(self) -> int:
         return hash(str(self))
+
+    @abstractmethod
+    def __str__(self) -> str:
+        pass
 
 
 class OmniHashableMixin(metaclass=ABCMeta):
