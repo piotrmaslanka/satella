@@ -1,6 +1,7 @@
 import ctypes
 import platform
 import threading
+import time
 import typing as tp
 from threading import Condition as PythonCondition
 
@@ -120,6 +121,22 @@ class TerminableThread(threading.Thread):
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.terminate().join()
         return False
+
+    def safe_sleep(self, interval: float, wake_up_each: float = 2):
+        """
+        Sleep for interval, waking up each wake_up_each seconds to check if terminating,
+        finish earlier if is terminating.
+
+        :param interval: Time to sleep in total
+        :param wake_up_each: Amount of seconds to wake up each
+        """
+        t = 0
+        while t < interval:
+            if self._terminating:
+                return
+            remaining_to_sleep = min(interval-t, wake_up_each)
+            time.sleep(remaining_to_sleep)
+            t += remaining_to_sleep
 
     def terminate(self, force: bool = False) -> 'TerminableThread':
         """
