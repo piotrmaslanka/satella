@@ -134,9 +134,7 @@ class TerminableThread(threading.Thread):
         :return: status of _terminating flag at the exit
         """
         t = 0
-        while t < interval:
-            if self._terminating:
-                return True
+        while t < interval and not self._terminating:
             remaining_to_sleep = min(interval-t, wake_up_each)
             time.sleep(remaining_to_sleep)
             t += remaining_to_sleep
