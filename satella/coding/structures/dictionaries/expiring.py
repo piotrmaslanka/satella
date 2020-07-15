@@ -103,7 +103,7 @@ class SelfCleaningDefaultDict(Monitor, collections.UserDict, tp.Generic[K, V], C
 
     @Monitor.synchronized
     @silence_excs(KeyError)  # because entries may disappear without warning
-    def cleanup(self):
+    def cleanup(self) -> None:
         for key in list(self.data.keys()):
             if self.data[key] == self.default_value:
                 del self.data[key]

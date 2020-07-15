@@ -69,31 +69,31 @@ class KeyAwareDefaultDict(collections.abc.MutableMapping):
     """
     A defaultdict whose factory function accepts the key to provide a default value for the key
 
-    :param factory_function: a callable that accepts a single argument, a key, for which it is to provide
-        a default value
+    :param factory_function: a callable that accepts a single argument, a key, for which it is
+        to provide a default value
     """
 
     def __len__(self) -> int:
         return len(self.dict)
 
-    def __iter__(self):
+    def __iter__(self) -> tp.Iterator[K]:
         return iter(self.dict)
 
     def __init__(self, factory_function: tp.Callable[[K], V], *args, **kwargs):
         self.dict = dict(*args, **kwargs)
         self.factory_function = factory_function
 
-    def __getitem__(self, item):
+    def __getitem__(self, item) -> V:
         if item in self.dict:
             return self.dict[item]
         else:
             self.dict[item] = self.factory_function(item)
             return self.dict[item]
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key, value) -> None:
         self.dict[key] = value
 
-    def __delitem__(self, key):
+    def __delitem__(self, key) -> None:
         del self.dict[key]
 
 
@@ -124,7 +124,7 @@ class TwoWayDictionary(collections.abc.MutableMapping, tp.Generic[K, V]):
     """
     __slots__ = ('data', 'reverse_data', '_reverse')
 
-    def done(self):
+    def done(self) -> None:
         """
         Called when the user is done using given TwoWayDictionary.
 
@@ -145,29 +145,20 @@ class TwoWayDictionary(collections.abc.MutableMapping, tp.Generic[K, V]):
             self._reverse.reverse_data = self.data
             self._reverse._reverse = self
 
-    def __enter__(self):
+    def __enter__(self) -> 'TwoWayDictionary':
         return self
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
+    def __exit__(self, exc_type, exc_val, exc_tb) -> bool:
         self.done()
         return False
 
     def __getitem__(self, item: K) -> V:
         return self.data[item]
 
-    def items(self) -> tp.Iterator[tp.Tuple[K, V]]:
-        return self.data.items()
-
-    def keys(self) -> tp.AbstractSet[K]:
-        return self.data.keys()
-
-    def values(self) -> tp.AbstractSet[V]:
-        return self.data.values()
-
     def __len__(self) -> int:
         return len(self.data)
 
-    def __setitem__(self, key: K, value: V):
+    def __setitem__(self, key: K, value: V) -> None:
         if value in self.reverse_data:
             raise ValueError('This value is already mapped to something!')
 
@@ -218,10 +209,10 @@ class DictionaryView(collections.abc.MutableMapping, tp.Generic[K, V]):
     """
     __slots__ = ('assign_to_same_dict', 'master_dict', 'dictionaries', 'propagate_deletes')
 
-    def __copy__(self):
+    def __copy__(self) -> 'DictionaryView':
         return DictionaryView(*copy.copy(self.dictionaries))
 
-    def __deepcopy__(self, memo):
+    def __deepcopy__(self, memo) -> 'DictionaryView':
         return DictionaryView(*copy.deepcopy(self.dictionaries, memo))
 
     def __init__(self, master_dict: tp.Dict[K, V], *rest_of_dicts: tp.Dict[K, V],
@@ -262,7 +253,7 @@ class DictionaryView(collections.abc.MutableMapping, tp.Generic[K, V]):
                 return dictionary[item]
         raise KeyError('Key not found')
 
-    def __setitem__(self, key: K, value: V):
+    def __setitem__(self, key: K, value: V) -> None:
         if self.assign_to_same_dict:
             for dictionary in self.dictionaries:
                 if key in dictionary:
@@ -270,7 +261,7 @@ class DictionaryView(collections.abc.MutableMapping, tp.Generic[K, V]):
                     return
         self.master_dict[key] = value
 
-    def __delitem__(self, key: K) -> V:
+    def __delitem__(self, key: K) -> None:
         if self.propagate_deletes:
             for dictionary in self.dictionaries:
                 if key in dictionary:

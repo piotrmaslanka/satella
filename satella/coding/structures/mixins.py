@@ -1,7 +1,29 @@
+import enum
 import functools
 import operator
 import typing as tp
 from abc import ABCMeta, abstractmethod
+
+
+class ComparableIntEnum(enum.IntEnum):
+    """
+    An enum.IntEnum that implements comparision, stemming from it's values
+    """
+
+    def __lt__(self, other: 'ComparableIntEnum') -> bool:
+        return self.value < other.value
+
+    def __le__(self, other: 'ComparableIntEnum') -> bool:
+        return self.value <= other.value
+
+    def __gt__(self, other: 'ComparableIntEnum') -> bool:
+        return self.value > other.value
+
+    def __ge__(self, other: 'ComparableIntEnum') -> bool:
+        return self.value >= other.value
+
+    def __eq__(self, other: 'ComparableIntEnum') -> bool:
+        return self.value == other.value
 
 
 class StrEqHashableMixin(metaclass=ABCMeta):

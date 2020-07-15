@@ -120,13 +120,13 @@ class DictObject(tp.MutableMapping[str, T]):
         except KeyError:
             return v
 
-    def keys(self):
+    def keys(self) -> tp.Iterator[str]:
         return self.__data.keys()
 
-    def values(self):
+    def values(self) -> tp.Iterator[T]:
         return self.__data.values()
 
-    def items(self):
+    def items(self) -> tp.Iterator[tp.Tuple[str, T]]:
         return self.__data.items()
 
 

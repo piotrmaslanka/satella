@@ -39,11 +39,11 @@ class Monitor:
     """
     __slots__ = ('_monitor_lock',)
 
-    def __enter__(self):
+    def __enter__(self) -> 'Monitor':
         self._monitor_lock.acquire()
         return self
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
+    def __exit__(self, exc_type, exc_val, exc_tb) -> bool:
         self._monitor_lock.release()
         return False
 
@@ -90,11 +90,11 @@ class Monitor:
         def __init__(self, foo: 'Monitor'):
             self.foo = foo
 
-        def __enter__(self):
+        def __enter__(self) -> None:
             # noinspection PyProtectedMember
             self.foo._monitor_lock.release()
 
-        def __exit__(self, e1, e2, e3):
+        def __exit__(self, e1, e2, e3) -> bool:
             # noinspection PyProtectedMember
             self.foo._monitor_lock.acquire()
             return False
@@ -115,11 +115,11 @@ class Monitor:
         def __init__(self, foo: 'Monitor'):
             self.foo = foo
 
-        def __enter__(self):
+        def __enter__(self) -> None:
             # noinspection PyProtectedMember
             self.foo._monitor_lock.acquire()
 
-        def __exit__(self, e1, e2, e3):
+        def __exit__(self, e1, e2, e3) -> bool:
             # noinspection PyProtectedMember
             self.foo._monitor_lock.release()
             return False
@@ -162,16 +162,21 @@ class RMonitor(Monitor):
 
 
 class MonitorList(tp.Generic[T], collections.UserList, Monitor):
-    """A list that is also a monitor"""
+    """
+    A list that is also a monitor.
+
+    Note that access to it's properties is not automatically synchronized, you got to
+    invoke the monitor to implement an opportunistic locking of your own choice
+    """
 
     def __init__(self, *args):
         collections.UserList.__init__(self, *args)
         Monitor.__init__(self)
 
-    def __copy__(self):
+    def __copy__(self) -> 'MonitorList':
         return MonitorList(copy.copy(self.data))
 
-    def __deepcopy__(self, memo):
+    def __deepcopy__(self, memo) -> 'MonitorList':
         return MonitorList(copy.deepcopy(self.data, memo))
 
     def __getitem__(self, item: tp.Union[slice, int]) -> T:
@@ -185,7 +190,12 @@ class MonitorList(tp.Generic[T], collections.UserList, Monitor):
 
 
 class MonitorDict(tp.Generic[K, V], collections.UserDict, Monitor):
-    """A dict that is also a monitor"""
+    """
+    A dict that is also a monitor.
+
+    Note that access to it's properties is not automatically synchronized, you got to
+    invoke the monitor to implement an opportunistic locking of your own choice
+    """
 
     def __init__(self, *args, **kwargs):
         collections.UserDict.__init__(self, *args, **kwargs)
@@ -200,8 +210,8 @@ class MonitorDict(tp.Generic[K, V], collections.UserDict, Monitor):
     def __delitem__(self, key: K) -> None:
         del self.data[key]
 
-    def __copy__(self):
+    def __copy__(self) -> 'MonitorDict':
         return MonitorDict(copy.copy(self.data))
 
-    def __deepcopy__(self, memo):
+    def __deepcopy__(self, memo) -> 'MonitorDict':
         return MonitorDict(copy.deepcopy(self.data, memo))

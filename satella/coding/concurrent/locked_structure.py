@@ -30,16 +30,16 @@ class LockedStructure(Proxy, tp.Generic[T]):
         super().__init__(obj_to_wrap)
         self.__lock = lock or threading.Lock()
 
-    def __setattr__(self, key, value):
+    def __setattr__(self, key, value) -> None:
         if key == '_LockedStructure__lock':
             object.__setattr__(self, key, value)
         else:
             super().__setattr__(key, value)
 
-    def __enter__(self):
+    def __enter__(self) -> 'LockedStructure':
         self.__lock.acquire()
         return self
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
+    def __exit__(self, exc_type, exc_val, exc_tb) -> bool:
         self.__lock.release()
         return False

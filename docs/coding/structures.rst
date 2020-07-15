@@ -1,8 +1,6 @@
-==========
-Structures
-==========
-
-The following is a guide to all the data structures that Satella defines.
+=====
+Heaps
+=====
 
 Heap
 ====
@@ -50,6 +48,14 @@ try to assign something else there.
 
 .. autofunction:: satella.coding.structures.typednamedtuple
 
+======
+Mixins
+======
+
+Mixins are classes whose constructor you do not need to invoke. They magically
+endow your class with chosen properties, often by overloading their specific
+special methods.
+
 OmniHashableMixin
 =================
 
@@ -76,6 +82,10 @@ If you need to provide a quick __repr__ for your classes:
 .. autoclass:: satella.coding.structures.ReprableMixin
     :members:
 
+==========
+Singletons
+==========
+
 Singleton
 =========
 
@@ -95,6 +105,10 @@ instance will depend on first *n* arguments. This function makes it easy:
 It will remember instances already created and return you a previously
 created instance, keying on the first *n* arguments.
 
+============
+Dictionaries
+============
+
 DictObject
 ==========
 
@@ -107,6 +121,64 @@ getitem().
 You can use the following function to recursively turn every dict into a DictObject
 
 .. autofunction:: satella.coding.structures.apply_dict_object
+
+
+frozendict
+==========
+
+A dictionary that can't be modified. I didn't import the one from _frozendict PyPI package,
+because it failed on Python 3.9.
+It is additionally hashable and __eq__-able
+
+.. _frozendict: https://pypi.org/project/frozendict/
+
+.. autoclass:: satella.coding.structures.frozendict
+
+DictionaryView
+==============
+
+.. autoclass:: satella.coding.structures.DictionaryView
+    :members:
+
+
+CacheDict
+=========
+
+.. autoclass:: satella.coding.structures.CacheDict
+    :members:
+
+SelfCleaningDefaultDict
+=======================
+
+.. autoclass:: satella.coding.structures.SelfCleaningDefaultDict
+    :members:
+
+ExpiringEntryDict
+=======================
+
+.. autoclass:: satella.coding.structures.ExpiringEntryDict
+    :members:
+
+DirtyDict
+=========
+
+A dictionary that has also a flag called ``dirty`` that says
+if it's been last modified since that flag was cleared.
+
+The flag is initially (after the dict has been created)
+set to False.
+
+.. autoclass:: satella.coding.structures.DirtyDict
+    :members:
+
+KeyAwareDefaultDict
+===================
+
+.. autoclass:: satella.coding.structures.KeyAwareDefaultDict
+
+================
+Other structures
+================
 
 Immutable
 =========
@@ -128,23 +200,6 @@ Immutable inherits from abc.ABCMeta, so it's safe to use abstract base classes h
         def illegal_op(self):
             self.attr = 'test'  # this will TypeError
 
-frozendict
-==========
-
-A dictionary that can't be modified. I didn't import the one from _frozendict PyPI package,
-because it failed on Python 3.9.
-It is additionally hashable and __eq__-able
-
-.. _frozendict: https://pypi.org/project/frozendict/
-
-.. autoclass:: satella.coding.structures.frozendict
-
-DictionaryView
-==============
-
-.. autoclass:: satella.coding.structures.DictionaryView
-    :members:
-
 HashableWrapper
 ===============
 
@@ -154,24 +209,6 @@ TwoWayDictionary
 ================
 
 .. autoclass:: satella.coding.structures.TwoWayDictionary
-    :members:
-
-CacheDict
-=========
-
-.. autoclass:: satella.coding.structures.CacheDict
-    :members:
-
-SelfCleaningDefaultDict
-=======================
-
-.. autoclass:: satella.coding.structures.SelfCleaningDefaultDict
-    :members:
-
-ExpiringEntryDict
-=======================
-
-.. autoclass:: satella.coding.structures.ExpiringEntryDict
     :members:
 
 Ranking
@@ -196,20 +233,3 @@ Proxy
 =====
 
 .. autoclass:: satella.coding.structures.Proxy
-
-DirtyDict
-=========
-
-A dictionary that has also a flag called ``dirty`` that says
-if it's been last modified since that flag was cleared.
-
-The flag is initially (after the dict has been created)
-set to False.
-
-.. autoclass:: satella.coding.structures.DirtyDict
-    :members:
-
-KeyAwareDefaultDict
-===================
-
-.. autoclass:: satella.coding.structures.KeyAwareDefaultDict

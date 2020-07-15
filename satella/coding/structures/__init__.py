@@ -4,7 +4,7 @@ from .dictionaries import DictObject, apply_dict_object, DictionaryView, TwoWayD
 from .hashable_objects import HashableWrapper
 from .heaps import Heap, SetHeap, TimeBasedHeap, TimeBasedSetHeap
 from .immutable import Immutable, frozendict
-from .mixins import OmniHashableMixin, ReprableMixin, StrEqHashableMixin
+from .mixins import OmniHashableMixin, ReprableMixin, StrEqHashableMixin, ComparableIntEnum
 from .proxy import Proxy
 from .ranking import Ranking
 from .singleton import Singleton, SingletonWithRegardsTo
@@ -17,6 +17,7 @@ __all__ = [
     'Proxy',
     'ReprableMixin',
     'StrEqHashableMixin',
+    'ComparableIntEnum',
     'DirtyDict',
     'SortedList',
     'SelfCleaningDefaultDict',

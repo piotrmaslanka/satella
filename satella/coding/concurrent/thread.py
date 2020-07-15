@@ -72,9 +72,11 @@ class TerminableThread(threading.Thread):
 
     Flag whether to terminate is stored in **self._terminating**.
 
-    If you decide to override run(), you got to check periodically for **self._terminating** to
-    become true.
-    If you decide to use the loop/cleanup interface, you don't need to do so.
+    If you decide to override run(), you got to check periodically for **self._terminating**
+    to become true. If it's true, then a termination request was received, and the thread should
+    terminate itself.
+    If you decide to use the loop/cleanup interface, you don't need to do so, because it will
+    be automatically checked for you before each loop() call.
 
     You may also use it as a context manager. Entering the context will start the thread, and
     exiting it will .terminate().join() it, in the following way:
@@ -122,21 +124,23 @@ class TerminableThread(threading.Thread):
         self.terminate().join()
         return False
 
-    def safe_sleep(self, interval: float, wake_up_each: float = 2):
+    def safe_sleep(self, interval: float, wake_up_each: float = 2) -> bool:
         """
         Sleep for interval, waking up each wake_up_each seconds to check if terminating,
         finish earlier if is terminating.
 
         :param interval: Time to sleep in total
         :param wake_up_each: Amount of seconds to wake up each
+        :return: status of _terminating flag at the exit
         """
         t = 0
         while t < interval:
             if self._terminating:
-                return
+                return True
             remaining_to_sleep = min(interval-t, wake_up_each)
             time.sleep(remaining_to_sleep)
             t += remaining_to_sleep
+        return self._terminating
 
     def terminate(self, force: bool = False) -> 'TerminableThread':
         """
