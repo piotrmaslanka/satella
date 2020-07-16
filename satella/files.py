@@ -4,7 +4,7 @@ import re
 import typing as tp
 
 __all__ = ['read_re_sub_and_write', 'find_files', 'split', 'read_in_file', 'write_to_file',
-           'write_out_file_if_different']
+           'write_out_file_if_different', 'make_noncolliding_name']
 
 SEPARATORS = {'\\', '/'}
 SEPARATORS.add(os.path.sep)
@@ -16,6 +16,32 @@ def _has_separator(path: str) -> bool:
         if path.endswith(':/') or path.endswith(':\\'):
             return False
     return any(map(lambda x: x in path, SEPARATORS))
+
+
+def make_noncolliding_name(path: str,
+                           exists_checker: tp.Callable[[str], bool] = os.path.exists) -> str:
+    """
+    Try to make a noncolliding name in such a way that .1, .2, .3, and so on will be appended
+    to the file name right before the extension (yielding test.1.txt) or at the end of the file
+    name if the extension isn't present
+
+    :param path: path of the file that has not to exist
+    :param exists_checker: a callable to check with if the file exists
+    :return: name mutated in such a way that exists_checker returned False on it
+    """
+    path, filename = os.path.split(path)
+    if '.' in filename:
+        *filename, extension = filename.split('.')
+        filename = '.'.join(filename)
+        extension = '.'+extension
+    else:
+        extension = ''
+    addition = ''
+    addition_counter = 0
+    while exists_checker(os.path.join(path, filename+addition+extension)):
+        addition_counter += 1
+        addition = '.' + str(addition_counter)
+    return os.path.join(path, filename+addition+extension)
 
 
 def split(path: str) -> tp.List[str]:

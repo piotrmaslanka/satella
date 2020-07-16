@@ -4,7 +4,7 @@ import tempfile
 import unittest
 import shutil
 from satella.files import read_re_sub_and_write, find_files, split, read_in_file, write_to_file, \
-    write_out_file_if_different
+    write_out_file_if_different, make_noncolliding_name
 
 
 def putfile(path: str) -> None:
@@ -13,6 +13,11 @@ def putfile(path: str) -> None:
 
 
 class TestFiles(unittest.TestCase):
+
+    def test_make_noncolliding_name(self):
+        with open('test.txt', 'w') as f_out:
+            f_out.write('test')
+        self.assertEqual(make_noncolliding_name('test.txt'), 'test.1.txt')
 
     def test_write_out_file_if_different(self):
         try:
