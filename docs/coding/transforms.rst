@@ -1,5 +1,11 @@
 Rudimentary data transforms.
 
+split_shuffle_and_join
+======================
+
+.. autofunction:: satella.coding.transforms.split_shuffle_and_join
+
+
 stringify
 =========
 
