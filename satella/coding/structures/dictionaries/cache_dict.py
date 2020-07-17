@@ -79,7 +79,6 @@ class CacheDict(tp.Mapping[K, V]):
         try:
             value = future.result()
         except KeyError:
-            self.invalidate(key)
             self._on_failure(key)
             if self.default_value_factory:
                 return self.default_value_factory()
@@ -94,7 +93,7 @@ class CacheDict(tp.Mapping[K, V]):
 
         It is expected that invalidate(key) will be always called before
         """
-        # at this point the data is deleted by invalidate(key)
+        self.invalidate(key)
         if self.cache_failures:
             self.cache_missed.add(key)
             self.timestamp_data[key] = self.time_getter()
@@ -112,7 +111,6 @@ class CacheDict(tp.Mapping[K, V]):
             try:
                 result = fut.result()
             except KeyError:
-                self.invalidate(key)
                 self._on_failure(key)
             else:
                 self[key] = result
