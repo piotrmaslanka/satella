@@ -2,11 +2,25 @@ import typing as tp
 
 T = tp.TypeVar('T')
 
-__all__ = ['choose']
+__all__ = ['choose', 'choose_one']
+
+
+def choose_one(filter_fun: tp.Callable[[T], bool], iterable: tp.Iterable[T]) -> T:
+    """
+    Syntactic sugar for
+
+    >>> choose(filter_fun, iterable, True)
+
+    :param filter_fun: function that returns bool on the single value
+    :param iterable: iterable to examine
+    :return: single element in the iterable that matches given input
+    :raises ValueError: on multiple elements matching, or none at all
+    """
+    return choose(filter_fun, iterable, True)
 
 
 def choose(filter_fun: tp.Callable[[T], bool], iterable: tp.Iterable[T],
-           dont_check_multiple: bool = False) -> T:
+           check_multiple: bool = False) -> T:
     """
     Return a single value that exists in given iterable.
 
@@ -14,21 +28,22 @@ def choose(filter_fun: tp.Callable[[T], bool], iterable: tp.Iterable[T],
 
     >>> next(iter(filter(filter_fun, iterable)))
 
-    but raises a different exception if nothing matches (and if there are multiple matches).
-    This will also look through the entire list
+    but raises a different exception if nothing matches (and if there are multiple matches
+    and check_multiple is True).
+    If check_multiple is True this guarantees to exhaust the generator (if passed).
 
     :param filter_fun: function that returns bool on the single value
     :param iterable: iterable to examine
-    :param dont_check_multiple: if True, this won't check if there are multiple entries matching
-        filter_fun, but will bail on first found element
+    :param check_multiple: if True, this will check if there are multiple entries matching
+        filter_fun, and will raise ValueError if so
     :return: single element in the iterable that matches given input
-    :raises ValueError: on multiple elements matching, or none at all
+    :raises ValueError: on multiple elements matching (if check_multiple), or none at all
     """
     elem_candidate = None
     found = False
     for elem in iterable:
         if filter_fun(elem):
-            if dont_check_multiple:
+            if not check_multiple:
                 return elem
 
             if found:

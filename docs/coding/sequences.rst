@@ -1,5 +1,9 @@
-Sequences
-=========
+=======================
+Sequences and iterators
+=======================
+
+Standard routines
+=================
 
 choose
 ------
@@ -7,6 +11,15 @@ choose
 To return the single element that returns true on given callable, use the following function:
 
 .. autofunction:: satella.coding.sequences.choose
+
+choose_one
+----------
+
+Does the same thing as choose, but exhausts the generator and checks if there are no multiple
+elements matching the callable. If there are, raises ValueError.
+
+.. autofunction:: satella.coding.sequences.choose_one
+
 
 n_th
 ----
