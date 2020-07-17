@@ -49,7 +49,7 @@ You use the descriptors by calling them on respective values, eg.
 
 
 JSON schema
------------
+===========
 
 The JSON schema is pretty straightforward. Assuming the top-level is a dict, it contains keys. A key name is the
 name of the corresponding key, and value can have two types. Either it is a string, which is a short-hand for a descriptor,

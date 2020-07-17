@@ -43,7 +43,7 @@ want parsing for **yaml** and **toml**, you better install `pyyaml` and `toml` r
 Note that JSON will be parsed using `ujson` if the module is available.
 
 JSON schema
------------
+===========
 
 The JSON schema consists of defining particular sources, embedded in one another.
 

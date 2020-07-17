@@ -75,8 +75,8 @@ Following function will help with that:
 
 .. autofunction:: satella.coding.metaclass_maker
 
-Preconditions
--------------
+Preconditions and postconditions
+--------------------------------
 
 Sometimes you need to specify conditions that parameter to your function will need to obey.
 You can use the following decorator for this:
@@ -110,6 +110,11 @@ Example:
 >>> expect_two(None)
 >>> expect_two(2)
 >>> self.assertRaises(PreconditionError, lambda: expect_two(3))
+
+You can also check the return value with
+
+.. autofunction:: satella.coding.postcondition
+
 
 attach_arguments
 ----------------

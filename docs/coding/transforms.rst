@@ -1,13 +1,14 @@
-Rudimentary data transforms.
+Rudimentary data transforms
+===========================
 
 split_shuffle_and_join
-======================
+----------------------
 
 .. autofunction:: satella.coding.transforms.split_shuffle_and_join
 
 
 stringify
-=========
+---------
 
 Make both keys and values (if dict), values (if list) or make an object a string by passing them through stringify function.
 

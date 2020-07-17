@@ -1,5 +1,6 @@
+=======
 Metrics
--------
+=======
 
 Satella's metrics
 =================
@@ -24,8 +25,8 @@ These are contained in a enum:
 By default, it runs in *RUNTIME* mode. This means that statistics
 are collected only from metrics of this
 instrument that are set to at least RUNTIME. If a user wants to
-dig deeper, it can switch the instrument to 
-DEBUG, which will cause more data to be registered. If a metric 
+dig deeper, it can switch the instrument to
+DEBUG, which will cause more data to be registered. If a metric
 is in state INHERIT, it will inherit the metric level from it's
 parent, traversing the tree if required.
 
@@ -113,7 +114,7 @@ an MetricAlreadyExists exception will be raised:
 
 .. autoclass:: satella.exceptions.MetricAlreadyExists
 
-Third parameter is optional. If set, all child metrics created 
+Third parameter is optional. If set, all child metrics created
 during this metric's instantiation will receive such metric level.
 If the metric already exists, it's level will be set to provided
 metric level, if passed.
@@ -228,4 +229,5 @@ Useful data structures
 
 Sometimes you want to metrify a ThreadPool. Here comes the saviour:
 
-.. autoclass:: satells.instrumentation.metrics.structures.MetrifiedThreadPool
+.. autoclass:: satella.instrumentation.metrics.structures.MetrifiedThreadPool
+

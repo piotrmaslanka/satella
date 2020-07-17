@@ -153,14 +153,21 @@ will run to completion.
 **Take care**: this won't work on PyPy due to it's nondeterministic
 garbage collection!
 
+Deleters
+========
+
+Objects that allow you to easily (and rather quickly)
+remove elements from a list or a dict while iterating over
+them with minimum memory overhead.
+
 ListDeleter
-===========
+-----------
 
 .. autoclass:: satella.coding.ListDeleter
     :members:
 
 DictDeleter
-===========
+-----------
 
 .. autoclass:: satella.coding.DictDeleter
     :members:
