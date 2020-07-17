@@ -3,10 +3,15 @@ import unittest
 
 from satella.coding.sequences import choose, choose_one, infinite_counter, take_n, is_instance, \
     is_last, add_next, half_cartesian, skip_first, zip_shifted, stop_after, group_quantity, \
-    iter_dict_of_list, shift, other_sequence_no_longer_than, count, even, odd, Multirun, n_th
+    iter_dict_of_list, shift, other_sequence_no_longer_than, count, even, odd, Multirun, n_th, \
+    unique
 
 
 class TestSequences(unittest.TestCase):
+
+    def test_unique(self):
+        a = [1, 2, 3, 1, 2, 3]
+        self.assertEqual(list(unique(a)), [1, 2, 3])
 
     def test_n_th(self):
         self.assertEqual(n_th(itertools.count()), 0)

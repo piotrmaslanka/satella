@@ -125,6 +125,7 @@ class TestMisc(unittest.TestCase):
         cd = CacheDict(1, 2, cg)
         now = time.monotonic()
         self.assertEqual(cd[2], 2)
+        self.assertEqual(list(cd), [2])
         self.assertGreaterEqual(cg.called_on[2], now)
         time.sleep(0.2)
         now = time.monotonic()

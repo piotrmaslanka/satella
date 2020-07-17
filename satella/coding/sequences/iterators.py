@@ -9,6 +9,25 @@ T, U = tp.TypeVar('T'), tp.TypeVar('U')
 IteratorOrIterable = tp.Union[tp.Iterator[T], tp.Iterable[T]]
 
 
+def unique(lst: IteratorOrIterable) -> tp.Iterator[T]:
+    """
+    Return each element from lst, but return every element only once.
+
+    Take care for elements of T to be __eq__-able and hashable!
+
+    This will keep internally a set of elements encountered, and skip them if same element
+    appears twice
+
+    :param lst: iterable to process
+    :return: a generator yielding unique items from lst
+    """
+    already_seen = set()
+    for elem in lst:
+        if elem not in already_seen:
+            already_seen.add(elem)
+            yield elem
+
+
 @for_argument(iter)
 def even(sq: IteratorOrIterable) -> tp.Iterator[T]:
     """
@@ -206,6 +225,7 @@ def n_th(iterator: IteratorOrIterable, n: int = 0) -> T:
     """
     Obtain n-th element (counting from 0) of an iterable
 
+    :param iterator: iterable to process
     :param n: element to return. Note that we're counting from 0
     :raises IndexError: iterable was too short
     """

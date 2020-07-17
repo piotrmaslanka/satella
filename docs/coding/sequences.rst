@@ -5,10 +5,16 @@ Sequences and iterators
 Standard routines
 =================
 
+unique
+------
+
+.. autofunction:: satella.coding.sequences.unique
+
 choose
 ------
 
-To return the single element that returns true on given callable, use the following function:
+To return the first single element that returns true on given callable,
+use the following function:
 
 .. autofunction:: satella.coding.sequences.choose
 

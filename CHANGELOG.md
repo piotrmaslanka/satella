@@ -2,3 +2,4 @@
 
 * `CacheDict`: `try_delete` -> `invalidate`
 * added `default_value_factory` to `CacheDict`
+* added `unique`
