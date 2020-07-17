@@ -36,6 +36,7 @@ class TestMisc(unittest.TestCase):
         self.assertFalse(Enum.A > Enum.B)
         self.assertFalse(Enum.A >= Enum.B)
         self.assertFalse(Enum.A == Enum.B)
+        self.assertEqual({Enum.A: 't'}[Enum.A], 't')
 
     def test_str_eq_hashable_mixin(self):
         class MyClass(StrEqHashableMixin):
