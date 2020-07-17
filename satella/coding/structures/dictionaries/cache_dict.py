@@ -67,6 +67,8 @@ class CacheDict(tp.Mapping[K, V]):
     def get_value_block(self, key: K) -> V:
         """
         Get a value using value_getter. Block until it's available. Store it into the cache.
+
+        :raises KeyError: the value is not present at all
         """
         future = self.value_getter_executor.submit(self.value_getter, key)
         try:
@@ -79,10 +81,13 @@ class CacheDict(tp.Mapping[K, V]):
         return value
 
     def _on_failure(self, key: K) -> None:
-        """Called internally when a KeyError occurs"""
+        """
+        Called internally when a KeyError occurs.
+
+        It is expected that try_delete(key) will be always called before
+        """
+        # at this point the data is deleted by try_delete(key)
         if self.cache_failures:
-            with silence_excs(KeyError):
-                del self.data[key]
             self.cache_missed.add(key)
             self.timestamp_data[key] = self.time_getter()
 
