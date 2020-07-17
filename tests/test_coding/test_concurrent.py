@@ -130,6 +130,20 @@ class TestConcurrent(unittest.TestCase):
         mtt.start()
         mtt.terminate().join()
 
+    @unittest.skipIf(platform.python_implementation() != 'PyPy', 'this requires PyPy')
+    def test_terminable_thread_force_notimplementederror(self):
+        class MyTerminableThread(TerminableThread):
+            def run(self):
+                a = 0
+                while not self._terminating:
+                    time.sleep(0.5)
+                    a += 1
+
+        mtt = MyTerminableThread(daemon=True)
+        mtt.start()
+        self.assertRaises(NotImplementedError, lambda: mtt.terminate(force=True))
+        mtt.terminate().join()
+
     @unittest.skipIf(platform.python_implementation() == 'PyPy', 'force=True doesn''t work on PyPy')
     def test_terminable_thread_force(self):
         class MyTerminableThread(TerminableThread):
