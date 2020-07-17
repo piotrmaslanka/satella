@@ -1,6 +1,2 @@
-# v2.9
+# v2.9.1
 
-* optimization in `CacheDict`
-* changed the logic in choose
-* changed the semantics for `choose`
-* added `choose_one`
