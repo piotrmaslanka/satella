@@ -1,4 +1,4 @@
-sequences
+Sequences
 =========
 
 choose
