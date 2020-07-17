@@ -1,3 +1,2 @@
-# v2.8.19
+# v2.8.20
 
-* add split_shuffle_and_join
