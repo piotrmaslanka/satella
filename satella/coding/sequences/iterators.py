@@ -89,7 +89,7 @@ def iter_dict_of_list(dct: tp.Dict[T, tp.List[U]]) -> tp.Generator[tp.Tuple[T, U
             yield key, item
 
 
-def infinite_counter(start_at: int = 0, step: int = 1) -> tp.Generator[int, None, None]:
+def infinite_counter(start_at: int = 0, step: int = 1) -> tp.Iterator[int]:
     """
     Infinite counter, starting at start_at
 
@@ -112,7 +112,7 @@ def is_instance(classes: tp.Union[tp.Tuple[type, ...], type]) -> tp.Callable[[ob
 
 
 def other_sequence_no_longer_than(base_sequence: IteratorOrIterable,
-                                  other_sequence: IteratorOrIterable[T]) -> tp.Iterator[T]:
+                                  other_sequence: IteratorOrIterable) -> tp.Iterator[T]:
     """
     Return every item in other_sequence, but limit it's p_len to that of base_sequence.
 
@@ -130,7 +130,7 @@ def other_sequence_no_longer_than(base_sequence: IteratorOrIterable,
             return
 
 
-def shift(iterable: IteratorOrIterable[T], shift_factor: int) -> tp.Iterator[T]:
+def shift(iterable_: IteratorOrIterable, shift_factor: int) -> tp.Iterator[T]:
     """
     Return this sequence, but shifted by factor elements, so that elements will appear
     sooner by factor.
@@ -143,29 +143,29 @@ def shift(iterable: IteratorOrIterable[T], shift_factor: int) -> tp.Iterator[T]:
     into memory (converted internally to lists). This can be avoided by passing in a Reversible
     iterable.
 
-    :param iterable: iterable to shift
+    :param iterable_: iterable to shift
     :param shift_factor: factor by which shift elements.
     :return: shifted sequence
     """
 
     if shift_factor >= 0:
-        iterator = iter(iterable)
+        iterator = iter(iterable_)
         elements = []
         for i in range(shift_factor):
             elements.append(next(iterator))
         return itertools.chain(iterator, elements)
     else:
-        if hasattr(iterable, '__reversed__'):
-            elements = take_n(reversed(iterable), -shift_factor)
+        if hasattr(iterable_, '__reversed__'):
+            elements = take_n(reversed(iterable_), -shift_factor)
             elements = reversed(elements)
-            return other_sequence_no_longer_than(iterable, itertools.chain(elements, iterable))
+            return other_sequence_no_longer_than(iterable_, itertools.chain(elements, iterable_))
         else:
-            iterator = list(iterable)
+            iterator = list(iterable_)
             iterator = iterator[shift_factor:] + iterator[:shift_factor]  # shift's already negative
             return iterator
 
 
-def zip_shifted(*args: tp.Union[IteratorOrIterable[T], tp.Tuple[IteratorOrIterable[T], int]]) -> \
+def zip_shifted(*args: tp.Union[IteratorOrIterable, tp.Tuple[IteratorOrIterable, int]]) -> \
         tp.Iterator[tp.Tuple[T, ...]]:
     """
     Construct an iterator, just like zip but first by cycling it's elements by it's shift factor.
@@ -209,7 +209,7 @@ def skip_first(iterator: IteratorOrIterable, n: int) -> tp.Iterator[T]:
     yield from iterator
 
 
-def stop_after(iterator: IteratorOrIterable[T], n: int) -> tp.Iterator[T]:
+def stop_after(iterator: IteratorOrIterable, n: int) -> tp.Iterator[T]:
     """
     Stop this iterator after returning n elements, even if it's longer than that.
 
