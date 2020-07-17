@@ -5,10 +5,24 @@ import typing as tp
 from abc import ABCMeta, abstractmethod
 
 
-class ComparableIntEnum(enum.IntEnum):
+class HashableIntEnum(enum.IntEnum):
     """
-    An enum.IntEnum that implements comparision, stemming from it's values
+    An enum.IntEnum that implements hashability, stemming from it's values, as well
+    as hashability
     """
+
+    def __hash__(self) -> int:
+        return hash(self.value)
+
+
+class ComparableIntEnum(HashableIntEnum):
+    """
+    An enum.IntEnum that implements comparision, stemming from it's values, as well
+    as hashability
+    """
+
+    def __hash__(self) -> int:
+        return hash(self.value)
 
     def __lt__(self, other: 'ComparableIntEnum') -> bool:
         return self.value < other.value

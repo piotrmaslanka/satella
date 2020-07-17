@@ -82,6 +82,23 @@ If you need to provide a quick __repr__ for your classes:
 .. autoclass:: satella.coding.structures.ReprableMixin
     :members:
 
+HashableIntEnum
+===============
+
+An enum.IntEnum that can be __hash__ed
+
+.. autoclass:: satella.coding.structures.HashableIntEnum
+    :members:
+
+
+ComparableIntEnum
+=================
+
+An enum.IntEnum that you can compare by it's values
+
+.. autoclass:: satella.coding.structures.ComparableIntEnum
+    :members:
+
 ==========
 Singletons
 ==========
