@@ -1,13 +1,51 @@
 import collections
+import random
 import typing as tp
 
-__all__ = ['stringify']
+__all__ = ['stringify', 'split_shuffle_and_join']
 
 
 def _stringify_none(str_none, stringifier):
     if str_none:
         return stringifier(None)
     return None
+
+
+T = tp.TypeVar('T')
+
+
+def split_shuffle_and_join(entries: tp.List[T],
+                           whether_to_shuffle: tp.Callable[[T], bool] = lambda x: True,
+                           not_shuffled_to_front: bool = True) -> tp.List[T]:
+    """
+    Split elements in entries into two groups - one group, called True, is the one for which
+    whether_to_shuffle(elem) is True, the other is False.
+
+    Shuffle the group True.
+
+    If not_shuffled_to_front, elements in the group False will go at the beginning of the returned
+    list, after which will go elements shuffled. If it's False, the not-shuffled elements will be
+    at the back of the list.
+
+    Order of the not shuffled elements will be preserved.
+
+    :param entries: list of elements
+    :param whether_to_shuffle: a decider to which group does given element belong?
+    :param not_shuffled_to_front: if True then not shuffled elements will be put before shuffled,
+        else the not shuffled elements will be at the back of the list
+    :return: list altered to specification
+    """
+
+    not_shuffled, shuffled = [], []
+    for elem in entries:
+        (shuffled if whether_to_shuffle(elem) else not_shuffled).append(elem)
+
+    random.shuffle(shuffled)
+
+    if not_shuffled_to_front:
+        return not_shuffled + shuffled
+    else:
+        return shuffled + not_shuffled
 
 
 def stringify(obj: tp.Union[tp.Any], stringifier: tp.Callable[[tp.Any], str] = str,
