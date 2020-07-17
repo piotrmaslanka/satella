@@ -74,7 +74,7 @@ class CacheDict(tp.Mapping[K, V]):
         try:
             value = future.result()
         except KeyError:
-            self.try_delete(key)
+            self.invalidate(key)
             self._on_failure(key)
             raise
         self[key] = value
@@ -84,16 +84,19 @@ class CacheDict(tp.Mapping[K, V]):
         """
         Called internally when a KeyError occurs.
 
-        It is expected that try_delete(key) will be always called before
+        It is expected that invalidate(key) will be always called before
         """
-        # at this point the data is deleted by try_delete(key)
+        # at this point the data is deleted by invalidate(key)
         if self.cache_failures:
             self.cache_missed.add(key)
             self.timestamp_data[key] = self.time_getter()
 
-    def schedule_a_fetch(self, key: K) -> None:
+    def schedule_a_fetch(self, key: K) -> Future:
         """
         Schedule a value refresh for given key
+
+        :param key: key to schedule the refresh for
+        :return: future that was queued to ask for given key
         """
         future = self.value_getter_executor.submit(self.value_getter, key)
 
@@ -101,18 +104,20 @@ class CacheDict(tp.Mapping[K, V]):
             try:
                 result = fut.result()
             except KeyError:
-                self.try_delete(key)
+                self.invalidate(key)
                 self._on_failure(key)
             else:
                 self[key] = result
 
         future.add_done_callback(on_done_callback)
+        return future
 
     @silence_excs(KeyError)
-    def try_delete(self, key: K) -> None:
+    def invalidate(self, key: K) -> None:
         """
-        Syntactic sugar for
+        Remove all information about given key from the cache
 
+        Syntactic sugar for:
 
         >>> try:
         >>>   del self[key]
