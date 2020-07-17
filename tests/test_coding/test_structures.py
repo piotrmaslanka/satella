@@ -159,6 +159,16 @@ class TestMisc(unittest.TestCase):
         time.sleep(1.1)
         self.assertEqual(cd[2], 2)
 
+    def test_cache_dict_defaultvaluefactory(self):
+        class TestCacheGetter:
+            def __call__(self, key):
+                raise KeyError('no value available')
+
+        cg = TestCacheGetter()
+        cd = CacheDict(1, 2, cg, cache_failures_interval=1, default_value_factory=list)
+        self.assertEqual(cd[2], [])
+        self.assertEqual(cd[2], [])
+
     def test_dictobject_dictobject(self):
         a = DictObject(a=5, k=3)
         b = DictObject(a)

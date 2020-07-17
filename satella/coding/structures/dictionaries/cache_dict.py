@@ -36,6 +36,9 @@ class CacheDict(tp.Mapping[K, V]):
     :param cache_failures_interval: if any other than None is defined, this is the timeout
         for which failed lookups will be cached. By default they won't be cached at all.
     :param time_getter: a routine used to get current time in seconds
+    :param default_value_factory: if given, this is the callable that will return values
+        that will be given to user instead of throwing KeyError. If not given (default),
+        KeyError will be thrown
     """
 
     def __len__(self) -> int:
@@ -48,10 +51,12 @@ class CacheDict(tp.Mapping[K, V]):
                  value_getter: tp.Callable[[K], V],
                  value_getter_executor: tp.Optional[Executor] = None,
                  cache_failures_interval: tp.Optional[float] = None,
-                 time_getter: tp.Callable[[], float] = time.monotonic):
+                 time_getter: tp.Callable[[], float] = time.monotonic,
+                 default_value_factory: tp.Optional[tp.Callable[[], V]] = None):
         assert stale_interval <= expiration_interval, 'Stale interval may not be larger ' \
                                                       'than expiration interval!'
         self.stale_interval = stale_interval
+        self.default_value_factory = default_value_factory
         self.expiration_interval = expiration_interval
         self.value_getter = value_getter
         if value_getter_executor is None:
@@ -76,7 +81,10 @@ class CacheDict(tp.Mapping[K, V]):
         except KeyError:
             self.invalidate(key)
             self._on_failure(key)
-            raise
+            if self.default_value_factory:
+                return self.default_value_factory()
+            else:
+                raise
         self[key] = value
         return value
 
@@ -131,7 +139,10 @@ class CacheDict(tp.Mapping[K, V]):
             if now - timestamp > self.cache_failures_interval:
                 return self.get_value_block(key)
             else:
-                raise KeyError('Cached a miss')
+                if self.default_value_factory:
+                    return self.default_value_factory()
+                else:
+                    raise KeyError('Cached a miss')
 
     def __getitem__(self, key: K) -> V:
         if key not in self.data and key not in self.cache_missed:
