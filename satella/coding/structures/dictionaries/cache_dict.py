@@ -49,12 +49,7 @@ class CacheDict(tp.Mapping[K, V]):
     def __iter__(self) -> tp.Iterator[K]:
         return iter(self.data)
 
-    def has_info_about(self, key):
-        p = self._has_info_about(key)
-        logger.warning(f'responding with {p}')
-        return p
-
-    def _has_info_about(self, key: str) -> bool:
+    def has_info_about(self, key: str) -> bool:
         """
         Is provided key cached, or failure about it is cached?
         """
