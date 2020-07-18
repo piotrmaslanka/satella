@@ -47,6 +47,22 @@ class CacheDict(tp.Mapping[K, V]):
     def __iter__(self) -> tp.Iterator[K]:
         return iter(self.data)
 
+    def has_info_about(self, key: str) -> bool:
+        """
+        Is provided key cached, or failure about it is cached?
+        """
+        if key in self.data:
+            try:
+                ts = self.timestamp_data[key]
+            except KeyError:
+                return False
+
+            return time.time() - ts <= self.expiration_interval
+        if self.cache_failures:
+            return key in self.cache_missed
+        else:
+            return False
+
     def __init__(self, stale_interval: float, expiration_interval: float,
                  value_getter: tp.Callable[[K], V],
                  value_getter_executor: tp.Optional[Executor] = None,
