@@ -9,9 +9,6 @@ class MetrifiedCacheDict(CacheDict):
     """
     A CacheDict with metrics!
 
-    Note that this mandated default_value_factory to be None, because otherwise
-    there's no way to tell if a __getitem__ resulted in a miss or a hit
-
     :param cache_hits_cps: a metric that will be ticked each time there's a cache hit
     :param cache_miss_cps: a metric that will be ticked each time there's a cache miss
     :param refreshes_cps: a metric that will be ticked each refresh (ie. call to value_getter)

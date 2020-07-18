@@ -1,5 +1,6 @@
 import unittest
 
+from satella.coding.sequences import n_th
 from satella.instrumentation.metrics import getMetric
 
 import time
@@ -28,11 +29,11 @@ class TestThreadPoolExecutor(unittest.TestCase):
         mcd = MetrifiedCacheDict(1, 2, getter, cache_hits_cps=cache_hits,
                                  cache_miss_cps=cache_miss)
         mcd[2]
-        self.assertEqual(next(iter(cache_hits.to_metric_data().values)).value, 0)
-        self.assertEqual(next(iter(cache_miss.to_metric_data().values)).value, 1)
+        self.assertEqual(n_th(cache_hits.to_metric_data().values).value, 0)
+        self.assertEqual(n_th(cache_miss.to_metric_data().values).value, 1)
         mcd[2]
-        self.assertEqual(next(iter(cache_hits.to_metric_data().values)).value, 1)
-        self.assertEqual(next(iter(cache_miss.to_metric_data().values)).value, 1)
+        self.assertEqual(n_th(cache_hits.to_metric_data().values).value, 1)
+        self.assertEqual(n_th(cache_miss.to_metric_data().values).value, 1)
 
     def test_metrified_thread_pool_executor(self):
         waiting_summary = getMetric('mtpe.summary', 'summary')
@@ -45,11 +46,11 @@ class TestThreadPoolExecutor(unittest.TestCase):
 
         mtpe.submit(wait)
         time.sleep(0.1)
-        self.assertEqual(next(iter(callable_metric.to_metric_data().values)).value, 0)
+        self.assertEqual(n_th(callable_metric.to_metric_data().values).value, 0)
         mtpe.submit(wait)
         fr = mtpe.submit(wait)
         time.sleep(0.1)
-        self.assertEqual(next(iter(callable_metric.to_metric_data().values)).value, 1)
+        self.assertEqual(n_th(callable_metric.to_metric_data().values).value, 1)
         fr.result()
         self.assertIn(choose('.count', executing_summary.to_metric_data()).value, {2, 3})
         self.assertEqual(choose('.count', waiting_summary.to_metric_data()).value, 3)

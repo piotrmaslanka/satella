@@ -1,9 +1,11 @@
 import time
 import typing as tp
+import logging
 from concurrent.futures import ThreadPoolExecutor, Executor, Future
 
 from satella.coding.recast_exceptions import silence_excs
 
+logger = logging.getLogger(__name__)
 K, V = tp.TypeVar('K'), tp.TypeVar('V')
 
 
@@ -47,21 +49,31 @@ class CacheDict(tp.Mapping[K, V]):
     def __iter__(self) -> tp.Iterator[K]:
         return iter(self.data)
 
-    def has_info_about(self, key: str) -> bool:
+    def has_info_about(self, key):
+        p = self._has_info_about(key)
+        logger.warning(f'responding with {p}')
+        return p
+
+    def _has_info_about(self, key: str) -> bool:
         """
         Is provided key cached, or failure about it is cached?
         """
         if key in self.data:
             try:
-                ts = self.timestamp_data[key]
+                # an additional check, since this is a concurrent data structure and
+                # we aren't locking
+                return self.time_getter() - self.timestamp_data[key] <= self.expiration_interval
             except KeyError:
                 return False
 
-            return time.time() - ts <= self.expiration_interval
         if self.cache_failures:
-            return key in self.cache_missed
-        else:
-            return False
+            if key in self.cache_missed:
+                try:
+                    return self.time_getter() - self.timestamp_data[key] <= self.expiration_interval
+                except KeyError:
+                    return False
+
+        return False
 
     def __init__(self, stale_interval: float, expiration_interval: float,
                  value_getter: tp.Callable[[K], V],
@@ -148,7 +160,7 @@ class CacheDict(tp.Mapping[K, V]):
         """
         del self[key]
 
-    def _on_cache_miss(self, key: K, timestamp: float, now: float) -> V:
+    def _on_cache_hit_empty(self, key: K, timestamp: float, now: float) -> V:
         if key in self.cache_missed:
             if now - timestamp > self.cache_failures_interval:
                 return self.get_value_block(key)
@@ -166,7 +178,7 @@ class CacheDict(tp.Mapping[K, V]):
         now = time.monotonic()
 
         if key in self.cache_missed:
-            return self._on_cache_miss(key, timestamp, now)
+            return self._on_cache_hit_empty(key, timestamp, now)
         else:
             return self._on_cache_hit(key, timestamp, now)
 
