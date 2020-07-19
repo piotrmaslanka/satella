@@ -22,7 +22,8 @@ class ClicksPerTimeUnitMetric(EmbeddedSubmetrics):
 
     def __init__(self, *args, time_unit_vectors: tp.Optional[tp.List[float]] = None,
                  aggregate_children: bool = True, internal: bool = False, **kwargs):
-        warnings.warn('cps is deprecated, use a counter and calculate a rate() from it',
+        warnings.warn('cps is deprecated and will be removed in Satella 3.0, '
+                      'use a counter and calculate a rate() from it instead',
                       DeprecationWarning)
         super().__init__(*args, internal=internal, time_unit_vectors=time_unit_vectors, **kwargs)
         time_unit_vectors = time_unit_vectors or [1]
