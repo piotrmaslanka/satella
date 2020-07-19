@@ -1,6 +1,7 @@
 import collections
 import time
 import typing as tp
+import warnings
 
 from .base import EmbeddedSubmetrics
 from .registry import register_metric
@@ -21,6 +22,8 @@ class ClicksPerTimeUnitMetric(EmbeddedSubmetrics):
 
     def __init__(self, *args, time_unit_vectors: tp.Optional[tp.List[float]] = None,
                  aggregate_children: bool = True, internal: bool = False, **kwargs):
+        warnings.warn('cps is deprecated, use a counter and calculate a rate() from it',
+                      PendingDeprecationWarning)
         super().__init__(*args, internal=internal, time_unit_vectors=time_unit_vectors, **kwargs)
         time_unit_vectors = time_unit_vectors or [1]
         self.last_clicks = collections.deque()  # type: tp.List[float]
