@@ -1,6 +1,7 @@
 import time
 import typing as tp
 from satella.coding.structures import CacheDict
+from satella.time import measure
 from .. import Metric
 from ..metric_types import ClicksPerTimeUnitMetric
 
@@ -22,6 +23,19 @@ class MetrifiedCacheDict(CacheDict):
                  cache_miss: tp.Optional[Metric] = None,
                  refreshes: tp.Optional[Metric] = None,
                  how_long_refresh_takes: tp.Optional[Metric] = None):
+        if refreshes or how_long_refresh_takes:
+            def value_getter_replacement():
+                with measure() as measurement:
+                    try:
+                        return value_getter()
+                    finally:
+                        if self.refreshes:
+                            self.refreshes.runtime(+1)
+                        if self.how_long_refresh_takes:
+                            self.how_long_refresh_takes.runtime(measurement())
+
+            value_getter = value_getter_replacement
+
         super().__init__(stale_interval, expiration_interval, value_getter,
                          value_getter_executor, cache_failures_interval, time_getter,
                          default_value_factory)
@@ -38,17 +52,3 @@ class MetrifiedCacheDict(CacheDict):
             if self.cache_miss:
                 self.cache_miss.runtime(+1)
         return super().__getitem__(item)
-
-    def schedule_a_fetch(self, key):
-        if self.refreshes:
-            self.refreshes.runtime(+1)
-        time_start = self.time_getter()
-        fut = super().schedule_a_fetch(key)
-
-        def on_done_callback(future):
-            elapsed = self.time_getter() - time_start
-            self.how_long_refresh_takes.runtime(elapsed)
-
-        if self.how_long_refresh_takes:
-            fut.add_done_callback(on_done_callback)
-        return fut
