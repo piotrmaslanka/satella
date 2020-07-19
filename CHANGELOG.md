@@ -1,4 +1,2 @@
-# v2.9.2
+# v2.9.3
 
-* refactored metrics in `MetrifiedCacheDict`
-* cps is pending deprecated
