@@ -18,10 +18,12 @@ class TestThreadPoolExecutor(unittest.TestCase):
         cache_hits = getMetric('cachedict.hits', 'counter')
         cache_miss = getMetric('cachedict.miss', 'counter')
         refreshes = getMetric('refreshes', 'counter')
+        how_long_takes = getMetric('how_long_takes', 'summary')
         value = 2
 
         def getter(key):
             nonlocal value
+            time.sleep(0.5)
             if value is None:
                 raise KeyError()
             else:
@@ -29,11 +31,13 @@ class TestThreadPoolExecutor(unittest.TestCase):
 
         mcd = MetrifiedCacheDict(1, 2, getter, cache_hits=cache_hits,
                                  cache_miss=cache_miss,
-                                 refreshes=refreshes)
+                                 refreshes=refreshes,
+                                 how_long_refresh_takes=how_long_takes)
         mcd[2]
         self.assertEqual(n_th(cache_hits.to_metric_data().values).value, 0)
         self.assertEqual(n_th(cache_miss.to_metric_data().values).value, 1)
         self.assertEqual(n_th(refreshes.to_metric_data().values).value, 1)
+        self.assertGreaterEqual(n_th(how_long_takes.to_metric_data().values).value, 0.5)
         mcd[2]
         self.assertEqual(n_th(cache_hits.to_metric_data().values).value, 1)
         self.assertEqual(n_th(cache_miss.to_metric_data().values).value, 1)

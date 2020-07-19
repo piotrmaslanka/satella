@@ -1,9 +1,8 @@
 import time
 import typing as tp
 from satella.coding.structures import CacheDict
-from satella.time import measure
 from .. import Metric
-from ..metric_types import ClicksPerTimeUnitMetric
+from ..metric_types.measurable_mixin import MeasurableMixin
 
 
 class MetrifiedCacheDict(CacheDict):
@@ -22,19 +21,21 @@ class MetrifiedCacheDict(CacheDict):
                  cache_hits: tp.Optional[Metric] = None,
                  cache_miss: tp.Optional[Metric] = None,
                  refreshes: tp.Optional[Metric] = None,
-                 how_long_refresh_takes: tp.Optional[Metric] = None):
-        if refreshes or how_long_refresh_takes:
+                 how_long_refresh_takes: tp.Optional[MeasurableMixin] = None):
+        if refreshes:
+            old_value_getter = value_getter
+
             def value_getter_replacement(item):
-                with measure() as measurement:
-                    try:
-                        return value_getter(item)
-                    finally:
-                        if self.refreshes:
-                            self.refreshes.runtime(+1)
-                        if self.how_long_refresh_takes:
-                            self.how_long_refresh_takes.runtime(measurement())
+                try:
+                    return old_value_getter(item)
+                finally:
+                    if self.refreshes:
+                        self.refreshes.runtime(+1)
 
             value_getter = value_getter_replacement
+
+        if how_long_refresh_takes:
+            value_getter = how_long_refresh_takes.measure(value_getter=time_getter)(value_getter)
 
         super().__init__(stale_interval, expiration_interval, value_getter,
                          value_getter_executor, cache_failures_interval, time_getter,
