@@ -24,10 +24,10 @@ class MetrifiedCacheDict(CacheDict):
                  refreshes: tp.Optional[Metric] = None,
                  how_long_refresh_takes: tp.Optional[Metric] = None):
         if refreshes or how_long_refresh_takes:
-            def value_getter_replacement():
+            def value_getter_replacement(item):
                 with measure() as measurement:
                     try:
-                        return value_getter()
+                        return value_getter(item)
                     finally:
                         if self.refreshes:
                             self.refreshes.runtime(+1)
