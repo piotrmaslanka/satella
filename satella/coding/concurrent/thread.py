@@ -66,8 +66,7 @@ class TerminableThread(threading.Thread):
     >>> class MeGrimlock(TerminableThread):
     >>>     def loop(self):
     >>>         ... do your operations ..
-    >>> a = MeGrimlock()
-    >>> a.start()
+    >>> a = MeGrimlock().start()
     >>> a.terminate().join()
 
     Flag whether to terminate is stored in **self._terminating**.
@@ -99,6 +98,14 @@ class TerminableThread(threading.Thread):
         This should block for as long as a single check will take, as termination checks take place
         between calls.
         """
+
+    def start(self) -> 'TerminableThread':
+        """
+        Start the execution of this thread
+        :return: this thread
+        """
+        super().start()
+        return self
 
     def run(self) -> None:
         """
