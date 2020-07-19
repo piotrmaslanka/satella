@@ -15,8 +15,9 @@ def wait():
 
 class TestThreadPoolExecutor(unittest.TestCase):
     def test_metrified_cache_dict(self):
-        cache_hits = getMetric('cachedict.hits', 'cps', time_unit_vectors=[10])
-        cache_miss = getMetric('cachedict.miss', 'cps', time_unit_vectors=[10])
+        cache_hits = getMetric('cachedict.hits', 'counter')
+        cache_miss = getMetric('cachedict.miss', 'counter')
+        refreshes = getMetric('refreshes', 'counter')
         value = 2
 
         def getter(key):
@@ -26,14 +27,17 @@ class TestThreadPoolExecutor(unittest.TestCase):
             else:
                 return value
 
-        mcd = MetrifiedCacheDict(1, 2, getter, cache_hits_cps=cache_hits,
-                                 cache_miss_cps=cache_miss)
+        mcd = MetrifiedCacheDict(1, 2, getter, cache_hits=cache_hits,
+                                 cache_miss=cache_miss,
+                                 refreshes=refreshes)
         mcd[2]
         self.assertEqual(n_th(cache_hits.to_metric_data().values).value, 0)
         self.assertEqual(n_th(cache_miss.to_metric_data().values).value, 1)
+        self.assertEqual(n_th(refreshes.to_metric_data().values).value, 1)
         mcd[2]
         self.assertEqual(n_th(cache_hits.to_metric_data().values).value, 1)
         self.assertEqual(n_th(cache_miss.to_metric_data().values).value, 1)
+        self.assertEqual(n_th(refreshes.to_metric_data().values).value, 1)
 
     def test_metrified_thread_pool_executor(self):
         waiting_summary = getMetric('mtpe.summary', 'summary')
