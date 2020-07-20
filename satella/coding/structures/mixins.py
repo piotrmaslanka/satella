@@ -58,6 +58,48 @@ class StrEqHashableMixin(metaclass=ABCMeta):
         pass
 
 
+class ComparableAndHashableBy(metaclass=ABCMeta):
+    """
+    A mix-in. Provides comparision (lt, gt, ge, le, eq) and hashing by a field of this class.
+
+    Example:
+
+    >>> class Vector(ComparableAndHashableBy):
+    >>>     _COMPARABLE_BY = 'length'
+    >>>     @property
+    >>>     def length(self):
+    >>>         ...
+    >>>
+    >>> assert Vector() > Vector()
+    """
+    @property
+    @abstractmethod
+    def _COMPARABLE_BY(self) -> str:
+        """
+        Return the sequence of names of properties and attributes
+        that will be used for __eq__ and __hash__
+        """
+        return ''
+
+    def __hash__(self):
+        return hash(getattr(self, self._COMPARABLE_BY))
+
+    def __eq__(self, other: 'ComparableAndHashableBy') -> bool:
+        return getattr(self, self._COMPARABLE_BY) == getattr(other, other._COMPARABLE_BY)
+
+    def __lt__(self, other: 'ComparableAndHashableBy') -> bool:
+        return getattr(self, self._COMPARABLE_BY) < getattr(other, other._COMPARABLE_BY)
+
+    def __le__(self, other: 'ComparableAndHashableBy') -> bool:
+        return getattr(self, self._COMPARABLE_BY) <= getattr(other, other._COMPARABLE_BY)
+
+    def __gt__(self, other: 'ComparableAndHashableBy') -> bool:
+        return getattr(self, self._COMPARABLE_BY) > getattr(other, other._COMPARABLE_BY)
+
+    def __ge__(self, other: 'ComparableAndHashableBy') -> bool:
+        return getattr(self, self._COMPARABLE_BY) >= getattr(other, other._COMPARABLE_BY)
+
+
 class OmniHashableMixin(metaclass=ABCMeta):
     """
     A mix-in. Provides hashing and equal comparison for your own class using specified fields.

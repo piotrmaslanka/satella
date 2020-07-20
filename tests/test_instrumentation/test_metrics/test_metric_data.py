@@ -13,6 +13,12 @@ class TestMetricData(unittest.TestCase):
         md2 = MetricData.from_json(md.to_json())
         self.assertTrue(md2.internal)
 
+    def test_metric_data_collection_add(self):
+        a = MetricDataCollection(MetricData('root', 3, {'labels': 'key'}),
+                                 MetricData('root_a', 3, {'labels': 'key'}))
+        a += MetricDataCollection(MetricData('root', 2, {'labels': 'key'}),
+                                  MetricData('root_a', 4, {'labels': 'key'}))
+
     def test_update_labels_2(self):
         a = MetricDataCollection(MetricData('root', 2, {'labels': 'key'}))
         a.add_labels({'service': 'wtf'})

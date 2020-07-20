@@ -58,6 +58,12 @@ If you need quick __hash__ and __eq__ operators from listed fields of the class.
 .. autoclass:: satella.coding.structures.OmniHashableMixin
     :members:
 
+ComparableAndHashableBy
+-----------------------
+
+.. autoclass:: satella.coding.structures.ComparableAndHashableBy
+    :members:
+
 StrEqHashableMixin
 ------------------
 
