@@ -96,7 +96,8 @@ class BaseSatellaError(CustomException):
 class BaseSatellaException(BaseSatellaError):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        warnings.warn('Use BaseSatellaError instead', DeprecationWarning)
+        warnings.warn('This is deprecated and will be removed in Satella 3.0, '
+                      'use BaseSatellaError instead', DeprecationWarning)
 
 
 class ResourceLockingError(BaseSatellaError):

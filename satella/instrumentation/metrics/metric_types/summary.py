@@ -131,4 +131,5 @@ class QuantileMetric(SummaryMetric):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        warnings.warn('quantile is deprecated; use summary instead', DeprecationWarning)
+        warnings.warn('quantile is deprecated and will be removed in Satella 3.0; '
+                      'use summary instead', DeprecationWarning)
