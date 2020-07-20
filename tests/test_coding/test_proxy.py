@@ -19,3 +19,8 @@ class TestProxy(unittest.TestCase):
         self.assertEqual(math.round(a), 5)
         self.assertEqual(math.ceil(a), 6)
         self.assertEqual(math.trunc(a), 5)
+        a = Proxy(2)
+        self.assertEqual(a & 2, 2)
+        self.assertEqual(a | 1, 3)
+        self.assertEqual(a << 1, 4)
+        self.assertEqual(a >> 1, 1)
