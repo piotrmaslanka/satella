@@ -23,3 +23,4 @@ class TestProxy(unittest.TestCase):
         self.assertEqual(a | 1, 3)
         self.assertEqual(a << 1, 4)
         self.assertEqual(a >> 1, 1)
+        self.assertNotEqual(a, 6)

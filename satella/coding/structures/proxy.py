@@ -169,6 +169,9 @@ class Proxy(tp.Generic[T]):
     def __eq__(self, other) -> bool:
         return self.__obj == other
 
+    def __ne__(self, other) -> bool:
+        return self.__obj != other
+
     def __or__(self, other):
         return self.__obj | other
 
