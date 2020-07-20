@@ -1,4 +1,2 @@
-# v2.9.3
+# v2.9.4
 
-* `TerminableThread.start` now returns self
-* add `ComparableAndHashableBy`
