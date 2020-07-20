@@ -40,8 +40,8 @@ class TestProxy(unittest.TestCase):
         a //= 2.0
         self.assertEqual(a, 2.0)
         a = Proxy(2)
-        self.assertEqual(str(a), 2)
-        self.assertEqual(repr(a), 2)
+        self.assertEqual(str(a), '2')
+        self.assertEqual(repr(a), '2')
         self.assertEqual(~a, -3)
         self.assertEqual(+a, 2)
         self.assertTrue(a < 3)
