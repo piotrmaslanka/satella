@@ -8,6 +8,7 @@ T = tp.TypeVar('T')
 logger = logging.getLogger(__name__)
 
 _SETTABLE_KEYS = {'_Proxy__obj', '_Proxy__wrap_operations'}
+Number = tp.Union[float, int]
 
 
 class Proxy(tp.Generic[T]):
@@ -110,17 +111,17 @@ class Proxy(tp.Generic[T]):
             result = self.__class__(result)
         return result
 
-    def __divmod__(self, other):
-        result = divmod(self.__obj, other)
-        if self.__wrap_operations:
-            result = self.__class__(result)
-        return result
+    def __divmod__(self, other) -> tp.Tuple[Number, Number]:
+        return divmod(self.__obj, other)
 
     def __floordiv__(self, other):
         result = self.__obj // other
         if self.__wrap_operations:
             result = self.__class__(result)
         return result
+
+    def __rdivmod__(self, other):
+        return divmod(other, self.__obj)
 
     def __truediv__(self, other):
         result = self.__obj / other

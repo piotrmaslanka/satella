@@ -16,6 +16,8 @@ class TestProxy(unittest.TestCase):
         self.assertEqual(a ** 2, 5.25*5.25)
         self.assertEqual(-a, -5.25)
         self.assertEqual(math.floor(a), 5)
+        self.assertEqual(divmod(a, 2), (2.0, 1.25))
+        self.assertEqual(divmod(2, a), (0.0, 2.0))
         self.assertEqual(round(a), 5)
         self.assertEqual(math.trunc(a), 5)
         self.assertEqual(- 0.25+a, 5.0)
