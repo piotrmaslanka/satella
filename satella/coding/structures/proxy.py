@@ -31,8 +31,7 @@ class Proxy(tp.Generic[T]):
     Note that in-place operations will return the Proxy itself, whereas simple addition will shed
     this proxy, returning object wrapped plus something.
 
-    Note that proxies are considered to be the type of the object that they wrap,
-    as well as considered to be of type Proxy.
+    Only __isinstance__ check is not overridden, due to Python limitations.
 
     Please access this object in your descendant classes via
 
@@ -41,7 +40,7 @@ class Proxy(tp.Generic[T]):
     Please note that this class does not overload the descriptor protocol,
     not the pickle interface!
 
-    Note that this overloads both __repr__ and __str__, which may prove confusing.
+    Note that this overloads __repr__, __str__ and __dir__, which may prove confusing.
     Handle this in your descendant classes.
 
     :param object_to_wrap: object to wrap

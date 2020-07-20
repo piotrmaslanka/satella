@@ -6,7 +6,10 @@ from satella.coding.structures import Proxy
 
 class TestProxy(unittest.TestCase):
     def test_proxy(self):
+        a = Proxy(5.25, True)
+        self.assertIsInstance(a+2, Proxy)
         a = Proxy(5.25)
+        self.assertNotIsInstance(a+2, Proxy)
         self.assertEqual(int(a), 5)
         self.assertEqual(float(a), 5.25)
         self.assertEqual(a - 0.25, 5.0)
