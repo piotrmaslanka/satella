@@ -68,6 +68,7 @@ class TestProxy(unittest.TestCase):
 
         a = Proxy(MyClass(2))
         self.assertEqual(a.test, 2)
+        self.assertIn('test', dir(a))
         del a.test
         self.assertRaises(AttributeError, lambda: a.test)
 
