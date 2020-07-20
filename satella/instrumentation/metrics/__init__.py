@@ -45,7 +45,7 @@ def getMetric(metric_name: str = '',
     :raise MetricAlreadyExists: a metric having this name already exists, but with a different type
     :raise ValueError: metric name contains a forbidden character
     """
-    for character in metric_name:
+    for character in metric_name.upper():
         if character not in ALLOWED_CHARACTERS:
             raise ValueError('Metric name contains a forbidden character %s' % (character, ))
 
