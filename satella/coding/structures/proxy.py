@@ -2,6 +2,8 @@ import logging
 import math
 import typing as tp
 
+from satella.coding.recast_exceptions import rethrow_as
+
 T = tp.TypeVar('T')
 logger = logging.getLogger(__name__)
 
@@ -71,9 +73,11 @@ class Proxy(tp.Generic[T]):
     def __int__(self) -> int:
         return int(self.__obj)
 
+    @rethrow_as(AttributeError, TypeError)
     def __float__(self) -> float:
         return float(self.__obj)
 
+    @rethrow_as(AttributeError, TypeError)
     def __complex__(self) -> complex:
         return complex(self.__obj)
 
@@ -263,6 +267,7 @@ class Proxy(tp.Generic[T]):
     def __index__(self) -> int:
         return self.__obj.__index__()
 
+    @rethrow_as(AttributeError, TypeError)
     def __round__(self, n=None):
         result = self.__obj.__round__(n)
         if self.__wrap_operations:
@@ -270,6 +275,7 @@ class Proxy(tp.Generic[T]):
 
         return result
 
+    @rethrow_as(AttributeError, TypeError)
     def __trunc__(self):
         result = self.__obj.__trunc__()
         if self.__wrap_operations:
@@ -277,6 +283,7 @@ class Proxy(tp.Generic[T]):
 
         return result
 
+    @rethrow_as(AttributeError, TypeError)
     def __floor__(self):
         if hasattr(self.__obj, '__floor__'):
             result = self.__obj.__floor__()
@@ -287,6 +294,7 @@ class Proxy(tp.Generic[T]):
             result = self.__class__(result)
         return result
 
+    @rethrow_as(AttributeError, TypeError)
     def __ceil__(self):
         result = self.__obj.__ceil__()
 
@@ -297,15 +305,18 @@ class Proxy(tp.Generic[T]):
     def __dir__(self) -> tp.Iterable[str]:
         return dir(self.__obj)
 
+    @rethrow_as(AttributeError, TypeError)
     def __concat__(self, other):
         result = self.__obj.__concat__(other)
         if self.__wrap_operations:
             result = self.__class__(result)
         return result
 
+    @rethrow_as(AttributeError, TypeError)
     def __iconcat__(self, other) -> 'Proxy':
         self.__obj.__iconcat__(other)
         return self
 
+    @rethrow_as(AttributeError, TypeError)
     def __length_hint__(self):
         return self.__obj.__length_hint__()
