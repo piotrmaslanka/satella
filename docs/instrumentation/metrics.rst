@@ -51,13 +51,9 @@ You obtain metrics using ``getMetric()`` as follows:
 
     ``metric = getMetric(__name__+'.StringMetric', 'string', MetricLevel.RUNTIME, **kwargs)``
 
-Please note that metric name cannot contain following characters:
+Please note that metric name must match the following regex:
 
-* -
-* {
-* }
-* '
-* "
+`[a-zA-Z_:][a-zA-Z0-9_:]*`
 
 **internal** is for those cases where the application is the consumer of
 the metrics, and you don't want them exposed to outside.

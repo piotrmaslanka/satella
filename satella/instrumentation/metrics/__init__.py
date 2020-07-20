@@ -1,4 +1,5 @@
 import itertools
+import string
 import threading
 import typing as tp
 
@@ -27,7 +28,7 @@ def adjust_metric_level_for_root(metric_level: tp.Optional[MetricLevel],
         return metric_level_to_set_for_children
 
 
-FORBIDDEN_CHARACTERS = '-"{}\''
+ALLOWED_CHARACTERS = string.ascii_uppercase + string.digits + ':' + '_' + '.'
 
 
 # noinspection PyPep8Naming
@@ -44,9 +45,9 @@ def getMetric(metric_name: str = '',
     :raise MetricAlreadyExists: a metric having this name already exists, but with a different type
     :raise ValueError: metric name contains a forbidden character
     """
-    for forbidden_char in FORBIDDEN_CHARACTERS:
-        if forbidden_char in metric_name:
-            raise ValueError('Metric name contains a forbidden character')
+    for character in metric_name:
+        if character not in ALLOWED_CHARACTERS:
+            raise ValueError('Metric name contains a forbidden character %s' % (character, ))
 
     metric_level_to_set_for_children = metric_level or MetricLevel.INHERIT
     name = metric_name.split('.')
