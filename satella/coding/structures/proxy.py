@@ -327,19 +327,15 @@ class Proxy(tp.Generic[T]):
     @wrap_operation
     @rethrow_as(AttributeError, TypeError)
     def __round__(self, n: int = 0):
-        result = round(self.__obj, n)
-        if self.__wrap_operations:
-            result = self.__class__(result)
-
-        return result
+        return round(self.__obj, n)
 
     @wrap_operation
     @rethrow_as(AttributeError, TypeError)
     def __trunc__(self):
-        result = self.__obj.__trunc__()
-        if self.__wrap_operations:
-            result = self.__class__(result)
-
+        if hasattr(self.__obj, '__trunc__'):
+            result = self.__obj.__trunc__()
+        else:
+            result = math.trunc(self.__obj)
         return result
 
     @wrap_operation
@@ -350,28 +346,24 @@ class Proxy(tp.Generic[T]):
         else:
             result = math.floor(self.__obj)
 
-        if self.__wrap_operations:
-            result = self.__class__(result)
         return result
 
     @wrap_operation
     @rethrow_as(AttributeError, TypeError)
     def __ceil__(self):
-        result = self.__obj.__ceil__()
-
-        if self.__wrap_operations:
-            result = self.__class__(result)
+        if hasattr(self.__obj, '__ceil__'):
+            result = self.__obj.__ceil__()
+        else:
+            result = math.ceil(self.__obj)
         return result
 
     def __dir__(self) -> tp.Iterable[str]:
         return dir(self.__obj)
 
+    @wrap_operation
     @rethrow_as(AttributeError, TypeError)
     def __concat__(self, other):
-        result = self.__obj.__concat__(other)
-        if self.__wrap_operations:
-            result = self.__class__(result)
-        return result
+        return self.__obj.__concat__(other)
 
     @rethrow_as(AttributeError, TypeError)
     def __iconcat__(self, other) -> 'Proxy':
