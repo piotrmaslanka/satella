@@ -25,6 +25,16 @@ class TestProxy(unittest.TestCase):
         self.assertEqual(2 / a, 2/5.25)
         self.assertEqual(2 // a, 0)
         self.assertEqual(2 ** a,  2**5.25)
+        a += 1.0
+        self.assertEqual(a, 6.25)
+        a -= 1.0
+        self.assertEqual(a, 5.25)
+        a *= 2.0
+        self.assertEqual(a, 10.5)
+        a /= 2.0
+        self.assertEqual(a, 5.25)
+        a //= 2.0
+        self.assertEqual(a, 2.0)
         a = Proxy(2)
         self.assertEqual(a & 2, 2)
         self.assertEqual(a | 1, 3)
@@ -37,3 +47,15 @@ class TestProxy(unittest.TestCase):
         self.assertEqual(1 >> a, 0)
         self.assertEqual(hex(a), '0x2')
         self.assertEqual(oct(a), '0o2')
+        a <<= 2
+        self.assertEqual(a, 8)
+        a >>= 2
+        self.assertEqual(a, 2)
+        a |= 1
+        self.assertEqual(a, 3)
+        a &= 2
+        self.assertEqual(a, 2)
+        a ^= 2
+        self.assertEqual(a, 0)
+        a **= 2
+        self.assertEqual(a, 0)
