@@ -133,19 +133,25 @@ class Proxy(tp.Generic[T]):
         return self
 
     def __itruediv__(self, other) -> 'Proxy':
-        self.obj /= other
+        self.__obj /= other
         return self
 
     def __ifloordiv__(self, other) -> 'Proxy':
-        self.obj //= other
+        self.__obj //= other
         return self
 
+    def __rshift__(self, other):
+        return self.__obj >> other
+
+    def __lshift__(self, other):
+        return self.__obj << other
+
     def __ilshift__(self, other) -> 'Proxy':
-        self.obj <<= other
+        self.__obj <<= other
         return self
 
     def __irshift__(self, other) -> 'Proxy':
-        self.obj >>= other
+        self.__obj >>= other
         return self
 
     def __iter__(self) -> tp.Iterator:
@@ -164,10 +170,10 @@ class Proxy(tp.Generic[T]):
         return self.__obj == other
 
     def __or__(self, other):
-        return self.__obj or other
+        return self.__obj | other
 
     def __and__(self, other):
-        return self.__obj and other
+        return self.__obj & other
 
     def __le__(self, other) -> bool:
         return self.__obj <= other
