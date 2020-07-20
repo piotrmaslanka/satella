@@ -48,8 +48,7 @@ class Proxy(tp.Generic[T]):
         also proxied. This will be done by the following code:
         >>> a = a.__add__(b)
         >>> return self.__class__(a)
-        Wrapped operations include ONLY add, sub, mul, all kinds of div.
-        If you want logical operations wrapped, file an issue.
+        Wrapped operations include all arithmetic operations and bitwise operations.
     """
     __slots__ = ('__obj', '__wrap_operations')
 
