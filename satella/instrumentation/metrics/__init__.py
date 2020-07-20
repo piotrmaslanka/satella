@@ -27,6 +27,9 @@ def adjust_metric_level_for_root(metric_level: tp.Optional[MetricLevel],
         return metric_level_to_set_for_children
 
 
+FORBIDDEN_CHARACTERS = '-"{}\''
+
+
 # noinspection PyPep8Naming
 def getMetric(metric_name: str = '',
               metric_type: str = 'base',
@@ -39,7 +42,12 @@ def getMetric(metric_name: str = '',
     :param metric_type: metric type
     :param metric_level: a metric level to set this metric to.
     :raise MetricAlreadyExists: a metric having this name already exists, but with a different type
+    :raise ValueError: metric name contains a forbidden character
     """
+    for forbidden_char in FORBIDDEN_CHARACTERS:
+        if forbidden_char in metric_name:
+            raise ValueError('Metric name contains a forbidden character')
+
     metric_level_to_set_for_children = metric_level or MetricLevel.INHERIT
     name = metric_name.split('.')
     with metrics_lock:

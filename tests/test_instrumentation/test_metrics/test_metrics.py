@@ -18,6 +18,9 @@ def choose(postfix: str, mdc: MetricDataCollection, labels=None) -> MetricData:
 
 class TestMetric(unittest.TestCase):
 
+    def test_forbidden_characters(self):
+        self.assertRaises(ValueError, lambda: getMetric('forbidden-characters', 'int'))
+
     def test_labeled_metric_with_callable(self):
         m1 = getMetric('lmc1', 'callable')
         lm = LabeledMetric(m1, key='value')

@@ -28,7 +28,8 @@ instrument that are set to at least RUNTIME. If a user wants to
 dig deeper, it can switch the instrument to
 DEBUG, which will cause more data to be registered. If a metric
 is in state INHERIT, it will inherit the metric level from it's
-parent, traversing the tree if required.
+parent, traversing the tree if required. The tree node separator is a dot in the
+metric's name, eg. `satella.metrics.my_metric`.
 
 INHERIT is the default state for all other metrics than root,
 for root the default is RUNTIME. Root metric cannot be set to INHERIT,
@@ -49,6 +50,14 @@ The call to ``getMetric()`` is specified as follows
 You obtain metrics using ``getMetric()`` as follows:
 
     ``metric = getMetric(__name__+'.StringMetric', 'string', MetricLevel.RUNTIME, **kwargs)``
+
+Please note that metric name cannot contain following characters:
+
+* -
+* {
+* }
+* '
+* "
 
 **internal** is for those cases where the application is the consumer of
 the metrics, and you don't want them exposed to outside.
