@@ -363,8 +363,8 @@ class Proxy(tp.Generic[T]):
             result = self.__class__(result)
         return result
 
-    # def __dir__(self) -> tp.Iterable[str]:
-    #     return dir(self.__obj)
+    def __dir__(self) -> tp.Iterable[str]:
+        return dir(self.__obj)
 
     @rethrow_as(AttributeError, TypeError)
     def __concat__(self, other):
