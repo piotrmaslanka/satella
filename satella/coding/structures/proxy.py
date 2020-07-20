@@ -316,8 +316,8 @@ class Proxy(tp.Generic[T]):
         return self.__obj.__index__()
 
     @rethrow_as(AttributeError, TypeError)
-    def __round__(self, n=None):
-        result = self.__obj.__round__(n)
+    def __round__(self, n: int = 0):
+        result = round(self.__obj, n)
         if self.__wrap_operations:
             result = self.__class__(result)
 
