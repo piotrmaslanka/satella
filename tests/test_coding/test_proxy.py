@@ -40,10 +40,13 @@ class TestProxy(unittest.TestCase):
         a //= 2.0
         self.assertEqual(a, 2.0)
         a = Proxy(2)
+        self.assertEqual(str(a), 2)
+        self.assertEqual(repr(a), 2)
         self.assertEqual(~a, -3)
         self.assertEqual(+a, 2)
         self.assertEqual(a & 2, 2)
         self.assertEqual(a | 1, 3)
+        self.assertEqual(2 ^ a, 0)
         self.assertEqual(a << 1, 4)
         self.assertEqual(a >> 1, 1)
         self.assertNotEqual(a, 6)
@@ -70,6 +73,8 @@ class TestProxy(unittest.TestCase):
         a = Proxy(dict())
         a['test'] = 2
         self.assertEqual(['test'], list(iter(a)))
+        self.assertIn('test', a)
+        self.assertEqual(len(a), 1)
         self.assertEqual(a['test'], 2)
         del a['test']
         self.assertRaises(KeyError, lambda: a['test'])
