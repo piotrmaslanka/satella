@@ -31,7 +31,8 @@ class EnvironmentSource(BaseSource):
         if cast_to is not None:
             warnings.warn(
                 'Use .schema module to cast values to target type. '
-                'This module is only concerned with loading the configuration', DeprecationWarning)
+                'This module is only concerned with loading the configuration.'
+                'This feature will be removed in Satella 3.0', DeprecationWarning)
             self.cast_to = cast_to  # type: tp.Callable[[tp.Any], tp.Any]
         else:
             self.cast_to = lambda x: x
