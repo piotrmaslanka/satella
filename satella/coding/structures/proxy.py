@@ -310,15 +310,27 @@ class Proxy(tp.Generic[T]):
 
     @wrap_operation
     def __neg__(self):
-        return self.__obj.__neg__()
+        return -self.__obj
 
     @wrap_operation
     def __pos__(self):
-        return self.__obj.__pow__()
+        return +self.__obj
 
     @wrap_operation
     def __invert__(self):
-        return self.__obj.__invert__()
+        return ~self.__obj
+
+    @wrap_operation
+    def __matmul__(self, other):
+        return self.__obj @ other
+
+    def __imatmul__(self, other):
+        self.__obj @= other
+        return self
+
+    @wrap_operation
+    def __rmatmul__(self, other):
+        return other @ self.__obj
 
     def __index__(self) -> int:
         return self.__obj.__index__()
