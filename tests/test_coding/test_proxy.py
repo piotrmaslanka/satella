@@ -24,6 +24,7 @@ class TestProxy(unittest.TestCase):
         self.assertEqual(2 * a, 10.5)
         self.assertEqual(2 / a, 2/5.25)
         self.assertEqual(2 // a, 0)
+        self.assertEqual(complex(a), 5.25+0j)
         self.assertEqual(2 ** a,  2**5.25)
         a += 1.0
         self.assertEqual(a, 6.25)
@@ -59,3 +60,9 @@ class TestProxy(unittest.TestCase):
         self.assertEqual(a, 0)
         a **= 2
         self.assertEqual(a, 0)
+        a = Proxy(object())
+        a.test = 2
+        self.assertEqual(a.test, 2)
+        del a.test
+        self.assertRaises(AttributeError, lambda: a.test)
+

@@ -2,6 +2,7 @@ import logging
 import math
 import typing as tp
 
+from satella.coding.decorators import wraps
 from satella.coding.recast_exceptions import rethrow_as
 
 T = tp.TypeVar('T')
@@ -10,6 +11,15 @@ logger = logging.getLogger(__name__)
 _SETTABLE_KEYS = {'_Proxy__obj', '_Proxy__wrap_operations'}
 Number = tp.Union[float, int]
 
+
+def wrap_operation(fun):
+    @wraps(fun)
+    def inner(self, other):
+        result = fun(self, other)
+        if getattr(self, '__Proxy_wrap_operations'):
+            result = self.__class__(result)
+        return result
+    return inner
 
 class Proxy(tp.Generic[T]):
     """
@@ -85,49 +95,43 @@ class Proxy(tp.Generic[T]):
     def __str__(self) -> str:
         return str(self.__obj)
 
+    @wrap_operation
     def __add__(self, other):
-        result = self.__obj + other
-        if self.__wrap_operations:
-            result = self.__class__(result)
-        return result
+        return self.__obj + other
 
     def __iadd__(self, other) -> 'Proxy':
         self.__obj += other
         return self
 
+    @wrap_operation
     def __sub__(self, other):
-        result = self.__obj - other
-        if self.__wrap_operations:
-            result = self.__class__(result)
-        return result
+        return self.__obj - other
 
     def __isub__(self, other) -> 'Proxy':
         self.__obj -= other
         return self
 
+    @wrap_operation
     def __mul__(self, other):
-        result = self.__obj * other
-        if self.__wrap_operations:
-            result = self.__class__(result)
-        return result
+        return self.__obj * other
 
     def __divmod__(self, other) -> tp.Tuple[Number, Number]:
         return divmod(self.__obj, other)
 
+    @wrap_operation
     def __floordiv__(self, other):
-        result = self.__obj // other
-        if self.__wrap_operations:
-            result = self.__class__(result)
-        return result
+        return self.__obj // other
 
+    @wrap_operation
     def __rdivmod__(self, other):
-        return divmod(other, self.__obj)
-
-    def __truediv__(self, other):
-        result = self.__obj / other
+        result = divmod(other, self.__obj)
         if self.__wrap_operations:
             result = self.__class__(result)
         return result
+
+    @wrap_operation
+    def __truediv__(self, other):
+        return self.__obj / other
 
     def __imul__(self, other) -> 'Proxy':
         self.__obj *= other
@@ -141,9 +145,11 @@ class Proxy(tp.Generic[T]):
         self.__obj //= other
         return self
 
+    @wrap_operation
     def __rshift__(self, other):
         return self.__obj >> other
 
+    @wrap_operation
     def __lshift__(self, other):
         return self.__obj << other
 
@@ -206,6 +212,7 @@ class Proxy(tp.Generic[T]):
     def __hex__(self) -> str:
         return hex(self.__obj)
 
+    @wrap_operation
     def __abs__(self):
         return abs(self.__obj)
 
@@ -218,39 +225,51 @@ class Proxy(tp.Generic[T]):
     def __next__(self):
         return next(self.__obj)
 
+    @wrap_operation
     def __xor__(self, other):
         return self.__obj ^ other
 
+    @wrap_operation
     def __radd__(self, other):
         return other + self.__obj
 
+    @wrap_operation
     def __rsub__(self, other):
         return other - self.__obj
 
+    @wrap_operation
     def __rmul__(self, other):
         return other * self.__obj
 
+    @wrap_operation
     def __rtruediv__(self, other):
         return other / self.__obj
 
+    @wrap_operation
     def __rfloordiv__(self, other):
         return other // self.__obj
 
+    @wrap_operation
     def __rlshift__(self, other):
         return other << self.__obj
 
+    @wrap_operation
     def __rrshift__(self, other):
         return other >> self.__obj
 
+    @wrap_operation
     def __rpow__(self, other):
         return other ** self.__obj
 
+    @wrap_operation
     def __ror__(self, other):
         return other | self.__obj
 
+    @wrap_operation
     def __rand__(self, other):
         return other & self.__obj
 
+    @wrap_operation
     def __rxor__(self, other):
         return other ^ self.__obj
 
@@ -281,41 +300,30 @@ class Proxy(tp.Generic[T]):
     def __reversed__(self):
         return reversed(self.__obj)
 
+    @wrap_operation
     def __pow__(self, power, modulo=None):
-        if self.__wrap_operations:
-            result = self.__class__(self.__obj.__pow__(power, modulo))
-        else:
-            result = self.__obj.__pow__(power, modulo)
-        return result
+        return pow(self.__obj, power, modulo)
 
     def __ipow__(self, other) -> 'Proxy':
         self.__obj.__ipow__(other)
         return self
 
+    @wrap_operation
     def __neg__(self):
-        if self.__wrap_operations:
-            result = self.__class__(self.__obj.__neg__())
-        else:
-            result = self.__obj.__neg__()
-        return result
+        return self.__obj.__neg__()
 
+    @wrap_operation
     def __pos__(self):
-        if self.__wrap_operations:
-            result = self.__class__(self.__obj.__pow__())
-        else:
-            result = self.__obj.__pow__()
-        return result
+        return self.__obj.__pow__()
 
+    @wrap_operation
     def __invert__(self):
-        if self.__wrap_operations:
-            result = self.__class__(self.__obj.__invert__())
-        else:
-            result = self.__obj.__invert__()
-        return result
+        return self.__obj.__invert__()
 
     def __index__(self) -> int:
         return self.__obj.__index__()
 
+    @wrap_operation
     @rethrow_as(AttributeError, TypeError)
     def __round__(self, n: int = 0):
         result = round(self.__obj, n)
@@ -324,6 +332,7 @@ class Proxy(tp.Generic[T]):
 
         return result
 
+    @wrap_operation
     @rethrow_as(AttributeError, TypeError)
     def __trunc__(self):
         result = self.__obj.__trunc__()
@@ -332,6 +341,7 @@ class Proxy(tp.Generic[T]):
 
         return result
 
+    @wrap_operation
     @rethrow_as(AttributeError, TypeError)
     def __floor__(self):
         if hasattr(self.__obj, '__floor__'):
@@ -343,6 +353,7 @@ class Proxy(tp.Generic[T]):
             result = self.__class__(result)
         return result
 
+    @wrap_operation
     @rethrow_as(AttributeError, TypeError)
     def __ceil__(self):
         result = self.__obj.__ceil__()
