@@ -14,12 +14,13 @@ Number = tp.Union[float, int]
 
 def wrap_operation(fun):
     @wraps(fun)
-    def inner(self, other):
-        result = fun(self, other)
-        if getattr(self, '__Proxy_wrap_operations'):
+    def inner(self: 'Proxy', *args, **kwargs):
+        result = fun(self, *args, **kwargs)
+        if self._Proxy__wrap_operations:
             result = self.__class__(result)
         return result
     return inner
+
 
 class Proxy(tp.Generic[T]):
     """
@@ -305,7 +306,7 @@ class Proxy(tp.Generic[T]):
         return pow(self.__obj, power, modulo)
 
     def __ipow__(self, other) -> 'Proxy':
-        self.__obj.__ipow__(other)
+        self.__obj **= other
         return self
 
     @wrap_operation
@@ -362,8 +363,8 @@ class Proxy(tp.Generic[T]):
             result = self.__class__(result)
         return result
 
-    def __dir__(self) -> tp.Iterable[str]:
-        return dir(self.__obj)
+    # def __dir__(self) -> tp.Iterable[str]:
+    #     return dir(self.__obj)
 
     @rethrow_as(AttributeError, TypeError)
     def __concat__(self, other):

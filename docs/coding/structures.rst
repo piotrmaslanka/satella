@@ -256,3 +256,4 @@ Proxy
 -----
 
 .. autoclass:: satella.coding.structures.Proxy
+    :members:

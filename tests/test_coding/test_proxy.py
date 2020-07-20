@@ -60,8 +60,13 @@ class TestProxy(unittest.TestCase):
         self.assertEqual(a, 0)
         a **= 2
         self.assertEqual(a, 0)
-        a = Proxy(object())
-        a.test = 2
+
+    def test_class(self):
+        class MyClass:
+            def __init__(self, test):
+                self.test = test
+
+        a = Proxy(MyClass(2))
         self.assertEqual(a.test, 2)
         del a.test
         self.assertRaises(AttributeError, lambda: a.test)
