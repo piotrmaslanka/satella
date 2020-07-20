@@ -199,6 +199,12 @@ class Proxy(tp.Generic[T]):
     def __repr__(self) -> str:
         return repr(self.__obj)
 
+    def __oct__(self) -> str:
+        return oct(self.__obj)
+
+    def __hex__(self) -> str:
+        return hex(self.__obj)
+
     def __abs__(self):
         return abs(self.__obj)
 
@@ -213,6 +219,39 @@ class Proxy(tp.Generic[T]):
 
     def __xor__(self, other):
         return self.__obj ^ other
+
+    def __radd__(self, other):
+        return other + self.__obj
+
+    def __rsub__(self, other):
+        return other - self.__obj
+
+    def __rmul__(self, other):
+        return other * self.__obj
+
+    def __rtruediv__(self, other):
+        return other / self.__obj
+
+    def __rfloordiv__(self, other):
+        return other // self.__obj
+
+    def __rlshift__(self, other):
+        return other << self.__obj
+
+    def __rrshift__(self, other):
+        return other >> self.__obj
+
+    def __rpow__(self, other):
+        return other ** self.__obj
+
+    def __ror__(self, other):
+        return other | self.__obj
+
+    def __rand__(self, other):
+        return other & self.__obj
+
+    def __rxor__(self, other):
+        return other ^ self.__obj
 
     def __ior__(self, other) -> 'Proxy':
         self.__obj |= other
