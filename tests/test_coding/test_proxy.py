@@ -79,8 +79,16 @@ class TestProxy(unittest.TestCase):
             def __init__(self, test):
                 self.test = test
 
+            def __matmul__(self, other):
+                return 2
+
+            def __rmatmul__(self, other):
+                return 3
+
         a = Proxy(MyClass(2))
         self.assertEqual(a.test, 2)
+        self.assertEqual(a @ 2, 2)
+        self.assertEqual(2 @ a, 3)
         self.assertIn('test', dir(a))
         del a.test
         self.assertRaises(AttributeError, lambda: a.test)
