@@ -2,9 +2,12 @@ import codecs
 import os
 import re
 import typing as tp
+import shutil
 
 __all__ = ['read_re_sub_and_write', 'find_files', 'split', 'read_in_file', 'write_to_file',
-           'write_out_file_if_different', 'make_noncolliding_name']
+           'write_out_file_if_different', 'make_noncolliding_name', 'try_unlink']
+
+from satella.coding import silence_excs
 
 SEPARATORS = {'\\', '/'}
 SEPARATORS.add(os.path.sep)
@@ -82,6 +85,10 @@ def read_in_file(path: str, encoding: tp.Optional[str] = None) -> tp.Union[bytes
     """
     Opens a file for reading, reads it in, converts to given encoding (or returns as bytes
     if not given), and closes it.
+
+    :param path: path of file to read
+    :param encoding: optional encoding. If default (None given), this will be returned as bytes
+    :return: file content, either decoded as a str, or not as bytes
     """
     if encoding is None:
         file = open(path, 'rb')
@@ -113,6 +120,30 @@ def read_re_sub_and_write(path: str, pattern: tp.Union[re.compile, str],
 
     with open(path, 'w') as f_out:
         f_out.write(data)
+
+
+@silence_excs(OSError, returns=False)
+def try_unlink(path: str) -> bool:
+    """
+    A syntactic sugar for:
+
+    >>> try:
+    >>>     os.unlink(path)
+    >>>     return True
+    >>> except FileNotFoundError:
+    >>>     return False
+
+    Note that if path is a directory, rmtree from shlex will be called on it, and
+    any OSErrors will report the deletion as False
+
+    :param path: path of file to delete
+    :return: whether the deletion happened
+    """
+    if os.path.isdir(path):
+        shutil.rmtree(path)
+    else:
+        os.unlink(path)
+    return True
 
 
 def _cond_join(prefix: tp.Optional[str], filename: str) -> str:
@@ -180,7 +211,10 @@ def write_out_file_if_different(path: str, data: tp.Union[bytes, str],
     >>>     write_to_file(path, data, encoding)
     >>>     return True
 
-    :returns: if write has happened
+    :param path: Path to put the file under
+    :param data: Data to write. Must be bytes if no encoding is given, str otherwise
+    :param encoding: Encoding. Default is None, which means no encoding (bytes will be written)
+    :return: if write has happened
     """
     try:
         if read_in_file(path, encoding) != data:
@@ -188,6 +222,6 @@ def write_out_file_if_different(path: str, data: tp.Union[bytes, str],
             return True
         else:
             return False
-    except OSError:
+    except FileNotFoundError:
         write_to_file(path, data, encoding)
         return True
