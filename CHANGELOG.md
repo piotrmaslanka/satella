@@ -1,5 +1,2 @@
-# v2.9.5
+# v2.9.6
 
-* more pydoc for `satella.files`
-* add `try_unlink`
-* add `one_tuple`
