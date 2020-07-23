@@ -133,29 +133,32 @@ class OmniHashableMixin(metaclass=ABCMeta):
         """
         return ()
 
-    def __hash__(self):
-        return functools.reduce(operator.xor, (hash(getattr(self, field_name))
-                                               for field_name in self._HASH_FIELDS_TO_USE))
+    def __hash__(self) -> int:
+        xor = 0
+        for field_name in self._HASH_FIELDS_TO_USE:
+            xor ^= hash(getattr(self, field_name))
+        return xor
 
     def __eq__(self, other: 'OmniHashableMixin') -> bool:
         """
         Note that this will only compare _HASH_FIELDS_TO_USE
         """
-
-        def con(p):
-            return tuple(getattr(p, field_name) for field_name in self._HASH_FIELDS_TO_USE)
-
         if isinstance(other, OmniHashableMixin):
-            try:
-                if con(self) == con(other):
-                    return True
-            except AttributeError:
-                return False
+            for field_name in self._HASH_FIELDS_TO_USE:
+                if getattr(self, field_name) != getattr(other, field_name):
+                    return False
+            return True
         else:
             return super().__eq__(other)
 
     def __ne__(self, other: 'OmniHashableMixin') -> bool:
-        return not self.__eq__(other)
+        if isinstance(other, OmniHashableMixin):
+            for field_name in self._HASH_FIELDS_TO_USE:
+                if getattr(self, field_name) != getattr(other, field_name):
+                    return True
+            return False
+        else:
+            return super().__ne__(other)
 
 
 class ReprableMixin:
