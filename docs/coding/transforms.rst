@@ -7,6 +7,11 @@ split_shuffle_and_join
 .. autofunction:: satella.coding.transforms.split_shuffle_and_join
 
 
+one_tuple
+---------
+
+.. autofunction:: satella.coding.transforms.one_tuple
+
 stringify
 ---------
 

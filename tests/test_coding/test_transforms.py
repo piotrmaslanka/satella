@@ -1,9 +1,12 @@
 import unittest
 
-from satella.coding.transforms import stringify, split_shuffle_and_join
+from satella.coding.transforms import stringify, split_shuffle_and_join, one_tuple
 
 
 class MyTestCase(unittest.TestCase):
+    def test_one_tuple(self):
+        self.assertEqual(list(one_tuple([1, 2, 3])), [(1, ), (2, ), (3, )])
+
     def test_split_shuffle_and_join(self):
         x = [1, 2, 3, 4]
         x = split_shuffle_and_join(x, lambda y: y % 2 == 0)

@@ -2,7 +2,8 @@ import collections
 import random
 import typing as tp
 
-__all__ = ['stringify', 'split_shuffle_and_join']
+__all__ = ['stringify', 'split_shuffle_and_join', 'one_tuple']
+
 
 
 def _stringify_none(str_none, stringifier):
@@ -12,6 +13,21 @@ def _stringify_none(str_none, stringifier):
 
 
 T = tp.TypeVar('T')
+
+
+def one_tuple(x: tp.Iterable[T]) -> tp.Iterator[tp.Tuple[T]]:
+    """
+    Change a sequence of iterables into a sequence that displays each element as
+    a part of one-element tuple. Essentially syntactic sugar for:
+
+    >>> for y in x:
+    >>>     yield y,
+
+    :param x: sequence to tupleify
+    :return: a iterator of one-element tuples
+    """
+    for y in x:
+        yield y,
 
 
 def split_shuffle_and_join(entries: tp.List[T],
