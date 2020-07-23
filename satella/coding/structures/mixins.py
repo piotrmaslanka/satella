@@ -107,13 +107,16 @@ class OmniHashableMixin(metaclass=ABCMeta):
     Example of use:
 
     >>> class Point2D(OmniHashableMixin):
-    >>>    _HASH_FIELDS_TO_USE = ['x', 'y']
+    >>>    _HASH_FIELDS_TO_USE = ('x', 'y')
     >>>    def __init__(self, x, y):
     >>>        ...
 
     and now class Point2D has defined __hash__ and __eq__ by these fields.
     Do everything in your power to make specified fields immutable, as mutating them will result
     in a different hash.
+
+    _HASH_FIELDS_TO_USE can be also a single string, in this case a single field called by this
+    name will be taken.
 
     Note that if you're explicitly providing __eq__ in your child class, you will be required to
     insert:
@@ -126,7 +129,7 @@ class OmniHashableMixin(metaclass=ABCMeta):
 
     @property
     @abstractmethod
-    def _HASH_FIELDS_TO_USE(self) -> tp.Sequence[str]:
+    def _HASH_FIELDS_TO_USE(self) -> tp.Tuple[str]:
         """
         Return the sequence of names of properties and attributes
         that will be used for __eq__ and __hash__
@@ -135,15 +138,24 @@ class OmniHashableMixin(metaclass=ABCMeta):
 
     def __hash__(self) -> int:
         xor = 0
-        for field_name in self._HASH_FIELDS_TO_USE:
+        cmpr_by = self._HASH_FIELDS_TO_USE
+        if isinstance(cmpr_by, str):
+            return hash(getattr(self, cmpr_by))
+
+        for field_name in cmpr_by:
             xor ^= hash(getattr(self, field_name))
         return xor
 
-    def __eq__(self, other: 'OmniHashableMixin') -> bool:
+    def __eq__(self, other) -> bool:
         """
         Note that this will only compare _HASH_FIELDS_TO_USE
         """
         if isinstance(other, OmniHashableMixin):
+            cmpr_by = self._HASH_FIELDS_TO_USE
+
+            if isinstance(cmpr_by, str):
+                return getattr(self, cmpr_by) == getattr(other, cmpr_by)
+
             for field_name in self._HASH_FIELDS_TO_USE:
                 if getattr(self, field_name) != getattr(other, field_name):
                     return False
@@ -151,9 +163,14 @@ class OmniHashableMixin(metaclass=ABCMeta):
         else:
             return super().__eq__(other)
 
-    def __ne__(self, other: 'OmniHashableMixin') -> bool:
+    def __ne__(self, other) -> bool:
         if isinstance(other, OmniHashableMixin):
-            for field_name in self._HASH_FIELDS_TO_USE:
+            cmpr_by = self._HASH_FIELDS_TO_USE
+
+            if isinstance(cmpr_by, str):
+                return getattr(self, cmpr_by) != getattr(other, cmpr_by)
+
+            for field_name in cmpr_by:
                 if getattr(self, field_name) != getattr(other, field_name):
                     return True
             return False

@@ -404,13 +404,7 @@ class TestMisc(unittest.TestCase):
         self.assertEqual(hash(a), hash(b))
         self.assertRaises(TypeError, lambda: a.update({3: 5}))
 
-    def test_omni(self):
-        class Omni(OmniHashableMixin):
-            _HASH_FIELDS_TO_USE = ['a']
-
-            def __init__(self, a):
-                self.a = a
-
+    def continue_testing_omni(self, Omni):
         e1 = Omni(2)
         e2 = Omni(1)
         e3 = Omni(1)
@@ -425,6 +419,23 @@ class TestMisc(unittest.TestCase):
 
         self.assertEqual(a[e1], '1')
         self.assertEqual(hash(e1), hash(2))
+
+    def test_omni_single_field(self):
+        class Omni(OmniHashableMixin):
+            _HASH_FIELDS_TO_USE = 'a'
+
+            def __init__(self, a):
+                self.a = a
+
+        self.continue_testing_omni(Omni)
+
+    def test_omni(self):
+        class Omni(OmniHashableMixin):
+            _HASH_FIELDS_TO_USE = ('a', )
+
+            def __init__(self, a):
+                self.a = a
+        self.continue_testing_omni(Omni)
 
     def test_tbsh(self):
         tbh = TimeBasedSetHeap()
