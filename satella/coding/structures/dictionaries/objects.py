@@ -11,6 +11,8 @@ class DirtyDict(tp.MutableMapping[K, V]):
 
     Setting the dict with the value that it already has doesn't count as dirtying it.
     Note that such changes will not be registered in the dict!
+
+    All arguments and kwargs will be passed to dict's constructor.
     """
 
     def __len__(self) -> int:
@@ -23,7 +25,7 @@ class DirtyDict(tp.MutableMapping[K, V]):
         return self.data[k]
 
     def __init__(self, *args, **kwargs):
-        self.data = {}      # type: tp.Dict[K, V]
+        self.data = dict(*args, **kwargs)      # type: tp.Dict[K, V]
         self.dirty = False
 
     def __copy__(self) -> 'DirtyDict':

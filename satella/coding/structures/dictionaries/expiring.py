@@ -72,7 +72,13 @@ class SelfCleaningDefaultDict(Monitor, tp.MutableMapping[K, V], Cleanupable):
     it is cleaned up both by __iter__ and by an external worker thread, so it's important to acquire
     it, because it can mutate in an undefined way.
 
+    Note that if you access a key which does not exist, and background_maintenance is False,
+    a default value will be created and inserted into the dictionary. This is the only
+    time that the dictionary will hold values that are equal to default.
+
     :param default_factory: a callable/0 that will return an object if it doesn't already exist
+    :param background_maintenance: whether to spawn a background thread. This is required
+        if dictionary values can change their value between inserts.
 
     All args and kwargs will be passed to a dict, which will be promptly added to this dictionary.
     """
@@ -81,12 +87,16 @@ class SelfCleaningDefaultDict(Monitor, tp.MutableMapping[K, V], Cleanupable):
         self.cleanup()
         return len(self.data)
 
-    def __init__(self, default_factory: tp.Callable[[], V], *args, **kwargs):
+    def __init__(self, default_factory: tp.Callable[[], V],
+                 background_maintenance: bool = True, *args, **kwargs):
         super().__init__()      # initialize the inner Monitor
         self.data = dict(*args, **kwargs)
         self.default_factory = default_factory
         self.default_value = default_factory()
-        ExpiringEntryDictThread().add_dict(self)
+
+        self.background_maintenance = background_maintenance
+        if self.background_maintenance:
+            ExpiringEntryDictThread().add_dict(self)
 
     def __iter__(self) -> tp.Iterator[K]:
         self.cleanup()
@@ -96,19 +106,28 @@ class SelfCleaningDefaultDict(Monitor, tp.MutableMapping[K, V], Cleanupable):
         if key in self.data:
             del self.data[key]
 
+    @Monitor.synchronized
     def __getitem__(self, item: K) -> V:
         try:
-            return self.data[item]
+            v = self.data[item]
+            if v == self.default_value:
+                del self.data[item]
+            return v
         except KeyError:
             obj = self.default_factory()
-            self.data[item] = obj
+            if not self.background_maintenance:
+                self.data[item] = obj
             return obj
 
+    @Monitor.synchronized
     def __setitem__(self, key: K, value: V) -> None:
+        value_equal = value == self.default_value
         if key in self.data:
-            if value == self.default_value:
+            if value_equal:
                 del self.data[key]
-        self.data[key] = value
+
+        if not value_equal:
+            self.data[key] = value
 
     @Monitor.synchronized
     @silence_excs(KeyError)  # because entries may disappear without warning
@@ -188,6 +207,7 @@ class ExpiringEntryDict(Monitor, tp.MutableMapping[K, V], Cleanupable):
         for ts, key in self.key_to_expiration_time.pop_less_than(self.time_getter()):
             del self.data[key]
 
+    @Monitor.synchronized
     def __setitem__(self, key: K, value: V) -> None:
         self.key_to_expiration_time.put(self.time_getter() + self.expiration_timeout, key)
         self.data[key] = value
@@ -201,6 +221,7 @@ class ExpiringEntryDict(Monitor, tp.MutableMapping[K, V], Cleanupable):
 
         return self.data[item]
 
+    @Monitor.synchronized
     def __delitem__(self, key: K) -> None:
         self.key_to_expiration_time.pop_item(key)
         del self.data[key]

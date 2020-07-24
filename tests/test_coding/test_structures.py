@@ -223,9 +223,18 @@ class TestMisc(unittest.TestCase):
         time.sleep(10)
         self.assertRaises(KeyError, lambda: eed.data['test'])
 
-    def test_self_cleaning_default_dict(self):
-        sc_dd = SelfCleaningDefaultDict(list)
+    def test_self_cleaning_default_dict_no_background_maintenance(self):
+        sc_dd = SelfCleaningDefaultDict(list, False)
         sc_dd['test'].append(2)
+        sc_dd['test'].pop()
+        sc_dd['test'] = '2'
+        self.assertEqual(len(sc_dd), 1)
+        del sc_dd['test']
+        self.assertEqual(len(sc_dd), 0)
+
+    def test_self_cleaning_default_dict_backgronud_maintenance(self):
+        sc_dd = SelfCleaningDefaultDict(list)
+        sc_dd['test'] = [1]
         sc_dd['test'].pop()
         time.sleep(10)
         self.assertEqual(len(sc_dd), 0)
