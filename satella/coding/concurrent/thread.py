@@ -59,6 +59,29 @@ class Condition(PythonCondition):
             super().notify(n=n)
 
 
+class SingleStartThread(threading.Thread):
+    """
+    A thread that keeps track of whether it's .start() method was called, and does nothing
+    if it's called second or so time.
+    """
+
+    def __init__(self, *args, **kwargs):
+        self.__started = False
+        super().__init__(*args, **kwargs)
+
+    def start(self) -> 'SingleStartThread':
+        """
+        No-op when called second or so time. The first time it starts the thread.
+
+        :return: self
+        """
+        if self.__started:
+            return
+        self.__started = True
+        super().start()
+        return self
+
+
 class TerminableThread(threading.Thread):
     """
     Class that will execute something in a loop unless terminated. Use like:

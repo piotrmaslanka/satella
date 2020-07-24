@@ -82,10 +82,10 @@ class SelfCleaningDefaultDict(Monitor, tp.MutableMapping[K, V], Cleanupable):
         return len(self.data)
 
     def __init__(self, default_factory: tp.Callable[[], V], *args, **kwargs):
+        super().__init__()      # initialize the inner Monitor
         self.data = dict(*args, **kwargs)
         self.default_factory = default_factory
         self.default_value = default_factory()
-
         ExpiringEntryDictThread().add_dict(self)
 
     def __iter__(self) -> tp.Iterator[K]:
@@ -144,6 +144,7 @@ class ExpiringEntryDict(Monitor, tp.MutableMapping[K, V], Cleanupable):
     def __init__(self, expiration_timeout: float, *args,
                  time_getter: tp.Callable[[], float] = time.monotonic,
                  external_cleanup: bool = False, **kwargs):
+        super().__init__()      # initialize the inner Monitor
         self.data = dict()
         self.expire_on = {}
         self.time_getter = time_getter
