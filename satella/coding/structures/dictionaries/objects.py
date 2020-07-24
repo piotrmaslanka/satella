@@ -5,7 +5,7 @@ import typing as tp
 K, V, T = tp.TypeVar('K'), tp.TypeVar('V'), tp.TypeVar('T')
 
 
-class DirtyDict(collections.UserDict, tp.Generic[K, V]):
+class DirtyDict(tp.MutableMapping[K, V]):
     """
     A dictionary that has also a flag called .dirty that sets to True if the dictionary has been
     changed since that flag was last cleared.
@@ -14,8 +14,17 @@ class DirtyDict(collections.UserDict, tp.Generic[K, V]):
     Note that such changes will not be registered in the dict!
     """
 
+    def __len__(self) -> int:
+        return len(self.data)
+
+    def __iter__(self) -> tp.Iterator[K]:
+        return iter(self.data)
+
+    def __getitem__(self, k: K) -> V:
+        return self.data[k]
+
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        self.data = {}      # type: tp.Dict[K, V]
         self.dirty = False
 
     def __copy__(self) -> 'DirtyDict':
@@ -25,13 +34,13 @@ class DirtyDict(collections.UserDict, tp.Generic[K, V]):
 
     def __setitem__(self, key: K, value: V) -> None:
         if key in self:
-            if self[key] == value:
+            if self.data[key] == value:
                 return
-        super().__setitem__(key, value)
+        self.data[key] == value
         self.dirty = True
 
     def __delitem__(self, key: K) -> None:
-        super().__delitem__(key)
+        del self.data[key]
         self.dirty = True
 
     def clear_dirty(self) -> None:
@@ -65,7 +74,7 @@ class DirtyDict(collections.UserDict, tp.Generic[K, V]):
         return a
 
 
-class KeyAwareDefaultDict(collections.abc.MutableMapping):
+class KeyAwareDefaultDict(tp.MutableMapping[K, V]):
     """
     A defaultdict whose factory function accepts the key to provide a default value for the key
 
@@ -97,7 +106,7 @@ class KeyAwareDefaultDict(collections.abc.MutableMapping):
         del self.dict[key]
 
 
-class TwoWayDictionary(collections.abc.MutableMapping, tp.Generic[K, V]):
+class TwoWayDictionary(tp.MutableMapping[K, V]):
     """
     A dictionary that keeps also a reverse_data mapping, allowing to look up keys by values.
 
@@ -188,7 +197,7 @@ class TwoWayDictionary(collections.abc.MutableMapping, tp.Generic[K, V]):
         return self._reverse
 
 
-class DictionaryView(collections.abc.MutableMapping, tp.Generic[K, V]):
+class DictionaryView(tp.MutableMapping[K, V]):
     """
     A view on a multiple dictionaries. If key isn't found in the first dictionary, it is looked up
     in another. Use like:

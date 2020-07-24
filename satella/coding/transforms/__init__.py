@@ -5,7 +5,6 @@ import typing as tp
 __all__ = ['stringify', 'split_shuffle_and_join', 'one_tuple']
 
 
-
 def _stringify_none(str_none, stringifier):
     if str_none:
         return stringifier(None)
