@@ -81,19 +81,32 @@ def write_to_file(path: str, data: tp.Union[bytes, str],
         file.close()
 
 
-def read_in_file(path: str, encoding: tp.Optional[str] = None) -> tp.Union[bytes, str]:
+def read_in_file(path: str, encoding: tp.Optional[str] = None,
+                 default: tp.Optional[tp.Union[bytes, str]] = None) -> tp.Union[bytes, str]:
     """
     Opens a file for reading, reads it in, converts to given encoding (or returns as bytes
     if not given), and closes it.
 
     :param path: path of file to read
     :param encoding: optional encoding. If default (None given), this will be returned as bytes
+    :param default: value to return when the file does not exist. Default (None) will raise a
+        FileNotFoundError
     :return: file content, either decoded as a str, or not as bytes
     """
-    if encoding is None:
-        file = open(path, 'rb')
-    else:
-        file = codecs.open(path, 'rb', encoding)
+    if os.path.isdir(path):
+        if default:
+            return default
+        raise FileNotFoundError('%s found and is a directory' % (path, ))
+
+    try:
+        if encoding is None:
+            file = open(path, 'rb')
+        else:
+            file = codecs.open(path, 'rb', encoding)
+    except FileNotFoundError:
+        if default:
+            return default
+        raise
 
     try:
         return file.read()

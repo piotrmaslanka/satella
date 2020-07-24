@@ -14,6 +14,14 @@ def putfile(path: str) -> None:
 
 class TestFiles(unittest.TestCase):
 
+    def try_directory(self):
+        os.system('mkdir test')
+        self.assertRaises(FileNotFoundError, lambda: read_in_file('test'))
+        self.assertEqual(b'test', read_in_file('test', default=b'test'))
+        os.system('rm -rf test')
+        self.assertRaises(FileNotFoundError, lambda: read_in_file('test'))
+        self.assertEqual(b'test', read_in_file('test', default=b'test'))
+
     def test_make_noncolliding_name(self):
         with open('test.txt', 'w') as f_out:
             f_out.write('test')
