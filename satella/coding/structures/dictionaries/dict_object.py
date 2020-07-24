@@ -114,21 +114,6 @@ class DictObject(tp.MutableMapping[str, T]):
         else:
             return True
 
-    def get(self, k: str, v: tp.Optional[tp.Any] = None) -> tp.Any:
-        try:
-            return self.__data[k]
-        except KeyError:
-            return v
-
-    def keys(self) -> tp.Iterator[str]:
-        return self.__data.keys()
-
-    def values(self) -> tp.Iterator[T]:
-        return self.__data.values()
-
-    def items(self) -> tp.Iterator[tp.Tuple[str, T]]:
-        return self.__data.items()
-
 
 def apply_dict_object(v: tp.Union[tp.Any, tp.Dict[str, T]]) -> tp.Union[DictObject, tp.Any]:
     """

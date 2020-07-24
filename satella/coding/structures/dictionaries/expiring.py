@@ -1,4 +1,3 @@
-import collections
 import threading
 import time
 import typing as tp
@@ -60,7 +59,7 @@ class ExpiringEntryDictThread(threading.Thread, Monitor):
         self.start()
 
 
-class SelfCleaningDefaultDict(Monitor, collections.UserDict, tp.Generic[K, V], Cleanupable):
+class SelfCleaningDefaultDict(Monitor, tp.MutableMapping[K, V], Cleanupable):
     """
     A defaultdict with the property that if it detects that a value is equal to it's default value,
     it will automatically remove it from the dict.
@@ -72,11 +71,17 @@ class SelfCleaningDefaultDict(Monitor, collections.UserDict, tp.Generic[K, V], C
     It is preferable to :meth:`satella.coding.concurrent.Monitor.acquire` it before iterating, since
     it is cleaned up both by __iter__ and by an external worker thread, so it's important to acquire
     it, because it can mutate in an undefined way.
+
+    :param default_factory: a callable/0 that will return an object if it doesn't already exist
+
+    All args and kwargs will be passed to a dict, which will be promptly added to this dictionary.
     """
 
+    def __len__(self) -> int:
+        return len(self.data)
+
     def __init__(self, default_factory: tp.Callable[[], V], *args, **kwargs):
-        super().__init__()
-        collections.UserDict.__init__(self, *args, **kwargs)
+        self.data = dict(*args, **kwargs)
         self.default_factory = default_factory
         self.default_value = default_factory()
 
@@ -91,9 +96,12 @@ class SelfCleaningDefaultDict(Monitor, collections.UserDict, tp.Generic[K, V], C
             del self.data[key]
 
     def __getitem__(self, item: K) -> V:
-        if item not in self.data:
-            self.data[item] = self.default_factory()
-        return self.data[item]
+        try:
+            return self.data[item]
+        except KeyError:
+            obj = self.default_factory()
+            self.data[item] = obj
+            return obj
 
     def __setitem__(self, key: K, value: V) -> None:
         if key in self.data:
@@ -109,7 +117,7 @@ class SelfCleaningDefaultDict(Monitor, collections.UserDict, tp.Generic[K, V], C
                 del self.data[key]
 
 
-class ExpiringEntryDict(Monitor, collections.UserDict, tp.Generic[K, V], Cleanupable):
+class ExpiringEntryDict(Monitor, tp.MutableMapping[K, V], Cleanupable):
     """
     A dictionary whose entries expire automatically after a predefined period of time.
 
@@ -124,12 +132,17 @@ class ExpiringEntryDict(Monitor, collections.UserDict, tp.Generic[K, V], Cleanup
     :param external_cleanup: whether to spawn a single thread that will clean up the dictionary.
         The thread is spawned once per program, and no additional threads are spawned for next
         dictionaries.
+
+    All args and kwargs will be passed to a dict, which will be promptly added to this dictionary.
     """
+
+    def __len__(self) -> int:
+        return len(self.data)
 
     def __init__(self, expiration_timeout: float, *args,
                  time_getter: tp.Callable[[], float] = time.monotonic,
                  external_cleanup: bool = False, **kwargs):
-        super().__init__()
+        self.data = dict()
         self.expire_on = {}
         self.time_getter = time_getter
         self.expiration_timeout = expiration_timeout
@@ -138,7 +151,9 @@ class ExpiringEntryDict(Monitor, collections.UserDict, tp.Generic[K, V], Cleanup
         if external_cleanup:
             ExpiringEntryDictThread().add_dict(self)
 
-        collections.UserDict.__init__(self, *args, **kwargs)
+        dct = dict(*args, **kwargs)
+        for key, value in dct.items():
+            self[key] = value
 
     def __contains__(self, item) -> bool:
         try:
@@ -172,17 +187,17 @@ class ExpiringEntryDict(Monitor, collections.UserDict, tp.Generic[K, V], Cleanup
 
     def __setitem__(self, key: K, value: V) -> None:
         self.key_to_expiration_time.put(self.time_getter() + self.expiration_timeout, key)
-        super().__setitem__(key, value)
+        self.data[key] = value
 
     @rethrow_as(ValueError, KeyError)
     def __getitem__(self, item: K) -> V:
         ts = self.key_to_expiration_time.get_timestamp(item)
         if ts < self.time_getter():
-            del self[item]
+            del self.data[item]
             raise KeyError('Entry expired')
 
-        return super().__getitem__(item)
+        return self.data[item]
 
     def __delitem__(self, key: K) -> None:
         self.key_to_expiration_time.pop_item(key)
-        super().__delitem__(key)
+        del self.data[key]

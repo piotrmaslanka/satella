@@ -1,4 +1,3 @@
-import collections.abc
 import copy
 import typing as tp
 
@@ -33,15 +32,18 @@ class DirtyDict(tp.MutableMapping[K, V]):
         return dd
 
     def __setitem__(self, key: K, value: V) -> None:
-        if key in self:
+        if key in self.data:
             if self.data[key] == value:
                 return
-        self.data[key] == value
+        self.data[key] = value
         self.dirty = True
 
     def __delitem__(self, key: K) -> None:
         del self.data[key]
         self.dirty = True
+
+    def __contains__(self, item: K) -> bool:
+        return item in self.data
 
     def clear_dirty(self) -> None:
         """Clears the dirty flag"""

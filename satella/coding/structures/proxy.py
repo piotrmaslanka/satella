@@ -276,11 +276,11 @@ class Proxy(tp.Generic[T]):
         self.__obj |= other
         return self
 
-    def __iand__(self, other):
+    def __iand__(self, other) -> 'Proxy':
         self.__obj &= other
         return self
 
-    def __ixor__(self, other):
+    def __ixor__(self, other) -> 'Proxy':
         self.__obj ^= other
         return self
 
