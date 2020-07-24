@@ -53,6 +53,45 @@ class AtomicNumber(Monitor):
         return str(self)
 
     @Monitor.synchronized
+    def __and__(self, other: Number) -> Number:
+        return self.value & other
+
+    @Monitor.synchronized
+    def __or__(self, other: Number) -> Number:
+        return self.value | other
+
+    @Monitor.synchronized
+    def __xor__(self, other: Number) -> Number:
+        return self.value ^ other
+
+    @Monitor.synchronized
+    def __rand__(self, other: Number) -> Number:
+        return other & self.value
+
+    @Monitor.synchronized
+    def __ror__(self, other: Number) -> Number:
+        return other | self.value
+
+    @Monitor.synchronized
+    def __rxor__(self, other: Number) -> Number:
+        return other ^ self.value
+
+    @Monitor.synchronized
+    def __iand__(self, other: Number) -> 'AtomicNumber':
+        self.value &= other
+        return self
+
+    @Monitor.synchronized
+    def __ior__(self, other: Number) -> 'AtomicNumber':
+        self.value |= other
+        return self
+
+    @Monitor.synchronized
+    def __ixor__(self, other: Number) -> 'AtomicNumber':
+        self.value ^= other
+        return self
+
+    @Monitor.synchronized
     def __str__(self) -> str:
         return 'AtomicNumber(%s)' % (self.value,)
 
@@ -79,13 +118,41 @@ class AtomicNumber(Monitor):
         return self
 
     @Monitor.synchronized
-    def __pow__(self, power, modulo=None):
-        return self.value.__pow__(power, modulo)
+    def __pow__(self, power: Number, modulo=None) -> Number:
+        return pow(self.value, power, modulo)
 
     @Monitor.synchronized
-    def __ipow__(self, other):
+    def __ipow__(self, other) -> 'AtomicNumber':
         self.value **= other
         return self
+
+    @Monitor.synchronized
+    def __radd__(self, other: Number) -> Number:
+        return other + self.value
+
+    @Monitor.synchronized
+    def __rsub__(self, other: Number) -> Number:
+        return other - self.value
+
+    @Monitor.synchronized
+    def __rmul__(self, other: Number) -> Number:
+        return other * self.value
+
+    @Monitor.synchronized
+    def __rtruediv__(self, other: Number) -> Number:
+        return other / self.value
+
+    @Monitor.synchronized
+    def __rfloordiv__(self, other: Number) -> Number:
+        return other // self.value
+
+    @Monitor.synchronized
+    def __rpow__(self, other: Number) -> Number:
+        return other ** self.value
+
+    @Monitor.synchronized
+    def __radd__(self, other: Number) -> Number:
+        return other + self.value
 
     @Monitor.synchronized
     def __add__(self, other: Number) -> Number:
@@ -158,6 +225,10 @@ class AtomicNumber(Monitor):
     @Monitor.synchronized
     def __neg__(self) -> Number:
         return -self.value
+
+    @Monitor.synchronized
+    def __pos__(self) -> Number:
+        return +self.value
 
     def wait_until_equal(self, v: Number, timeout: tp.Optional[float] = None) -> None:
         """
