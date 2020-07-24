@@ -25,7 +25,7 @@ class DirtyDict(tp.MutableMapping[K, V]):
         return self.data[k]
 
     def __init__(self, *args, **kwargs):
-        self.data = dict(*args, **kwargs)      # type: tp.Dict[K, V]
+        self.data = dict(*args, **kwargs)  # type: tp.Dict[K, V]
         self.dirty = False
 
     def __copy__(self) -> 'DirtyDict':

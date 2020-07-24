@@ -1,6 +1,6 @@
+import logging
 import time
 import typing as tp
-import logging
 from concurrent.futures import ThreadPoolExecutor, Executor, Future
 
 from satella.coding.recast_exceptions import silence_excs

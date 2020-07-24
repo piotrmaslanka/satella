@@ -1,6 +1,4 @@
 import enum
-import functools
-import operator
 import typing as tp
 from abc import ABCMeta, abstractmethod
 
@@ -72,6 +70,7 @@ class ComparableAndHashableBy(metaclass=ABCMeta):
     >>>
     >>> assert Vector() > Vector()
     """
+
     @property
     @abstractmethod
     def _COMPARABLE_BY(self) -> str:

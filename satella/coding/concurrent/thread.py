@@ -165,7 +165,7 @@ class TerminableThread(threading.Thread):
         """
         t = 0
         while t < interval and not self._terminating:
-            remaining_to_sleep = min(interval-t, wake_up_each)
+            remaining_to_sleep = min(interval - t, wake_up_each)
             time.sleep(remaining_to_sleep)
             t += remaining_to_sleep
         return self._terminating

@@ -19,6 +19,7 @@ def wrap_operation(fun):
         if self._Proxy__wrap_operations:
             result = self.__class__(result)
         return result
+
     return inner
 
 
