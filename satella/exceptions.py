@@ -82,6 +82,45 @@ class CodedCustomExceptionMetaclass(type):
 
 
 class CodedCustomException(CustomException, metaclass=CodedCustomExceptionMetaclass):
+    """
+    An exception with the property that every CodedCustomException having the code
+    of it's child instance will be considered it's child by isinstance.
+
+    I.e. following is true:
+
+    >>> class MyCustomError(CodedCustomException):
+    >>>     code = 5
+    >>> a = CodedCustomException()
+    >>> a.code = 5
+    >>> assert isinstance(a, MyCustomError)
+
+    Note that you however cannot use your child classes, ie. in following way:
+
+    >>> try:
+    >>>     e = CodedCustomException()
+    >>>     e.code = 5
+    >>> except MyCustomError:
+    >>>     ...
+
+    due to Python limitations. See
+    https://mail.python.org/pipermail/python-ideas/2015-November/037104.html to learn more
+    about the issue.
+
+    Note that the exception you're checking needs to be included in the class hierarchy.
+    Here's the snippet that illustrates this:
+
+    >>> class MyException(CodedCustomException):
+    >>>     pass
+    >>> class MyCode5(MyException):
+    >>>     code = 5
+    >>> class DifferentHierarchy(CodedCustomException):
+    >>>     pass
+    >>> class MyCode5Diff(DifferentHierarchy):
+    >>>     code = 5
+    >>> a = MyException()
+    >>  a.code = 5
+    >>> assert not isinstance(a, MyCode5Diff)
+    """
     def __init__(self, message, code=None, *args, **kwargs):
         super().__init__(message, code, *args, **kwargs)
         self.message = message  # type: str
