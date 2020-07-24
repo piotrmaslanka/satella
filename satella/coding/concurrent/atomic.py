@@ -100,6 +100,32 @@ class AtomicNumber(Monitor):
         return self.value > other
 
     @Monitor.synchronized
+    def __lshift__(self, other: int) -> Number:
+        return self.value << other
+
+    @Monitor.synchronized
+    def __rshift__(self, other: int) -> Number:
+        return self.value >> other
+
+    @Monitor.synchronized
+    def __rlshift__(self, other: int) -> Number:
+        return other << self.value
+
+    @Monitor.synchronized
+    def __rrshift__(self, other: int) -> Number:
+        return other >> self.value
+
+    @Monitor.synchronized
+    def __ilshift__(self, other: int) -> 'AtomicNumber':
+        self.value <<= other
+        return self
+
+    @Monitor.synchronized
+    def __irshift__(self, other: int) -> 'AtomicNumber':
+        self.value >>= other
+        return self
+
+    @Monitor.synchronized
     def __ge__(self, other: Number):
         return self.value >= other
 

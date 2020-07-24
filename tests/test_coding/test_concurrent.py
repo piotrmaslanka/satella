@@ -45,6 +45,11 @@ class TestConcurrent(unittest.TestCase):
         self.assertIsInstance(a, AtomicNumber)
         self.assertEqual(a, 3)
 
+        self.assertEqual(a << 1, 0b110)
+        self.assertEqual(a >> 1, 1)
+        self.assertEqual(1 << a, 0b1000)
+        self.assertEqual(0b111000 >> a, 0b111)
+        self.assertEqual(a >> 1, 1)
         self.assertIsInstance(a + 2, int)
         self.assertEqual(a | 4, 7)
         self.assertEqual(a & 2, 2)
@@ -72,6 +77,10 @@ class TestConcurrent(unittest.TestCase):
         a &= 3
         self.assertEqual(a, 3)
         a ^= 0
+        self.assertEqual(a, 3)
+        a <<= 1
+        self.assertEqual(a, 0b110)
+        a >>= 1
         self.assertEqual(a, 3)
         a /= 1
         self.assertEqual(a, 3.0)
