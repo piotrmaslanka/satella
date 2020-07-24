@@ -78,6 +78,7 @@ class SelfCleaningDefaultDict(Monitor, tp.MutableMapping[K, V], Cleanupable):
     """
 
     def __len__(self) -> int:
+        self.cleanup()
         return len(self.data)
 
     def __init__(self, default_factory: tp.Callable[[], V], *args, **kwargs):
@@ -137,6 +138,7 @@ class ExpiringEntryDict(Monitor, tp.MutableMapping[K, V], Cleanupable):
     """
 
     def __len__(self) -> int:
+        self.cleanup()
         return len(self.data)
 
     def __init__(self, expiration_timeout: float, *args,

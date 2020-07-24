@@ -43,12 +43,17 @@ class Proxy(tp.Generic[T]):
     Note that this overloads __repr__, __str__ and __dir__, which may prove confusing.
     Handle this in your descendant classes.
 
+    If wrap_operations is set, the following code will be executed on the result:
+
+    >>> a = a.__add__(b)
+    >>> return self.__class__(a)
+
+    Wrapped operations include all arithmetic operations and bitwise operations,
+    except for divmod, but including concat, rounding, truncing and ceiling.
+
     :param object_to_wrap: object to wrap
     :param wrap_operations: whether results of operations returning something else should be
-        also proxied. This will be done by the following code:
-        >>> a = a.__add__(b)
-        >>> return self.__class__(a)
-        Wrapped operations include all arithmetic operations and bitwise operations.
+        also proxied.
     """
     __slots__ = ('__obj', '__wrap_operations')
 
@@ -62,13 +67,13 @@ class Proxy(tp.Generic[T]):
     def __getitem__(self, item):
         return self.__obj[item]
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key, value) -> None:
         self.__obj[key] = value
 
-    def __delitem__(self, key):
+    def __delitem__(self, key) -> None:
         del self.__obj[key]
 
-    def __setattr__(self, key, value):
+    def __setattr__(self, key, value) -> None:
         if key in _SETTABLE_KEYS:
             super().__setattr__(key, value)
         else:
@@ -77,7 +82,7 @@ class Proxy(tp.Generic[T]):
     def __getattr__(self, item):
         return getattr(self.__obj, item)
 
-    def __delattr__(self, item):
+    def __delattr__(self, item) -> None:
         delattr(self.__obj, item)
 
     def __int__(self) -> int:
@@ -121,12 +126,8 @@ class Proxy(tp.Generic[T]):
     def __floordiv__(self, other):
         return self.__obj // other
 
-    @wrap_operation
     def __rdivmod__(self, other):
-        result = divmod(other, self.__obj)
-        if self.__wrap_operations:
-            result = self.__class__(result)
-        return result
+        return divmod(other, self.__obj)
 
     @wrap_operation
     def __truediv__(self, other):
