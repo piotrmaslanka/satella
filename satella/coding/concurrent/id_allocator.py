@@ -38,7 +38,7 @@ class IDAllocator(Monitor):
     @Monitor.synchronized
     def allocate_int(self) -> int:
         """
-        Return an allocated int
+        Return a previously unallocated int, and mark it as allocated
 
         :return: an allocated int
         """
