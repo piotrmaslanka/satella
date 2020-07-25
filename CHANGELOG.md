@@ -1,5 +1,3 @@
-# v2.9.7
+# v2.9.8
 
-* add binary shift operations to `AtomicNumber`
-* add `default` to `read_in_file`
 
