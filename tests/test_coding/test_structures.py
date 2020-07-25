@@ -259,8 +259,8 @@ class TestMisc(unittest.TestCase):
             def __init__(self, v):
                 self.v = v
 
-        self.assertEqual(repr(Test2(2)),
-                         'tests.test_coding.test_structures.TestMisc.test_reprable_mixin.<locals>.Test2(2)')
+        self.assertTrue(repr(Test2(2)).endswith(
+            'test_coding.test_structures.TestMisc.test_reprable_mixin.<locals>.Test2(2)'))
 
     def test_proxy(self):
         a = Proxy(5, wrap_operations=True)

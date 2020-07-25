@@ -6,6 +6,7 @@ from satella.os.misc import suicide
 
 
 class TestSuicide(unittest.TestCase):
+    @unittest.skipIf('linux' in sys.platform, 'Running on Linux')
     @unittest.skipIf('win' in sys.platform, 'Running on Windows')
     def test_suicide(self):
         pcid = os.fork()
