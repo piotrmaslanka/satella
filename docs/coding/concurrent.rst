@@ -38,6 +38,12 @@ SingleStartThread
 .. autoclass:: satella.coding.concurrent.SingleStartThread
     :members:
 
+IDAllocator
+===========
+
+.. autoclass:: satella.coding.concurrent.IDAllocator
+    :members:
+
 Monitor
 =======
 

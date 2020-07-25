@@ -5,7 +5,7 @@ __all__ = ['BaseSatellaError', 'ResourceLockingError', 'ResourceNotLocked', 'Res
            'ConfigurationValidationError', 'ConfigurationError', 'ConfigurationSchemaError',
            'PreconditionError', 'MetricAlreadyExists', 'BaseSatellaException', 'CustomException',
            'CodedCustomException', 'CodedCustomExceptionMetaclass', 'WouldWaitMore', 'LockIsHeld',
-           'ProcessFailed']
+           'ProcessFailed', 'AlreadyAllocated']
 
 
 class CustomException(Exception):
@@ -201,6 +201,12 @@ class LockIsHeld(ResourceLocked):
     def __init__(self, pid):
         super().__init__(pid)
         self.pid = pid
+
+
+class AlreadyAllocated(ResourceLocked):
+    """
+    Given ID has been already marked as allocated
+    """
 
 
 class ProcessFailed(BaseSatellaError, OSError):

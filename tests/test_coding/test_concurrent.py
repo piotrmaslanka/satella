@@ -6,11 +6,22 @@ import time
 import unittest
 
 from satella.coding.concurrent import TerminableThread, CallableGroup, Condition, MonitorList, \
-    LockedStructure, AtomicNumber, Monitor
-from satella.exceptions import WouldWaitMore
+    LockedStructure, AtomicNumber, Monitor, IDAllocator
+from satella.coding.sequences import unique
+from satella.exceptions import WouldWaitMore, AlreadyAllocated
 
 
 class TestConcurrent(unittest.TestCase):
+
+    def test_id_allocator(self):
+        id_alloc = IDAllocator()
+        x = set([id_alloc.allocate_int(), id_alloc.allocate_int(), id_alloc.allocate_int()])
+        y = x.pop()
+        self.assertRaises(AlreadyAllocated, lambda: id_alloc.mark_as_allocated(y))
+        x.add(y)
+        self.assertTrue(set(unique(x)), x)
+        id_alloc.mark_as_free(y)
+        id_alloc.mark_as_allocated(y)
 
     def test_atomic_number_timeout(self):
         """Test comparison while the lock is held all the time"""
