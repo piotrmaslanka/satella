@@ -23,6 +23,11 @@ class TestConcurrent(unittest.TestCase):
         id_alloc.mark_as_free(y)
         id_alloc.mark_as_allocated(y)
 
+        for i in range(100):
+            x.add(id_alloc.allocate_int())
+
+        self.assertEqual(x, set(unique(x)))
+
     def test_atomic_number_timeout(self):
         """Test comparison while the lock is held all the time"""
         a = AtomicNumber(2)
