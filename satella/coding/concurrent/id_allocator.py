@@ -10,9 +10,12 @@ class IDAllocator(Monitor):
     them to be reused.
 
     Thread-safe.
+
+    :param start_at: the lowest integer that the allocator will return
     """
-    def __init__(self):
+    def __init__(self, start_at: int = 0):
         super().__init__()
+        self.start_at = start_at
         self.ints_allocated = set()
         self.free_ints = set()
         self.bound = 0
@@ -28,8 +31,11 @@ class IDAllocator(Monitor):
         Mark x as free
 
         :param x: int to free
-        :raises ValueError: x was not allocated
+        :raises ValueError: x was not allocated or less than start_at
         """
+        if x < self.start_at:
+            raise ValueError('%s is less than start_at' % (x, ))
+        x -= self.start_at
         if x not in self.ints_allocated:
             raise ValueError('%s was not allocated' % (x, ))
         self.ints_allocated.remove(x)
@@ -46,7 +52,7 @@ class IDAllocator(Monitor):
             self._extend_the_bound_to(self.bound+10)
         x = self.free_ints.pop()
         self.ints_allocated.add(x)
-        return x
+        return x+self.start_at
 
     @Monitor.synchronized
     def mark_as_allocated(self, x: int):
@@ -55,7 +61,11 @@ class IDAllocator(Monitor):
 
         :param x: x to mark as allocated
         :raises AlreadyAllocated: x was already allocated
+        :raises ValueError: x is less than start_at
         """
+        if x < self.start_at:
+            raise ValueError('%s is less than start_at' % (x, ))
+        x -= self.start_at
         if x >= self.bound:
             self._extend_the_bound_to(x+1)
             self.free_ints.remove(x)
