@@ -29,8 +29,8 @@ class TestConcurrent(unittest.TestCase):
         self.assertEqual(x, set(unique(x)))
 
         id_alloc = IDAllocator(9000)
-        self.assertEqual(id_alloc.allocate_int(), 9000)
-        self.assertEqual(id_alloc.allocate_int(), 9001)
+        self.assertTrue(9000 <= id_alloc.allocate_int() <= 9009)
+        self.assertTrue(9000 <= id_alloc.allocate_int() <= 9009)
 
     def test_atomic_number_timeout(self):
         """Test comparison while the lock is held all the time"""
