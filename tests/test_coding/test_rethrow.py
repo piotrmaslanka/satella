@@ -57,7 +57,7 @@ class TestStuff(unittest.TestCase):
         def nop():
             return 4
 
-        self.assertRaises(TypeError, lambda: catch_exception(TypeError, throw_value_error))
+        self.assertRaises(ValueError, lambda: catch_exception(TypeError, throw_value_error))
         self.assertIsInstance(catch_exception(ValueError, throw_value_error), ValueError)
         self.assertRaises(ValueError, lambda: catch_exception(ValueError, nop))
         self.assertEqual(4, catch_exception(TypeError, nop, return_value_on_no_exception=True))

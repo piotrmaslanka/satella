@@ -215,6 +215,8 @@ def catch_exception(exc_class: tp.Union[ExcType, tp.Tuple[ExcType, ...]],
     >>>         return return_instead
     >>>     return e
 
+    If a different class of exception is caught, it will be propagated.
+
     :param exc_class: Exception classes to catch
     :param clb: callable/0 to call to raise the exception
     :param return_instead: what to return instead of the function result if it didn't end in an
@@ -222,14 +224,11 @@ def catch_exception(exc_class: tp.Union[ExcType, tp.Tuple[ExcType, ...]],
     :param return_value_on_no_exception: whether to return the function result if exception didn't
         happen
     :raises ValueError: an exception was not thrown
-    :raises TypeError: a different exception was thrown that the one we're catchin
     """
     try:
         result = clb()
     except exc_class as e:
         return e
-    except Exception as e:
-        raise TypeError('%s was thrown instead' % (e,))
 
     if return_instead is not None:
         return return_instead
