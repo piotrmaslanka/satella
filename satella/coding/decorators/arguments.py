@@ -12,7 +12,7 @@ def _NOP(x):
     return x
 
 
-def execute_before(callable_: tp.Callable[[], None]):
+def execute_before(callable_: tp.Callable) -> tp.Callable:
     """
     Wrapper to create wrappers which execute callable before function launch.
 
@@ -40,12 +40,10 @@ def execute_before(callable_: tp.Callable[[], None]):
 
     def outer(*args, **kwargs):
         if len(args) == 1 and not kwargs and callable(args[0]):
-            fun = args[0]
-
-            @wraps(fun)
+            @wraps(args[0])
             def inner(*my_args, **my_kwargs):
                 callable_()
-                return fun(*my_args, **my_kwargs)
+                return args[0](*my_args, **my_kwargs)
 
             return inner
         else:
