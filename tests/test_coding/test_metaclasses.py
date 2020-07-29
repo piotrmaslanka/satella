@@ -1,7 +1,8 @@
 import abc
 import unittest
 
-from satella.coding import metaclass_maker, wrap_with, dont_wrap, rethrow_as, wrap_property
+from satella.coding import metaclass_maker, wrap_with, dont_wrap, rethrow_as, wrap_property, \
+    DocsFromParent
 
 
 class MetaA(type):
@@ -25,6 +26,18 @@ class AB(A, B, metaclass=metaclass_maker):
 
 
 class TestMetaclasses(unittest.TestCase):
+
+    def test_docs_from_parent(self):
+        class Father:
+            def test(self):
+                """my docstring"""
+
+        class Child(Father, metaclass=DocsFromParent):
+            def test(self):
+                pass
+
+        self.assertEqual(Child.test.__doc, Father.test.__doc__)
+
     def test_metaclasses(self):
         AB()
 

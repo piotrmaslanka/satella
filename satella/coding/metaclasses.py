@@ -1,5 +1,6 @@
 import inspect
 
+from .recast_exceptions import silence_excs
 from .decorators import wraps
 
 """
@@ -9,7 +10,30 @@ modified
 from abc import ABCMeta
 import typing as tp
 
-__all__ = ['metaclass_maker', 'wrap_with', 'dont_wrap', 'wrap_property']
+__all__ = ['metaclass_maker', 'wrap_with', 'dont_wrap', 'wrap_property',
+           'DocsFromParent']
+
+
+class DocsFromParent(type):
+    """
+    A metaclass that fetches missing docstring's for methods from class's immediate parent
+
+    >>> class Father:
+    >>>     def test(self):
+    >>>         '''my docstring'''
+
+    >>> class Child(Father, metaclass=DocsFromParent):
+    >>>     def test(self):
+    >>>         ...
+    >>> assert Child.test.__doc__ == 'my docstring'
+    """
+    def __call__(cls, name, bases, dictionary):
+        for key, value in dictionary.items():
+            if bases and callable(value) and not value.__doc__:
+                with silence_excs(AttributeError):
+                    value.__doc__ = getattr(bases[0], key).__doc__
+                    dictionary[key] = value
+        return super().__call__(name, bases, dictionary)
 
 
 def skip_redundant(iterable, skip_set=None):

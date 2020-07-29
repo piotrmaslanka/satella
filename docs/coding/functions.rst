@@ -43,6 +43,12 @@ You can also decorate given callables in order not to be wrapped with
 .. autofunction:: satella.coding.dont_wrap
 
 
+DocsFromParent
+--------------
+
+.. autoclass:: satella.coding.DocsFromParent
+    :members:
+
 metaclass_maker
 ---------------
 
