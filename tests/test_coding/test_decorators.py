@@ -18,17 +18,17 @@ class TestDecorators(unittest.TestCase):
         a = 0
 
         @execute_before
-        def increase_a():
+        def increase_a(factor=1):
             nonlocal a
-            a += 1
+            a += factor
 
-        @increase_a
+        @increase_a(factor=2)
         def launch_me():
             nonlocal a
             a += 1
 
         launch_me()
-        self.assertEqual(a, 2)
+        self.assertEqual(a, 3)
 
     def test_precondition_none(self):
         @precondition(short_none('x == 2'))

@@ -28,22 +28,33 @@ def execute_before(callable_: tp.Callable[[], None]):
     >>>     ...
     >>> nothing()
 
-    As well as the following:
+    You can even specify custom parameters for the callable:
 
-    >>> do_things(execute=True)
-
-    to simply execute the callable.
+    >>> @execute_before
+    >>> def i_am_2(two):
+    >>>     assert two == 2
+    >>> @i_am_2(2)
+    >>> def run_me():
+    >>>     pass
     """
 
-    def outer(fun=None, execute: bool = False):
-        if execute:
-            return callable_()
-        else:
-            @wraps(fun)
-            def inner(*args, **kwargs):
-                callable_()
-                return fun(*args, **kwargs)
+    def outer(*args, **kwargs):
+        if len(args) == 1 and not kwargs and callable(args[0]):
+            fun = args[0]
 
+            @wraps(fun)
+            def inner(*my_args, **my_kwargs):
+                callable_()
+                return fun(*my_args, **my_kwargs)
+
+            return inner
+        else:
+            def inner(func):
+                @wraps(func)
+                def inner2(*my_args, **my_kwargs):
+                    callable_(*args, **kwargs)
+                    return func(*my_args, **my_kwargs)
+                return inner2
             return inner
 
     return outer
