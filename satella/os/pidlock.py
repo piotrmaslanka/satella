@@ -41,10 +41,12 @@ class PIDFileLock:
     def release(self) -> None:
         """
         Free the lock
+        :raises RuntimeError: lock not acquired
         """
-        if self.file_no is not None:
-            os.unlink(self.path)
-            self.file_no = None
+        if self.file_no is None:
+            raise RuntimeError('lock not acquired')
+        os.unlink(self.path)
+        self.file_no = None
 
     def acquire(self) -> None:
         """
