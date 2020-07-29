@@ -33,7 +33,7 @@ class TestMetaclasses(unittest.TestCase):
                 """my docstring"""
 
         class Child(Father, metaclass=DocsFromParent):
-            a: int = 2
+            a = 2
 
             def test(self):
                 pass
