@@ -1,6 +1,2 @@
-# v2.9.10
+# v2.9.11
 
-* semantics of `catch_exception` changed
-* added `DocsFromParent`
-* added `ConstruableIterator`
-* added `walk`
