@@ -1,5 +1,4 @@
 from setuptools import setup, find_packages
-import unittest
 from satella import __version__
 
 
@@ -15,7 +14,7 @@ setup(keywords=['ha', 'high availability', 'scalable', 'scalability', 'server', 
             'HTTPJSONSource': ['requests'],
             'YAMLSource': ['pyyaml'],
             'TOMLSource': ['toml'],
-            'Faster JSONSource': ['ujson'],
-            'satella.cassandra': ['cassandra-driver']
+            'FasterJSONSource': ['ujson'],
+            'cassandra': ['cassandra-driver']
       }
       )
