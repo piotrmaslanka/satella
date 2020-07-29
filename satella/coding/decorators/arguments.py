@@ -12,6 +12,43 @@ def _NOP(x):
     return x
 
 
+def execute_before(callable_: tp.Callable[[], None]):
+    """
+    Wrapper to create wrappers which execute callable before function launch.
+
+    Use like this:
+
+    >>> @execute_before
+    >>> def do_things():
+    >>>     print('Things are done')
+
+    Then the following will print 'Things are done'
+    >>> @do_things
+    >>> def nothing():
+    >>>     ...
+    >>> nothing()
+
+    As well as the following:
+
+    >>> do_things(execute=True)
+
+    to simply execute the callable.
+    """
+
+    def outer(fun=None, execute: bool = False):
+        if execute:
+            return callable_()
+        else:
+            @wraps(fun)
+            def inner(*args, **kwargs):
+                callable_()
+                return fun(*args, **kwargs)
+
+            return inner
+
+    return outer
+
+
 def auto_adapt_to_methods(decorator):
     """
     Allows you to use the same decorator on methods and functions,

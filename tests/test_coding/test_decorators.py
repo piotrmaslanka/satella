@@ -5,13 +5,30 @@ from socket import socket
 
 from satella.coding import wraps, chain_functions, postcondition, \
     log_exceptions, queue_get, precondition, short_none
-from satella.coding.decorators import auto_adapt_to_methods, attach_arguments
+from satella.coding.decorators import auto_adapt_to_methods, attach_arguments, \
+    execute_before
 from satella.exceptions import PreconditionError
 
 logger = logging.getLogger(__name__)
 
 
 class TestDecorators(unittest.TestCase):
+
+    def test_execute_before(self):
+        a = 0
+
+        @execute_before
+        def increase_a():
+            nonlocal a
+            a += 1
+
+        @increase_a
+        def launch_me():
+            nonlocal a
+            a += 1
+
+        launch_me()
+        self.assertEqual(a, 2)
 
     def test_precondition_none(self):
         @precondition(short_none('x == 2'))

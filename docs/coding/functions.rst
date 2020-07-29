@@ -133,3 +133,8 @@ A ``functools.wraps()`` equivalent, but for classes
 
 .. autofunction:: satella.coding.wraps
 
+execute_before
+--------------
+
+.. autofunction:: satella.coding.decorators.execute_before
+
