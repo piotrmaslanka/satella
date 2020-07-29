@@ -1,3 +1,5 @@
+import copy
+import typing as tp
 import collections
 
 from satella.coding.recast_exceptions import rethrow_as
@@ -5,7 +7,7 @@ from satella.coding.recast_exceptions import rethrow_as
 ITER_KEYS = 0
 ITER_VALUES = 1
 ITER_ITEMS = 2
-
+T = tp.TypeVar('T')
 
 class DictDeleter:
     """
@@ -77,8 +79,10 @@ class DictDeleter:
             del self.dict_to_process[key]
         return False
 
+DIR_FORWARD = 0
+DIR_BACKWARD = 1
 
-class ListDeleter:
+class ListDeleter(tp.Generic[T]):
     """
     Having problems deleting entries from your list while iterating on them? No problem. Just swap
     the following:
@@ -94,8 +98,8 @@ class ListDeleter:
 
     >>> with ListDeleter(my_list) as ld:
     >>>     for entry in ld:
-    >>>         if entry.should_delete():
-    >>>             ld.delete()
+    >>>         if entry.value.should_delete():
+    >>>             entry.delete()
 
     Note that a single ListDeleter running from a single context must be iterated on by only a
     single Thread as it keeps the state of iterator in itself, to prevent allocating new objects
@@ -103,28 +107,74 @@ class ListDeleter:
 
     This allocates only a single object per a call to delete().
 
+    Calling the list deleter during iteration will yield the element.
+
     You can pass any type of object here, as long as it supports pop(position) and __getitem__
     """
-    __slots__ = ('list_to_process', 'current_index', 'indices_to_delete')
+    __slots__ = ('list_to_process', 'current_index', 'indices_to_delete', 'direction')
 
-    def __init__(self, list_to_process: collections.abc.MutableSequence):
+    def __init__(self, list_to_process: tp.MutableSequence[T]):
         self.list_to_process = list_to_process
+        self.direction = DIR_FORWARD
+        # pointer to currently processed element
+        self.current_index = -1 if self.direction == DIR_FORWARD else len(self.list_to_process)
+        self.indices_to_delete = set()      # type: tp.Set[int]
 
     def __enter__(self) -> 'ListDeleter':
         return self
 
+    @property
+    def value(self) -> T:
+        return self()
+
+    def __call__(self) -> T:
+        """
+        Return current element
+        """
+        return self.list_to_process[self.current_index]
+
     def __iter__(self) -> 'ListDeleter':
-        self.current_index = 0
+        self.current_index = -1 if self.direction == DIR_FORWARD else len(self.list_to_process)
         self.indices_to_delete = set()
         return self
 
-    @rethrow_as(IndexError, StopIteration)
     def __next__(self):
-        self.current_index += 1
-        return self.list_to_process[self.current_index - 1]
+        if self.direction == DIR_BACKWARD and self.current_index == 0:
+            raise StopIteration('First element reached')
+        if self.direction == DIR_FORWARD and self.current_index == len(self.list_to_process) - 1:
+            raise StopIteration('Last element reached')
+        self.current_index += +1 if self.direction == DIR_FORWARD else -1
+        return self.list_to_process[self.current_index]
+
+    def next(self) -> T:
+        """
+        :return: the next element
+        :raises StopIteration: no more entries
+        """
+        next(self)
+        return self.list_to_process[self.current_index]
+
+    def prev(self) -> T:
+        """
+        Move to previous element
+
+        :return: the previous element
+        :raises ValueError: list is already at the first element!
+        """
+        if self.direction == DIR_FORWARD and self.current_index == 0:
+            raise ValueError('Cannot go previous on a first element!')
+        if self.direction == DIR_BACKWARD and self.current_index == len(self.list_to_process) - 1:
+            raise ValueError('Cannot go previous on a last element!')
+        self.current_index += -1 if self.direction == DIR_FORWARD else +1
+        return self.list_to_process[self.current_index]
 
     def delete(self) -> None:
-        self.indices_to_delete.add(self.current_index - 1)
+        self.indices_to_delete.add(self.current_index)
+
+    def __reversed__(self) -> 'ListDeleter':
+        self_2 = copy.copy(self)
+        self_2.direction = DIR_FORWARD if self.direction == DIR_BACKWARD else DIR_BACKWARD
+        return self_2
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         index_delta = 0
@@ -134,3 +184,10 @@ class ListDeleter:
                 index_delta += 1
 
         return False
+
+    def __copy__(self) -> 'ListDeleter':
+        ld = ListDeleter(self.list_to_process)
+        ld.direction = self.direction
+        ld.current_index = self.current_index
+        ld.indices_to_delete = copy.copy(self.indices_to_delete)
+        return ld
