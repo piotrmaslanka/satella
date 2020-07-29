@@ -16,7 +16,7 @@ from .recast_exceptions import rethrow_as, silence_excs, catch_exception, log_ex
     raises_exception
 
 __all__ = [
-    'update_if_not_none',
+    'update_if_not_none', 'DocsFromParent',
     'hint_with_length', 'SelfClosingGenerator', 'exhaust', 'chain',
     'Monitor', 'RMonitor', 'merge_dicts',
     'short_none', 'has_keys',
