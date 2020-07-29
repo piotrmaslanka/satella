@@ -15,10 +15,11 @@ __all__ = ['metaclass_maker', 'wrap_with', 'dont_wrap', 'wrap_property',
            'DocsFromParent']
 
 
-def DocsFromParent(name, bases, dictionary):
+def DocsFromParent(name: str, bases: tp.Tuple[type], dictionary: dict) -> tp.Type:
     """
     A metaclass that fetches missing docstring's for methods from the classes' bases,
-    looked up BFS.
+    looked up BFS. This will fetch the class's docstring itself, if available and not
+    present in the child.
 
     >>> class Father:
     >>>     def test(self):
@@ -34,6 +35,12 @@ def DocsFromParent(name, bases, dictionary):
             return cls
         else:
             return [v_base for v_base in cls.__bases__ if v_base is not object]
+
+    if '__doc__' not in dictionary:
+        for base in walk(bases, extract_bases, deep_first=False):
+            if hasattr(base, '__doc__'):
+                dictionary['__doc__'] = base.__doc__
+                break
 
     for key, value in dictionary.items():
         if not value.__doc__ and callable(value):

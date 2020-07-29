@@ -29,6 +29,7 @@ class TestMetaclasses(unittest.TestCase):
 
     def test_docs_from_parent(self):
         class Father:
+            """docstring"""
             def test(self):
                 """my docstring"""
 
@@ -39,6 +40,7 @@ class TestMetaclasses(unittest.TestCase):
                 pass
 
         self.assertEqual(Child.test.__doc__, Father.test.__doc__)
+        self.assertEqual(Child.__doc__, Father.__doc__)
 
     def test_metaclasses(self):
         AB()
