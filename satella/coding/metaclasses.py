@@ -1,6 +1,5 @@
 import inspect
 
-from .recast_exceptions import silence_excs
 from .decorators import wraps
 from .sequences.iterators import walk
 
@@ -13,6 +12,13 @@ import typing as tp
 
 __all__ = ['metaclass_maker', 'wrap_with', 'dont_wrap', 'wrap_property',
            'DocsFromParent']
+
+
+def _extract_bases(cls):
+    if isinstance(cls, (tuple, list)):
+        return cls
+    else:
+        return [v_base for v_base in cls.__bases__ if v_base is not object]
 
 
 def DocsFromParent(name: str, bases: tp.Tuple[type], dictionary: dict) -> tp.Type:
@@ -30,14 +36,8 @@ def DocsFromParent(name: str, bases: tp.Tuple[type], dictionary: dict) -> tp.Typ
     >>>         ...
     >>> assert Child.test.__doc__ == 'my docstring'
     """
-    def extract_bases(cls):
-        if isinstance(cls, (tuple, list)):
-            return cls
-        else:
-            return [v_base for v_base in cls.__bases__ if v_base is not object]
-
     if '__doc__' not in dictionary:
-        for base in walk(bases, extract_bases, deep_first=False):
+        for base in walk(bases, _extract_bases, deep_first=False):
             if hasattr(base, '__doc__'):
                 if base.__doc__:
                     dictionary['__doc__'] = base.__doc__
@@ -45,7 +45,7 @@ def DocsFromParent(name: str, bases: tp.Tuple[type], dictionary: dict) -> tp.Typ
 
     for key, value in dictionary.items():
         if not value.__doc__ and callable(value):
-            for base in walk(bases, extract_bases, deep_first=False):
+            for base in walk(bases, _extract_bases, deep_first=False):
                 if hasattr(base, key):
                     if getattr(base, key).__doc__:
                         value.__doc__ = getattr(base, key).__doc__
