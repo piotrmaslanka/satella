@@ -4,7 +4,7 @@ import typing as tp
 import warnings
 
 
-from ..recast_exceptions import rethrow_as, silence_excs
+from ..recast_exceptions import rethrow_as
 from ..decorators import for_argument
 
 T, U = tp.TypeVar('T'), tp.TypeVar('U')
@@ -25,7 +25,6 @@ def walk(obj: T, child_getter: tp.Callable[[T], tp.List[T]] = list,
     """
     a = ConstruableIterator(child_getter(obj))
     for o in a:
-        item_present = True
         children = child_getter(o)
         if children is not None:
             try:
@@ -39,9 +38,9 @@ def walk(obj: T, child_getter: tp.Callable[[T], tp.List[T]] = list,
                 else:
                     a.add_many(children)
                 if leafs_only:
-                    item_present = False
-        if item_present:
-            yield o
+                    continue
+
+        yield o
 
 
 class ConstruableIterator:
