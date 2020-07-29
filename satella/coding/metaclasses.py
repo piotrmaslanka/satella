@@ -15,7 +15,7 @@ __all__ = ['metaclass_maker', 'wrap_with', 'dont_wrap', 'wrap_property',
            'DocsFromParent']
 
 
-class DocsFromParent(type):
+def DocsFromParent(name, bases, dictionary):
     """
     A metaclass that fetches missing docstring's for methods from the classes' bases,
     looked up BFS.
@@ -29,23 +29,21 @@ class DocsFromParent(type):
     >>>         ...
     >>> assert Child.test.__doc__ == 'my docstring'
     """
-    def __call__(cls, name, bases, dictionary):
+    def extract_bases(cls):
+        if isinstance(cls, (tuple, list)):
+            return cls
+        else:
+            return [v_base for v_base in cls.__bases__ if v_base is not object]
 
-        def extract_bases(obj):
-            if isinstance(obj, tuple):
-                return obj
-            else:
-                return [v_base for v_base in obj.__bases__ if v_base is not object]
-
-        for key, value in dictionary.items():
-            if callable(value) and not value.__doc__:
-                for base in walk(bases, extract_bases, deep_first=False):
-                    if hasattr(base, key):
-                        if getattr(base, key).__doc__:
-                            value.__doc__ = getattr(base, key).__doc__
-                            dictionary[key] = value
-                            break
-        return super().__call__(name, bases, dictionary)
+    for key, value in dictionary.items():
+        if not value.__doc__ and callable(value):
+            for base in walk(bases, extract_bases, deep_first=False):
+                if hasattr(base, key):
+                    if getattr(base, key).__doc__:
+                        value.__doc__ = getattr(base, key).__doc__
+                        dictionary[key] = value
+                        break
+    return type(name, bases, dictionary)
 
 
 def skip_redundant(iterable, skip_set=None):
