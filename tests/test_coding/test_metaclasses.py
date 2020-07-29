@@ -36,7 +36,7 @@ class TestMetaclasses(unittest.TestCase):
             def test(self):
                 pass
 
-        self.assertEqual(Child.test.__doc, Father.test.__doc__)
+        self.assertEqual(Child.test.__doc__, Father.test.__doc__)
 
     def test_metaclasses(self):
         AB()
