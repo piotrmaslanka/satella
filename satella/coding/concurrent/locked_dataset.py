@@ -67,7 +67,7 @@ class LockedDataset:
         if inspect.ismethod(super(LockedDataset, self).__getattribute__(name)):
             return super(LockedDataset, self).__getattribute__(name)
 
-        if not get_internal(self).locked:
+        if not _get_internal(self).locked:
             raise ResourceNotLocked('No lock held on this object for a read operation')
 
         return super(LockedDataset, self).__getattribute__(name)
@@ -75,27 +75,27 @@ class LockedDataset:
     def __setattr__(self, key, value):
         if key == '_LockedDataset__internal':
             return super(LockedDataset, self).__setattr__(key, value)
-        if not get_internal(self).locked:
+        if not _get_internal(self).locked:
             raise ResourceNotLocked('No lock held on this object for a write operation')
         return super(LockedDataset, self).__setattr__(key, value)
 
     def __call__(self, blocking=True, timeout=-1):
-        get_internal(self).args = blocking, timeout
+        _get_internal(self).args = blocking, timeout
         return self
 
     def __enter__(self):
-        args = get_internal(self).args
+        args = _get_internal(self).args
 
-        if not get_internal(self).lock.acquire(*args):
+        if not _get_internal(self).lock.acquire(*args):
             raise WouldWaitMore('Resource is still locked')
-        get_internal(self).locked = True
+        _get_internal(self).locked = True
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        get_internal(self).lock.release()
-        get_internal(self).locked = False
+        _get_internal(self).lock.release()
+        _get_internal(self).locked = False
         return False
 
 
-def get_internal(self):
+def _get_internal(self):
     return super(LockedDataset, self).__getattribute__('_LockedDataset__internal')

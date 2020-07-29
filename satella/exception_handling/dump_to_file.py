@@ -8,9 +8,6 @@ from satella.coding import silence_excs
 from satella.instrumentation import Traceback
 from .exception_handlers import BaseExceptionHandler
 
-__all__ = [
-    'DumpToFileHandler'
-]
 
 AsStreamTypeAccept = tp.Union[str, tp.IO, None]
 AsStreamTypeAcceptHR = tp.Union[str, tp.TextIO]

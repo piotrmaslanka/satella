@@ -68,7 +68,7 @@ class FunctionExceptionHandler(BaseExceptionHandler):
     __slots__ = ('fun',)
 
     def __init__(self, fun: ExceptionHandlerCallable, priority: int = NORMAL_PRIORITY):
-        super(FunctionExceptionHandler, self).__init__(priority)
+        super().__init__(priority)
         self.fun = fun
 
     def handle_exception(self, type_, value, traceback):

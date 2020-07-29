@@ -201,11 +201,10 @@ class ReprableMixin:
 
     def __repr__(self):
         fragments = []
-        if hasattr(self, '_REPR_FULL_CLASSNAME'):
-            if self._REPR_FULL_CLASSNAME:
-                fragments = ['%s%s' % ((self.__class__.__module__ + '.')
-                                       if self.__class__.__module__ != 'builtins' else '',
-                                       self.__class__.__qualname__)]
+        if getattr(self, '_REPR_FULL_CLASSNAME', False):
+            fragments = ['%s%s' % ((self.__class__.__module__ + '.')
+                                   if self.__class__.__module__ != 'builtins' else '',
+                                   self.__class__.__qualname__)]
         if not fragments:
             fragments = [self.__class__.__name__]
         fragments.append('(')

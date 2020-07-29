@@ -11,7 +11,7 @@ T, U = tp.TypeVar('T'), tp.TypeVar('U')
 IteratorOrIterable = tp.Union[tp.Iterator[T], tp.Iterable[T]]
 
 
-def walk(obj: T, child_getter: tp.Callable[[T], tp.List[T]] = list,
+def walk(obj: T, child_getter: tp.Callable[[T], tp.Optional[tp.List[T]]] = list,
          deep_first: bool = True,
          leafs_only: bool = False) -> tp.Iterator[T]:
     """

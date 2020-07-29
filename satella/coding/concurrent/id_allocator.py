@@ -13,6 +13,8 @@ class IDAllocator(Monitor):
 
     :param start_at: the lowest integer that the allocator will return
     """
+    __slots__ = ('start_at', 'ints_allocated', 'free_ints', 'bound')
+
     def __init__(self, start_at: int = 0):
         super().__init__()
         self.start_at = start_at

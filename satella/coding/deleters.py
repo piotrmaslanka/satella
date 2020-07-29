@@ -79,8 +79,10 @@ class DictDeleter:
             del self.dict_to_process[key]
         return False
 
+
 DIR_FORWARD = 0
 DIR_BACKWARD = 1
+
 
 class ListDeleter(tp.Generic[T]):
     """

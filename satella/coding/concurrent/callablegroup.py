@@ -80,8 +80,8 @@ class CallableGroup(tp.Generic[T]):
 
 class CallNoOftenThan:
     """
-    A class that will ensure that calls to given callable are made no sooner
-    than after some interval.
+    A class that will ensure that calls to given callable are made no more often
+    than some interval.
 
     :param interval: interval in seconds
     :param callable_: callable to call
