@@ -39,8 +39,9 @@ def DocsFromParent(name: str, bases: tp.Tuple[type], dictionary: dict) -> tp.Typ
     if '__doc__' not in dictionary:
         for base in walk(bases, extract_bases, deep_first=False):
             if hasattr(base, '__doc__'):
-                dictionary['__doc__'] = base.__doc__
-                break
+                if base.__doc__:
+                    dictionary['__doc__'] = base.__doc__
+                    break
 
     for key, value in dictionary.items():
         if not value.__doc__ and callable(value):
