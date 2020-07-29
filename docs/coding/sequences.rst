@@ -151,6 +151,11 @@ Multirun
 Generators
 ==========
 
+.. autoclass:: satella.coding.sequences.ConstruableIterator
+    :members:
+
+.. autofunction:: satella.coding.sequences.walk
+
 .. autofunction:: satella.coding.chain
 
 .. autofunction:: satella.coding.exhaust

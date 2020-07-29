@@ -2,6 +2,7 @@ import inspect
 
 from .recast_exceptions import silence_excs
 from .decorators import wraps
+from .sequences.iterators import walk
 
 """
 Taken from http://code.activestate.com/recipes/204197-solving-the-metaclass-conflict/ and slightly
@@ -16,7 +17,8 @@ __all__ = ['metaclass_maker', 'wrap_with', 'dont_wrap', 'wrap_property',
 
 class DocsFromParent(type):
     """
-    A metaclass that fetches missing docstring's for methods from class's immediate parent
+    A metaclass that fetches missing docstring's for methods from the classes' bases,
+    looked up BFS.
 
     >>> class Father:
     >>>     def test(self):
@@ -28,11 +30,21 @@ class DocsFromParent(type):
     >>> assert Child.test.__doc__ == 'my docstring'
     """
     def __call__(cls, name, bases, dictionary):
+
+        def extract_bases(obj):
+            if isinstance(obj, tuple):
+                return obj
+            else:
+                return [v_base for v_base in obj.__bases__ if v_base is not object]
+
         for key, value in dictionary.items():
-            if bases and callable(value) and not value.__doc__:
-                with silence_excs(AttributeError):
-                    value.__doc__ = getattr(bases[0], key).__doc__
-                    dictionary[key] = value
+            if callable(value) and not value.__doc__:
+                for base in walk(bases, extract_bases, deep_first=False):
+                    if hasattr(base, key):
+                        if getattr(base, key).__doc__:
+                            value.__doc__ = getattr(base, key).__doc__
+                            dictionary[key] = value
+                            break
         return super().__call__(name, bases, dictionary)
 
 

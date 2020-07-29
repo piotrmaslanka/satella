@@ -1,12 +1,108 @@
 import itertools
+import collections
 import typing as tp
 import warnings
 
+
+from ..recast_exceptions import rethrow_as, silence_excs
 from ..decorators import for_argument
 
 T, U = tp.TypeVar('T'), tp.TypeVar('U')
-
 IteratorOrIterable = tp.Union[tp.Iterator[T], tp.Iterable[T]]
+
+
+def walk(obj: T, child_getter: tp.Callable[[T], tp.List[T]] = list,
+         deep_first: bool = True,
+         leafs_only: bool = False) -> tp.Iterator[T]:
+    """
+    Return every node of a nested structure.
+
+    :param obj: structure to traverse. This will not appear in generator
+    :param child_getter: a callable to return a list of children of T.
+        Should return an empty list or None of there are no more children.
+    :param deep_first: if True, deep first will be returned, else it will be breadth first
+    :param leafs_only: if True, only leaf nodes (having no children) will be returned
+    """
+    a = ConstruableIterator(child_getter(obj))
+    for o in a:
+        item_present = True
+        children = child_getter(o)
+        if children is not None:
+            try:
+                child_len = len(children)
+            except TypeError:
+                child_len = 0
+
+            if child_len:
+                if deep_first:
+                    a.add_many_immediate(children)
+                else:
+                    a.add_many(children)
+                if leafs_only:
+                    item_present = False
+        if item_present:
+            yield o
+
+
+class ConstruableIterator:
+    """
+    An iterator that you can attach arbitrary things at the end and consume them during iteration.
+    Eg:
+
+    >>> a = ConstruableIterator([1, 2, 3])
+    >>> for b in a:
+    >>>   if b % 2 == 0:
+    >>>       a.add(6)
+
+    All arguments you provide to the constructor will be passed to underlying deque
+    """
+    __slots__ = ('entries', )
+
+    def __init__(self, *args, **kwargs):
+        self.entries = collections.deque(*args, **kwargs)       # type: tp.List[T]
+
+    def add_immediate(self, t: T) -> None:
+        """
+        Schedule given value to be iterated over during the next __next__ call
+
+        :param t: value to iterate over
+        """
+        self.entries.appendleft(t)
+
+    def add_many_immediate(self, t: tp.Iterable[T]) -> None:
+        """
+        Schedule given values to be iterated over during the next __next__ call
+
+        :param t: values to iterate over
+        """
+        for i, entry in enumerate(t):
+            self.entries.insert(i, entry)
+
+    def add(self, t: T) -> None:
+        """
+        Schedule given value to be iterated over after current items
+
+        :param t: value to iterate over
+        """
+        self.entries.append(t)
+
+    def add_many(self, t: tp.Iterable[T]) -> None:
+        """
+        Schedule given values to be iterated over after current items
+
+        :param t: iterable of values
+        """
+        self.entries.extend(t)
+
+    def __iter__(self) -> 'ConstruableIterator':
+        return self
+
+    @rethrow_as(IndexError, StopIteration)
+    def __next__(self) -> T:
+        return self.entries.popleft()
+
+    def __length_hint__(self) -> int:
+        return len(self.entries)
 
 
 def unique(lst: IteratorOrIterable) -> tp.Iterator[T]:
@@ -239,7 +335,7 @@ def n_th(iterator: IteratorOrIterable, n: int = 0) -> T:
         raise IndexError('Iterable was too short')
 
 
-def enumerate(iterator: IteratorOrIterable, start: int = 0) -> tp.Iterator[tp.Tuple]:
+def satella_enumerate(iterator: IteratorOrIterable, start: int = 0) -> tp.Iterator[tp.Tuple]:
     """
     An enumerate that talks pretty with lists of tuples. Consider
 
@@ -264,6 +360,8 @@ def enumerate(iterator: IteratorOrIterable, start: int = 0) -> tp.Iterator[tp.Tu
         else:
             yield (i,) + tuple(row)
         i += 1
+
+satella_enumerate.__name__ = 'enumerate'
 
 
 def take_n(iterator: IteratorOrIterable, n: int, skip: int = 0) -> tp.List[T]:

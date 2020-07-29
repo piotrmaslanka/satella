@@ -2,10 +2,24 @@ import sys
 import unittest
 
 from satella.coding import SelfClosingGenerator, hint_with_length, chain
-from satella.coding.sequences import enumerate
+from satella.coding.sequences import enumerate, ConstruableIterator, walk
 
 
 class TestIterators(unittest.TestCase):
+
+    def test_walk(self):
+        a = [[1, 2, 3], 4, 5, 6, [7, 8, 9]]
+        b = walk(a, lambda x: x if isinstance(x, list) else None, leafs_only=True)
+        self.assertEqual(list(b), [1, 2, 3, 4, 5, 6, 7, 8, 9])
+
+    def test_construable_iterator(self):
+        a = ConstruableIterator([1, 2, 3])
+        c = []
+        for b in a:
+            if b == 2:
+                a.add(5)
+            c.append(b)
+        self.assertEqual(c, [1, 2, 3, 5])
 
     def test_chain(self):
         a = chain(1, 2, [3, 4, 5], 6, (i for i in range(2)))

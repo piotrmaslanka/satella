@@ -2,4 +2,5 @@
 
 * semantics of `catch_exception` changed
 * added `DocsFromParent`
-
+* added `ConstruableIterator`
+* added `walk`
