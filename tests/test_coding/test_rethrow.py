@@ -12,6 +12,13 @@ class TestStuff(unittest.TestCase):
         self.assertTrue(raises_exception(NameError, lambda: name_error))
         self.assertFalse(raises_exception(NameError, lambda: None))
 
+    def test_silence_excs_returns_factory(self):
+        @silence_excs(KeyError, returns_factory=lambda: 5)
+        def key_error():
+            raise KeyError()
+
+        self.assertEqual(key_error(), 5)
+
     def test_log_exceptions_decorator(self):
 
         @log_exceptions(logger, logging.CRITICAL)

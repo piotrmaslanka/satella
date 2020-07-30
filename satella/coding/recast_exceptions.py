@@ -9,7 +9,8 @@ ExcType = tp.Type[Exception]
 T = tp.TypeVar('T')
 
 
-def silence_excs(*exc_types: ExcType, returns=None):
+def silence_excs(*exc_types: ExcType, returns=None,
+                 returns_factory: tp.Optional[tp.Callable[[], tp.Any]] = None):
     """
     Silence given exception types.
 
@@ -22,8 +23,16 @@ def silence_excs(*exc_types: ExcType, returns=None):
     >>> def returns_5():
     >>>     raise KeyError()
     >>> assert returns_5() == 5
+
+    Or if you want to you can specify a callable that will return the value you want to return
+
+    >>> @silence_excs(KeyError, returns_factory=lambda: 5)
+    >>> def returns_5():
+    >>>     raise KeyError()
+    >>> assert returns_5() == 5
     """
-    return rethrow_as(exc_types, None, returns=returns)
+    return rethrow_as(exc_types, None, returns=returns,
+                      returns_factory=returns_factory)
 
 
 class log_exceptions:
@@ -126,19 +135,22 @@ class rethrow_as:
     >>> rethrow_as((NameError, ValueError), (OSError, IOError))
 
     If the second value is a None, exception will be silenced.
+
+    Pass tuples of (exception to catch - exception to transform to).
+
+    :param exception_preprocessor: other callable/1 to use instead of repr.
+        Should return a str, a text description of the exception
+    :param returns: what value should the function return if this is used as a decorator
+    :param returns_factory: a callable that returns the value this function should return is this
+        is used as as decorator
     """
-    __slots__ = ('mapping', 'exception_preprocessor', 'returns', '__exception_remapped')
+    __slots__ = ('mapping', 'exception_preprocessor', 'returns', '__exception_remapped',
+                 'returns_factory')
 
     def __init__(self, *pairs: tp.Union[ExcType, tp.Tuple[ExcType, ExcType]],
                  exception_preprocessor: tp.Optional[tp.Callable[[Exception], str]] = repr,
-                 returns=None):
-        """
-        Pass tuples of (exception to catch - exception to transform to).
-
-        :param exception_preprocessor: other callable/1 to use instead of repr.
-            Should return a str, a text description of the exception
-        :param returns: what value should the function return if this is used as a decorator
-        """
+                 returns=None,
+                 returns_factory: tp.Optional[tp.Callable[[], tp.Any]] = None):
         try:
             a, b = pairs  # throws ValueError
             op = issubclass(b, BaseException)  # throws TypeError
@@ -153,6 +165,7 @@ class rethrow_as:
         self.mapping = list(pairs)
         self.exception_preprocessor = exception_preprocessor or repr
         self.returns = returns
+        self.returns_factory = returns_factory
 
         # this is threading.local because two threads may execute the same function at the
         # same time, and exceptions from one function would leak to another
@@ -165,7 +178,11 @@ class rethrow_as:
                 v = fun(*args, **kwargs)
             if self.__exception_remapped.was_raised:
                 # This means that the normal flow of execution was interrupted
-                return self.returns
+                if self.returns is not None:
+                    return self.returns
+                elif self.returns_factory is not None:
+                    return self.returns_factory()
+                return
             else:
                 return v
 
