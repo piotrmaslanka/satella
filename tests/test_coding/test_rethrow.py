@@ -13,6 +13,15 @@ class TestStuff(unittest.TestCase):
         self.assertFalse(raises_exception(NameError, lambda: None))
 
     def test_silence_excs_returns_factory(self):
+        try:
+            @silence_excs(KeyError, returns=5, returns_factory=5)
+            def errors():
+                pass
+        except ValueError:
+            pass
+        else:
+            self.fail('ValueError not raised')
+
         @silence_excs(KeyError, returns_factory=lambda: 5)
         def key_error():
             raise KeyError()

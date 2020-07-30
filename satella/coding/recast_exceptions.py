@@ -30,6 +30,8 @@ def silence_excs(*exc_types: ExcType, returns=None,
     >>> def returns_5():
     >>>     raise KeyError()
     >>> assert returns_5() == 5
+
+    :raises ValueError: you gave both returns and returns_factory. You can only pass one of them!
     """
     return rethrow_as(exc_types, None, returns=returns,
                       returns_factory=returns_factory)
@@ -143,6 +145,7 @@ class rethrow_as:
     :param returns: what value should the function return if this is used as a decorator
     :param returns_factory: a callable that returns the value this function should return is this
         is used as as decorator
+    :raises ValueError: you specify both returns and returns_factory
     """
     __slots__ = ('mapping', 'exception_preprocessor', 'returns', '__exception_remapped',
                  'returns_factory')
@@ -166,6 +169,9 @@ class rethrow_as:
         self.exception_preprocessor = exception_preprocessor or repr
         self.returns = returns
         self.returns_factory = returns_factory
+
+        if self.returns is not None and self.returns_factory is not None:
+            raise ValueError('You can specify only one of (returns, returns_factory)')
 
         # this is threading.local because two threads may execute the same function at the
         # same time, and exceptions from one function would leak to another
