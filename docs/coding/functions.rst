@@ -46,8 +46,12 @@ You can also decorate given callables in order not to be wrapped with
 DocsFromParent
 --------------
 
-.. autoclass:: satella.coding.DocsFromParent
-    :members:
+.. autofunction:: satella.coding.DocsFromParent
+
+CopyDocsFrom
+------------
+
+.. autofunction:: satella.coding.CopyDocsFrom
 
 metaclass_maker
 ---------------
