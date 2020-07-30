@@ -10,7 +10,8 @@ from .decorators import precondition, short_none, has_keys, \
 from .deleters import ListDeleter, DictDeleter
 from .fun_static import static_var
 from .iterators import hint_with_length, SelfClosingGenerator, exhaust, chain
-from .metaclasses import metaclass_maker, wrap_with, dont_wrap, wrap_property, DocsFromParent
+from .metaclasses import metaclass_maker, wrap_with, dont_wrap, wrap_property, DocsFromParent, \
+    CopyDocsFrom
 from .misc import update_if_not_none
 from .recast_exceptions import rethrow_as, silence_excs, catch_exception, log_exceptions, \
     raises_exception
@@ -19,7 +20,7 @@ __all__ = [
     'update_if_not_none', 'DocsFromParent',
     'hint_with_length', 'SelfClosingGenerator', 'exhaust', 'chain',
     'Monitor', 'RMonitor', 'merge_dicts',
-    'short_none', 'has_keys',
+    'short_none', 'has_keys', 'CopyDocsFrom',
     'precondition', 'postcondition', 'queue_get',
     'rethrow_as', 'silence_excs', 'raises_exception',
     'static_var', 'metaclass_maker',
