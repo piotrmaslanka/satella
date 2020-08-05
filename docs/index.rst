@@ -30,6 +30,7 @@ Visit the project's page at GitHub_!
            exceptions
            processes
            cassandra
+           opentracing
 
 
 Indices and tables
