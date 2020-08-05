@@ -1,4 +1,4 @@
-# v2.9.14
+# v2.9.15
 
-* extra feature added to `update_attr_if_none`
+* add `trace_future`
 
