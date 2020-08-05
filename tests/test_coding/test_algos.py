@@ -18,6 +18,8 @@ class TestMergeDicts(unittest.TestCase):
         self.assertEqual(a.b, 5)
         self.assertRaises(AttributeError, lambda: update_attr_if_none(
             a, 'c', 6, on_attribute_error=False))
+        update_attr_if_none(a, 'b', 6, if_value_is_not_none=True)
+        self.assertEqual(a.b, 6)
 
     def test_lolwut(self):
         try:
