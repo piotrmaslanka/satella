@@ -10,15 +10,44 @@ modified
 from abc import ABCMeta
 import typing as tp
 
-__all__ = ['metaclass_maker', 'wrap_with', 'dont_wrap', 'wrap_property',
-           'DocsFromParent']
-
 
 def _extract_bases(cls):
     if isinstance(cls, (tuple, list)):
         return cls
     else:
         return [v_base for v_base in cls.__bases__ if v_base is not object]
+
+
+def CopyDocsFrom(target_cls: tp.Type):
+    """
+    A metaclass to copy documentation from some other class for respective methods.
+
+    >>> class Source:
+    >>>     def test(self):
+    >>>        'docstring'
+    >>> class Target(metaclass=CopyDocsFrom(Source)):
+    >>>     def test(self):
+    >>>         ...
+    >>> assert Target.test.__doc__ == Source.test.__doc__
+
+    :param target_cls: class from which to copy the docs
+    """
+    def inner(name, bases, dictionary):
+        if '__doc__' not in dictionary:
+            if hasattr(target_cls, '__doc__'):
+                if target_cls.__doc__:
+                    dictionary['__doc__'] = target_cls.__doc__
+
+        for key, value in dictionary.items():
+            if not value.__doc__ and callable(value):
+                if hasattr(target_cls, key):
+                    if getattr(target_cls, key).__doc__:
+                        value.__doc__ = getattr(target_cls, key).__doc__
+                        dictionary[key] = value
+                        break
+
+        return type(name, bases, dictionary)
+    return inner
 
 
 def DocsFromParent(name: str, bases: tp.Tuple[type], dictionary: dict) -> tp.Type:

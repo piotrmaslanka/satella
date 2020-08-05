@@ -2,7 +2,7 @@ import abc
 import unittest
 
 from satella.coding import metaclass_maker, wrap_with, dont_wrap, rethrow_as, wrap_property, \
-    DocsFromParent
+    DocsFromParent, CopyDocsFrom
 
 
 class MetaA(type):
@@ -26,6 +26,16 @@ class AB(A, B, metaclass=metaclass_maker):
 
 
 class TestMetaclasses(unittest.TestCase):
+
+    def test_copy_docs_from(self):
+        class Source:
+            def test(self):
+                """docstring"""
+        class Target(metaclass=CopyDocsFrom(Source)):
+            def test(self):
+                ...
+
+        self.assertEqual(Target.test.__doc__, Source.test.__doc__)
 
     def test_docs_from_parent(self):
         class Father:

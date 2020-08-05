@@ -2,7 +2,9 @@
 Functions and decorators
 ========================
 
-.. autofunction:: satella.coding.update_if_not_none
+.. autofunction:: satella.coding.update_key_if_none
+
+.. autofunction:: satella.coding.update_attr_if_none
 
 .. autofunction:: satella.coding.merge_dicts
 
@@ -46,8 +48,12 @@ You can also decorate given callables in order not to be wrapped with
 DocsFromParent
 --------------
 
-.. autoclass:: satella.coding.DocsFromParent
-    :members:
+.. autofunction:: satella.coding.DocsFromParent
+
+CopyDocsFrom
+------------
+
+.. autofunction:: satella.coding.CopyDocsFrom
 
 metaclass_maker
 ---------------

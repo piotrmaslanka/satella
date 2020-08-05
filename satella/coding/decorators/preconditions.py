@@ -18,8 +18,6 @@ def precondition(*t_ops: tp.Union[tp.Callable[[T], bool], Expression],
     """
     Check that a precondition happens for given parameter.
 
-    Active only if __debug__ is True.
-
     You can do it like this:
 
     >>> @precondition(lambda x: x == 1)
@@ -93,40 +91,31 @@ def precondition(*t_ops: tp.Union[tp.Callable[[T], bool], Expression],
 
         return inner
 
-    if __debug__:
-        return outer
-    else:
-        return lambda x: x
+    return outer
 
 
 def postcondition(condition: tp.Union[tp.Callable[[T], bool], str]):
     """
     Return a decorator, asserting that result of this function, called with provided
     callable,
-    is True.
-
-    Else, the function will raise PreconditionError. Note that this is active only with
-    __debug__, else it short-circuits and returns the provided function.
+    is True, else the function will raise PreconditionError.
 
     :param condition: callable that accepts a single argument, the return value of the function.
         Can be also a string, in which case it is an expression about the value x of return
     """
-    if __debug__:
-        if isinstance(condition, str):
-            q = dict(globals())
-            exec('_precond = lambda x: ' + condition, q)
-            condition = q['_precond']
+    if isinstance(condition, str):
+        q = dict(globals())
+        exec('_precond = lambda x: ' + condition, q)
+        condition = q['_precond']
 
-        def outer(fun):
-            @wraps(fun)
-            def inner(*args, **kwargs):
-                v = fun(*args, **kwargs)
-                if condition(v) is False:
-                    raise PreconditionError('Condition not true')
-                return v
+    def outer(fun):
+        @wraps(fun)
+        def inner(*args, **kwargs):
+            v = fun(*args, **kwargs)
+            if condition(v) is False:
+                raise PreconditionError('Condition not true')
+            return v
 
-            return inner
+        return inner
 
-        return outer
-    else:
-        return lambda x: x
+    return outer
