@@ -1,6 +1,4 @@
-# v2.9.13
+# v2.9.14
 
-* `precondition` and `postcondition` are no longer debug-only
-* added `CopyDocsFrom`
-
+* extra feature added to `update_attr_if_none`
 
