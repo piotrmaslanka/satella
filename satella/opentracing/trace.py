@@ -15,11 +15,11 @@ except ImportError:
 
 def trace_future(future: tp.Union[ResponseFuture, Future], span: Span):
     """
-    Install a handler that will close a span upon a future completing, attaching the exception
-    contents if the future ends with an exception.
+    Install a handler that will close a span upon a future completing,
+    attaching the exception contents if the future ends with an exception.
 
     :param future: can be either a normal Future or a Cassandra's ResponseFuture
-    :param span: span to close
+    :param span: span to close on future's completion
     """
     if isinstance(future, ResponseFuture):
         def close_exception(exc):
