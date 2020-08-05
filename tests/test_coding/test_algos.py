@@ -1,10 +1,24 @@
 import os
 import unittest
 
-from satella.coding import merge_dicts
+from satella.coding import merge_dicts, update_attr_if_none
 
 
 class TestMergeDicts(unittest.TestCase):
+    def test_update_attr_if_none(self):
+        class Object:
+            def __init__(self):
+                self.a = None
+                self.b = 5
+
+        a = Object()
+        update_attr_if_none(a, 'a', 5)
+        self.assertEqual(a.a, 5)
+        update_attr_if_none(a, 'b', 4)
+        self.assertEqual(a.b, 5)
+        self.assertRaises(AttributeError, lambda: update_attr_if_none(
+            a, 'c', 6, on_attribute_error=False))
+
     def test_lolwut(self):
         try:
             with open('lolwut', 'wb') as fout:

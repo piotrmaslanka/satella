@@ -2,7 +2,9 @@
 Functions and decorators
 ========================
 
-.. autofunction:: satella.coding.update_if_not_none
+.. autofunction:: satella.coding.update_key_if_none
+
+.. autofunction:: satella.coding.update_attr_if_none
 
 .. autofunction:: satella.coding.merge_dicts
 
