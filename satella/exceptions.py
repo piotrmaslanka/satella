@@ -4,7 +4,7 @@ import warnings
 __all__ = ['BaseSatellaError', 'ResourceLockingError', 'ResourceNotLocked', 'ResourceLocked',
            'ConfigurationValidationError', 'ConfigurationError', 'ConfigurationSchemaError',
            'PreconditionError', 'MetricAlreadyExists', 'BaseSatellaException', 'CustomException',
-           'CodedCustomException', 'CodedCustomExceptionMetaclass', 'WouldWaitMore', 'LockIsHeld',
+           'CodedCustomException', 'CodedCustomExceptionMetaclass', 'WouldWaitMore',
            'ProcessFailed', 'AlreadyAllocated']
 
 
@@ -190,19 +190,6 @@ class MetricAlreadyExists(BaseSatellaError):
         self.existing_type = existing_type
 
 
-class LockIsHeld(ResourceLocked):
-    """
-    An exception raised when lock is held by someone
-
-    :param pid: PID of the holder, who is alive at the time this exception was raised.
-        This is checked via psutil.
-    """
-
-    def __init__(self, pid):
-        super().__init__(pid)
-        self.pid = pid
-
-
 class AlreadyAllocated(ResourceLocked):
     """
     Given ID has been already marked as allocated
@@ -210,7 +197,8 @@ class AlreadyAllocated(ResourceLocked):
 
 
 class ProcessFailed(BaseSatellaError, OSError):
-    """A process finished with other result code that it was requested
+    """
+    A process finished with other result code than it was requested
 
     :param rc: return code of the process
     :param stdout_so_far: process' stdout gathered so far

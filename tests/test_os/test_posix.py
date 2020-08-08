@@ -5,7 +5,7 @@ import unittest
 
 from mock import patch, Mock
 
-from satella.exceptions import LockIsHeld
+from satella.exceptions import ResourceLocked
 from satella.os import PIDFileLock
 from satella import posix   # test importing
 
@@ -39,7 +39,7 @@ class TestPidlock(unittest.TestCase):
         p.get()
         n = PIDFileLock('lock', '.')
         try:
-            self.assertRaises(LockIsHeld, lambda: n.acquire())
+            self.assertRaises(ResourceLocked, lambda: n.acquire())
         finally:
             q.put(None)
             process.terminate()

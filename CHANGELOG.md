@@ -1,4 +1,4 @@
-# v2.9.16
+# v2.9.17
 
-* added `terminating` property to `TerminableThread`
-* added `trace_function`
+* replaced `LockIsHeld` with `ResourceLocked` exception
+

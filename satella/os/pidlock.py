@@ -2,7 +2,7 @@ import os
 
 import psutil
 
-from satella.exceptions import LockIsHeld
+from satella.exceptions import ResourceLocked
 
 
 class PIDFileLock:
@@ -23,7 +23,7 @@ class PIDFileLock:
 
     The constructor doesn't throw, __enter__ or acquire() does, one of:
 
-   * LockIsHeld - lock is already held. This has two attributes - pid (int), the PID of holder,
+   * ResourceLocked - lock is already held. This has two attributes - pid (int), the PID of holder,
                                   and is_alive (bool) - whether the holder is an alive process
     """
     __slots__ = ('path', 'file_no')
@@ -52,7 +52,7 @@ class PIDFileLock:
         """
         Acquire the PID lock
 
-        :raises LockIsHeld: if lock if held
+        :raises ResourceLocked: if lock if held
         """
         try:
             self.file_no = os.open(self.path, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
@@ -67,7 +67,7 @@ class PIDFileLock:
                 return self.acquire()
 
             if pid in {x.pid for x in psutil.process_iter()}:
-                raise LockIsHeld(pid)
+                raise ResourceLocked(pid)
             else:
                 # does not exist
                 os.unlink(self.path)
