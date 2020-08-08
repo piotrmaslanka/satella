@@ -181,7 +181,7 @@ class TestConcurrent(unittest.TestCase):
         class MyTerminableThread(TerminableThread):
             def run(self):
                 a = 0
-                while not self._terminating:
+                while not self.terminating:
                     time.sleep(0.5)
                     a += 1
 
@@ -223,12 +223,13 @@ class TestConcurrent(unittest.TestCase):
             'b': False
         }
 
-        opF = lambda what: lambda: a.__setitem__(what, True)
+        def op_f(what):
+            return lambda: a.__setitem__(what, True)
 
         cg = CallableGroup()
 
-        cg.add(opF('a'))
-        cg.add(opF('b'))
+        cg.add(op_f('a'))
+        cg.add(op_f('b'))
 
         cg()
 
