@@ -2,10 +2,8 @@ import typing as tp
 import warnings
 from queue import Queue
 
-T = tp.TypeVar('T')
 
-
-def queue_iterator(queue: Queue[T]) -> tp.Iterator[T]:
+def queue_iterator(queue: Queue) -> tp.Iterator:
     """
     Syntactic sugar for
 
