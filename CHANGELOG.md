@@ -1,4 +1,4 @@
-# v2.9.15
+# v2.9.16
 
-* add `trace_future`
-
+* added `terminating` property to `TerminableThread`
+* added `trace_function`

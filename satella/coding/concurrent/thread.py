@@ -92,7 +92,7 @@ class TerminableThread(threading.Thread):
     >>> a = MeGrimlock().start()
     >>> a.terminate().join()
 
-    Flag whether to terminate is stored in **self._terminating**.
+    Flag whether to terminate is stored in **self.terminating**.
 
     If you decide to override run(), you got to check periodically for **self._terminating**
     to become true. If it's true, then a termination request was received, and the thread should
@@ -112,6 +112,11 @@ class TerminableThread(threading.Thread):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._terminating = False  # type: bool
+
+    @property
+    def terminating(self) -> bool:
+        """Return whether a termination of this thread was requested"""
+        return self._terminating
 
     def loop(self) -> None:
         """

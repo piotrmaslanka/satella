@@ -1,7 +1,7 @@
-**This module is available only if you have cassandra-driver installed**
-
 Cassandra
 =========
+
+**This module is available only if you have cassandra-driver installed**
 
 parallel_for
 ------------
