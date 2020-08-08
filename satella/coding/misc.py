@@ -1,5 +1,19 @@
 import typing as tp
 import warnings
+from queue import Queue
+
+T = tp.TypeVar('T')
+
+
+def queue_iterator(queue: Queue[T]) -> tp.Iterator[T]:
+    """
+    Syntactic sugar for
+
+    >>> while queue.qsize() > 0:
+    >>>     yield queue.get()
+    """
+    while queue.qsize() > 0:
+        yield queue.get()
 
 
 def update_if_not_none(dictionary: dict, key, value):

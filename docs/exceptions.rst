@@ -1,5 +1,9 @@
+==========
 Exceptions
 ==========
+
+For you to use
+==============
 
 CustomException
 ---------------
@@ -80,4 +84,90 @@ The CodedCustomException uses the following metaclass to accomplish
 it's magic
 
 .. autoclass:: satella.exceptions.CodedCustomExceptionMetaclass
+    :members:
+
+Satella-specific exceptions
+===========================
+
+BaseSatellaError
+----------------
+
+.. autoclass:: satella.exceptions.BaseSatellaError
+    :members:
+
+
+ResourceLockingError
+--------------------
+
+.. autoclass:: satella.exceptions.ResourceLockingError
+    :members:
+
+
+ResourceLocked
+--------------
+
+.. autoclass:: satella.exceptions.ResourceLocked
+    :members:
+
+
+ResourceNotLocked
+-----------------
+
+.. autoclass:: satella.exceptions.ResourceNotLocked
+    :members:
+
+
+WouldWaitMore
+-------------
+
+.. autoclass:: satella.exceptions.WouldWaitMore
+    :members:
+
+
+PreconditionError
+-----------------
+
+.. autoclass:: satella.exceptions.PreconditionError
+    :members:
+
+
+ConfigurationError
+------------------
+
+.. autoclass:: satella.exceptions.ConfigurationError
+    :members:
+
+
+ConfigurationSchemaError
+------------------------
+
+.. autoclass:: satella.exceptions.ConfigurationSchemaError
+    :members:
+
+
+ConfigurationValidationError
+----------------------------
+
+.. autoclass:: satella.exceptions.ConfigurationValidationError
+    :members:
+
+
+MetricAlreadyExists
+-------------------
+
+.. autoclass:: satella.exceptions.MetricAlreadyExists
+    :members:
+
+
+AlreadyAllocated
+----------------
+
+.. autoclass:: satella.exceptions.AlreadyAllocated
+    :members:
+
+
+ProcessFailed
+-------------
+
+.. autoclass:: satella.exceptions.ProcessFailed
     :members:
