@@ -1,9 +1,18 @@
+import queue
 import unittest
 
 from satella.coding.structures import Singleton, SingletonWithRegardsTo
+from satella.coding import queue_iterator
 
 
 class TestSingleton(unittest.TestCase):
+
+    def test_queue_iterator(self):
+        q = queue.Queue()
+        q.put(2)
+        q.put(5)
+        self.assertEqual(list(queue_iterator(q)), [2, 5])
+
     def test_singleton(self):
         @Singleton
         class MyClass(object):
