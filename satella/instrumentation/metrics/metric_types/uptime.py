@@ -11,11 +11,13 @@ class UptimeMetric(LeafMetric):
     """
     A metric that gives the difference between current value of time_getter
     and it's value at the initialization of this metric
+
+    :param time_getter: a callable/0 that returns a float, the notion of the time
+        passing. By default it's a safe time.monotonic
     """
     __slots__ = ('time_getter', 'basic_time')
 
     CLASS_NAME = 'uptime'
-    CONSTRUCTOR = str
 
     def __init__(self, *args, time_getter: tp.Callable[[], float] = time.monotonic,
                  **kwargs):
