@@ -1,3 +1,1 @@
-# v2.9.18
-
-* added `UptimeMetric`
+# v2.9.19
