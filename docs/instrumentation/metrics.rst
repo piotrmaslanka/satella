@@ -105,6 +105,10 @@ are available:
     .. autoclass:: satella.instrumentation.metrics.metric_types.CallableMetric
         :members:
 
+* uptime - a metric to report uptime
+
+    .. autoclass:: satella.instrumentation.metrics.metric_types.UptimeMetric
+        :members:
 
 .. _summary: https://prometheus.io/docs/concepts/metric_types/#summary
 .. _histogram: https://prometheus.io/docs/concepts/metric_types/#histogram

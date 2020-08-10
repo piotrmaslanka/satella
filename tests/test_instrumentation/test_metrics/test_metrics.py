@@ -3,6 +3,8 @@ import logging
 import time
 import unittest
 
+from satella.coding.sequences import n_th
+
 from satella.exceptions import MetricAlreadyExists
 from satella.instrumentation.metrics import getMetric, MetricLevel, MetricData, \
     MetricDataCollection, AggregateMetric, LabeledMetric
@@ -17,6 +19,11 @@ def choose(postfix: str, mdc: MetricDataCollection, labels=None) -> MetricData:
 
 
 class TestMetric(unittest.TestCase):
+
+    def test_uptime_metric(self):
+        up_metric = getMetric('uptime.metric', 'uptime')
+        time.sleep(1)
+        self.assertGreaterEqual(n_th(up_metric.to_metric_data().values).value, 1)
 
     def test_forbidden_characters(self):
         self.assertRaises(ValueError, lambda: getMetric('forbidden-characters', 'int'))
