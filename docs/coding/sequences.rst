@@ -136,6 +136,12 @@ count
 
 .. autofunction:: satella.coding.sequences.count
 
+length
+------
+
+.. autofunction:: satella.coding.sequences.length
+
+
 Even and odd
 ------------
 

@@ -4,10 +4,19 @@ import unittest
 from satella.coding.sequences import choose, choose_one, infinite_counter, take_n, is_instance, \
     is_last, add_next, half_cartesian, skip_first, zip_shifted, stop_after, group_quantity, \
     iter_dict_of_list, shift, other_sequence_no_longer_than, count, even, odd, Multirun, n_th, \
-    unique
+    unique, length
 
 
 class TestSequences(unittest.TestCase):
+
+    def test_length(self):
+        def iterator():
+            i = 0
+            for i in range(10):
+                if i == 3:
+                    return
+                yield i
+        self.assertEqual(length(iterator()), 3)
 
     def test_unique(self):
         a = [1, 2, 3, 1, 2, 3]

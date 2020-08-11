@@ -3,12 +3,21 @@ import collections
 import typing as tp
 import warnings
 
-
 from ..recast_exceptions import rethrow_as
 from ..decorators import for_argument
 
 T, U = tp.TypeVar('T'), tp.TypeVar('U')
 IteratorOrIterable = tp.Union[tp.Iterator[T], tp.Iterable[T]]
+
+
+def length(iterator: IteratorOrIterable) -> int:
+    """
+    Return the length of an iterator, exhausting it by the way
+    """
+    i = 0
+    for _ in iterator:
+        i += 1
+    return i
 
 
 def walk(obj: T, child_getter: tp.Callable[[T], tp.Optional[tp.List[T]]] = list,
