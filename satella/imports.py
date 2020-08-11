@@ -22,7 +22,7 @@ def import_class(path: str) -> type:
         raise ImportError('%s not found in %s' % (classname, import_path))
 
 
-def import_from(path: tp.List[str], package_prefix: str, all_: tp.List[str],
+def import_from(path: str, package_prefix: str, all_: tp.List[str],
                 locals: tp.Dict[str, tp.Any], recursive: bool = True,
                 fail_on_attributerror: bool = True, create_all: bool = True,
                 skip_single_underscores: bool = True,
