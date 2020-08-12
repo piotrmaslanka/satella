@@ -47,7 +47,7 @@ def getMetric(metric_name: str = '',
     """
     for character in metric_name.upper():
         if character not in ALLOWED_CHARACTERS:
-            raise ValueError('Metric name contains a forbidden character %s' % (character, ))
+            raise ValueError('Metric name contains a forbidden character %s' % (character,))
 
     metric_level_to_set_for_children = metric_level or MetricLevel.INHERIT
     name = metric_name.split('.')

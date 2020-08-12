@@ -1,5 +1,6 @@
 import time
 import typing as tp
+
 from satella.coding.structures import CacheDict
 from .. import Metric
 from ..metric_types.measurable_mixin import MeasurableMixin
@@ -14,6 +15,7 @@ class MetrifiedCacheDict(CacheDict):
     :param refreshes: a metric that will be updated with +1 each time there's a cache refresh
     :param how_long_refresh_takes: a metric that will be ticked with time value_getter took
     """
+
     def __init__(self, stale_interval, expiration_interval, value_getter,
                  value_getter_executor=None, cache_failures_interval=None,
                  time_getter=time.monotonic,

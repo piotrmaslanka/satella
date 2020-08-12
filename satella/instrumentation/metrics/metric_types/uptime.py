@@ -28,9 +28,9 @@ class UptimeMetric(LeafMetric):
     def _handle(self, *args, **kwargs) -> None:
         raise TypeError('You are not supposed to call this!')
 
-    def to_metric_data(self) -> tp.Union[list, dict, str, int, float, None]:
+    def to_metric_data(self) -> MetricDataCollection:
         return MetricDataCollection(
             MetricData(self.name,
                        self.time_getter() - self.basic_time,
-            self.labels, self.get_timestamp(), self.internal)
+                       self.labels, self.get_timestamp(), self.internal)
         )
