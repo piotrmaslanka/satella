@@ -39,7 +39,7 @@ class merge_series(tp.Iterator):
 
     def advance(self, i: int) -> None:
         if self.super_next_preloaded_values[i] is None:
-            raise RuntimeError(f'Cannot advance on series {i} which is empty')
+            raise RuntimeError('Cannot advance on series %s which is empty' % (i, ))
         else:
             self.next_preloaded_values[i] = self.super_next_preloaded_values[i]
             try:
