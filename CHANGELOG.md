@@ -1,4 +1,3 @@
-# v2.9.21
+# v2.9.22
 
-* added a special case for `group_quantity` processing a sequence
 
