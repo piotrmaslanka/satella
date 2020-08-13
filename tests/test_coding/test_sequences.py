@@ -77,6 +77,7 @@ class TestSequences(unittest.TestCase):
     def test_group_quantity(self):
         self.assertEqual(list(group_quantity(3, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10])),
                          [[1, 2, 3], [4, 5, 6], [7, 8, 9], [10]])
+        self.assertEqual(list(group_quantity(3, 'ala ma kota')), ['ala', ' ma', ' ko', 'ta'])
 
     def test_stop_after(self):
         a = [1, 2, 3, 4, 5, 6, 7]
