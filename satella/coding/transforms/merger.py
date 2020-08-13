@@ -20,7 +20,7 @@ class merge_series(tp.Iterator):
         else:
             self.empty = False
 
-        self.timestamps: SetHeap[int] = SetHeap()
+        self.timestamps = SetHeap()
         timestamps = {x[0] for x in self.next_preloaded_values}
         max_ts = max(timestamps)
         self.timestamps.push(max_ts)
