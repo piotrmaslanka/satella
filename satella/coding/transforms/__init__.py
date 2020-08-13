@@ -2,7 +2,10 @@ import collections
 import random
 import typing as tp
 
-__all__ = ['stringify', 'split_shuffle_and_join', 'one_tuple']
+from .merger import merge_series
+
+__all__ = ['stringify', 'split_shuffle_and_join', 'one_tuple',
+           'merge_series']
 
 
 def _stringify_none(str_none, stringifier):

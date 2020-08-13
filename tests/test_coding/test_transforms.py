@@ -1,9 +1,17 @@
 import unittest
 
-from satella.coding.transforms import stringify, split_shuffle_and_join, one_tuple
+from satella.coding.transforms import stringify, split_shuffle_and_join, one_tuple, \
+    merge_series
 
 
 class MyTestCase(unittest.TestCase):
+
+    def test_merge_series(self):
+        s1 = [(10, 'A'), (20, 'B')]
+        s2 = [(15, 'C'), (17, 'D'), (21, 'E')]
+        s3 = list(merge_series(s1, s2))
+        self.assertEqual(s3, [(15, 'A', 'C'), (17, 'A', 'D'), (20, 'B', 'D'), (21, 'B', 'E')])
+
     def test_one_tuple(self):
         self.assertEqual(list(one_tuple([1, 2, 3])), [(1, ), (2, ), (3, )])
 

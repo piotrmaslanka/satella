@@ -1,11 +1,10 @@
 import typing as tp
 
 T = tp.TypeVar('T')
+IteratorOrIterable = tp.Union[tp.Iterator[T], tp.Iterable[T]]
 
-__all__ = ['choose', 'choose_one']
 
-
-def choose_one(filter_fun: tp.Callable[[T], bool], iterable: tp.Iterable[T]) -> T:
+def choose_one(filter_fun: tp.Callable[[T], bool], iterable: IteratorOrIterable) -> T:
     """
     Syntactic sugar for
 
@@ -19,7 +18,7 @@ def choose_one(filter_fun: tp.Callable[[T], bool], iterable: tp.Iterable[T]) -> 
     return choose(filter_fun, iterable, True)
 
 
-def choose(filter_fun: tp.Callable[[T], bool], iterable: tp.Iterable[T],
+def choose(filter_fun: tp.Callable[[T], bool], iterable: IteratorOrIterable,
            check_multiple: bool = False) -> T:
     """
     Return a single value that exists in given iterable.
