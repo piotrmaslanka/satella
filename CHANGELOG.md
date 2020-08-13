@@ -1,4 +1,2 @@
-# v2.9.20
+# v2.9.21
 
-* fixed typing annotations in `satella.coding.sequences`
-* added `merge_series`
