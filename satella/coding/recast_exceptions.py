@@ -59,15 +59,19 @@ class log_exceptions:
         by this, but e will never be overwritten.
     :param exc_types: logger will log only on those exceptions. Default is None which means
         log on all exceptions
+    :param swallow_exception: if True, exception will be swallowed
     """
-    __slots__ = ('logger', 'severity', 'format_string', 'locals', 'exc_types')
+    __slots__ = ('logger', 'severity', 'format_string', 'locals', 'exc_types',
+                 'swallow_exception')
 
     def __init__(self, logger: logging.Logger,
                  severity: int = logging.ERROR,
                  format_string: str = '{e}',
                  locals_: tp.Optional[tp.Dict] = None,
-                 exc_types: tp.Optional[tp.Union[ExcType, tp.Sequence[ExcType]]] = None):
+                 exc_types: tp.Optional[tp.Union[ExcType, tp.Sequence[ExcType]]] = None,
+                 swallow_exception: bool = False):
         self.logger = logger
+        self.swallow_exception = swallow_exception
         self.severity = severity
         self.format_string = format_string
         self.locals = locals_
@@ -81,10 +85,14 @@ class log_exceptions:
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         if exc_type is not None:
-            self.analyze_exception(exc_val, (), {})
+            if not self.analyze_exception(exc_val, (), {}):
+                return False
+            else:
+                return self.swallow_exception
         return False
 
-    def analyze_exception(self, e, args, kwargs):
+    def analyze_exception(self, e, args, kwargs) -> bool:
+        """Return whether the exception has been logged"""
         if isinstance(e, self.exc_types):
             format_dict = {'args': args,
                            'kwargs': kwargs}
@@ -93,8 +101,8 @@ class log_exceptions:
             format_dict['e'] = e
             self.logger.log(self.severity, self.format_string.format(**format_dict),
                             exc_info=e)
-
-        raise e
+            return True
+        return False
 
     def __call__(self, fun):
         if inspect.isgeneratorfunction(fun):
@@ -103,7 +111,10 @@ class log_exceptions:
                 try:
                     yield from fun(*args, **kwargs)
                 except Exception as e:
-                    self.analyze_exception(e, args, kwargs)
+                    if not self.analyze_exception(e, args, kwargs):
+                        raise
+                    elif not self.swallow_exception:
+                        raise
 
             return inner
         else:
@@ -112,8 +123,10 @@ class log_exceptions:
                 try:
                     return fun(*args, **kwargs)
                 except Exception as e:
-                    self.analyze_exception(e, args, kwargs)
-
+                    if not self.analyze_exception(e, args, kwargs):
+                        raise
+                    elif not self.swallow_exception:
+                        raise
             return inner
 
 

@@ -28,6 +28,25 @@ class TestStuff(unittest.TestCase):
 
         self.assertEqual(key_error(), 5)
 
+    def test_log_exceptions_swallow(self):
+
+        @log_exceptions(logger, logging.CRITICAL, exc_types=KeyError, swallow_exception=True)
+        def get_me(exc_type):
+            yield 2
+            yield 4
+            raise exc_type()
+
+        @log_exceptions(logger, logging.CRITICAL, exc_types=KeyError, swallow_exception=True)
+        def get_me_normal(exc_type):
+            raise exc_type()
+
+        for i in get_me(KeyError):
+            pass
+        get_me_normal(KeyError)
+
+        self.assertRaises(ValueError, lambda: list(get_me(ValueError)))
+        self.assertRaises(ValueError, lambda: get_me_normal(ValueError))
+
     def test_log_exceptions_decorator(self):
 
         @log_exceptions(logger, logging.CRITICAL)
