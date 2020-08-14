@@ -1,5 +1,7 @@
 import typing as tp
 
+from satella.coding.recast_exceptions import rethrow_as
+
 from satella.coding.structures import SetHeap
 
 
@@ -86,6 +88,7 @@ class merge_series(tp.Iterator):
         if not len(self.timestamps):
             raise StopIteration('cannot advance series anymore')
 
+    @rethrow_as(IndexError, StopIteration)
     def __next__(self):
         if self.empty:
             raise StopIteration('empty right from the start')
@@ -95,10 +98,7 @@ class merge_series(tp.Iterator):
         ts = self.timestamps.pop()
 
         while not self.assert_preloaded(ts):
-            try:
-                ts = self.timestamps.pop()
-            except IndexError:
-                raise StopIteration('sequence exhausted during iteration')
+            ts = self.timestamps.pop()  # throws IndexError
 
-        output = (ts,) + tuple(v[1] for v in self.next_preloaded_values)
+        output = (ts, *(v[1] for v in self.next_preloaded_values))
         return output
