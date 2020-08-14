@@ -49,8 +49,9 @@ class AtomicNumber(Monitor):
             if throw_exception:
                 raise
 
+    @Monitor.synchronized
     def __repr__(self) -> str:
-        return str(self)
+        return 'AtomicNumber(%s)' % (self.value, )
 
     @Monitor.synchronized
     def __and__(self, other: Number) -> Number:
@@ -93,7 +94,7 @@ class AtomicNumber(Monitor):
 
     @Monitor.synchronized
     def __str__(self) -> str:
-        return 'AtomicNumber(%s)' % (self.value,)
+        return str(self.value)
 
     @Monitor.synchronized
     def __gt__(self, other: Number):

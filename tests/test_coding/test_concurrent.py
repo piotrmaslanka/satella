@@ -56,7 +56,7 @@ class TestConcurrent(unittest.TestCase):
         an.wait_until_equal(1, timeout=1)
         an.wait_until_equal(1)
 
-        self.assertEqual(str(an), 'AtomicNumber(1)')
+        self.assertEqual(str(an), '1')
         self.assertEqual(repr(an), 'AtomicNumber(1)')
 
     def test_atomic_number(self):
