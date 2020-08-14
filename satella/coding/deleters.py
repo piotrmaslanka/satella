@@ -58,19 +58,19 @@ class DictDeleter:
         elif self.iter_mode == ITER_KEYS:
             return key
 
-    def items(self):
+    def items(self) -> 'DictDeleter':
         self.iter_mode = ITER_ITEMS
         return self
 
-    def keys(self):
+    def keys(self) -> 'DictDeleter':
         self.iter_mode = ITER_KEYS
         return self
 
-    def values(self):
+    def values(self) -> 'DictDeleter':
         self.iter_mode = ITER_VALUES
         return self
 
-    def delete(self):
+    def delete(self) -> None:
         self.keys_to_delete.add(self.current_key)
 
     def __exit__(self, exc_type, exc_val, exc_tb):
