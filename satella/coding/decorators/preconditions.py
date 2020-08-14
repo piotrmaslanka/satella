@@ -6,15 +6,14 @@ from .decorators import wraps
 
 T = tp.TypeVar('T')
 Expression = tp.NewType('Expression', str)
-
+Condition = tp.Union[tp.Callable[[T], bool], Expression]
 
 # noinspection PyPep8Naming
 def _TRUE(x):
     return True
 
 
-def precondition(*t_ops: tp.Union[tp.Callable[[T], bool], Expression],
-                 **kw_opts: tp.Union[tp.Callable[[T], bool], Expression]):
+def precondition(*t_ops: Condition, **kw_opts: Condition):
     """
     Check that a precondition happens for given parameter.
 
@@ -94,7 +93,7 @@ def precondition(*t_ops: tp.Union[tp.Callable[[T], bool], Expression],
     return outer
 
 
-def postcondition(condition: tp.Union[tp.Callable[[T], bool], str]):
+def postcondition(condition: Condition):
     """
     Return a decorator, asserting that result of this function, called with provided
     callable,
