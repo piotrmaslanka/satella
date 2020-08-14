@@ -163,9 +163,9 @@ class TimeBasedSetHeap(Heap):
         """
         return self.item_to_timestamp[item]
 
-    def items(self) -> tp.Iterable[T]:
+    def items(self) -> tp.Iterator[T]:
         """
-        Return an iterable, but WITHOUT timestamps (only items), in
+        Return an iterator, but WITHOUT timestamps (only items), in
         unspecified order
         """
         return (ob for ts, ob in self.data)
