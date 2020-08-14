@@ -2,30 +2,27 @@ import subprocess
 import threading
 import typing as tp
 
+from satella.coding.recast_exceptions import silence_excs
+
 from .exceptions import ProcessFailed
 
 __all__ = ['call_and_return_stdout']
 
 
+@silence_excs((IOError, OSError))
 def _read_nowait(process: subprocess.Popen, output_list: tp.List[str]) -> None:
     """
     To be launched as a daemon thread. This reads stdout and appends it's entries to a list.
     This should finish as soon as the process exits or closes it's stdout.
     """
-    try:
-        while True:
-            try:
-                process.wait(timeout=0.1)
-            except subprocess.TimeoutExpired:
-                pass
+    while True:
+        with silence_excs(subprocess.TimeoutExpired):
+            process.wait(timeout=0.1)
+            line = process.stdout.read(2048)
+            if line:
+                output_list.append(line)
             else:
-                line = process.stdout.read(2048)
-                if line:
-                    output_list.append(line)
-                else:
-                    break
-    except (IOError, OSError):
-        pass
+                break
 
 
 def call_and_return_stdout(args: tp.Union[str, tp.List[str]],
