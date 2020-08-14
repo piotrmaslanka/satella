@@ -41,11 +41,11 @@ class TimeBasedHeap(Heap):
         """
         return (ob for ts, ob in self.data)
 
-    def __init__(self, default_clock_source: tp.Callable[[], Number] = None):
+    def __init__(self, default_clock_source: tp.Callable[[], Number] = time.monotonic):
         """
         Initialize an empty heap
         """
-        self.default_clock_source = default_clock_source or time.monotonic
+        self.default_clock_source = default_clock_source
         super().__init__(from_list=())
 
     def pop_timestamp(self, timestamp: Number) -> T:
@@ -105,8 +105,9 @@ class TimeBasedHeap(Heap):
 
         This changes state of the heap
 
-        :param less: value to compare against
-        :return: a Generator
+        :param less: value to compare against. If left at default, it will be the
+            default clock source specified at construction.
+        :return: an Iterator
         """
 
         if less is None:

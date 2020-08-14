@@ -2,12 +2,11 @@ import copy
 import typing as tp
 import collections
 
-from satella.coding.recast_exceptions import rethrow_as
-
 ITER_KEYS = 0
 ITER_VALUES = 1
 ITER_ITEMS = 2
 T = tp.TypeVar('T')
+
 
 class DictDeleter:
     """
