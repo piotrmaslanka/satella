@@ -31,7 +31,7 @@ class TimeBasedHeap(Heap):
     #notthreadsafe
     """
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return '<satella.coding.TimeBasedHeap with %s elements>' % (len(self.data),)
 
     def items(self) -> tp.Iterable[tp.Tuple[Number, T]]:
@@ -151,7 +151,7 @@ class TimeBasedSetHeap(Heap):
     #notthreadsafe
     """
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return '<satella.coding.TimeBasedSetHeap with %s elements>' % (len(self.data),)
 
     @rethrow_as(KeyError, ValueError)
