@@ -23,7 +23,7 @@ def import_class(path: str) -> type:
 
 
 def import_from(path: tp.List[str], package_prefix: str, all_: tp.List[str],
-                locals: tp.Dict[str, tp.Any], recursive: bool = True,
+                locals_: tp.Dict[str, tp.Any], recursive: bool = True,
                 fail_on_attributerror: bool = True, create_all: bool = True,
                 skip_single_underscores: bool = True,
                 skip_not_having_all: bool = False) -> None:
@@ -41,15 +41,15 @@ def import_from(path: tp.List[str], package_prefix: str, all_: tp.List[str],
     :param recursive: whether to import packages as well
     :param fail_on_attributerror: whether to fail if a module reports something in their __all__
         that is physically not there (ie. getattr() raised AttributeError
-    :param locals: module's locals, obtain them by calling locals() in importing module's context
+    :param locals_: module's locals, obtain them by calling locals() in importing module's context
     :param create_all: whether to create artificial __all__'s for modules that don't have them
     :param skip_single_underscores: whether to refrain from importing things that are preceded with
         a single underscore. Pertains to modules, as well as items
     :param skip_not_having_all: skip module's not having an __all__ entry
     :raise AttributeError: module's __all__ contained entry that was not in this module
     """
-    for importer, modname, ispkg in pkgutil.walk_packages(path, onerror=lambda x: None):
-        if recursive and ispkg:
+    for importer, modname, is_pkg in pkgutil.walk_packages(path, onerror=lambda x: None):
+        if recursive and is_pkg:
             if modname.startswith('_') and skip_single_underscores:
                 continue
             module = importlib.import_module(package_prefix + '.' + modname)
@@ -66,10 +66,10 @@ def import_from(path: tp.List[str], package_prefix: str, all_: tp.List[str],
                         fail_on_attributerror=fail_on_attributerror, create_all=create_all,
                         skip_not_having_all=skip_not_having_all,
                         skip_single_underscores=skip_single_underscores),
-            locals[modname] = module
+            locals_[modname] = module
             if modname not in all_:
                 all_.append(modname)
-        elif not ispkg:
+        elif not is_pkg:
             module = importlib.import_module(package_prefix + '.' + modname)
             try:
                 package_ref = module.__all__
@@ -82,7 +82,7 @@ def import_from(path: tp.List[str], package_prefix: str, all_: tp.List[str],
                 if item.startswith('_') and skip_single_underscores:
                     continue
                 try:
-                    locals[item] = getattr(module, item)
+                    locals_[item] = getattr(module, item)
                 except AttributeError:
                     if fail_on_attributerror:
                         raise
