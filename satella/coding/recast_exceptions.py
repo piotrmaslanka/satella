@@ -223,7 +223,7 @@ class rethrow_as:
 
 
 def raises_exception(exc_class: tp.Union[ExcType, tp.Tuple[ExcType, ...]],
-                     clb: tp.Callable[[], None]):
+                     clb: tp.Callable[[], None]) -> bool:
     """
     Does the callable raise a given exception?
     """
