@@ -1,5 +1,7 @@
 import typing as tp
 
+from satella.coding.recast_exceptions import silence_excs
+
 
 def chain(*args) -> tp.Iterator:
     """
@@ -75,10 +77,10 @@ class SelfClosingGenerator:
 
     def close(self) -> None:
         if not self.stopped:
-            try:
+            with silence_excs(TypeError):  # we might get a generator-generating function
+                                           # as an argument
                 exhaust(self.generator)
-            except TypeError:
-                pass  # we got a generator-generating function as an argument
+
             self.stopped = True
 
     def __del__(self):
@@ -95,12 +97,23 @@ class hint_with_length:
 
     :param generator: generator to decorate
     :param length: length hint to provide
-    """
-    __slots__ = ('generator', 'length')
+    :param length_factory: a callable called with no arguments to get the length
 
-    def __init__(self, generator: tp.Generator, length: int):
+    You must provide either length or length_factory. Giving them both is wrong, and
+    will result in ValueError
+    """
+    __slots__ = ('generator', 'length', 'length_factory')
+
+    def __init__(self, generator: tp.Generator, length: tp.Optional[int],
+                 length_factory: tp.Optional[tp.Callable[[], int]] = None):
         self.generator = generator
+        if length is None and length_factory is None:
+            raise ValueError('Give either length or length_factory')
+        elif length is not None and length_factory is not None:
+            raise ValueError('Give either length or length_factory')
+
         self.length = length
+        self.length_factory = length_factory
 
     def __call__(self, *args, **kwargs):
         return hint_with_length(self.generator(*args, **kwargs), self.length)
@@ -118,4 +131,7 @@ class hint_with_length:
         return next(self.generator)
 
     def __length_hint__(self) -> int:
-        return self.length
+        if self.length is None:
+            return self.length_factory()
+        else:
+            return self.length
