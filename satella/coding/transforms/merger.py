@@ -5,12 +5,14 @@ from satella.coding.recast_exceptions import rethrow_as
 from satella.coding.structures import SetHeap
 
 
-class merge_series(tp.Iterator):
+class merge_series:
     """
     A merger for multiple sequences that return (timestamp, value).
 
     This will behave as a single-use iterator and return (timestamp, value1, value2, ...)
     """
+    __slots__ = ('series', 'next_preloaded_values', 'empty', 'timestamps',
+                 'super_next_preloaded_values')
 
     def __init__(self, *series: tp.Iterator[tp.Tuple[float, tp.Any]]):
         self.series = [iter(x) for x in series]
