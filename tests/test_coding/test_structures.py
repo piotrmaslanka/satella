@@ -232,7 +232,7 @@ class TestMisc(unittest.TestCase):
         del sc_dd['test']
         self.assertEqual(len(sc_dd), 0)
 
-    def test_self_cleaning_default_dict_backgronud_maintenance(self):
+    def test_self_cleaning_default_dict_background_maintenance(self):
         sc_dd = SelfCleaningDefaultDict(list)
         sc_dd['test'] = [1]
         sc_dd['test'].pop()

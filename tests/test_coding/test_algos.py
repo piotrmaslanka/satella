@@ -18,17 +18,10 @@ class TestMergeDicts(unittest.TestCase):
         update_attr_if_none(a, 'c', 8)
         self.assertEqual(a.b, 5)
         self.assertRaises(AttributeError, lambda: update_attr_if_none(
-            a, 'c', 6, on_attribute_error=False))
+            a, 'd', 6, on_attribute_error=False))
         update_attr_if_none(a, 'b', 6, if_value_is_not_none=True)
         self.assertEqual(a.b, 6)
         self.assertEqual(a.c, 8)
-
-    def test_lolwut(self):
-        try:
-            with open('lolwut', 'wb') as fout:
-                fout.write(b'{"a":2}')
-        finally:
-            os.unlink('lolwut')
 
     def test_advanced_merge_dicts(self):
 
