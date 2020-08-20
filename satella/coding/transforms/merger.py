@@ -86,12 +86,12 @@ class merge_series:
         """
         Assert that self.timestamps is not empty, or raise StopIteration if it can't be filled in
         """
-        if len(self.timestamps):
+        if self.timestamps:
             return
         if all(map(_is_x_none, self.super_next_preloaded_values)):
             raise StopIteration('sequence exhausted')
         self.next()
-        if not len(self.timestamps):
+        if not self.timestamps:
             raise StopIteration('cannot advance series anymore')
 
     @rethrow_as(IndexError, StopIteration)
