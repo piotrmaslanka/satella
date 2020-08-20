@@ -7,7 +7,7 @@ from satella.coding.transforms import stringify, split_shuffle_and_join, one_tup
 class TestTransforms(unittest.TestCase):
     def test_pad_to_multiple_length(self):
         a = [1, 2, 3]
-        pad_to_multiple_of_length(a, 16, None)
+        a = pad_to_multiple_of_length(a, 16, None)
         self.assertTrue(len(a) % 16 == 0)
 
     def test_series_merger(self):
