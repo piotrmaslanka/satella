@@ -2,6 +2,8 @@ import collections
 import random
 import typing as tp
 
+from satella.coding.decorators import for_argument
+
 from .merger import merge_series
 
 __all__ = ['stringify', 'split_shuffle_and_join', 'one_tuple',
@@ -10,6 +12,7 @@ __all__ = ['stringify', 'split_shuffle_and_join', 'one_tuple',
 T = tp.TypeVar('T')
 
 
+@for_argument(list)
 def pad_to_multiple_of_length(seq: tp.Sequence[T], multiple_of: int,
                               pad_with: tp.Optional = None,
                               pad_with_factory: tp.Optional[tp.Callable[[], T]] = None) -> \
@@ -23,12 +26,12 @@ def pad_to_multiple_of_length(seq: tp.Sequence[T], multiple_of: int,
     :param pad_with_factory: a callable/0 that returns an element with which to pad the sequence
     :return: a list with elements
     """
-    seq = list(seq)
     if pad_with is not None and pad_with_factory is not None:
         raise ValueError('You need to give either pad_with or pad_with_factory')
 
     if pad_with_factory is None:
-        pad_with_factory = lambda: pad_with
+        def pad_with_factory():
+            return pad_with
 
     while len(seq) % multiple_of:
         seq.append(pad_with_factory())
