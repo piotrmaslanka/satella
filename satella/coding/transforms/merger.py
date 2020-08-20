@@ -5,6 +5,10 @@ from satella.coding.recast_exceptions import rethrow_as
 from satella.coding.structures import SetHeap
 
 
+def _is_x_none(x) -> bool:
+    return x is None
+
+
 class merge_series:
     """
     A merger for multiple sequences that return (timestamp, value).
@@ -84,7 +88,7 @@ class merge_series:
         """
         if len(self.timestamps):
             return
-        if all(map(lambda x: x is None, self.super_next_preloaded_values)):
+        if all(map(_is_x_none, self.super_next_preloaded_values)):
             raise StopIteration('sequence exhausted')
         self.next()
         if not len(self.timestamps):
