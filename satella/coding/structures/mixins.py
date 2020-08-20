@@ -128,7 +128,7 @@ class OmniHashableMixin(metaclass=ABCMeta):
 
     @property
     @abstractmethod
-    def _HASH_FIELDS_TO_USE(self) -> tp.Tuple[str]:
+    def _HASH_FIELDS_TO_USE(self) -> tp.Union[str, tp.Sequence[str]]:
         """
         Return the sequence of names of properties and attributes
         that will be used for __eq__ and __hash__
