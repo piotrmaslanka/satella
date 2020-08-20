@@ -99,8 +99,8 @@ class ListDeleter(tp.Generic[T]):
 
     >>> with ListDeleter(my_list) as ld:
     >>>     for entry in ld:
-    >>>         if entry.value.should_delete():
-    >>>             entry.delete()
+    >>>         if entry.should_delete():
+    >>>             ld.delete()
 
     Note that a single ListDeleter running from a single context must be iterated on by only a
     single Thread as it keeps the state of iterator in itself, to prevent allocating new objects
@@ -173,9 +173,21 @@ class ListDeleter(tp.Generic[T]):
         self.indices_to_delete.add(self.current_index)
 
     def __reversed__(self) -> 'ListDeleter':
-        self_2 = copy.copy(self)
-        self_2.direction = DIR_FORWARD if self.direction == DIR_BACKWARD else DIR_BACKWARD
-        return self_2
+        """
+        Take care, for this will modify the current object.
+
+        This is done not to break the context manager semantics, and enable this:
+        >>> with ListDeleter(a):
+        >>>     for v in reversed(a):
+        >>>         ...
+        """
+        if self.direction == DIR_BACKWARD:
+            self.direction = DIR_FORWARD
+            self.current_index = -1
+        else:
+            self.direction = DIR_BACKWARD
+            self.current_index = len(self.list_to_process)
+        return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         index_delta = 0

@@ -15,12 +15,11 @@ class TestDeleters(unittest.TestCase):
 
     def test_list_deleter_reversed(self):
         a = [1, 2, 3, 4, 5, 6, 7, 8]
-        b = []
         with ListDeleter(a) as ld:
             for v in reversed(ld):
                 if v % 2:
-                    b.append(v)
-        self.assertEqual(b, [7, 5, 3, 1])
+                    ld.delete()
+        self.assertEqual(a, [2, 4, 6, 8])
 
     def test_list_deleter(self):
         a = [1, 2, 3, 4, 5, 6, 7, 8]
