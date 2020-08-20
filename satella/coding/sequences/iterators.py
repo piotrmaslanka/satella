@@ -22,7 +22,7 @@ def length(iterator: IteratorOrIterable) -> int:
 
 def walk(obj: T, child_getter: tp.Callable[[T], tp.Optional[tp.List[T]]] = list,
          deep_first: bool = True,
-         leafs_only: bool = False) -> tp.Iterator[T]:
+         leaves_only: bool = False) -> tp.Iterator[T]:
     """
     Return every node of a nested structure.
 
@@ -30,7 +30,7 @@ def walk(obj: T, child_getter: tp.Callable[[T], tp.Optional[tp.List[T]]] = list,
     :param child_getter: a callable to return a list of children of T.
         Should return an empty list or None of there are no more children.
     :param deep_first: if True, deep first will be returned, else it will be breadth first
-    :param leafs_only: if True, only leaf nodes (having no children) will be returned
+    :param leaves_only: if True, only leaf nodes (having no children) will be returned
     """
     a = ConstruableIterator(child_getter(obj))
     for o in a:
@@ -46,7 +46,7 @@ def walk(obj: T, child_getter: tp.Callable[[T], tp.Optional[tp.List[T]]] = list,
                     a.add_many_immediate(children)
                 else:
                     a.add_many(children)
-                if leafs_only:
+                if leaves_only:
                     continue
 
         yield o

@@ -9,7 +9,7 @@ class TestIterators(unittest.TestCase):
 
     def test_walk(self):
         a = [[1, 2, 3], 4, 5, 6, [7, 8, 9]]
-        b = walk(a, lambda x: x if isinstance(x, list) else None, leafs_only=True)
+        b = walk(a, lambda x: x if isinstance(x, list) else None, leaves_only=True)
         self.assertEqual(list(b), [1, 2, 3, 4, 5, 6, 7, 8, 9])
 
     def test_construable_iterator(self):
