@@ -18,10 +18,11 @@ def pad_to_multiple_of_length(seq: tp.Sequence[T], multiple_of: int,
                               pad_with_factory: tp.Optional[tp.Callable[[], T]] = None) -> \
         tp.List[T]:
     """
-    Make sequence multiple of length
+    Make sequence multiple of length, ie. append elements to the sequence
+    until it's length is a multiple of multiple_of.
 
     :param seq: sequence to lengthify
-    :param multiple_of: sequence must be multiple of this length
+    :param multiple_of: sequence returned will be a multiple of this length.
     :param pad_with: argument with which to pad the sequence
     :param pad_with_factory: a callable/0 that returns an element with which to pad the sequence
     :return: a list with elements
