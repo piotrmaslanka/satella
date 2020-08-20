@@ -1,3 +1,2 @@
-# v2.9.23
+# v2.9.24
 
-* add `pad_to_multiple_of_length`
