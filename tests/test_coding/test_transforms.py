@@ -1,10 +1,15 @@
 import unittest
 
 from satella.coding.transforms import stringify, split_shuffle_and_join, one_tuple, \
-    merge_series
+    merge_series, pad_to_multiple_of_length
 
 
 class TestTransforms(unittest.TestCase):
+    def test_pad_to_multiple_length(self):
+        a = [1, 2, 3]
+        pad_to_multiple_of_length(a, 16, None)
+        self.assertTrue(len(a) % 16 == 0)
+
     def test_series_merger(self):
         s1 = [(100, 1), (200, 2), (300, 3)]
         s2 = ((100, 2), (200, 3), (300, 4))

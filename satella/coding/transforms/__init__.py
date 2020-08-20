@@ -5,7 +5,34 @@ import typing as tp
 from .merger import merge_series
 
 __all__ = ['stringify', 'split_shuffle_and_join', 'one_tuple',
-           'merge_series']
+           'merge_series', 'pad_to_multiple_of_length']
+
+T = tp.TypeVar('T')
+
+
+def pad_to_multiple_of_length(seq: tp.Sequence[T], multiple_of: int,
+                              pad_with: tp.Optional = None,
+                              pad_with_factory: tp.Optional[tp.Callable[[], T]] = None) -> \
+        tp.List[T]:
+    """
+    Make sequence multiple of length
+
+    :param seq: sequence to lengthify
+    :param multiple_of: sequence must be multiple of this length
+    :param pad_with: argument with which to pad the sequence
+    :param pad_with_factory: a callable/0 that returns an element with which to pad the sequence
+    :return: a list with elements
+    """
+    seq = list(seq)
+    if pad_with is not None and pad_with_factory is not None:
+        raise ValueError('You need to give either pad_with or pad_with_factory')
+
+    if pad_with_factory is None:
+        pad_with_factory = lambda: pad_with
+
+    while len(seq) % multiple_of:
+        seq.append(pad_with_factory())
+    return seq
 
 
 def _stringify_none(str_none, stringifier):

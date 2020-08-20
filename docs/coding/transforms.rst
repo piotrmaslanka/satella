@@ -1,6 +1,12 @@
 Rudimentary data transforms
 ===========================
 
+pad_to_multiple_of_length
+-------------------------
+
+.. autofunction:: satella.coding.transforms.pad_to_multiple_of_length
+
+
 split_shuffle_and_join
 ----------------------
 
