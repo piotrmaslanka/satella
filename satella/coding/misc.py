@@ -55,6 +55,15 @@ def update_attr_if_none(obj: object, attr: str, value: tp.Any,
 
 def update_key_if_none(dictionary: dict, key, value):
     """
+    This is deprecated. Please use update_key_if_not_none instead!
+    """
+    warnings.warn('This is deprecated and will be removed in Satella 3.0, use '
+                  'update_key_if_not_none instead', DeprecationWarning)
+    return update_key_if_not_none(dictionary, key, value)
+
+
+def update_key_if_not_none(dictionary: dict, key, value):
+    """
     Syntactic sugar for
 
     >>> if value is not None:
