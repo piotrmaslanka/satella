@@ -14,7 +14,7 @@ T = tp.TypeVar('T')
 
 @for_argument(list)
 def pad_to_multiple_of_length(seq: tp.Sequence[T], multiple_of: int,
-                              pad_with: tp.Optional = None,
+                              pad_with: tp.Optional[T] = None,
                               pad_with_factory: tp.Optional[tp.Callable[[], T]] = None) -> \
         tp.List[T]:
     """
