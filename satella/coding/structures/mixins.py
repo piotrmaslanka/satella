@@ -70,6 +70,7 @@ class ComparableAndHashableBy(metaclass=ABCMeta):
     >>>
     >>> assert Vector() > Vector()
     """
+    __slots__ = ()
 
     @property
     @abstractmethod
@@ -103,6 +104,9 @@ class ComparableAndHashableByInt(metaclass=ABCMeta):
     """
     A mix-in. Provides comparision (lt, gt, ge, le, eq) and hashing by __int__ of this class.
     """
+
+    __slots__ = ()
+
     @abstractmethod
     def __int__(self) -> int:
         ...
