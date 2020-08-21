@@ -1,11 +1,34 @@
 import unittest
 
 
-from satella.coding.predicates import between, one_of, length_is, length_less_than, \
-    length_multiple_of, attribute, equals, item
+from satella.coding.predicates import between, one_of, length_is, shorter_than, \
+    length_multiple_of, attribute, equals, item, longer_than, is_not_none, not_equal, \
+    has_attr
 
 
 class TestPredicates(unittest.TestCase):
+
+    def test_has_attr(self):
+        class A:
+            def __init__(self):
+                self.b = 2
+        a = A()
+        self.assertTrue(has_attr('b')(a))
+        self.assertFalse(has_attr('c')(a))
+
+    def test_not_equal(self):
+        self.assertTrue(not_equal(5)(6))
+        self.assertFalse(not_equal(5)(5))
+
+    def test_is_not_none(self):
+        self.assertTrue(is_not_none()(6))
+        self.assertFalse(is_not_none()(None))
+
+    def test_longer_than(self):
+        a = 'ala'
+        self.assertTrue(longer_than(2)(a))
+        self.assertFalse(longer_than(3)(a))
+
     def test_length_is_attribute(self):
         class Attr:
             def __init__(self, b):
@@ -26,10 +49,10 @@ class TestPredicates(unittest.TestCase):
         self.assertTrue(length_is(3)(a))
         self.assertFalse(length_is(4)(a))
 
-    def test_length_less_than(self):
+    def test_shorter_than(self):
         a = 'ala'
-        self.assertTrue(length_less_than(4)(a))
-        self.assertFalse(length_less_than(3)(a))
+        self.assertTrue(shorter_than(4)(a))
+        self.assertFalse(shorter_than(3)(a))
 
     def test_length_multiple_of(self):
         a = 'ala '

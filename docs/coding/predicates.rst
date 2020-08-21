@@ -18,7 +18,15 @@ Predicates
 
 .. autofunction:: satella.coding.predicates.equals
 
-.. autofunction:: satella.coding.predicates.length_less_than
+.. autofunction:: satella.coding.predicates.shorter_than
+
+.. autofunction:: satella.coding.predicates.longer_than
+
+.. autofunction:: satella.coding.predicates.is_not_none
+
+.. autofunction:: satella.coding.predicates.not_equal
+
+
 
 Decorators
 ----------

@@ -1,7 +1,7 @@
 import typing as tp
 
 
-def length_less_than(x) -> tp.Callable[[tp.Sequence], bool]:
+def shorter_than(x) -> tp.Callable[[tp.Sequence], bool]:
     """
     Return a predicate that will return True if length of sequence is less than x
 
@@ -9,6 +9,15 @@ def length_less_than(x) -> tp.Callable[[tp.Sequence], bool]:
     """
     def predicate(v):
         return len(v) < x
+    return predicate
+
+
+def longer_than(x):
+    """
+    Return a predicate that will return True if length of sequence is greater than x
+    """
+    def predicate(v):
+        return len(v) > x
     return predicate
 
 
