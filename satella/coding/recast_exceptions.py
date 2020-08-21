@@ -68,17 +68,14 @@ class log_exceptions:
                  severity: int = logging.ERROR,
                  format_string: str = '{e}',
                  locals_: tp.Optional[tp.Dict] = None,
-                 exc_types: tp.Optional[tp.Union[ExcType, tp.Sequence[ExcType]]] = None,
+                 exc_types: tp.Union[ExcType, tp.Sequence[ExcType]] = Exception,
                  swallow_exception: bool = False):
         self.logger = logger
         self.swallow_exception = swallow_exception
         self.severity = severity
         self.format_string = format_string
         self.locals = locals_
-        if exc_types is None:
-            self.exc_types = Exception
-        else:
-            self.exc_types = exc_types
+        self.exc_types = exc_types
 
     def __enter__(self):
         return self
