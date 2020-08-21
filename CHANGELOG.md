@@ -1,1 +1,3 @@
-# v2.9.25
+# v2.10.0
+
+* added `satella.coding.predicates`
