@@ -1,15 +1,12 @@
 import typing as tp
 import math
 
-from .shared import get_attribute
-
 Number = tp.Union[float, int]
 Predicate = tp.Callable[[Number], bool]
 
 
 def between(left: Number = -math.inf, right: Number = math.inf,
-            incl_left: bool = True, incl_right: bool = True,
-            attribute: tp.Optional[str] = None) -> Predicate:
+            incl_left: bool = True, incl_right: bool = True) -> Predicate:
     """
     Build a predicate to check whether a given number is in particular range
 
@@ -21,7 +18,6 @@ def between(left: Number = -math.inf, right: Number = math.inf,
     :param attribute: if given, then it will first try to access given attribute of v
     """
     def predicate(x: Number) -> bool:
-        x = get_attribute(x, attribute)
         if incl_left:
             if x < left:
                 return False

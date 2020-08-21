@@ -2,7 +2,7 @@ import unittest
 
 
 from satella.coding.predicates import between, one_of, length_is, length_less_than, \
-    length_multiple_of
+    length_multiple_of, attribute, equals, item
 
 
 class TestPredicates(unittest.TestCase):
@@ -12,8 +12,14 @@ class TestPredicates(unittest.TestCase):
                 self.a = b
 
         a = Attr('ala')
-        self.assertTrue(length_is(3, 'a')(a))
-        self.assertFalse(length_is(4, 'a')(a))
+        self.assertTrue(attribute(length_is(3), 'a')(a))
+        self.assertFalse(attribute(length_is(4), 'a')(a))
+
+    def test_length_is_item(self):
+        a = [1, 2, 5]
+
+        self.assertTrue(item(equals(2), 1)(a))
+        self.assertFalse(item(equals(2), 0)(a))
 
     def test_length_is(self):
         a = 'ala'
