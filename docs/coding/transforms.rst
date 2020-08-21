@@ -26,6 +26,12 @@ Make both keys and values (if dict), values (if list) or make an object a string
 .. autofunction:: satella.coding.transforms.stringify
 
 
+clip
+---------
+
+.. autofunction:: satella.coding.transforms.clip
+
+
 merge_series
 ------------
 
