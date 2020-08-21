@@ -1,10 +1,16 @@
 import unittest
 
 from satella.coding.transforms import stringify, split_shuffle_and_join, one_tuple, \
-    merge_series, pad_to_multiple_of_length
+    merge_series, pad_to_multiple_of_length, clip
 
 
 class TestTransforms(unittest.TestCase):
+
+    def test_clip(self):
+        self.assertEqual(clip(5, 10, 15), 10)
+        self.assertEqual(clip(25, 10, 15), 15)
+        self.assertEqual(clip(12, 10, 15), 12)
+
     def test_pad_to_multiple_length(self):
         a = [1, 2, 3]
         a = pad_to_multiple_of_length(a, 16, None)
