@@ -3,10 +3,20 @@ import unittest
 
 from satella.coding.predicates import between, one_of, length_is, shorter_than, \
     length_multiple_of, attribute, equals, item, longer_than, is_not_none, not_equal, \
-    has_attr
+    has_attr, p_all, p_any
 
 
 class TestPredicates(unittest.TestCase):
+
+    def test_p_all(self):
+        p = [1, 2]
+        self.assertTrue(p_all(item(equals(1), 0), item(equals(2), 1))(p))
+        self.assertFalse(p_all(item(equals(1), 0), item(equals(3), 1))(p))
+
+    def test_p_any(self):
+        p = [1, 2]
+        self.assertTrue(p_any(item(equals(1), 0), item(equals(3), 1))(p))
+        self.assertFalse(p_any(item(equals(4), 0), item(equals(3), 1))(p))
 
     def test_has_attr(self):
         class A:

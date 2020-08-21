@@ -5,6 +5,8 @@ Predicates
 Predicates are functions that take something and return a boolean about truthfulness
 of given statement. Satella contains a bunch of functions to produce these predicates.
 
+These go superbly hand-in-hand with preconditions and postconditions.
+
 Predicates
 ----------
 
@@ -42,6 +44,15 @@ Decorators are used to extend given predicates. Eg:
 
         p = [1, 2, 5]
         assert item(equals(2), 1)(p)
+
+    ::
+        p = [1, 2, 5]
+        assert p_all(item(equals(1), 0), item(equals(2), 1))
+
+    ::
+        p = [1, 2, 5]
+        assert p_any(item(equals(1), 0), item(equals(2), 1))
+
 
 .. autofunction:: satella.coding.predicates.attribute
 

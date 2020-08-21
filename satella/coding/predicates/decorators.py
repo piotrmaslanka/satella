@@ -1,6 +1,24 @@
 import typing as tp
 
 
+def p_all(*args: tp.Callable[[tp.Any], bool]) -> tp.Callable[[tp.Any], bool]:
+    """
+    Make a predicate returning True if all specified predicates return True
+    """
+    def predicate(v):
+        return all(arg(v) for arg in args)
+    return predicate
+
+
+def p_any(*args: tp.Callable[[tp.Any], bool]) -> tp.Callable[[tp.Any], bool]:
+    """
+    Make a predicate returning True if any of specified predicates return True
+    """
+    def predicate(v):
+        return any(arg(v) for arg in args)
+    return predicate
+
+
 def attribute(p: tp.Callable[[tp.Any], bool], attr) -> tp.Callable[[tp.Any], bool]:
     """
     Make predicate p refer to attribute of the object passed to it.
