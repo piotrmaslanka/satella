@@ -12,3 +12,5 @@ of given statement. Satella contains a bunch of functions to produce these predi
 .. autofunction:: satella.coding.predicates.length_multiple_of
 
 .. autofunction:: satella.coding.predicates.one_of
+
+.. autofunction:: satella.coding.predicates.length_less_than

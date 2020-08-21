@@ -1,10 +1,26 @@
 import unittest
 
 
-from satella.coding.predicates import between, one_of
+from satella.coding.predicates import between, one_of, length_is, length_less_than, \
+    length_multiple_of
 
 
 class TestPredicates(unittest.TestCase):
+    def test_length_is(self):
+        a = 'ala'
+        self.assertTrue(length_is(3)(a))
+        self.assertFalse(length_is(4)(a))
+
+    def test_length_less_than(self):
+        a = 'ala'
+        self.assertTrue(length_less_than(4)(a))
+        self.assertFalse(length_less_than(3)(a))
+
+    def test_length_multiple_of(self):
+        a = 'ala '
+        self.assertTrue(length_multiple_of(4)(a))
+        self.assertFalse(length_multiple_of(3)(a))
+
     def test_one_of(self):
         two_or_five = one_of(2, 5)
         self.assertTrue(two_or_five(2))
