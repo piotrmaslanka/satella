@@ -6,6 +6,15 @@ from satella.coding.predicates import between, one_of, length_is, length_less_th
 
 
 class TestPredicates(unittest.TestCase):
+    def test_length_is_attribute(self):
+        class Attr:
+            def __init__(self, b):
+                self.a = b
+
+        a = Attr('ala')
+        self.assertTrue(length_is(3, 'a')(a))
+        self.assertFalse(length_is(4, 'a')(a))
+
     def test_length_is(self):
         a = 'ala'
         self.assertTrue(length_is(3)(a))
