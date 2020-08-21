@@ -11,10 +11,29 @@ from satella.coding.structures import TimeBasedHeap, Heap, typednamedtuple, \
     OmniHashableMixin, DictObject, apply_dict_object, Immutable, frozendict, SetHeap, \
     DictionaryView, HashableWrapper, TwoWayDictionary, Ranking, SortedList, SliceableDeque, \
     DirtyDict, KeyAwareDefaultDict, Proxy, ReprableMixin, TimeBasedSetHeap, ExpiringEntryDict, SelfCleaningDefaultDict, \
-    CacheDict, StrEqHashableMixin, ComparableIntEnum, HashableIntEnum, ComparableAndHashableBy
+    CacheDict, StrEqHashableMixin, ComparableIntEnum, HashableIntEnum, ComparableAndHashableBy, \
+ComparableAndHashableByInt
 
 
 class TestMisc(unittest.TestCase):
+
+    def test_comparable_and_hashable_by_int(self):
+        class MyClass(ComparableAndHashableByInt):
+            def __init__(self, a: int):
+                self.a = a
+
+            def __int__(self):
+                return self.a
+
+        a = MyClass(1)
+        b = MyClass(1)
+        c = MyClass(2)
+        self.assertEqual(a, b)
+        self.assertNotEqual(a, c)
+        self.assertLess(a, c)
+        self.assertGreaterEqual(a, b)
+        self.assertGreaterEqual(c, b)
+        self.assertEqual(hash(a), hash(b))
 
     def test_comparable_and_hashable_by(self):
         class Vector(ComparableAndHashableBy):

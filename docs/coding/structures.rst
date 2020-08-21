@@ -50,6 +50,12 @@ Mixins are classes whose constructor you do not need to invoke. They magically
 endow your class with chosen properties, often by overloading their specific
 special methods.
 
+ComparableAndHashableByInt
+--------------------------
+
+.. autoclass:: satella.coding.ComparableAndHashableByInt
+    :members:
+
 OmniHashableMixin
 -----------------
 
