@@ -23,6 +23,20 @@ def update_if_not_none(dictionary: dict, key, value):
     return update_key_if_none(dictionary, key, value)
 
 
+def source_to_function(src: str) -> tp.Callable[[tp.Any], tp.Any]:
+    """
+    Transform a string containing a Python expression with a variable x to a lambda.
+
+    It will be treated as if it was appended to 'lambda x: '
+
+    WARNING: Do not run untrusted data. Familiarize yourself with the dangers of passing
+    unvalidated data to exec() or eval()!
+    """
+    q = dict(globals())
+    exec('_precond = lambda x: ' + src, q)
+    return q['_precond']
+
+
 def update_attr_if_none(obj: object, attr: str, value: tp.Any,
                         on_attribute_error: bool = True,
                         if_value_is_not_none: bool = False) -> None:

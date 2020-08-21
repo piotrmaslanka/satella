@@ -13,13 +13,13 @@ from .iterators import hint_with_length, SelfClosingGenerator, exhaust, chain
 from .metaclasses import metaclass_maker, wrap_with, dont_wrap, wrap_property, DocsFromParent, \
     CopyDocsFrom
 from .misc import update_if_not_none, update_key_if_none, update_attr_if_none, queue_iterator, \
-    update_key_if_not_none
+    update_key_if_not_none, source_to_function
 from .recast_exceptions import rethrow_as, silence_excs, catch_exception, log_exceptions, \
     raises_exception
 
 __all__ = [
     'update_if_not_none', 'DocsFromParent', 'update_key_if_none', 'queue_iterator',
-    'update_attr_if_none', 'update_key_if_not_none',
+    'update_attr_if_none', 'update_key_if_not_none', 'source_to_function',
     'hint_with_length', 'SelfClosingGenerator', 'exhaust', 'chain',
     'Monitor', 'RMonitor', 'merge_dicts',
     'short_none', 'has_keys', 'CopyDocsFrom',

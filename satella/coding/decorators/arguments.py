@@ -2,6 +2,7 @@ import itertools
 import typing as tp
 
 from .decorators import wraps
+from ..misc import source_to_function
 
 T = tp.TypeVar('T')
 U = tp.TypeVar('U')
@@ -130,7 +131,10 @@ def attach_arguments(*args, **kwargs):
     return outer
 
 
-def for_argument(*t_ops: tp.Callable[[T], U], **t_kwops: tp.Callable[[T], U]):
+ForArgumentArg = tp.Union[tp.Callable[[T], U], str]
+
+
+def for_argument(*t_ops: ForArgumentArg, **t_kwops: ForArgumentArg):
     """
     Calls a callable for each of the arguments. Pass None if you do not wish to process given
     argument.
@@ -143,9 +147,33 @@ def for_argument(*t_ops: tp.Callable[[T], U], **t_kwops: tp.Callable[[T], U]):
     >>> def check(val1, val2, typed='True'):
     >>>     if typed:
     >>>         return val1 + int(val2)
+
+    for_argument can also accept strings as expressions:
+
+    >>> @for_argument('x*2')
+    >>> def accept_two(x):
+    >>>     assert x == 2
+    >>> accept_two(1)
     """
-    t_ops = [_NOP if op == 'self' else op for op in t_ops]
+    new_t_ops = []
+    for op in t_ops:
+        if op == 'self':
+            new_t_ops.append(_NOP)
+        elif op is None:
+            new_t_ops.append(_NOP)
+        elif isinstance(op, str):
+            new_t_ops.append(source_to_function(op))
+        else:
+            new_t_ops.append(op)
+
+    t_ops = new_t_ops
     returns = t_kwops.pop('returns', _NOP)
+
+    for key, value in t_kwops.items():
+        if value is None:
+            t_kwops[key] = _NOP
+        elif isinstance(value, str):
+            t_kwops[key] = source_to_function(value)
 
     def outer(fun):
         @wraps(fun)

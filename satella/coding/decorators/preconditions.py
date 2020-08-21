@@ -3,10 +3,12 @@ import typing as tp
 
 from satella.exceptions import PreconditionError
 from .decorators import wraps
+from ..misc import source_to_function
 
 T = tp.TypeVar('T')
 Expression = tp.NewType('Expression', str)
 Condition = tp.Union[tp.Callable[[T], bool], Expression]
+
 
 # noinspection PyPep8Naming
 def _TRUE(x):
@@ -48,9 +50,7 @@ def precondition(*t_ops: Condition, **kw_opts: Condition):
         if t_op is None:
             precond_ = _TRUE
         elif isinstance(t_op, str):
-            q = dict(globals())
-            exec('_precond = lambda x: ' + t_op, q)
-            precond_ = q['_precond']
+            precond_ = source_to_function(t_op)
         else:
             precond_ = t_op
 
@@ -61,9 +61,7 @@ def precondition(*t_ops: Condition, **kw_opts: Condition):
         if value is None:
             precond_ = _TRUE
         elif isinstance(value, str):
-            q = dict(globals())
-            exec('_precond = lambda x: ' + value, q)
-            precond_ = q['_precond']
+            precond_ = source_to_function(value)
         else:
             precond_ = value
         kw_ops[kwarg_] = precond_
