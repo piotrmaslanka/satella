@@ -6,7 +6,7 @@ __all__ = ['x']
 
 def make_operation_two_args(operation_two_args: tp.Callable[[tp.Any, tp.Any], tp.Any],
                             docstring: tp.Optional[str] = None):
-    def operation(self, a) -> 'Predicate':
+    def operation(self, a) -> Predicate:
         if isinstance(a, Predicate):
             def op(v):
                 return operation_two_args(self(v), a(v))
@@ -21,7 +21,7 @@ def make_operation_two_args(operation_two_args: tp.Callable[[tp.Any, tp.Any], tp
 
 def make_operation_single_arg(operation,
                               docstring: tp.Optional[str] = None):
-    def operation_v(self):
+    def operation_v(self) -> Predicate:
         def operate(v):
             return operation(v)
         return Predicate(operate)
@@ -42,9 +42,16 @@ def _one_of(a, values):
 
 
 class Predicate:
+    """
+    A class used to construct functions of single argument in such a vein:
+
+    >>> from satella.coding.predicates import x
+    >>> add_two = x + 2
+    >>> assert add_two(2) == 4
+    """
     __slots__ = ('operation', )
 
-    def __init__(self, operation: tp.Callable[[tp.Any], tp.Any]):
+    def __init__(self, operation: tp.Callable[[tp.Any], tp.Any] = lambda y: y):
         self.operation = operation
 
     def __call__(self, v):
@@ -87,4 +94,4 @@ class Predicate:
     __mod__ = make_operation_two_args(operator.mod)
 
 
-x = Predicate(lambda y: y)
+x = Predicate()
