@@ -45,14 +45,14 @@ class TestPredicates(unittest.TestCase):
                 self.a = b
 
         a = Attr('ala')
-        self.assertTrue(attribute(length_is(3), 'a')(a))
-        self.assertFalse(attribute(length_is(4), 'a')(a))
+        self.assertTrue(attribute('a', length_is(3))(a))
+        self.assertFalse(attribute('a', length_is(4))(a))
 
     def test_length_is_item(self):
         a = [1, 2, 5]
 
-        self.assertTrue(item(equals(2), 1)(a))
-        self.assertFalse(item(equals(2), 0)(a))
+        self.assertTrue(item(1, equals(2))(a))
+        self.assertFalse(item(0, equals(2))(a))
 
     def test_length_is(self):
         a = 'ala'

@@ -19,7 +19,7 @@ def p_any(*args: tp.Callable[[tp.Any], bool]) -> tp.Callable[[tp.Any], bool]:
     return predicate
 
 
-def attribute(p: tp.Callable[[tp.Any], bool], attr) -> tp.Callable[[tp.Any], bool]:
+def attribute(attr: str, p: tp.Callable[[tp.Any], bool]) -> tp.Callable[[tp.Any], bool]:
     """
     Make predicate p refer to attribute of the object passed to it.
     """
@@ -28,7 +28,7 @@ def attribute(p: tp.Callable[[tp.Any], bool], attr) -> tp.Callable[[tp.Any], boo
     return predicate
 
 
-def item(p: tp.Callable[[tp.Any], bool], i) -> tp.Callable[[tp.Any], bool]:
+def item(i, p: tp.Callable[[tp.Any], bool]) -> tp.Callable[[tp.Any], bool]:
     """
     Make predicate p refer to i-th item of the value passed to it
 

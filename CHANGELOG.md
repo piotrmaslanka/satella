@@ -6,3 +6,5 @@
 * added `clip`
 * added predicate `has_keys`, deprecated
   existing `has_keys`
+* changed ordering of arguments to attribute and item
+
