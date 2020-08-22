@@ -5,60 +5,66 @@ Predicates
 Predicates are functions that take something and return a boolean about truthfulness
 of given statement. Satella contains a bunch of functions to produce these predicates.
 
-These go superbly hand-in-hand with preconditions and postconditions.
-
-Predicates
-----------
-
-.. autofunction:: satella.coding.predicates.between
-
-.. autofunction:: satella.coding.predicates.length_is
-
-.. autofunction:: satella.coding.predicates.length_multiple_of
-
-.. autofunction:: satella.coding.predicates.one_of
-
-.. autofunction:: satella.coding.predicates.equals
-
-.. autofunction:: satella.coding.predicates.shorter_than
-
-.. autofunction:: satella.coding.predicates.longer_than
-
-.. autofunction:: satella.coding.predicates.is_not_none
-
-.. autofunction:: satella.coding.predicates.not_equal
-
-.. autofunction:: satella.coding.predicates.has_keys
-
-
-Decorators
-----------
-
-Decorators are used to extend given predicates. Eg:
-
-    ::
-        P = namedtuple('P', ('x', 'y'))
-        p = P(2,5)
-        assert attribute(equals(5), 'y')(p)
+Satella lets you express predicates in a Pythonic way, eg:
 
     ::
 
-        p = [1, 2, 5]
-        assert item(equals(2), 1)(p)
+        p = x == 2
+
+        assert(p(2) and not p(1))
+
+        p = x > 2
+
+        assert(p(2) and not p(1))
+
+
+This behaviour extends to operators, item procurement and attr procurement. The only exception is the length,
+which due to Python limitations (namely __len__ being allowed to return an int only) is called
+via it's method .length(), eg:
+
+
 
     ::
-        p = [1, 2, 5]
-        assert p_all(item(equals(1), 0), item(equals(2), 1))
+
+        p = x.length() == 2
+
+        assert(p([1, 2]) and not p([3])
+
+
+You can also piece together multiple predicates.
+Because of Python limitations please use & and | operators in place of and and or.
+Also use ^ in place of xor and ~ in place of not.
+
 
     ::
-        p = [1, 2, 5]
-        assert p_any(item(equals(1), 0), item(equals(2), 1))
 
+        p = x > 2 & x < 6
 
-.. autofunction:: satella.coding.predicates.attribute
+        assert(p(4) and not p(8) and not p(1))
 
-.. autofunction:: satella.coding.predicates.item
+Predicate class is documented here:
 
-.. autofunction:: satella.coding.predicates.p_all
+.. autoclass:: satella.coding.predicates.Predicate
 
-.. autofunction:: satella.coding.predicates.p_any
+To use the predicate you are to execute the following import:
+
+    ::
+
+        from satella.coding.predicates import x
+
+        p = x == 2
+
+        assert(p(2))
+
+You can also check if a dict has provided keys
+
+::
+    a = {'hello': 'hello', 'world': 'world'}
+    p = x.has_keys('hello', 'world')
+    assert p(a)
+
+Or check whether an instance is of provided type
+
+::
+    p = x.instanceof(int)
+    assert p(2)

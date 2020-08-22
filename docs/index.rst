@@ -14,6 +14,7 @@ Visit the project's page at GitHub_!
            configuration/sources
            coding/functions
            coding/structures
+           coding/predicates
            coding/concurrent
            coding/sequences
            coding/transforms
