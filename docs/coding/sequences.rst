@@ -66,10 +66,10 @@ is_last
 
 .. autofunction:: satella.coding.sequences.is_last
 
-enumerate
+smart_enumerate
 ---------
 
-.. autofunction:: satella.coding.sequences.enumerate
+.. autofunction:: satella.coding.sequences.smart_enumerate
 
 add_next
 --------

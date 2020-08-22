@@ -2,7 +2,7 @@ import sys
 import unittest
 
 from satella.coding import SelfClosingGenerator, hint_with_length, chain
-from satella.coding.sequences import enumerate, ConstruableIterator, walk
+from satella.coding.sequences import smart_enumerate, ConstruableIterator, walk
 
 
 class TestIterators(unittest.TestCase):
@@ -26,9 +26,9 @@ class TestIterators(unittest.TestCase):
         a = list(a)
         self.assertEqual(a, [1, 2, 3, 4, 5, 6, 0, 1])
 
-    def test_enumerate(self):
+    def test_smart_enumerate(self):
         a = [(1, 2), (3, 4), (5, 6)]
-        b = list(enumerate(a))
+        b = list(smart_enumerate(a))
         self.assertEqual([(0, 1, 2), (1, 3, 4), (2, 5, 6)], b)
 
     def test_hint_with_length(self):

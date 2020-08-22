@@ -343,7 +343,7 @@ def n_th(iterator: IteratorOrIterable, n: int = 0) -> T:
         raise IndexError('Iterable was too short')
 
 
-def satella_enumerate(iterator: IteratorOrIterable, start: int = 0) -> tp.Iterator[tp.Tuple]:
+def smart_enumerate(iterator: IteratorOrIterable, start: int = 0) -> tp.Iterator[tp.Tuple]:
     """
     An enumerate that talks pretty with lists of tuples. Consider
 
@@ -368,8 +368,6 @@ def satella_enumerate(iterator: IteratorOrIterable, start: int = 0) -> tp.Iterat
         else:
             yield (i,) + tuple(row)
         i += 1
-
-satella_enumerate.__name__ = 'enumerate'
 
 
 def take_n(iterator: IteratorOrIterable, n: int, skip: int = 0) -> tp.List[T]:
