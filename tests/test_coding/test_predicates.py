@@ -53,7 +53,7 @@ class TestPredicates(unittest.TestCase):
         self.assertFalse(p(4))
 
     def test_contains(self):
-        p = 2 in x
+        p = x.inside(2)
         self.assertTrue(p([1, 2]))
         self.assertFalse(p([1, 3]))
 

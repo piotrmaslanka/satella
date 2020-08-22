@@ -56,6 +56,12 @@ class Predicate:
         """
         return make_operation_two_args(_one_of)(self, values)
 
+    def inside(self, value):
+        """
+        Return a predicate checking if x is inside value
+        """
+        return make_operation_two_args(operator.contains)(self, value)
+
     def instanceof(self, instance):
         """
         Return a predicate checking whether this value is an instance of instance

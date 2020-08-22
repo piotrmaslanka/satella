@@ -69,3 +69,4 @@ Or check whether an instance is of provided type
 ::
     p = x.instanceof(int)
     assert p(2)
+
