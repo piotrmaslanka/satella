@@ -186,7 +186,7 @@ def has_keys(keys: tp.List[str]):
 
 
 def short_none(clb: tp.Union[Expression, tp.Callable[[T], U]]) -> tp.Callable[
-    [tp.Optional[T]], tp.Optional[U]]:
+        [tp.Optional[T]], tp.Optional[U]]:
     """
     Accept a callable. Return a callable that executes it only if passed a no-None arg,
     and returns its result. If passed a None, return a None
