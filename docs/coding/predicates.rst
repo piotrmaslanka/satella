@@ -45,6 +45,7 @@ Also use ^ in place of xor and ~ in place of not.
 Predicate class is documented here:
 
 .. autoclass:: satella.coding.predicates.Predicate
+    :members:
 
 To use the predicate you are to execute the following import:
 
