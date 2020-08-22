@@ -77,7 +77,7 @@ class Predicate:
 
     __contains__ = make_operation_two_args(operator.contains)
     __getattr__ = make_operation_two_args(getattr)
-    __getitem__ = make_operation_two_args(lambda a, b: a[b])
+    __getitem__ = make_operation_two_args(operator.getitem)
     __eq__ = make_operation_two_args(operator.eq)
     __ne__ = make_operation_two_args(operator.ne)
     __lt__ = make_operation_two_args(operator.lt)
