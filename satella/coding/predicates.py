@@ -4,7 +4,8 @@ import operator
 __all__ = ['x']
 
 
-def make_operation_two_args(operation_two_args: tp.Callable[[tp.Any, tp.Any], tp.Any]):
+def make_operation_two_args(operation_two_args: tp.Callable[[tp.Any, tp.Any], tp.Any],
+                            docstring: tp.Optional[str] = None):
     def operation(self, a) -> 'Predicate':
         if isinstance(a, Predicate):
             def op(v):
@@ -13,14 +14,19 @@ def make_operation_two_args(operation_two_args: tp.Callable[[tp.Any, tp.Any], tp
             def op(v):
                 return operation_two_args(self(v), a)
         return Predicate(op)
+    if docstring:
+        operation.__doc__ = docstring
     return operation
 
 
-def make_operation_single_arg(operation):
+def make_operation_single_arg(operation,
+                              docstring: tp.Optional[str] = None):
     def operation_v(self):
         def operate(v):
             return operation(v)
         return Predicate(operate)
+    if docstring:
+        operation_v.__doc__ = docstring
     return operation_v
 
 
@@ -44,31 +50,17 @@ class Predicate:
     def __call__(self, v):
         return self.operation(v)
 
-    def has_keys(self, *keys) -> 'Predicate':
-        """
-        Return a predicate checking whether this value has provided keys
-        """
-        return make_operation_two_args(_has_keys)(self, keys)
-
-    def one_of(self, *values) -> 'Predicate':
-        """
-        Return a predicate checking if x is amongst values
-        """
-        return make_operation_two_args(_one_of)(self, values)
-
-    def inside(self, value: tp.Container) -> 'Predicate':
-        """
-        Return a predicate checking if x is inside value
-        """
-        return make_operation_two_args(operator.contains)(self, value)
-
-    def instanceof(self, class_descriptor) -> 'Predicate':
-        """
-        Return a predicate checking whether this value is an instance of instance
-        """
-        return make_operation_two_args(isinstance)(self, class_descriptor)
-
-    length = make_operation_single_arg(len)
+    has_keys = make_operation_two_args(_has_keys,
+                                       'Return a predicate checking whether this value '
+                                       'has provided keys')
+    one_of = make_operation_two_args(_one_of,
+                                     'Return a predicate checking if x is amongst values')
+    inside = make_operation_two_args(operator.contains,
+                                     'Return a predicate checking if x is inside value')
+    instanceof = make_operation_two_args(isinstance,
+                                         'Return a predicate checking whether this value '
+                                         'is an instance of instance')
+    length = make_operation_single_arg(len, 'Return a predicate returning length of it''s argument')
 
     __contains__ = make_operation_two_args(operator.contains)
     __getattr__ = make_operation_two_args(getattr)
