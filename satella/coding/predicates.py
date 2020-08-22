@@ -42,31 +42,33 @@ def _one_of(a, values):
 
 
 class Predicate:
-    """
-    A class used to construct functions of single argument in such a vein:
-
-    >>> from satella.coding.predicates import x
-    >>> add_two = x + 2
-    >>> assert add_two(2) == 4
-    """
     __slots__ = ('operation', )
 
-    def __init__(self, operation: tp.Callable[[tp.Any], tp.Any] = lambda y: y):
+    def __init__(self, operation: tp.Callable[[tp.Any], tp.Any]):
         self.operation = operation
 
     def __call__(self, v):
         return self.operation(v)
 
-    has_keys = make_operation_two_args(_has_keys,
-                                       'Return a predicate checking whether this value '
-                                       'has provided keys')
-    one_of = make_operation_two_args(_one_of,
-                                     'Return a predicate checking if x is amongst values')
+    def has_keys(self, *keys) -> 'Predicate':
+        """
+        Return a predicate checking whether this value has provided keys
+        """
+        return make_operation_two_args(_has_keys)(self, keys)
+
+    def one_of(self, *values) -> 'Predicate':
+        """
+        Return a predicate checking if x is amongst values
+        """
+        return make_operation_two_args(_one_of)(self, values)
+
     inside = make_operation_two_args(operator.contains,
                                      'Return a predicate checking if x is inside value')
+
     instanceof = make_operation_two_args(isinstance,
                                          'Return a predicate checking whether this value '
                                          'is an instance of instance')
+
     length = make_operation_single_arg(len, 'Return a predicate returning length of it''s argument')
 
     __contains__ = make_operation_two_args(operator.contains)
@@ -94,4 +96,4 @@ class Predicate:
     __mod__ = make_operation_two_args(operator.mod)
 
 
-x = Predicate()
+x = Predicate(lambda y: y)
