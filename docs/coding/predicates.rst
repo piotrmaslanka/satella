@@ -59,14 +59,23 @@ To use the predicate you are to execute the following import:
 
 You can also check if a dict has provided keys
 
-::
-    a = {'hello': 'hello', 'world': 'world'}
-    p = x.has_keys('hello', 'world')
-    assert p(a)
+    ::
+
+        a = {'hello': 'hello', 'world': 'world'}
+        p = x.has_keys('hello', 'world')
+        assert p(a)
 
 Or check whether an instance is of provided type
 
-::
-    p = x.instanceof(int)
-    assert p(2)
+    ::
+
+        p = x.instanceof(int)
+        assert p(2)
+
+Only take care for x to be the first argument in all operators you use. For example,
+don't do this:
+
+    ::
+
+        p = 2 < x < 6
 
