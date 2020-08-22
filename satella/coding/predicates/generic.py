@@ -8,12 +8,12 @@ def one_of(*args) -> tp.Callable[[tp.Any], bool]:
     :param args: a list of arguments on which the predicate will return True
     :param attribute: if given, then it will first try to access given attribute of v
     """
-    def predicate(v):
+    def predicate(v) -> bool:
         return v in args
     return predicate
 
 
-def _is_not_none(v):
+def _is_not_none(v) -> bool:
     return v is not None
 
 

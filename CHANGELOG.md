@@ -4,3 +4,5 @@
 * changed typing for `for_argument`
 * added `source_to_function`
 * added `clip`
+* added predicate `has_keys`, deprecated
+  existing `has_keys`

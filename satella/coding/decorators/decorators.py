@@ -1,5 +1,6 @@
 import queue
 import typing as tp
+import warnings
 
 from satella.exceptions import PreconditionError
 
@@ -172,6 +173,8 @@ def has_keys(keys: tp.List[str]):
 
     :param keys: list of keys to expect
     """
+    warnings.warn('This is deprecated and will be removed in Satella 3.0. '
+                  'Use satella.coding.predicates.has_keys instead', DeprecationWarning)
 
     def inner(dictionary: dict) -> bool:
         for key in keys:

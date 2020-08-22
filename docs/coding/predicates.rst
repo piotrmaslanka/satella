@@ -28,6 +28,7 @@ Predicates
 
 .. autofunction:: satella.coding.predicates.not_equal
 
+.. autofunction:: satella.coding.predicates.has_keys
 
 
 Decorators
@@ -57,3 +58,7 @@ Decorators are used to extend given predicates. Eg:
 .. autofunction:: satella.coding.predicates.attribute
 
 .. autofunction:: satella.coding.predicates.item
+
+.. autofunction:: satella.coding.predicates.p_all
+
+.. autofunction:: satella.coding.predicates.p_any
