@@ -46,6 +46,12 @@ def _one_of(a, values):
 
 
 class Predicate:
+    """
+    A shorthand to create lambdas using such statements, for example:
+
+    >>> add_two = x + 2
+    >>> assert add_two(2) == 4
+    """
     __slots__ = ('operation', )
 
     def __init__(self, operation: tp.Callable[[tp.Any], tp.Any] = _nop):
@@ -93,6 +99,7 @@ class Predicate:
     __lshift__ = make_operation_two_args(operator.lshift)
     __xor__ = make_operation_two_args(operator.xor)
     __neg__ = make_operation_single_arg(operator.neg)
+    __pow__ = make_operation_two_args(operator.pow)
     __invert__ = make_operation_single_arg(operator.invert)
     __abs__ = make_operation_single_arg(abs)
     __truediv__ = make_operation_two_args(operator.__truediv__)
