@@ -10,13 +10,13 @@ class TestPredicates(unittest.TestCase):
 
     def test_p_all(self):
         p = [1, 2]
-        self.assertTrue(p_all(item(equals(1), 0), item(equals(2), 1))(p))
-        self.assertFalse(p_all(item(equals(1), 0), item(equals(3), 1))(p))
+        self.assertTrue(p_all(item(0, equals(1)), item(1, equals(2)))(p))
+        self.assertFalse(p_all(item(0, equals(1)), item(1, equals(3)))(p))
 
     def test_p_any(self):
         p = [1, 2]
-        self.assertTrue(p_any(item(equals(1), 0), item(equals(3), 1))(p))
-        self.assertFalse(p_any(item(equals(4), 0), item(equals(3), 1))(p))
+        self.assertTrue(p_any(item(0, equals(1)), item(1, equals(3)))(p))
+        self.assertFalse(p_any(item(0, equals(4)), item(1, equals(3)))(p))
 
     def test_has_attr(self):
         class A:
