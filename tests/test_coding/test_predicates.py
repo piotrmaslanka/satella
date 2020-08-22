@@ -46,6 +46,17 @@ class TestPredicates(unittest.TestCase):
         self.assertTrue(p(1))
         self.assertFalse(p(2))
 
+    def test_one_of(self):
+        p = x.one_of(2, 3)
+        self.assertTrue(p(2))
+        self.assertTrue(p(3))
+        self.assertFalse(p(4))
+
+    def test_contains(self):
+        p = 2 in x
+        self.assertTrue(p([1, 2]))
+        self.assertFalse(p([1, 3]))
+
     def test_getattr(self):
         class A:
             def __init__(self, a=2):

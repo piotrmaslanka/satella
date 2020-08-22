@@ -31,6 +31,10 @@ def _has_keys(a, keys):
     return True
 
 
+def _one_of(a, values):
+    return a in values
+
+
 class Predicate:
     __slots__ = ('operation', )
 
@@ -46,6 +50,12 @@ class Predicate:
         """
         return make_operation_two_args(_has_keys)(self, keys)
 
+    def one_of(self, *values):
+        """
+        Return a predicate checking if x is amongst values
+        """
+        return make_operation_two_args(_one_of)(self, values)
+
     def instanceof(self, instance):
         """
         Return a predicate checking whether this value is an instance of instance
@@ -54,6 +64,7 @@ class Predicate:
 
     length = make_operation_single_arg(len)
 
+    __contains__ = make_operation_two_args(operator.contains)
     __getattr__ = make_operation_two_args(getattr)
     __getitem__ = make_operation_two_args(lambda a, b: a[b])
     __eq__ = make_operation_two_args(operator.eq)
