@@ -44,29 +44,29 @@ class Predicate:
     def __call__(self, v):
         return self.operation(v)
 
-    def has_keys(self, *keys):
+    def has_keys(self, *keys) -> 'Predicate':
         """
         Return a predicate checking whether this value has provided keys
         """
         return make_operation_two_args(_has_keys)(self, keys)
 
-    def one_of(self, *values):
+    def one_of(self, *values) -> 'Predicate':
         """
         Return a predicate checking if x is amongst values
         """
         return make_operation_two_args(_one_of)(self, values)
 
-    def inside(self, value):
+    def inside(self, value: tp.Container) -> 'Predicate':
         """
         Return a predicate checking if x is inside value
         """
         return make_operation_two_args(operator.contains)(self, value)
 
-    def instanceof(self, instance):
+    def instanceof(self, class_descriptor) -> 'Predicate':
         """
         Return a predicate checking whether this value is an instance of instance
         """
-        return make_operation_two_args(isinstance)(self, instance)
+        return make_operation_two_args(isinstance)(self, class_descriptor)
 
     length = make_operation_single_arg(len)
 
@@ -88,10 +88,6 @@ class Predicate:
     __neg__ = make_operation_single_arg(lambda y: -y)
     __invert__ = make_operation_single_arg(operator.invert)
     __abs__ = make_operation_single_arg(abs)
-    __int__ = make_operation_single_arg(int)
-    __float__ = make_operation_single_arg(float)
-    __complex__ = make_operation_single_arg(complex)
-    __str__ = make_operation_single_arg(str)
     __truediv__ = make_operation_two_args(operator.__truediv__)
     __floordiv__ = make_operation_two_args(operator.floordiv)
     __mod__ = make_operation_two_args(operator.mod)

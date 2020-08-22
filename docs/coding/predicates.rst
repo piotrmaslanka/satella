@@ -2,10 +2,10 @@
 Predicates
 ==========
 
-Predicates are functions that take something and return a boolean about truthfulness
-of given statement. Satella contains a bunch of functions to produce these predicates.
+By a predicate Satella understands a function of a single argument and a single return values.
+Satella's API drastically simplifies writing lambda.
 
-Satella lets you express predicates in a Pythonic way, eg:
+Satella lets you express lambdas in a Pythonic way, eg:
 
     ::
 
@@ -21,7 +21,6 @@ Satella lets you express predicates in a Pythonic way, eg:
 This behaviour extends to operators, item procurement and attr procurement. The only exception is the length,
 which due to Python limitations (namely __len__ being allowed to return an int only) is called
 via it's method .length(), eg:
-
 
 
     ::
@@ -72,6 +71,7 @@ Or check whether an instance is of provided type
         p = x.instanceof(int)
         assert p(2)
 
+
 Only take care for x to be the first argument in all operators you use. For example,
 don't do this:
 
@@ -79,3 +79,5 @@ don't do this:
 
         p = 2 < x < 6
 
+
+Because Python will compare first 2 with x using int's __gt__, which will fail.
