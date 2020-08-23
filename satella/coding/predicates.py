@@ -34,7 +34,7 @@ def make_operation_two_args(operation_two_args: tp.Callable[[tp.Any, tp.Any], tp
     return operation
 
 
-def make_operation_single_arg(operation,
+def make_operation_single_arg(operation: tp.Callable[[tp.Any], tp.Any],
                               docstring: tp.Optional[str] = None):
     def operation_v(self) -> 'Predicate':
         def operate(v):
@@ -47,14 +47,14 @@ def make_operation_single_arg(operation,
     return operation_v
 
 
-def _has_keys(a, keys):
+def _has_keys(a: tp.Container, keys) -> bool:
     for key in keys:
         if key not in a:
             return False
     return True
 
 
-def _one_of(a, values):
+def _one_of(a, values: tp.Container) -> bool:
     return a in values
 
 
