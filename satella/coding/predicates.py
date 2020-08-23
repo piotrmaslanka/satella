@@ -4,7 +4,7 @@ import operator
 __all__ = ['x']
 
 
-def _nop(v):
+def _nop(v: tp.Any) -> tp.Any:
     return v
 
 
@@ -27,8 +27,10 @@ def make_operation_two_args(operation_two_args: tp.Callable[[tp.Any, tp.Any], tp
                 def op(v):
                     return operation_two_args(a, self(v))
         return Predicate(op)
+
     if docstring:
         operation.__doc__ = docstring
+
     return operation
 
 
@@ -38,8 +40,10 @@ def make_operation_single_arg(operation,
         def operate(v):
             return operation(v)
         return Predicate(operate)
+
     if docstring:
         operation_v.__doc__ = docstring
+
     return operation_v
 
 
