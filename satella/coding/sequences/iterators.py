@@ -3,7 +3,7 @@ import collections
 import typing as tp
 import warnings
 
-from ..recast_exceptions import rethrow_as
+from ..recast_exceptions import rethrow_as, silence_excs
 from ..decorators import for_argument
 
 T, U = tp.TypeVar('T'), tp.TypeVar('U')
@@ -133,30 +133,26 @@ def unique(lst: IteratorOrIterable) -> tp.Iterator[T]:
 
 
 @for_argument(iter)
+@silence_excs(StopIteration)
 def even(sq: IteratorOrIterable) -> tp.Iterator[T]:
     """
     Return only elements with even indices in this iterable (first element will be returned,
     as indices are counted from 0)
     """
-    try:
-        while True:
-            yield next(sq)
-            next(sq)
-    except StopIteration:
-        return
+    while True:
+        yield next(sq)
+        next(sq)
 
 
 @for_argument(iter)
+@silence_excs(StopIteration)
 def odd(sq: IteratorOrIterable) -> tp.Iterator[T]:
     """
     Return only elements with odd indices in this iterable.
     """
-    try:
-        while True:
-            next(sq)
-            yield next(sq)
-    except StopIteration:
-        return
+    while True:
+        next(sq)
+        yield next(sq)
 
 
 def count(sq: IteratorOrIterable, start: tp.Optional[int] = None, step: int = 1,
@@ -217,6 +213,7 @@ def is_instance(classes: tp.Union[tp.Tuple[type, ...], type]) -> tp.Callable[[ob
 
 
 @for_argument(iter, iter)
+@silence_excs(StopIteration)
 def other_sequence_no_longer_than(base_sequence: IteratorOrIterable,
                                   other_sequence: IteratorOrIterable) -> tp.Iterator[T]:
     """
@@ -228,11 +225,8 @@ def other_sequence_no_longer_than(base_sequence: IteratorOrIterable,
     :param other_sequence: sequence to output values from
     """
     while True:
-        try:
-            next(base_sequence)
-            yield next(other_sequence)
-        except StopIteration:
-            return
+        next(base_sequence)
+        yield next(other_sequence)
 
 
 def shift(iterable_: IteratorOrIterable, shift_factor: int) -> tp.Iterator[T]:
@@ -305,9 +299,12 @@ def zip_shifted(*args: tp.Union[IteratorOrIterable, tp.Tuple[IteratorOrIterable,
 
 
 @for_argument(iter)
+@silence_excs(StopIteration)
 def skip_first(iterator: IteratorOrIterable, n: int) -> tp.Iterator[T]:
     """
-    Skip first n elements from given iterator
+    Skip first n elements from given iterator.
+
+    Returned iterator may be empty, if source iterator is shorter or equal to n.
     """
     warnings.warn('This is deprecated and will be removed in Satella 3.0. '
                   'Please use itertools.islice instead', DeprecationWarning)
@@ -318,9 +315,12 @@ def skip_first(iterator: IteratorOrIterable, n: int) -> tp.Iterator[T]:
 
 
 @for_argument(iter)
+@silence_excs(StopIteration)
 def stop_after(iterator: IteratorOrIterable, n: int) -> tp.Iterator[T]:
     """
     Stop this iterator after returning n elements, even if it's longer than that.
+
+    The resulting iterator may be shorter than n, if the source element is so.
 
     :param iterator: iterator or iterable to examine
     :param n: elements to return
