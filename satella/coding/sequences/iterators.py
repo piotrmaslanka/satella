@@ -216,6 +216,7 @@ def is_instance(classes: tp.Union[tp.Tuple[type, ...], type]) -> tp.Callable[[ob
     return inner
 
 
+@for_argument(iter, iter)
 def other_sequence_no_longer_than(base_sequence: IteratorOrIterable,
                                   other_sequence: IteratorOrIterable) -> tp.Iterator[T]:
     """
@@ -226,7 +227,6 @@ def other_sequence_no_longer_than(base_sequence: IteratorOrIterable,
     :param base_sequence: sequence whose p_len should be taken
     :param other_sequence: sequence to output values from
     """
-    base_sequence, other_sequence = iter(base_sequence), iter(other_sequence)
     while True:
         try:
             next(base_sequence)
@@ -304,16 +304,17 @@ def zip_shifted(*args: tp.Union[IteratorOrIterable, tp.Tuple[IteratorOrIterable,
     return zip(*iterators)
 
 
+@for_argument(iter)
 def skip_first(iterator: IteratorOrIterable, n: int) -> tp.Iterator[T]:
     """
     Skip first n elements from given iterator
     """
-    iterator = iter(iterator)
     for i in range(n):
         next(iterator)
     yield from iterator
 
 
+@for_argument(iter)
 def stop_after(iterator: IteratorOrIterable, n: int) -> tp.Iterator[T]:
     """
     Stop this iterator after returning n elements, even if it's longer than that.
@@ -321,11 +322,11 @@ def stop_after(iterator: IteratorOrIterable, n: int) -> tp.Iterator[T]:
     :param iterator: iterator or iterable to examine
     :param n: elements to return
     """
-    iterator = iter(iterator)
     for i in range(n):
         yield next(iterator)
 
 
+@for_argument(iter)
 def n_th(iterator: IteratorOrIterable, n: int = 0) -> T:
     """
     Obtain n-th element (counting from 0) of an iterable
@@ -334,11 +335,10 @@ def n_th(iterator: IteratorOrIterable, n: int = 0) -> T:
     :param n: element to return. Note that we're counting from 0
     :raises IndexError: iterable was too short
     """
-    obj = iter(iterator)
     try:
         for i in range(n):
-            next(obj)
-        return next(obj)
+            next(iterator)
+        return next(iterator)
     except (StopIteration, GeneratorExit):
         raise IndexError('Iterable was too short')
 
@@ -370,6 +370,7 @@ def smart_enumerate(iterator: IteratorOrIterable, start: int = 0) -> tp.Iterator
         i += 1
 
 
+@for_argument(iter)
 def take_n(iterator: IteratorOrIterable, n: int, skip: int = 0) -> tp.List[T]:
     """
     Take (first) n elements of an iterator, or the entire iterator, whichever comes first
@@ -379,7 +380,6 @@ def take_n(iterator: IteratorOrIterable, n: int, skip: int = 0) -> tp.List[T]:
     :param skip: elements from the start to skip
     :return: list of p_len n (or shorter)
     """
-    iterator = iter(iterator)
     for i in range(skip):
         next(iterator)
 
