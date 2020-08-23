@@ -309,6 +309,9 @@ def skip_first(iterator: IteratorOrIterable, n: int) -> tp.Iterator[T]:
     """
     Skip first n elements from given iterator
     """
+    warnings.warn('This is deprecated and will be removed in Satella 3.0. '
+                  'Please use itertools.islice instead', DeprecationWarning)
+
     for i in range(n):
         next(iterator)
     yield from iterator
@@ -322,6 +325,9 @@ def stop_after(iterator: IteratorOrIterable, n: int) -> tp.Iterator[T]:
     :param iterator: iterator or iterable to examine
     :param n: elements to return
     """
+    warnings.warn('This is deprecated and will be removed in Satella 3.0. '
+                  'Please use itertools.islice instead', DeprecationWarning)
+
     for i in range(n):
         yield next(iterator)
 
