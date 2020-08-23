@@ -111,6 +111,7 @@ class Predicate:
     __truediv__ = make_operation_two_args(operator.__truediv__)
     __floordiv__ = make_operation_two_args(operator.floordiv)
     __mod__ = make_operation_two_args(operator.mod)
+    __pow__ = make_operation_two_args(operator.pow)
     __radd__ = make_operation_two_args(operator.add, swap_order=True)
     __rsub__ = make_operation_two_args(operator.sub, swap_order=True)
     __rmul__ = make_operation_two_args(operator.mul, swap_order=True)
@@ -123,8 +124,8 @@ class Predicate:
     __rtruediv__ = make_operation_two_args(operator.__truediv__, swap_order=True)
     __rfloordiv__ = make_operation_two_args(operator.floordiv, swap_order=True)
     __rmod__ = make_operation_two_args(operator.mod, swap_order=True)
+    __rpow__ = make_operation_two_args(operator.pow, swap_order=True)
     __neg__ = make_operation_single_arg(operator.neg)
-    __pow__ = make_operation_two_args(operator.pow)
     __invert__ = make_operation_single_arg(operator.invert)
     __abs__ = make_operation_single_arg(abs)
 
