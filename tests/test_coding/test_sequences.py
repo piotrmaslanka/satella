@@ -4,10 +4,14 @@ import unittest
 from satella.coding.sequences import choose, choose_one, infinite_counter, take_n, is_instance, \
     is_last, add_next, half_cartesian, skip_first, zip_shifted, stop_after, group_quantity, \
     iter_dict_of_list, shift, other_sequence_no_longer_than, count, even, odd, Multirun, n_th, \
-    unique, length
+    unique, length, map_list
 
 
 class TestSequences(unittest.TestCase):
+
+    def test_map_list(self):
+        _list = map_list(lambda x: x*2, range(5))
+        self.assertEqual(_list, [0, 2, 4, 6, 8])
 
     def test_length(self):
         def iterator():

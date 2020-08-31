@@ -349,6 +349,18 @@ def n_th(iterator: IteratorOrIterable, n: int = 0) -> T:
         raise IndexError('Iterable was too short')
 
 
+def map_list(fun: tp.Callable, iterable: IteratorOrIterable) -> tp.List:
+    """
+    A syntactic sugar for
+
+    >>> list(map(fun, iterable))
+
+    :param fun: function to apply
+    :param iterable: iterable to iterate over
+    """
+    return list(map(fun, iterable))
+
+
 def smart_enumerate(iterator: IteratorOrIterable, start: int = 0) -> tp.Iterator[tp.Tuple]:
     """
     An enumerate that talks pretty with lists of tuples. Consider

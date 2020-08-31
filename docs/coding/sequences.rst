@@ -5,6 +5,11 @@ Sequences and iterators
 Standard routines
 =================
 
+map_list
+--------
+
+.. autofunction:: satella.coding.sequences.map_list
+
 unique
 ------
 
