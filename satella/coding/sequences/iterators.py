@@ -133,15 +133,17 @@ def unique(lst: IteratorOrIterable) -> tp.Iterator[T]:
 
 
 @for_argument(iter)
-@silence_excs(StopIteration)
 def even(sq: IteratorOrIterable) -> tp.Iterator[T]:
     """
     Return only elements with even indices in this iterable (first element will be returned,
     as indices are counted from 0)
     """
     while True:
-        yield next(sq)
-        next(sq)
+        try:
+            yield next(sq)
+            next(sq)
+        except StopIteration:
+            return
 
 
 @for_argument(iter)
@@ -151,8 +153,11 @@ def odd(sq: IteratorOrIterable) -> tp.Iterator[T]:
     Return only elements with odd indices in this iterable.
     """
     while True:
-        next(sq)
-        yield next(sq)
+        try:
+            next(sq)
+            yield next(sq)
+        except StopIteration:
+            return
 
 
 def count(sq: IteratorOrIterable, start: tp.Optional[int] = None, step: int = 1,
@@ -213,7 +218,6 @@ def is_instance(classes: tp.Union[tp.Tuple[type, ...], type]) -> tp.Callable[[ob
 
 
 @for_argument(iter, iter)
-@silence_excs(StopIteration)
 def other_sequence_no_longer_than(base_sequence: IteratorOrIterable,
                                   other_sequence: IteratorOrIterable) -> tp.Iterator[T]:
     """
@@ -225,8 +229,11 @@ def other_sequence_no_longer_than(base_sequence: IteratorOrIterable,
     :param other_sequence: sequence to output values from
     """
     while True:
-        next(base_sequence)
-        yield next(other_sequence)
+        try:
+            next(base_sequence)
+            yield next(other_sequence)
+        except StopIteration:
+            return
 
 
 def shift(iterable_: IteratorOrIterable, shift_factor: int) -> tp.Iterator[T]:
@@ -264,6 +271,7 @@ def shift(iterable_: IteratorOrIterable, shift_factor: int) -> tp.Iterator[T]:
             return iterator
 
 
+@silence_excs(StopIteration)
 def zip_shifted(*args: tp.Union[IteratorOrIterable, tp.Tuple[IteratorOrIterable, int]]) -> \
         tp.Iterator[tp.Tuple[T, ...]]:
     """
@@ -286,7 +294,8 @@ def zip_shifted(*args: tp.Union[IteratorOrIterable, tp.Tuple[IteratorOrIterable,
     :param args: a tuple with the iterator/iterable and amount of shift. If a non-tuple is given,
         it is assumed that the shift is zero.
     """
-    warnings.warn('Use zip(shift(...)) instead!', DeprecationWarning)
+    warnings.warn('This is deprecated and will be removed in Satella 3.0. '
+                  'Use zip(shift(...)) instead!', DeprecationWarning)
 
     iterators = []  # type: tp.List[tp.Union[tp.Tuple[tp.Iterator[T], tp.List[T]], tp.Iterator[T]]
     for row in args:
