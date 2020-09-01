@@ -2,6 +2,7 @@ import typing as tp
 import operator
 
 __all__ = ['x']
+PredicateType = tp.Callable[[tp.Any], bool]
 
 
 def _nop(v: tp.Any) -> tp.Any:
@@ -10,23 +11,26 @@ def _nop(v: tp.Any) -> tp.Any:
 
 def make_operation_two_args(operation_two_args: tp.Callable[[tp.Any, tp.Any], tp.Any],
                             docstring: tp.Optional[str] = None,
-                            swap_order: bool = True):
-    def operation(self, a) -> 'Predicate':
+                            swap_order: bool = False) -> PredicateType:
+    def operation(self, a) -> PredicateType:
         if isinstance(a, Predicate):
-            if not swap_order:
-                def op(v):
-                    return operation_two_args(self(v), a(v))
-            else:
+            if swap_order:
                 def op(v):
                     return operation_two_args(a(v), self(v))
-        else:
-            if not swap_order:
-                def op(v):
-                    return operation_two_args(self(v), a)
+                return Predicate(op)
             else:
                 def op(v):
+                    return operation_two_args(self(v), a(v))
+                return Predicate(op)
+        else:
+            if swap_order:
+                def op(v):
                     return operation_two_args(a, self(v))
-        return Predicate(op)
+                return Predicate(op)
+            else:
+                def op(v):
+                    return operation_two_args(self(v), a)
+                return Predicate(op)
 
     if docstring:
         operation.__doc__ = docstring
@@ -35,8 +39,8 @@ def make_operation_two_args(operation_two_args: tp.Callable[[tp.Any, tp.Any], tp
 
 
 def make_operation_single_arg(operation: tp.Callable[[tp.Any], tp.Any],
-                              docstring: tp.Optional[str] = None):
-    def operation_v(self) -> 'Predicate':
+                              docstring: tp.Optional[str] = None) -> PredicateType:
+    def operation_v(self) -> PredicateType:
         def operate(v):
             return operation(v)
         return Predicate(operate)
@@ -70,16 +74,16 @@ class Predicate:
     def __init__(self, operation: tp.Callable[[tp.Any], tp.Any] = _nop):
         self.operation = operation
 
-    def __call__(self, v):
+    def __call__(self, v) -> bool:
         return self.operation(v)
 
-    def has_keys(self, *keys) -> 'Predicate':
+    def has_keys(self, *keys) -> PredicateType:
         """
         Return a predicate checking whether this value has provided keys
         """
         return make_operation_two_args(_has_keys)(self, keys)
 
-    def one_of(self, *values) -> 'Predicate':
+    def one_of(self, *values) -> PredicateType:
         """
         Return a predicate checking if x is amongst values
         """
