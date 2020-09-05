@@ -395,7 +395,8 @@ def smart_zip(*iterators: IteratorOrIterable) -> tp.Iterator[tp.Tuple[T, ...]]:
         yield tuple(a)
 
 
-def smart_enumerate(iterator: IteratorOrIterable, start: int = 0) -> tp.Iterator[tp.Tuple]:
+def smart_enumerate(iterator: IteratorOrIterable, start: int = 0,
+                    step: int = 1) -> tp.Iterator[tp.Tuple]:
     """
     An enumerate that talks pretty with lists of tuples. Consider
 
@@ -411,6 +412,9 @@ def smart_enumerate(iterator: IteratorOrIterable, start: int = 0) -> tp.Iterator
     Note that elements in your iterable must be either a list of a tuple for that to work,
     or need to be able to be coerced to a tuple. Otherwise, TypeError will be thrown.
 
+    :param iterator: iterator to enumerate
+    :param start: value to start counting at
+    :param step: step to advance the enumeration with
     :raise TypeError: could not coerce the elements in your iterable to a tuple
     """
     i = start
@@ -419,7 +423,7 @@ def smart_enumerate(iterator: IteratorOrIterable, start: int = 0) -> tp.Iterator
             yield (i,) + row
         else:
             yield (i,) + tuple(row)
-        i += 1
+        i += step
 
 
 @for_argument(iter)
