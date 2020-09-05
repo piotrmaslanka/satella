@@ -24,7 +24,7 @@ class MemoryErrorExceptionHandler(BaseExceptionHandler):
                  kill_pg: bool = False):
         super().__init__(ALWAYS_FIRST)
         # so that we have some spare space in case a MemoryError is thrown
-        self._free_on_memory_error = {'a': bytearray(1024 * 2)}  # type: tp.Dict[str, bytearray]
+        self._free_on_memory_error = {'a': bytearray(1024 * 4)}  # type: tp.Dict[str, bytearray]
         self.custom_hook = custom_hook  # type: ExceptionHandlerCallable
         self.kill_pg = kill_pg  # type: bool
         self.installed = False  # type: bool
