@@ -76,6 +76,11 @@ smart_enumerate
 
 .. autofunction:: satella.coding.sequences.smart_enumerate
 
+smart_zip
+---------
+
+.. autofunction:: satella.coding.sequences.smart_zip
+
 add_next
 --------
 

@@ -370,6 +370,31 @@ def map_list(fun: tp.Callable, iterable: IteratorOrIterable) -> tp.List:
     return list(map(fun, iterable))
 
 
+def smart_zip(*iterators: IteratorOrIterable) -> tp.Iterator[tp.Tuple[T, ...]]:
+    """
+    Zip in such a way that resulted tuples are automatically expanded.
+
+    Ie:
+
+    >>> b = list(smart_zip([(1, 1), (1, 2)], [1, 2]))
+    >>> assert b == [(1, 1, 1), (1, 2, 2)]
+
+    Note that an element of the zipped iterator must be a tuple (ie. isinstance tuple)
+    in order for it to be appended to resulting iterator element!
+
+    :param iterators: list of iterators to zip together
+    :return: an iterator zipping the arguments in a smart way
+    """
+    for row in zip(*iterators):
+        a = []
+        for elem in row:
+            if isinstance(elem, tuple):
+                a.extend(elem)
+            else:
+                a.append(elem)
+        yield tuple(a)
+
+
 def smart_enumerate(iterator: IteratorOrIterable, start: int = 0) -> tp.Iterator[tp.Tuple]:
     """
     An enumerate that talks pretty with lists of tuples. Consider
