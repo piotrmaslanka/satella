@@ -38,6 +38,8 @@ class overload:
         self.type_signatures_to_functions = {
             extract_type_signature_from(fun): fun
         }  # type: tp.Dict[tp.Tuple[type, ...], tp.Callable]
+        if hasattr(fun, '__doc__'):
+            self.__doc__ = fun.__doc__
 
     def overload(self, fun):
         """
