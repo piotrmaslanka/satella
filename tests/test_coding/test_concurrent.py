@@ -6,12 +6,24 @@ import time
 import unittest
 
 from satella.coding.concurrent import TerminableThread, CallableGroup, Condition, MonitorList, \
-    LockedStructure, AtomicNumber, Monitor, IDAllocator
+    LockedStructure, AtomicNumber, Monitor, IDAllocator, call_in_separate_thread
 from satella.coding.sequences import unique
 from satella.exceptions import WouldWaitMore, AlreadyAllocated
 
 
 class TestConcurrent(unittest.TestCase):
+
+    def test_call_in_separate_thread(self):
+        a = {}
+
+        @call_in_separate_thread()
+        def call_me():
+            a['test'] = 2
+            return 5
+
+        fut = call_me()
+        self.assertEquals(fut.result(), 5)
+        self.assertEquals(a['test'], 2)
 
     def test_id_allocator(self):
         id_alloc = IDAllocator()

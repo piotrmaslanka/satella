@@ -5,6 +5,7 @@ from satella.coding.sequences import choose, choose_one, infinite_counter, take_
     is_last, add_next, half_cartesian, skip_first, zip_shifted, stop_after, group_quantity, \
     iter_dict_of_list, shift, other_sequence_no_longer_than, count, even, odd, Multirun, n_th, \
     unique, length, map_list, smart_zip
+from satella.coding.predicates import x
 
 
 class TestSequences(unittest.TestCase):
@@ -16,7 +17,7 @@ class TestSequences(unittest.TestCase):
         self.assertEqual(a, [(1, 1, 1), (1, 2, 2), (1, 3, 3)])
 
     def test_map_list(self):
-        _list = map_list(lambda x: x*2, range(5))
+        _list = map_list(x*2, range(5))
         self.assertEqual(_list, [0, 2, 4, 6, 8])
 
     def test_length(self):
@@ -145,8 +146,8 @@ class TestSequences(unittest.TestCase):
             self.assertEqual(a, i)
 
     def test_choose_one(self):
-        self.assertEqual(choose_one(lambda x: x == 2, [1, 2, 3, 4, 5]), 2)
-        self.assertEqual(choose(lambda x: x % 2 == 0, [1, 2, 3, 4, 5]), 2)
+        self.assertEqual(choose_one(x == 2, [1, 2, 3, 4, 5]), 2)
+        self.assertEqual(choose(x % 2 == 0, [1, 2, 3, 4, 5]), 2)
         self.assertRaises(ValueError, lambda: choose_one(lambda x: x % 2 == 0, [1, 2, 3, 4, 5]))
         self.assertRaises(ValueError, lambda: choose_one(lambda x: x == 0, [1, 2, 3, 4, 5]))
 

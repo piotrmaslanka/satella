@@ -1,12 +1,47 @@
+import concurrent
 import ctypes
 import platform
 import threading
 import time
 import typing as tp
+from concurrent.futures import Future
 from threading import Condition as PythonCondition
+
+from satella.coding.decorators import wraps
 
 from satella.time import measure
 from ...exceptions import ResourceLocked, WouldWaitMore
+
+
+def call_in_separate_thread(*t_args, **t_kwargs):
+    """
+    Decorator to mark given routine as callable in a separate thread.
+
+    The routine will return a Future that is waitable to get the result of the function
+
+    The arguments given here will be passed to thread's constructor.
+    """
+    def outer(fun):
+        @wraps(fun)
+        def inner(*args, **kwargs):
+            class MyThread(threading.Thread):
+                def __init__(self):
+                    self.future = Future()
+                    super().__init__(*t_args, **t_kwargs)
+
+                def run(self):
+                    if not self.future.set_running_or_notify_cancel():
+                        return
+                    try:
+                        res = fun(*args, **kwargs)
+                        self.future.set_result(res)
+                    except Exception as e:
+                        self.future.set_exception(e)
+            t = MyThread()
+            t.start()
+            return t.future
+        return inner
+    return outer
 
 
 class Condition(PythonCondition):
