@@ -74,8 +74,11 @@ class Predicate:
     def __init__(self, operation: tp.Callable[[tp.Any], tp.Any] = _nop):
         self.operation = operation
 
-    def __call__(self, v) -> bool:
-        return self.operation(v)
+    def __call__(self, *args) -> bool:
+        if len(args) == 0:
+            return Predicate(lambda y: self.operation(y)())
+        else:
+            return self.operation(args[0])
 
     def has_keys(self, *keys) -> PredicateType:
         """
