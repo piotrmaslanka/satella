@@ -48,7 +48,7 @@ class overload:
         sign = extract_type_signature_from(fun)
         if sign in self.type_signatures_to_functions:
             f = self.type_signatures_to_functions[sign]
-            raise ValueError(f'Method of this signature is already overloaded with {f}')
+            raise ValueError('Method of this signature is already overloaded with %s' % (f, ))
         self.type_signatures_to_functions[sign] = fun
         return self
 
