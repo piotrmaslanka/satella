@@ -3,17 +3,25 @@ import threading
 import typing as tp
 
 from satella.coding.recast_exceptions import silence_excs
+from .coding.concurrent import call_in_separate_thread
 
 from .exceptions import ProcessFailed
 
-__all__ = ['call_and_return_stdout']
+__all__ = ['call_and_return_stdout', 'read_nowait']
 
 
+@call_in_separate_thread(daemon=True)
 @silence_excs((IOError, OSError))
-def _read_nowait(process: subprocess.Popen, output_list: tp.List[str]) -> None:
+def read_nowait(process: subprocess.Popen, output_list: tp.List[str]):
     """
-    To be launched as a daemon thread. This reads stdout and appends it's entries to a list.
-    This should finish as soon as the process exits or closes it's stdout.
+    This spawns a thread to read given process' stdout and append it to a list, in
+    order to prevent buffer filling up completely.
+
+    To retrieve entire stdout after process finishes do
+
+    >>> ''.join(list)
+
+    This thread will terminate automatically after the process closes it's stdout or finishes.
     """
     while True:
         with silence_excs(subprocess.TimeoutExpired):
@@ -54,11 +62,7 @@ def call_and_return_stdout(args: tp.Union[str, tp.List[str]],
     stdout_list = []
 
     proc = subprocess.Popen(args, **kwargs)
-    reader_thread = threading.Thread(name='stdout reader',
-                                     target=_read_nowait,
-                                     args=(proc, stdout_list),
-                                     daemon=True)
-    reader_thread.start()
+    fut = read_nowait(proc, stdout_list)
 
     try:
         proc.wait(timeout=timeout)
@@ -67,7 +71,7 @@ def call_and_return_stdout(args: tp.Union[str, tp.List[str]],
         proc.wait()
         raise TimeoutError('Process did not complete within %s seconds' % (timeout, ))
     finally:
-        reader_thread.join()
+        fut.result()
 
     if encoding is None:
         result = b''.join(stdout_list)

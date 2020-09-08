@@ -17,7 +17,8 @@ def call_in_separate_thread(*t_args, **t_kwargs):
     """
     Decorator to mark given routine as callable in a separate thread.
 
-    The routine will return a Future that is waitable to get the result of the function
+    The decorated routine will return a Future that is waitable to get the result
+    (or the exception) of the function
 
     The arguments given here will be passed to thread's constructor.
     """
