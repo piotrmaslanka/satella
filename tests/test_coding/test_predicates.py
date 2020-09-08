@@ -6,6 +6,10 @@ from satella.coding.predicates import x
 
 class TestPredicates(unittest.TestCase):
 
+    def test_int(self):
+        p = x.int()
+        self.assertEqual(p('2'), 2)
+
     def test_upper(self):
         p = x.upper()
         self.assertEquals(p('ala ma kota'), 'ALA MA KOTA')

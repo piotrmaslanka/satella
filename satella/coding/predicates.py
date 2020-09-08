@@ -74,6 +74,10 @@ class Predicate:
     def __init__(self, operation: tp.Callable[[tp.Any], tp.Any] = _nop):
         self.operation = operation
 
+    str = make_operation_single_arg(str, 'Call str() on predicate')
+    int = make_operation_single_arg(int, 'Call int() on predicate')
+    float = make_operation_single_arg(float, 'Call float() on predicate')
+
     def __call__(self, *args) -> bool:
         if len(args) == 0:
             return Predicate(lambda y: self.operation(y)())
