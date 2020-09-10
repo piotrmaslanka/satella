@@ -1,3 +1,4 @@
+import typing as tp
 import inspect
 import threading
 
@@ -45,12 +46,11 @@ class LockedDataset:
         self.__internal = LockedDataset.InternalDataset()  # type: LockedDataset.InternalDataset
 
     @staticmethod
-    def locked(blocking=True, timeout=-1):
+    def locked(blocking=True, timeout=-1) -> tp.Callable[[tp.Callable], tp.Callable]:
         """
         Decorator to use for annotating methods that would lock
-        :param blocking:
-        :param timeout:
-        :return:
+        :param blocking: whether to block at all
+        :param timeout: optional timeout. Default, or -1 means "return ASAP"
         """
 
         def inner(f):
