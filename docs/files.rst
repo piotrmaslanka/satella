@@ -1,6 +1,15 @@
 File management routines
 ========================
 
+DevNullFilelikeObject
+---------------------
+
+A file-like object that will dispose of your content.
+
+.. autoclass:: satella.files.DevNullFilelikeObject
+    :members:
+
+
 read_re_sub_and_write
 ---------------------
 

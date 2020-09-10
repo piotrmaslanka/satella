@@ -1,16 +1,67 @@
 import codecs
+import io
 import os
 import re
 import typing as tp
 import shutil
 
 __all__ = ['read_re_sub_and_write', 'find_files', 'split', 'read_in_file', 'write_to_file',
-           'write_out_file_if_different', 'make_noncolliding_name', 'try_unlink']
+           'write_out_file_if_different', 'make_noncolliding_name', 'try_unlink',
+           'DevNullFilelikeObject']
+
 
 from satella.coding import silence_excs
 
 SEPARATORS = {'\\', '/'}
 SEPARATORS.add(os.path.sep)
+
+
+class DevNullFilelikeObject:
+    """
+    A /dev/null filelike object. For multiple uses.
+    """
+    __slots__ = ('is_closed', )
+
+    def __init__(self):
+        self.is_closed = False
+
+    def read(self):
+        """
+        :raises io.UnsupportedOperation: since reading from this is forbidden
+        """
+        raise io.UnsupportedOperation('read')
+
+    def write(self, x: tp.Union[str, bytes]):
+        """
+        Discard any amount of bytes
+
+        :raises ValueError: this object has been closed
+        :return: length of written content
+        """
+        if self.is_closed:
+            raise ValueError('Writing to closed /dev/null!')
+        return len(x)
+
+    def flush(self) -> None:
+        """
+        :raises ValueError: flush of closed file
+        :return:
+        """
+        if self.is_closed:
+            raise ValueError('flush of closed file')
+
+    def close(self) -> None:
+        """
+        Close this stream. Further write()s and flush()es will raise a ValueError.
+        No-op if invoked multiple times
+        """
+        self.is_closed = True
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.close()
 
 
 def _has_separator(path: str) -> bool:

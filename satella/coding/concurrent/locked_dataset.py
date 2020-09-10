@@ -33,7 +33,7 @@ class LockedDataset:
     Note that __enter__ will raise WouldWaitMore if timeout was given.
     """
 
-    class InternalDataset(object):
+    class InternalDataset:
         __slots__ = ('lock', 'locked', 'args')
 
         def __init__(self):
