@@ -31,7 +31,7 @@ class DevNullFilelikeObject:
         """
         raise io.UnsupportedOperation('read')
 
-    def write(self, x: tp.Union[str, bytes]):
+    def write(self, x: tp.Union[str, bytes]) -> int:
         """
         Discard any amount of bytes
 
@@ -44,8 +44,7 @@ class DevNullFilelikeObject:
 
     def flush(self) -> None:
         """
-        :raises ValueError: flush of closed file
-        :return:
+        :raises ValueError: when this object has been closed
         """
         if self.is_closed:
             raise ValueError('flush of closed file')
