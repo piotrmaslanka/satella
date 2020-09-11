@@ -1,10 +1,11 @@
+import io
 import os
 from os.path import join
 import tempfile
 import unittest
 import shutil
 from satella.files import read_re_sub_and_write, find_files, split, read_in_file, write_to_file, \
-    write_out_file_if_different, make_noncolliding_name, try_unlink
+    write_out_file_if_different, make_noncolliding_name, try_unlink, DevNullFilelikeObject
 
 
 def putfile(path: str) -> None:
@@ -13,6 +14,19 @@ def putfile(path: str) -> None:
 
 
 class TestFiles(unittest.TestCase):
+
+    def test_devnullfilelikeobject(self):
+        null = DevNullFilelikeObject()
+        self.assertEqual(null.write('ala'), 3)
+        self.assertEqual(null.write(b'ala'), 3)
+        self.assertRaises(io.UnsupportedOperation, lambda: null.read())
+        self.assertRaises(io.UnsupportedOperation, lambda: null.read(7))
+        null.flush()
+        null.close()
+        self.assertRaises(ValueError, lambda: null.write('test'))
+        self.assertRaises(ValueError, lambda: null.flush())
+        self.assertRaises(ValueError, lambda: null.read())
+        null.close()
 
     def try_directory(self):
         os.system('mkdir test')

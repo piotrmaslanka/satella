@@ -25,10 +25,13 @@ class DevNullFilelikeObject:
     def __init__(self):
         self.is_closed = False
 
-    def read(self):
+    def read(self, byte_count: tp.Optional[int] = None):
         """
+        :raises ValueError: this object has been closed
         :raises io.UnsupportedOperation: since reading from this is forbidden
         """
+        if self.is_closed:
+            raise ValueError('Reading from closed /dev/null!')
         raise io.UnsupportedOperation('read')
 
     def write(self, x: tp.Union[str, bytes]) -> int:
