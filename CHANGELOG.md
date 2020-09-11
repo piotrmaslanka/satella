@@ -1,3 +1,1 @@
-# v2.11.5
-
-* added `DevNullFilelikeObject`
+# v2.11.6
