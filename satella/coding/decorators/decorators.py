@@ -76,6 +76,7 @@ def queue_get(queue_getter: tp.Callable[[object], Queue], timeout: tp.Optional[f
             try:
                 que = my_queue_getter(self)
                 item = queue_get_method(que, timeout)
+                return fun(self, item)
             except exception_empty:
                 if method_to_execute_on_empty is not None:
                     if callable(method_to_execute_on_empty):
@@ -83,7 +84,6 @@ def queue_get(queue_getter: tp.Callable[[object], Queue], timeout: tp.Optional[f
                     elif isinstance(method_to_execute_on_empty, str):
                         method = getattr(self, method_to_execute_on_empty)
                         method()
-            return fun(self, item)
 
         return inner
 
