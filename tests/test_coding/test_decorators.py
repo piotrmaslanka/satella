@@ -42,15 +42,20 @@ class TestDecorators(unittest.TestCase):
         class Queue:
             def __init__(self):
                 self.queue = queue.Queue()
+                self.on_empty_called = False
 
-            @queue_get('queue', timeout=0)
+            @queue_get('queue', timeout=0, method_to_execute_on_empty='process_on_empty')
             def process(self, item):
                 pass
+
+            def process_on_empty(self):
+                self.on_empty_called = True
 
         q = Queue()
         q.queue.put(True)
         q.process()
         q.process()
+        self.assertTrue(q.on_empty_called)
 
     def test_log_exceptions(self):
         try:

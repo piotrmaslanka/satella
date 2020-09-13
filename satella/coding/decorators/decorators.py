@@ -21,7 +21,8 @@ def queue_get(queue_getter: tp.Callable[[object], Queue], timeout: tp.Optional[f
               exception_empty=queue.Empty,
               queue_get_method: tp.Callable[[Queue, tp.Optional[float]], tp.Any] =
               lambda x, timeout: x.get(
-                  timeout=timeout)):
+                  timeout=timeout),
+              method_to_execute_on_empty: tp.Optional[tp.Union[str, tp.Callable]] = None):
     """
     A decorator for class methods that consume from a queue.
 
@@ -39,6 +40,10 @@ def queue_get(queue_getter: tp.Callable[[object], Queue], timeout: tp.Optional[f
         empty.
     :param queue_get_method: a method to invoke on this queue. Accepts two arguments - the first
         is the queue, the second is the timeout. It has to follow the type signature given.
+    :param method_to_execute_on_empty: a callable, or a name of the method to be executed (with no
+        arguments other than self) to execute in case queue.Empty was raised. Can be a callable -
+        in that case it should expect no arguments, or can be a string, which will be assumed to be
+        a method name
 
     Use instead of:
 
@@ -72,7 +77,12 @@ def queue_get(queue_getter: tp.Callable[[object], Queue], timeout: tp.Optional[f
                 que = my_queue_getter(self)
                 item = queue_get_method(que, timeout)
             except exception_empty:
-                return
+                if method_to_execute_on_empty is not None:
+                    if callable(method_to_execute_on_empty):
+                        method_to_execute_on_empty()
+                    elif isinstance(method_to_execute_on_empty, str):
+                        method = getattr(self, method_to_execute_on_empty)
+                        method()
             return fun(self, item)
 
         return inner
