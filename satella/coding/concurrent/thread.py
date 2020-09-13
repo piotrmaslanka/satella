@@ -118,6 +118,36 @@ class SingleStartThread(threading.Thread):
         return self
 
 
+class BogusTerminableThread:
+    """
+    A mock object that implements threading interface but does nothing
+    """
+    def __init__(self):
+        self.running = False
+        self.terminated = False
+        self.daemon = True
+
+    def is_alive(self):
+        return not self.terminated and self.running
+
+    def start(self):
+        """
+        :raises RuntimeError: thread already terminated or already running
+        """
+        if self.terminated:
+            raise RuntimeError('Thread already terminated')
+        if self.running:
+            raise RuntimeError('Thread already running')
+        self.running = True
+
+    def terminate(self):
+        self.terminated = True
+
+    def join(self, timeout=None):
+        if self.terminated:
+            self.running = False
+
+
 class TerminableThread(threading.Thread):
     """
     Class that will execute something in a loop unless terminated. Use like:

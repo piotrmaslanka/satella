@@ -32,6 +32,12 @@ It means that if it's hanging on I/O, for example, it won't be affected.
 .. autoclass:: satella.coding.concurrent.TerminableThread
     :members:
 
+BogusTerminableThread
+=====================
+
+.. autoclass:: satella.coding.concurrent.BogusTerminableThread
+    :members:
+
 call_in_separate_thread
 =======================
 
