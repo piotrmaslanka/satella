@@ -10,6 +10,10 @@ class TestPredicates(unittest.TestCase):
         p = x.int()
         self.assertEqual(p('2'), 2)
 
+    def test_bool_str(self):
+        p = x.int().str()
+        self.assertEqual(p(True), '1')
+
     def test_upper(self):
         p = x.upper()
         self.assertEquals(p('ala ma kota'), 'ALA MA KOTA')

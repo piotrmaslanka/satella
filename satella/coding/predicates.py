@@ -42,7 +42,7 @@ def make_operation_single_arg(operation: tp.Callable[[tp.Any], tp.Any],
                               docstring: tp.Optional[str] = None) -> PredicateType:
     def operation_v(self) -> PredicateType:
         def operate(v):
-            return operation(v)
+            return operation(self.operation(v))
         return Predicate(operate)
 
     if docstring:
