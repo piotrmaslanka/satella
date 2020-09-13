@@ -7,7 +7,7 @@ from satella.exceptions import PreconditionError
 T = tp.TypeVar('T')
 U = tp.TypeVar('U')
 Expression = tp.NewType('Expression', str)
-
+ExcType = tp.Type[Exception]
 
 # noinspection PyPep8Naming
 def _TRUE(x):
@@ -18,7 +18,7 @@ Queue = tp.TypeVar('Queue')
 
 
 def queue_get(queue_getter: tp.Union[str, tp.Callable[[object], Queue]], timeout: tp.Optional[float] = None,
-              exception_empty=queue.Empty,
+              exception_empty: tp.Union[ExcType, tp.Tuple[ExcType, ...]]=queue.Empty,
               queue_get_method: tp.Callable[[Queue, tp.Optional[float]], tp.Any] =
               lambda x, timeout: x.get(
                   timeout=timeout),
