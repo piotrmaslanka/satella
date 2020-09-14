@@ -358,6 +358,21 @@ def n_th(iterator: IteratorOrIterable, n: int = 0) -> T:
         raise IndexError('Iterable was too short')
 
 
+def is_empty(iterable: IteratorOrIterable) -> bool:
+    """
+    Checks whether an iterator is empty.
+
+    This will exhaust the iterator.
+
+    :param iterable: iterator to check
+    :return: whether the iterator is empty
+    """
+    i = 0
+    for elem in iterable:
+        i += 1
+    return i == 0
+
+
 def map_list(fun: tp.Callable, iterable: IteratorOrIterable) -> tp.List:
     """
     A syntactic sugar for

@@ -4,11 +4,20 @@ import unittest
 from satella.coding.sequences import choose, choose_one, infinite_counter, take_n, is_instance, \
     is_last, add_next, half_cartesian, skip_first, zip_shifted, stop_after, group_quantity, \
     iter_dict_of_list, shift, other_sequence_no_longer_than, count, even, odd, Multirun, n_th, \
-    unique, length, map_list, smart_zip
+    unique, length, map_list, smart_zip, is_empty
 from satella.coding.predicates import x
 
 
 class TestSequences(unittest.TestCase):
+
+    def test_empty(self):
+        def empty_iterator():
+            if False:
+                yield 2
+
+        e = empty_iterator()
+        self.assertTrue(is_empty(e))
+        self.assertFalse(is_empty([1]))
 
     def test_smart_zip(self):
         a1 = [(1, 1), (1, 2), (1, 3)]
