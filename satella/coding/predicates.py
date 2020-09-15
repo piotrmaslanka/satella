@@ -118,7 +118,6 @@ class Predicate:
             values
         """
         def op(v):
-            import sys
             for e in self.operation(v):
                 if predicate(e):
                     return True
