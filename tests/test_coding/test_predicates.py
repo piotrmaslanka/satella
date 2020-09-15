@@ -6,6 +6,15 @@ from satella.coding.predicates import x
 
 class TestPredicates(unittest.TestCase):
 
+    def test_has_p(self):
+        class Object:
+            def __init__(self):
+                self.a = [1, 2, 3, 4, 5, 6]
+        a = Object()
+        self.assertTrue(x.a.has_p(x % 2 == 0)(a))
+        a.a = [3, 5, 7, 9]
+        self.assertFalse(x.a.has_p(x % 2 == 0)(a))
+
     def test_int(self):
         p = x.int()
         self.assertEqual(p('2'), 2)

@@ -96,6 +96,22 @@ class Predicate:
         """
         return make_operation_two_args(_one_of)(self, values)
 
+    def has_p(self, predicate: 'Predicate') -> PredicateType:
+        """
+        Check if any element of the current value (which must be an iterable)
+        returns True when applied to predicate
+
+        :param predicate: predicate that has to return True for at least one of this predicate's
+            values
+        """
+        def op(v):
+            import sys
+            for e in self.operation(v):
+                if predicate(e):
+                    return True
+            return False
+        return Predicate(op)
+
     inside = make_operation_two_args(operator.contains,
                                      'Return a predicate checking if x is inside value')
 
