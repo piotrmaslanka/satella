@@ -12,7 +12,7 @@ from satella.coding.structures import TimeBasedHeap, Heap, typednamedtuple, \
     DictionaryView, HashableWrapper, TwoWayDictionary, Ranking, SortedList, SliceableDeque, \
     DirtyDict, KeyAwareDefaultDict, Proxy, ReprableMixin, TimeBasedSetHeap, ExpiringEntryDict, SelfCleaningDefaultDict, \
     CacheDict, StrEqHashableMixin, ComparableIntEnum, HashableIntEnum, ComparableAndHashableBy, \
-ComparableAndHashableByInt
+    ComparableAndHashableByInt
 
 
 class TestMisc(unittest.TestCase):
