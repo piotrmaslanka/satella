@@ -2,6 +2,9 @@ import typing as tp
 import operator
 
 __all__ = ['x']
+
+import warnings
+
 PredicateType = tp.Callable[[tp.Any], bool]
 
 
@@ -97,6 +100,16 @@ class Predicate:
         return make_operation_two_args(_one_of)(self, values)
 
     def has_p(self, predicate: 'Predicate') -> PredicateType:
+        """
+        An old name for has().
+
+        It's deprecated. Use has() instead
+        """
+        warnings.warn('This is deprecated and will be removed in Satella 3.x.'
+                      'Please use has() instead', DeprecationWarning)
+        return self.has(predicate)
+
+    def has(self, predicate: 'Predicate') -> PredicateType:
         """
         Check if any element of the current value (which must be an iterable)
         returns True when applied to predicate
