@@ -111,7 +111,6 @@ def loop_while(pred: tp.Union[tp.Callable[[tp.Any], bool],
     def outer(fun):
         @wraps(fun)
         def inner(*args, **kwargs):
-            nonlocal pred
             pred_f = pred
             if len(args) > 0:
                 pred_f = lambda: pred(args[0])
