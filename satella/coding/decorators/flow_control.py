@@ -112,7 +112,7 @@ def loop_while(pred: tp.Union[tp.Callable[[tp.Any], bool],
         @wraps(fun)
         def inner(*args, **kwargs):
             pred_f = pred
-            if len(args) > 0:
+            if len(args):
                 pred_f = lambda: pred(args[0])
             while pred_f():
                 fun(*args, **kwargs)
