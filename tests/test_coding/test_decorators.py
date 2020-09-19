@@ -6,13 +6,36 @@ from socket import socket
 from satella.coding import wraps, chain_functions, postcondition, \
     log_exceptions, queue_get, precondition, short_none
 from satella.coding.decorators import auto_adapt_to_methods, attach_arguments, \
-    execute_before
+    execute_before, loop_while
+from satella.coding.predicates import x
 from satella.exceptions import PreconditionError
 
 logger = logging.getLogger(__name__)
 
 
 class TestDecorators(unittest.TestCase):
+
+    def test_loop_while(self):
+        class MyLooped:
+            terminating = False
+            i = 0
+
+            @loop_while(x.i < 10)
+            def run(self):
+                self.i += 1
+
+        a = MyLooped()
+        a.run()
+        self.assertGreaterEqual(a.i, 10)
+        b = {'i': 0}
+
+        @loop_while(lambda: b['i'] < 10)
+        def run():
+            nonlocal b
+            b['i'] += 1
+
+        run()
+        self.assertGreaterEqual(b['i'], 10)
 
     def test_execute_before(self):
         a = 0
