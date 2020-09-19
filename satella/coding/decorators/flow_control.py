@@ -1,3 +1,4 @@
+import inspect
 import typing as tp
 import queue
 from .decorators import wraps, ExcType
@@ -101,20 +102,19 @@ def loop_while(pred: tp.Union[tp.Callable[[tp.Any], bool],
 
     :param pred: predicate to evaluate. Can accept either one element, in this case
         it will be fed the class instance, or accept no arguments, in which case
-        it will be considered to annotate a method
+        it will be considered to annotate a method.
+
+    Note that the function you decorate may only take arguments if it's a class method.
+    If it's a standard method, then it should not take any arguments.
     """
     def outer(fun):
         @wraps(fun)
         def inner(*args, **kwargs):
+            nonlocal pred
+            pred_f = pred
             if len(args) > 0:
-                p = pred(args[0])
-            else:
-                p = pred()
-            while p:
+                pred_f = lambda: pred(args[0])
+            while pred_f():
                 fun(*args, **kwargs)
-                if len(args) > 0:
-                    p = pred(args[0])
-                else:
-                    p = pred()
         return inner
     return outer
