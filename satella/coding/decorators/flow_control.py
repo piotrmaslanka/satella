@@ -87,6 +87,7 @@ def loop_while(pred: tp.Union[tp.Callable[[tp.Any], bool],
 
     Use to mostly loop class methods basing off classes, like:
 
+    >>> from satella.coding.predicates import x
     >>> class Terminable:
     >>>     terminated = False
     >>>     @loop_while(x.terminated == False)
