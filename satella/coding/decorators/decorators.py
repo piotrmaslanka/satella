@@ -76,6 +76,8 @@ def wraps(cls_to_wrap: tp.Type) -> tp.Callable[[tp.Type], tp.Type]:
     A functools.wraps() but for classes.
 
     As a matter of fact, this can replace functools.wraps() entirely.
+    This replaces __doc__, __name__, __module__ and __annotations__.
+    It also sets a correct __wrapped__.
 
     :param cls_to_wrap: class to wrap
     """
