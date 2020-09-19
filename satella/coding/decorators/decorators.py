@@ -89,6 +89,7 @@ def wraps(cls_to_wrap: tp.Type) -> tp.Callable[[tp.Type], tp.Type]:
             cls.__module__ = cls_to_wrap.__module__
         if hasattr(cls_to_wrap, '__annotations__'):
             cls.__annotations__ = cls_to_wrap.__annotations__
+        cls.__wrapped__ = cls
         return cls
 
     return outer
