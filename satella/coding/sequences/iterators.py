@@ -358,6 +358,58 @@ def n_th(iterator: IteratorOrIterable, n: int = 0) -> T:
         raise IndexError('Iterable was too short')
 
 
+class IteratorListAdapter:
+    """
+    A wrapper around an iterator that enables it to be processed as a list.
+
+    Ie. the generator will now support __contains__, __len__ and __getitem__.
+    If a call to such a method is done, the generator will be unfolded in memory so this
+    might take a ton of memory! You've been warned!
+    
+    :param iterator: 
+    """
+    __slots__ = ('unfolded', 'iterator', 'list', 'pointer')
+
+    def __init__(self, iterator: tp.Iterator):
+        self.iterator = iter(iterator)
+        self.list = None        # type: list
+        self.unfolded = False
+        self.pointer = 0
+
+    def __iter__(self):
+        if self.unfolded:
+            return iter(self.list)
+        else:
+            return self
+
+    @rethrow_as(IndexError, StopIteration)
+    def __next__(self):
+        if self.unfolded:
+            self.pointer += 1
+            return self.list[self.pointer-1]    # throws: IndexError
+        else:
+            return next(self.iterator)
+
+    def __unfold(self):
+        if self.unfolded:
+            return
+        self.list = list(self.iterator)
+        self.unfolded = True
+        self.pointer = 0
+
+    def __getitem__(self, item):
+        self.__unfold()
+        return self.list[item]
+
+    def __contains__(self, item) -> bool:
+        self.__unfold()
+        return item in self.list
+
+    def __len__(self) -> int:
+        self.__unfold()
+        return len(self.list)
+
+
 def is_empty(iterable: IteratorOrIterable) -> bool:
     """
     Checks whether an iterator is empty.

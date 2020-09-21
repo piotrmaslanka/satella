@@ -2,10 +2,18 @@ import sys
 import unittest
 
 from satella.coding import SelfClosingGenerator, hint_with_length, chain
-from satella.coding.sequences import smart_enumerate, ConstruableIterator, walk
+from satella.coding.sequences import smart_enumerate, ConstruableIterator, walk, \
+    IteratorListAdapter
 
 
 class TestIterators(unittest.TestCase):
+
+    def test_generator_list_adapter(self):
+        gla = IteratorListAdapter(range(10))
+        self.assertEqual(next(gla), 0)
+        self.assertEqual(gla[0], 1)
+        self.assertEqual(len(gla), 9)
+        self.assertEqual(list(gla), list(range(1, 10)))
 
     def test_walk(self):
         a = [[1, 2, 3], 4, 5, 6, [7, 8, 9]]

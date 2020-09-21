@@ -3,3 +3,4 @@
 * added `make_list`
 * fixed typing issue in `choose` and `choose_one`
 * added `RollingArithmeticAverage`
+* added `IteratorListAdapter`

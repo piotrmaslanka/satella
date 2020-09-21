@@ -11,6 +11,12 @@ Rolling averages
 Standard routines
 =================
 
+IteratorListAdapter
+-------------------
+
+.. autoclass:: satella.coding.sequences.IteratorListAdapter
+    :members:
+
 map_list
 --------
 
