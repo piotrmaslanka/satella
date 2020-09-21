@@ -2,6 +2,12 @@
 Sequences and iterators
 =======================
 
+Rolling averages
+================
+
+.. autoclass:: satella.coding.sequences.RollingArithmeticAverage
+    :members:
+
 Standard routines
 =================
 

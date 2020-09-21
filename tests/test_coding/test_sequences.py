@@ -4,11 +4,21 @@ import unittest
 from satella.coding.sequences import choose, choose_one, infinite_counter, take_n, is_instance, \
     is_last, add_next, half_cartesian, skip_first, zip_shifted, stop_after, group_quantity, \
     iter_dict_of_list, shift, other_sequence_no_longer_than, count, even, odd, Multirun, n_th, \
-    unique, length, map_list, smart_zip, is_empty, make_list
+    unique, length, map_list, smart_zip, is_empty, make_list, RollingArithmeticAverage
 from satella.coding.predicates import x
 
 
 class TestSequences(unittest.TestCase):
+
+    def test_rolling_arith_avg(self):
+        a = RollingArithmeticAverage(10)
+        for i in range(10):
+            a.insert(1)
+        self.assertEqual(a.avg(), 1)
+        a.insert(5)
+        self.assertGreaterEqual(a.avg(), 1)
+        self.assertLessEqual(len(a.queue), 10)
+        self.assertEqual(a.tot_sum, 9+5)
 
     def test_make_list(self):
         a = [1, 2, 3]
