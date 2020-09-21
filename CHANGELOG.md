@@ -1,6 +1,3 @@
-# v2.11.10
+# v2.11.11
 
-* added `make_list`
-* fixed typing issue in `choose` and `choose_one`
-* added `RollingArithmeticAverage`
-* added `IteratorListAdapter`
+
