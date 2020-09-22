@@ -29,6 +29,22 @@ class TestMisc(unittest.TestCase):
         del sm[1, 2]
         a = list(sm)
         self.assertEqual(a, [[2]])
+        sm[..., 2] = [5, 6, 7]
+        self.assertEqual(list(sm), [[2, None, None], [None, None, None], [5, 6, 7]])
+        sm[1, :] = [1, 2, 3]
+        self.assertEqual(sm[1, :], [1, 2, 3])
+        self.assertEqual(sm[:, 1], [None, 2, None])
+        self.assertEqual(list(sm), [[2, 1, None], [None, 2, None], [5, 3, 7]])
+        del sm[1, 2]
+        self.assertEqual(list(sm), [[2, 1, None], [None, 2, None], [5, None, 7]])
+        sm2 = SparseMatrix.from_iterable([[2, 1, None], [None, 2, None], [5, None, 7]])
+        self.assertEqual(sm, sm2)
+        del sm[1,:]
+        self.assertEqual(list(sm), [[2, None, None], [None, None, None], [5, None, 7]])
+        del sm[:,2]
+        self.assertEqual(list(sm), [[2]])
+        del sm[:,:]
+        self.assertEqual(list(sm), [])
 
     def test_comparable_and_hashable_by_int(self):
         class MyClass(ComparableAndHashableByInt):
