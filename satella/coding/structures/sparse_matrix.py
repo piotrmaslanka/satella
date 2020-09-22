@@ -14,9 +14,6 @@ class SparseMatrix(tp.Generic[T]):
     Set elements like this:
 
     >>> sm[1, 2] = 5
-    >>> sm[...,1] = [5]
-    >>> sm[1,...] = [5]
-    >>> sm[...,...] = [[5]]
     >>> sm[:,1] = [5]
     >>> sm[1,:] = [5]
     >>> sm[:,:] = [[5]]
@@ -51,6 +48,22 @@ class SparseMatrix(tp.Generic[T]):
     def __bool__(self) -> bool:
         return self.no_rows == 0
 
+    def _sanitize_coordinate(self, coord: tp.Union[int, slice],
+                             max_len: int) -> tp.Union[int, slice]:
+        if isinstance(coord, int):
+            if coord < 0:
+                coord += max_len
+        elif isinstance(coord, slice):
+            start = coord.start
+            stop = coord.stop
+            step = coord.step
+            if start < 0:
+                start += max_len
+            if stop < 0:
+                stop += max_len
+            coord = slice(start, stop, step)
+        return coord
+
     def _sanitize_key(self, key: KeyArg) -> KeyArg:
         col, row = key
 
@@ -59,15 +72,13 @@ class SparseMatrix(tp.Generic[T]):
                 'Custom slicing not supported yet!'
             col = Ellipsis
         elif isinstance(col, int):
-            if col < 0:
-                col += self.no_cols
+            col = self._sanitize_coordinate(col, self.no_cols)
         if isinstance(row, slice):
             assert row.start is None and row.stop is None and row.step is None, \
                 'Custom slicing not supported yet!'
             row = Ellipsis
         elif isinstance(row, int):
-            if row < 0:
-                row += self.no_rows
+            row = self._sanitize_coordinate(row, self.no_rows)
 
         return col, row
 
