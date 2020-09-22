@@ -15,7 +15,7 @@ from satella.coding.structures import TimeBasedHeap, Heap, typednamedtuple, \
     ComparableAndHashableByInt, SparseMatrix
 
 
-class TestStructures(unittest.TestCase):
+class TestMisc(unittest.TestCase):
 
     def test_sparse_matrix(self):
         sm = SparseMatrix()
