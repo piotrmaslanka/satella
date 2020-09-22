@@ -1,4 +1,2 @@
-# v2.11.11
-
-* added `SparseMatrix`
+# v2.11.12
 
