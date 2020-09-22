@@ -46,6 +46,8 @@ class TestMisc(unittest.TestCase):
         self.assertEqual(list(sm), [[2]])
         del sm[:, :]
         self.assertEqual(list(sm), [])
+        sm.append_row([1, 2])
+        self.assertEqual(list(sm), [[1, 2]])
 
     def test_comparable_and_hashable_by_int(self):
         class MyClass(ComparableAndHashableByInt):

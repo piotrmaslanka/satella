@@ -7,6 +7,10 @@ KeyArg = tp.Tuple[tp.Union[int, slice],
                   tp.Union[int, slice]]
 
 
+def iterate_slice(sli: slice) -> tp.Iterator[int]:
+    return range(sli.start, sli.stop, sli.step)
+
+
 class SparseMatrix(tp.Generic[T]):
     """
     A matrix of infinite size, that supports assignments.
@@ -32,6 +36,16 @@ class SparseMatrix(tp.Generic[T]):
         self.known_column_count = {}        # tp.Dict[int, int] column_no => amount
         self.no_cols = 0
         self.no_rows = 0
+
+    def append_row(self, y: tp.Iterable[T]):
+        """
+        Append a row to the bottom of the matrix
+
+        :param y: iterable with consequent columns
+        """
+        next_row = self.no_rows
+        for col_no, z in enumerate(y):
+            self[col_no, next_row] = z
 
     def clear(self) -> None:
         """
