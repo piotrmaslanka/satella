@@ -57,9 +57,13 @@ class SparseMatrix(tp.Generic[T]):
             start = coord.start
             stop = coord.stop
             step = coord.step
-            if start < 0:
+            if start is None:
+                start = 0
+            elif start < 0:
                 start += max_len
-            if stop < 0:
+            if stop is None:
+                stop = max_len
+            elif stop < 0:
                 stop += max_len
             coord = slice(start, stop, step)
         return coord
