@@ -12,10 +12,23 @@ from satella.coding.structures import TimeBasedHeap, Heap, typednamedtuple, \
     DictionaryView, HashableWrapper, TwoWayDictionary, Ranking, SortedList, SliceableDeque, \
     DirtyDict, KeyAwareDefaultDict, Proxy, ReprableMixin, TimeBasedSetHeap, ExpiringEntryDict, SelfCleaningDefaultDict, \
     CacheDict, StrEqHashableMixin, ComparableIntEnum, HashableIntEnum, ComparableAndHashableBy, \
-    ComparableAndHashableByInt
+    ComparableAndHashableByInt, SparseMatrix
 
 
-class TestMisc(unittest.TestCase):
+class TestStructures(unittest.TestCase):
+
+    def test_sparse_matrix(self):
+        sm = SparseMatrix()
+        sm[1, 2] = 1
+        sm[0, 0] = 2
+        self.assertEqual(list(sm), [[2, None], [None, None], [None, 1]])
+        self.assertEqual(sm.columns, 2)
+        self.assertEqual(sm.rows, 3)
+        sm[1, 2] = 3
+        self.assertEqual(list(sm), [[2, None], [None, None], [None, 3]])
+        del sm[1, 2]
+        a = list(sm)
+        self.assertEqual(a, [[2]])
 
     def test_comparable_and_hashable_by_int(self):
         class MyClass(ComparableAndHashableByInt):

@@ -11,6 +11,7 @@ from .ranking import Ranking
 from .singleton import Singleton, SingletonWithRegardsTo
 from .sorted_list import SortedList, SliceableDeque
 from .typednamedtuple import typednamedtuple
+from .sparse_matrix import SparseMatrix
 
 __all__ = [
     'CacheDict',
@@ -33,6 +34,7 @@ __all__ = [
     'HashableWrapper',
     'DictionaryView',
     'frozendict',
+    'SparseMatrix',
     'OmniHashableMixin',
     'Singleton',
     'SingletonWithRegardsTo',

@@ -2,6 +2,13 @@
 Structures
 ==========
 
+SparseMatrix
+------------
+
+.. autoclass:: satella.coding.structures.SparseMatrix
+    :members:
+
+
 Heaps
 =====
 
