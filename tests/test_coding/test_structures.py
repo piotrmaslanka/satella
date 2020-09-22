@@ -37,6 +37,7 @@ class TestMisc(unittest.TestCase):
         self.assertEqual(list(sm), [[2, 1, None], [None, 2, None], [5, 3, 7]])
         del sm[1, 2]
         self.assertEqual(list(sm), [[2, 1, None], [None, 2, None], [5, None, 7]])
+        self.assertEqual(sm[-1, -1], 7)
         sm2 = SparseMatrix.from_iterable([[2, 1, None], [None, 2, None], [5, None, 7]])
         self.assertEqual(sm, sm2)
         del sm[1,:]

@@ -7,20 +7,6 @@ KeyArg = tp.Tuple[tp.Union[int, slice],
                   tp.Union[int, slice]]
 
 
-def _sanitize_key(key: KeyArg) -> KeyArg:
-    col, row = key
-
-    if isinstance(col, slice):
-        assert col.start is None and col.stop is None and col.step is None, \
-            'Custom slicing not supported yet!'
-        col = Ellipsis
-    if isinstance(row, slice):
-        assert row.start is None and row.stop is None and row.step is None, \
-            'Custom slicing not supported yet!'
-        row = Ellipsis
-    return col, row
-
-
 class SparseMatrix(tp.Generic[T]):
     """
     A matrix of infinite size, that supports assignments.
@@ -39,9 +25,10 @@ class SparseMatrix(tp.Generic[T]):
     and the second one is the number of the row, also counted from 0
 
     Note that custom slicing (ie. slices which are not :) are not yet supported.
+    Negative indices are supported.
     # todo add custom slicing
 
-    Undefined elements are considered to be of value None
+    Undefined elements are considered to be of value None.
     """
     def __init__(self):
         self.rows_dict = collections.defaultdict(lambda: collections.defaultdict(lambda: None))
@@ -63,6 +50,26 @@ class SparseMatrix(tp.Generic[T]):
 
     def __bool__(self) -> bool:
         return self.no_rows == 0
+
+    def _sanitize_key(self, key: KeyArg) -> KeyArg:
+        col, row = key
+
+        if isinstance(col, slice):
+            assert col.start is None and col.stop is None and col.step is None, \
+                'Custom slicing not supported yet!'
+            col = Ellipsis
+        elif isinstance(col, int):
+            if col < 0:
+                col += self.no_cols
+        if isinstance(row, slice):
+            assert row.start is None and row.stop is None and row.step is None, \
+                'Custom slicing not supported yet!'
+            row = Ellipsis
+        elif isinstance(row, int):
+            if row < 0:
+                row += self.no_rows
+
+        return col, row
 
     @classmethod
     def from_iterable(cls, y: tp.Iterable[tp.Iterable[T]]):
@@ -158,7 +165,7 @@ class SparseMatrix(tp.Generic[T]):
             del self[key]
             return
 
-        col, row = _sanitize_key(key)
+        col, row = self._sanitize_key(key)
 
         if col is Ellipsis and row is Ellipsis:
             sm = SparseMatrix.from_iterable(value)
@@ -185,7 +192,7 @@ class SparseMatrix(tp.Generic[T]):
             self.rows_dict[row][col] = value
 
     def __getitem__(self, item: tp.Tuple[int, int]) -> tp.Optional[T]:
-        col, row = _sanitize_key(item)
+        col, row = self._sanitize_key(item)
 
         if col is Ellipsis and row is Ellipsis:
             return list(self)
@@ -216,7 +223,7 @@ class SparseMatrix(tp.Generic[T]):
 
     @silence_excs(KeyError)
     def __delitem__(self, key: tp.Tuple[int, int]) -> None:
-        col, row = _sanitize_key(key)
+        col, row = self._sanitize_key(key)
 
         if row is Ellipsis and col is Ellipsis:
             self.clear()
