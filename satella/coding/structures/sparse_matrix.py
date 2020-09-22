@@ -2,13 +2,9 @@ import collections
 import typing as tp
 
 from satella.coding.recast_exceptions import silence_excs
+
 T = tp.TypeVar('T')
-KeyArg = tp.Tuple[tp.Union[int, slice],
-                  tp.Union[int, slice]]
-
-
-def iterate_slice(sli: slice) -> tp.Iterator[int]:
-    return range(sli.start, sli.stop, sli.step)
+KeyArg = tp.Tuple[tp.Union[int, slice], tp.Union[int, slice]]
 
 
 class SparseMatrix(tp.Generic[T]):
@@ -25,11 +21,12 @@ class SparseMatrix(tp.Generic[T]):
     where the first argument is the number of the column, counted from 0,
     and the second one is the number of the row, also counted from 0
 
-    Note that custom slicing (ie. slices which are not :) are not yet supported.
+    Note that custom slicing (ie. slices which are not :) will not be supported.
     Negative indices are supported.
-    # todo add custom slicing
 
     Undefined elements are considered to be of value None.
+
+    Iterating over this matrix will yield it's consecutive rows.
     """
     def __init__(self):
         self.rows_dict = collections.defaultdict(lambda: collections.defaultdict(lambda: None))
@@ -37,7 +34,7 @@ class SparseMatrix(tp.Generic[T]):
         self.no_cols = 0
         self.no_rows = 0
 
-    def append_row(self, y: tp.Iterable[T]):
+    def append_row(self, y: tp.Iterable[T]) -> None:
         """
         Append a row to the bottom of the matrix
 
@@ -67,33 +64,21 @@ class SparseMatrix(tp.Generic[T]):
         if isinstance(coord, int):
             if coord < 0:
                 coord += max_len
-        elif isinstance(coord, slice):
-            start = coord.start
-            stop = coord.stop
-            step = coord.step
-            if start is None:
-                start = 0
-            elif start < 0:
-                start += max_len
-            if stop is None:
-                stop = max_len
-            elif stop < 0:
-                stop += max_len
-            coord = slice(start, stop, step)
         return coord
 
     def _sanitize_key(self, key: KeyArg) -> KeyArg:
         col, row = key
 
         if isinstance(col, slice):
-            assert col.start is None and col.stop is None and col.step is None, \
-                'Custom slicing not supported yet!'
+            if not (col.start is None and col.stop is None and col.step is None):
+                raise IndexError('Custom slicing is not supported!')
             col = Ellipsis
         elif isinstance(col, int):
             col = self._sanitize_coordinate(col, self.no_cols)
+
         if isinstance(row, slice):
-            assert row.start is None and row.stop is None and row.step is None, \
-                'Custom slicing not supported yet!'
+            if not (row.start is None and row.stop is None and row.step is None):
+                raise IndexError('Custom slicing is not supported!')
             row = Ellipsis
         elif isinstance(row, int):
             row = self._sanitize_coordinate(row, self.no_rows)
@@ -125,14 +110,8 @@ class SparseMatrix(tp.Generic[T]):
         """Return the amount of rows"""
         return self.no_rows
 
-    def get_rows(self) -> tp.Iterator[tp.List[T]]:
-        """
-        Return an iterator that yields consecutive rows of the matrix
-        """
-        return (self.get_row(i) for i in range(self.no_rows))
-
     def __iter__(self) -> tp.Iterator[tp.List]:
-        return self.get_rows()
+        return (self.get_row(i) for i in range(self.no_rows))
 
     def __len__(self) -> int:
         return self.no_rows
@@ -168,7 +147,12 @@ class SparseMatrix(tp.Generic[T]):
         else:
             self.known_column_count[col_no] -= 1
 
-    def _delete_row(self, row_no: int) -> None:
+    def delete_row(self, row_no: int) -> None:
+        """
+        Delete a row with specified number
+
+        :param row_no: number of the row to delete
+        """
         cols = list(self.rows_dict[row_no].keys())  # Copy it here
         for col_no in cols:
             del self[col_no, row_no]
@@ -220,21 +204,16 @@ class SparseMatrix(tp.Generic[T]):
                 self._increment_column_count(col)
             self.rows_dict[row][col] = value
 
-    def __getitem__(self, item: tp.Tuple[int, int]) -> tp.Optional[T]:
+    def __getitem__(self,
+                    item: KeyArg) -> tp.Union[tp.List[T], tp.List[tp.List[T]], T]:
         col, row = self._sanitize_key(item)
 
         if col is Ellipsis and row is Ellipsis:
             return list(self)
         elif col is Ellipsis:
-            lst = [None] * self.no_cols
-            for col_no in range(self.no_cols):
-                lst[col_no] = self[col_no, row]
-            return lst
+            return [self[col_no, row] for col_no in range(self.no_cols)]
         elif row is Ellipsis:
-            lst = [None] * self.no_rows
-            for row_no in range(self.no_rows):
-                lst[row_no] = self[col, row_no]
-            return lst
+            return [self[col, row_no] for row_no in range(self.no_rows)]
         else:
             if row not in self.rows_dict:    # check so as to avoid adding new entries
                 return None
@@ -243,15 +222,15 @@ class SparseMatrix(tp.Generic[T]):
             return self.rows_dict[row][col]
 
     @silence_excs(TypeError, returns=0)
-    def _calculate_column_count(self):
-        return max(self.known_column_count)+1
+    def _calculate_column_count(self) -> int:
+        return max(self.known_column_count) + 1
 
     @silence_excs(TypeError, returns=0)
-    def _calculate_row_count(self):
+    def _calculate_row_count(self) -> int:
         return max(self.rows_dict) + 1
 
     @silence_excs(KeyError)
-    def __delitem__(self, key: tp.Tuple[int, int]) -> None:
+    def __delitem__(self, key: KeyArg) -> None:
         col, row = self._sanitize_key(key)
 
         if row is Ellipsis and col is Ellipsis:
@@ -266,6 +245,7 @@ class SparseMatrix(tp.Generic[T]):
             # Check if the element is there
             if row not in self.rows_dict:
                 return
+
             if col not in self.rows_dict[row]:
                 return
 
