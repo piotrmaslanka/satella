@@ -57,9 +57,8 @@ class Timer:
         if self.cancelled:
             return
         if self.spawn_separate:
-            thr = threading.Thread(target=self.function, args=self.args, kwargs=self.kwargs,
-                                   daemon=True)
-            thr.start()
+            threading.Thread(target=self.function, args=self.args, kwargs=self.kwargs,
+                             daemon=True).start()
         else:
             self.function(*self.args, **self.kwargs)
 

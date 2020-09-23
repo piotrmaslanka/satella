@@ -13,6 +13,17 @@ from satella.exceptions import WouldWaitMore, AlreadyAllocated
 
 class TestConcurrent(unittest.TestCase):
 
+    def test_timer_separate(self):
+        a = {'test': False}
+
+        def set_a():
+            a['test'] = True
+
+        tmr = Timer(1, set_a, spawn_separate=True)
+        tmr.start()
+        time.sleep(2)
+        self.assertTrue(a['test'])
+
     def test_timer(self):
         a = {'test': False}
 
