@@ -6,8 +6,9 @@ from .monitor import MonitorList, Monitor, MonitorDict, RMonitor
 from .thread import TerminableThread, Condition, SingleStartThread, call_in_separate_thread, \
     BogusTerminableThread
 from .id_allocator import IDAllocator
+from .timer import Timer
 
 __all__ = ['LockedDataset', 'Monitor', 'RMonitor', 'CallableGroup', 'TerminableThread',
            'MonitorDict', 'MonitorList', 'Condition', 'LockedStructure', 'AtomicNumber',
            'CallNoOftenThan', 'SingleStartThread', 'IDAllocator', 'call_in_separate_thread',
-           'BogusTerminableThread']
+           'BogusTerminableThread', 'Timer']

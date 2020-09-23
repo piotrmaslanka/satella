@@ -99,6 +99,14 @@ class TimeBasedHeap(Heap):
         assert timestamp is not None
         self.push((timestamp, item))
 
+    def peek_closest(self) -> tp.Tuple[Number, T]:
+        """
+        Return the closest object to the execution deadline, but not discard it from the heap.
+
+        :raises IndexError: the heap is empty
+        """
+        return self.data[0]
+
     def pop_less_than(self, less: tp.Optional[Number] = None) -> tp.Iterator[tp.Tuple[Number, T]]:
         """
         Return all elements less (sharp inequality) than particular value.

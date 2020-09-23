@@ -141,3 +141,9 @@ in order to be notified. Just a bunch of syntactic sugar.
 
 .. autoclass:: satella.coding.concurrent.Condition
     :members:
+
+Timer
+=====
+
+.. autoclass:: satella.coding.concurrent.Timer
+    :members:

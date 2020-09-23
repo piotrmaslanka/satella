@@ -526,6 +526,8 @@ class TestMisc(unittest.TestCase):
         tbh.put(20, 'ma')
         tbh.put(30, 'kota')
 
+        self.assertEqual(tbh.peek_closest(), (10, 'ala'))
+
         q = set(tbh.pop_less_than(25))
 
         self.assertIn((10, 'ala'), q)

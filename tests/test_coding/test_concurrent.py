@@ -6,12 +6,23 @@ import time
 import unittest
 
 from satella.coding.concurrent import TerminableThread, CallableGroup, Condition, MonitorList, \
-    LockedStructure, AtomicNumber, Monitor, IDAllocator, call_in_separate_thread
+    LockedStructure, AtomicNumber, Monitor, IDAllocator, call_in_separate_thread, Timer
 from satella.coding.sequences import unique
 from satella.exceptions import WouldWaitMore, AlreadyAllocated
 
 
 class TestConcurrent(unittest.TestCase):
+
+    def test_timer(self):
+        a = {'test': False}
+
+        def set_a():
+            a['test'] = True
+
+        tmr = Timer(1, set_a)
+        tmr.start()
+        time.sleep(2)
+        self.assertTrue(a['test'])
 
     def test_call_in_separate_thread(self):
         a = {}
