@@ -13,19 +13,19 @@ T = tp.TypeVar('T')
 Number = tp.Union[int, float]
 
 
-def clip(v: Number, min: Number, max: Number) -> Number:
+def clip(v: Number, minimum: Number, maximum: Number) -> Number:
     """
-    Clip v so it conforms to min <= v <= max
+    Clip v so it conforms to minimum <= v <= maximum
 
     :param v: value to clip
-    :param min: minimum
-    :param max: maximum
+    :param minimum: minimum
+    :param maximum: maximum
     :return: clipped value
     """
-    if v < min:
-        return min
-    if v > max:
-        return max
+    if v < minimum:
+        return minimum
+    if v > maximum:
+        return maximum
     return v
 
 
