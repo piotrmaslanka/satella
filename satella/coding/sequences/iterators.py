@@ -365,8 +365,8 @@ class IteratorListAdapter:
     Ie. the generator will now support __contains__, __len__ and __getitem__.
     If a call to such a method is done, the generator will be unfolded in memory so this
     might take a ton of memory! You've been warned!
-    
-    :param iterator: 
+
+    :param iterator:
     """
     __slots__ = ('unfolded', 'iterator', 'list', 'pointer')
 
@@ -460,6 +460,21 @@ def smart_zip(*iterators: IteratorOrIterable) -> tp.Iterator[tp.Tuple[T, ...]]:
             else:
                 a.append(elem)
         yield tuple(a)
+
+
+def enumerate2(iterable: IteratorOrIterable, start: int = 0,
+               step: int = 1) -> tp.Iterator[tp.Tuple[int, T]]:
+    """
+    Enumerate with a custom step
+
+    :param iterable: iterable to enumerate
+    :param start: value to start at
+    :param step: step to add during each iteration
+    """
+    v = start
+    for item in iterable:
+        yield v, item
+        v += step
 
 
 def smart_enumerate(iterator: IteratorOrIterable, start: int = 0,

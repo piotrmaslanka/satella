@@ -83,6 +83,11 @@ is_last
 
 .. autofunction:: satella.coding.sequences.is_last
 
+enumerate2
+----------
+
+.. autofunction:: satella.coding.sequences.enumerate2
+
 smart_enumerate
 ---------
 
