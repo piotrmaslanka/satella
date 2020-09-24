@@ -1,6 +1,7 @@
 Decorators
 ==========
 
+.. autofunction:: satella.coding.decorators.memoize
 
 .. autofunction:: satella.coding.decorators.queue_get
 

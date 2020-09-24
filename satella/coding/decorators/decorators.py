@@ -1,4 +1,3 @@
-import queue
 import typing as tp
 import warnings
 
@@ -69,6 +68,29 @@ def chain_functions(fun_first: tp.Callable[..., tp.Union[tp.Tuple[tp.Tuple, tp.D
         return inner
 
     return outer
+
+
+def memoize(fun):
+    """
+    A thread safe memoizer based on function's ONLY positional arguments.
+
+    Note that this will make your function execute it at most one thread, the
+    remaining ones will have to wait.
+    """
+    from satella.coding.concurrent.monitor import MonitorDict, Monitor
+
+    fun.memoizer = MonitorDict()
+
+    @wraps(fun)
+    def inner(*args, **kwargs):
+        with Monitor.acquire(fun.memoizer):
+            if args in fun.memoizer:
+                return fun.memoizer[args]
+            else:
+                v = fun(*args, **kwargs)
+                fun.memoizer[args] = v
+                return v
+    return inner
 
 
 def wraps(cls_to_wrap: tp.Type) -> tp.Callable[[tp.Type], tp.Type]:
