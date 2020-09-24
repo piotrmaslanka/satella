@@ -1,4 +1,1 @@
-# v2.11.13
-
-* change argument names for `clip`
-* add `memoize`
+# v2.11.14
