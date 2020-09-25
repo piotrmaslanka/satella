@@ -28,6 +28,13 @@ class TestConcurrent(unittest.TestCase):
         fut.result()
         self.assertTrue(a['set'])
 
+        @run_as_future
+        def raises():
+            raise ValueError()
+
+        fut = raises()
+        self.assertRaises(ValueError, fut.result)
+
     def test_parallel_execute(self):
         a = {'times_called': 0}
 
