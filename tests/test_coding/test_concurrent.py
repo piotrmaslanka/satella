@@ -4,14 +4,39 @@ import sys
 import threading
 import time
 import unittest
+from concurrent.futures import Future
 
 from satella.coding.concurrent import TerminableThread, CallableGroup, Condition, MonitorList, \
-    LockedStructure, AtomicNumber, Monitor, IDAllocator, call_in_separate_thread, Timer
+    LockedStructure, AtomicNumber, Monitor, IDAllocator, call_in_separate_thread, Timer, \
+    parallel_execute
 from satella.coding.sequences import unique
 from satella.exceptions import WouldWaitMore, AlreadyAllocated
 
 
 class TestConcurrent(unittest.TestCase):
+
+    def test_parallel_execute(self):
+        a = {'times_called': 0}
+
+        def return_a_future(j):
+            fut = Future()
+            fut.set_running_or_notify_cancel()
+            if j % 2 == 0:
+                fut.set_exception(Exception())
+            else:
+                fut.set_result(a['times_called'])
+            a['times_called'] += 1
+            return fut
+
+        i = 0
+        for result in parallel_execute(return_a_future, [(0,), (1,), (2,), (3,), (4,)]):
+            if i % 2 == 0:
+                self.assertIsInstance(result, Exception)
+            else:
+                self.assertEqual(result, i)
+            i += 1
+        self.assertEqual(5, a['times_called'])
+
 
     def test_timer_separate(self):
         a = {'test': False}

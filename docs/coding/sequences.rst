@@ -64,6 +64,11 @@ However, this function comes to the rescue:
 
 .. autofunction:: satella.coding.sequences.take_n
 
+infinite_iterator
+-----------------
+
+.. autofunction:: satella.coding.sequences.infinite_iterator
+
 is_instance
 -----------
 

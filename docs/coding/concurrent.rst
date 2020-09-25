@@ -147,3 +147,14 @@ Timer
 
 .. autoclass:: satella.coding.concurrent.Timer
     :members:
+
+
+parallel_execute
+================
+
+For executing those functions that return a Future in parallel.
+
+parallel_execute will return you an iterator, returning the result
+(or raising an exception) for every result you get.
+
+.. autofunction:: satella.coding.concurrent.parallel_execute
