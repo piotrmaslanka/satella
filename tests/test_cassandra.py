@@ -27,6 +27,7 @@ class TestCassandra(unittest.TestCase):
 
         mcf = MockCassandraFuture()
         wrapped = wrap_future(mcf)
+        self.assertRaises(TypeError, lambda: wrap_future(wrapped))
         a = {}
 
         def on_done(fut):
