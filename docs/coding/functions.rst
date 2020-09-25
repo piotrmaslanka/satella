@@ -2,6 +2,8 @@
 Functions and decorators
 ========================
 
+.. autoclass:: satella.coding.class_or_instancemethod
+
 .. autofunction:: satella.coding.source_to_function
 
 .. autofunction:: satella.coding.queue_iterator

@@ -15,6 +15,27 @@ def extract_type_signature_from(fun: tp.Callable) -> tp.Tuple[type, ...]:
     return tuple(sign)
 
 
+# Taken from https://stackoverflow.com/questions/28237955/same-name-for-classmethod-and-instancemethod
+class class_or_instancemethod(classmethod):
+    """
+    A decorator to make your methods both classmethods (they will receive an instance of type
+    as their first argument) or normal methods (they will receive an instance of their type).
+
+    Use like:
+
+    >>> class MyClass:
+    >>>     @class_or_instancemethod
+    >>>     def method(self_or_cls):
+    >>>         if isinstance(self_or_cls, MyClass):
+    >>>             # method code
+    >>>         else:
+    >>>             # classmethod code
+    """
+    def __get__(self, instance, type_):
+        descr_get = super().__get__ if instance is None else self.__func__.__get__
+        return descr_get(instance, type_)
+
+
 class overload:
     """
     A class used for method overloading.

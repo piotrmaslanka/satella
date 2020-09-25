@@ -1,8 +1,25 @@
-from satella.coding import update_key_if_not_none, overload
+from satella.coding import update_key_if_not_none, overload, class_or_instancemethod
 import unittest
 
 
 class TestCase(unittest.TestCase):
+
+    def test_class_or_instancemethod(self):
+
+        a = {}
+        class MyClass:
+            @class_or_instancemethod
+            def method(self_or_cls):
+                if isinstance(self_or_cls, MyClass):
+                    a['method'] = True
+                else:
+                    a['classmethod'] = True
+
+        b = MyClass()
+        b.method()
+        self.assertEqual(a, {'method': True})
+        MyClass.method()
+        self.assertEqual(a, {'method': True, 'classmethod': True})
 
     def test_overload(self):
         a = {}
