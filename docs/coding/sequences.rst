@@ -17,6 +17,11 @@ IteratorListAdapter
 .. autoclass:: satella.coding.sequences.IteratorListAdapter
     :members:
 
+to_iterator
+-----------
+
+.. autofunction:: satella.coding.sequences.to_iterator
+
 map_list
 --------
 

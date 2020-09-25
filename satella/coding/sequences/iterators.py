@@ -4,7 +4,7 @@ import typing as tp
 import warnings
 
 from ..recast_exceptions import rethrow_as, silence_excs
-from ..decorators import for_argument
+from ..decorators import for_argument, wraps
 
 T, U = tp.TypeVar('T'), tp.TypeVar('U')
 IteratorOrIterable = tp.Union[tp.Iterator[T], tp.Iterable[T]]
@@ -435,6 +435,30 @@ def map_list(fun: tp.Callable, iterable: IteratorOrIterable) -> tp.List:
     :param iterable: iterable to iterate over
     """
     return list(map(fun, iterable))
+
+
+def to_iterator(fun):
+    """
+    Convert function to an iterator. You can replace the following code:
+
+    >>> def iterator(x):
+    >>>     for y in x:
+    >>>         yield fun(y)
+
+    with
+
+    >>> @to_iterator
+    >>> def fun(y):
+    >>>     ...
+
+    and now call fun instead of iterator. fun will accept a single argument - the iterable,
+    and assume that the function you decorate also takes a single argument - the item
+    """
+    @wraps(fun)
+    def inner(iterable):
+        for item in iterable:
+            yield fun(item)
+    return inner
 
 
 def smart_zip(*iterators: IteratorOrIterable) -> tp.Iterator[tp.Tuple[T, ...]]:

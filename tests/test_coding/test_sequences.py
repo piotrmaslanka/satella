@@ -5,11 +5,18 @@ from satella.coding.sequences import choose, choose_one, infinite_counter, take_
     is_last, add_next, half_cartesian, skip_first, zip_shifted, stop_after, group_quantity, \
     iter_dict_of_list, shift, other_sequence_no_longer_than, count, even, odd, Multirun, n_th, \
     unique, length, map_list, smart_zip, is_empty, make_list, RollingArithmeticAverage, \
-    enumerate2, infinite_iterator
+    enumerate2, infinite_iterator, to_iterator
 from satella.coding.predicates import x
 
 
 class TestSequences(unittest.TestCase):
+
+    def test_to_iterator(self):
+        @to_iterator
+        def is_even(x):
+            return not (x % 2)
+
+        self.assertEqual(list(is_even([1, 2, 3, 4])), [False, True, False, True])
 
     def test_infinite_iterator(self):
         if1 = infinite_iterator(1)
