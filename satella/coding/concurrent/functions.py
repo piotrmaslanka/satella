@@ -35,8 +35,7 @@ def run_as_future(fun):
             except Exception as e:
                 fut.set_exception(e)
 
-        thr = Thread(target=separate_target)
-        thr.start()
+        Thread(target=separate_target).start()
         return fut
     return inner
 
