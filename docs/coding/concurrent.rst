@@ -158,3 +158,8 @@ parallel_execute will return you an iterator, returning the result
 (or raising an exception) for every result you get.
 
 .. autofunction:: satella.coding.concurrent.parallel_execute
+
+run_as_future
+=============
+
+.. autofunction:: satella.coding.concurrent.run_as_future

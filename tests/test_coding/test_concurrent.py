@@ -8,12 +8,25 @@ from concurrent.futures import Future
 
 from satella.coding.concurrent import TerminableThread, CallableGroup, Condition, MonitorList, \
     LockedStructure, AtomicNumber, Monitor, IDAllocator, call_in_separate_thread, Timer, \
-    parallel_execute
+    parallel_execute, run_as_future
 from satella.coding.sequences import unique
 from satella.exceptions import WouldWaitMore, AlreadyAllocated
 
 
 class TestConcurrent(unittest.TestCase):
+
+    def test_run_as_future(self):
+        a = {}
+
+        @run_as_future
+        def sleep_and_set(b):
+            time.sleep(2)
+            a['set'] = b
+
+        fut = sleep_and_set(True)
+        self.assertNotIn('set', a)
+        fut.result()
+        self.assertTrue(a['set'])
 
     def test_parallel_execute(self):
         a = {'times_called': 0}
@@ -36,7 +49,6 @@ class TestConcurrent(unittest.TestCase):
                 self.assertEqual(result, i)
             i += 1
         self.assertEqual(5, a['times_called'])
-
 
     def test_timer_separate(self):
         a = {'test': False}
@@ -140,17 +152,17 @@ class TestConcurrent(unittest.TestCase):
         self.assertTrue(a < 4)
         self.assertTrue(a >= 1)
         self.assertTrue(a <= 4)
-        self.assertEqual(a+1, 4)
-        self.assertEqual(a-1, 2)
-        self.assertEqual(a*1, 3)
-        self.assertEqual(a/1, 3.0)
-        self.assertEqual(a//1, 3)
-        self.assertEqual(1+a, 4)
-        self.assertEqual(-1+a, 2)
-        self.assertEqual(1*a, 3)
-        self.assertEqual(1/(a+1), 0.25)
-        self.assertEqual(1//a, 0)
-        self.assertEqual(2**a, 8)
+        self.assertEqual(a + 1, 4)
+        self.assertEqual(a - 1, 2)
+        self.assertEqual(a * 1, 3)
+        self.assertEqual(a / 1, 3.0)
+        self.assertEqual(a // 1, 3)
+        self.assertEqual(1 + a, 4)
+        self.assertEqual(-1 + a, 2)
+        self.assertEqual(1 * a, 3)
+        self.assertEqual(1 / (a + 1), 0.25)
+        self.assertEqual(1 // a, 0)
+        self.assertEqual(2 ** a, 8)
         a |= 4
         self.assertEqual(a, 7)
         a &= 3
@@ -165,7 +177,7 @@ class TestConcurrent(unittest.TestCase):
         self.assertEqual(a, 3.0)
         a //= 1
         self.assertEqual(a, 3)
-        self.assertEqual(a**2, 9)
+        self.assertEqual(a ** 2, 9)
         a **= 2
         self.assertEqual(a, 9)
         self.assertEqual(+a, 9)

@@ -1,9 +1,44 @@
 import typing as tp
-from concurrent.futures import Future, wait
+from concurrent.futures import Future
+from threading import Thread
+
+from satella.coding.decorators.decorators import wraps
 
 from satella.coding.sequences.sequences import infinite_iterator
 
 T = tp.TypeVar('T')
+
+
+def run_as_future(fun):
+    """
+    A decorator that accepts a function that should be executed in a separate thread,
+    and a Future returned instead of it's result, that will enable to watch the function for completion.
+
+    The created thread will be non-demonic
+
+    Example usage:
+
+    >>> @run_as_future
+    >>> def parse_a_file(x: str):
+    >>>     ...
+    >>> fut = parse_a_file('test.txt')
+    >>> result = fut.result()
+    """
+    @wraps(fun)
+    def inner(*args, **kwargs):
+        fut = Future()
+        fut.set_running_or_notify_cancel()
+
+        def separate_target():
+            try:
+                fut.set_result(fun(*args, **kwargs))
+            except Exception as e:
+                fut.set_exception(e)
+
+        thr = Thread(target=separate_target)
+        thr.start()
+        return fut
+    return inner
 
 
 def parallel_execute(callable_: tp.Callable[[T], Future],
