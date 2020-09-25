@@ -1,18 +1,16 @@
 import typing as tp
+import sys
+import warnings
 from concurrent.futures import Future
 
+from ..cassandra.future import wrap_future
+from ..cassandra.common import ResponseFuture
 from satella.coding.decorators import wraps
 
 try:
     from opentracing import Span
 except ImportError:
     class Span:
-        pass
-
-try:
-    from cassandra.cluster import ResponseFuture
-except ImportError:
-    class ResponseFuture:
         pass
 
 
@@ -43,18 +41,17 @@ def trace_future(future: tp.Union[ResponseFuture, Future], span: Span):
     :param span: span to close on future's completion
     """
     if isinstance(future, ResponseFuture):
-        def close_exception(exc):
-            # noinspection PyProtectedMember
-            Span._on_error(span, type(exc), exc, '<unavailable>')
-            span.finish()
+        warnings.warn('Tracing Cassandra futures is deprecated. Use wrap_future() to '
+                      'convert it to a standard Python future. This feature will be '
+                      'deprecated in Satella 3.x', DeprecationWarning)
+        future = wrap_future(future)
 
-        future.add_callback(span.finish)
-        future.add_errback(close_exception)
-    else:
-        def close_future(fut):
-            exc = fut.exception()
-            if exc is not None:
-                # noinspection PyProtectedMember
-                Span._on_error(span, type(exc), exc, '<unavailable>')
-            span.finish()
-        future.add_done_callback(close_future)
+    def close_future(fut):
+        exc = fut.exception()
+        if exc is not None:
+            # noinspection PyProtectedMember
+            exc_type, value, traceback = sys.exc_info()
+            Span._on_error(span, exc_type, value, traceback)
+        span.finish()
+
+    future.add_done_callback(close_future)

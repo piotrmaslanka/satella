@@ -3,6 +3,11 @@ Cassandra
 
 **This module is available only if you have cassandra-driver installed**
 
+wrap_future
+-----------
+
+.. autofunction:: satella.cassandra.wrap_future
+
 parallel_for
 ------------
 
