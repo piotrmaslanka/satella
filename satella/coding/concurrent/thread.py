@@ -4,6 +4,7 @@ import platform
 import threading
 import time
 import typing as tp
+import warnings
 from concurrent.futures import Future
 from threading import Condition as PythonCondition
 
@@ -54,7 +55,14 @@ class Condition(PythonCondition):
     This happens to sorta not work on PyPy. Use at your own peril. You have been warned.
     """
 
-    def wait(self, timeout: tp.Optional[float] = None):
+    def notifyAll(self) -> None:
+        """
+        Deprecated alias for notify_all
+        """
+        warnings.warn('Use notify_all instead', DeprecationWarning)
+        self.notify_all()
+
+    def wait(self, timeout: tp.Optional[float] = None) -> None:
         """
         Wait for condition to become true.
 
@@ -85,7 +93,7 @@ class Condition(PythonCondition):
         with self._lock:
             super().notify_all()
 
-    def notify(self, n: int = 1):
+    def notify(self, n: int = 1) -> None:
         """
         Notify n threads waiting on this Condition
 
