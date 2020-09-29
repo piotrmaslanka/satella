@@ -1,4 +1,1 @@
-# v2.11.18
-
-* added `Condition.notifyAll`
-* added `ExclusiveWritebackCachce`
+# v2.11.19
