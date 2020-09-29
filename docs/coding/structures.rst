@@ -157,6 +157,13 @@ created instance, keying on the first *n* arguments.
 Dictionaries
 ============
 
+ExclusiveWritebackCache
+-----------------------
+
+.. autoclass:: satella.coding.structures.ExclusiveWritebackCache
+
+Use it as you would a normal dictionary.
+
 DictObject
 ----------
 
