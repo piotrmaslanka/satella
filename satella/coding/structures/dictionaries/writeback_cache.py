@@ -24,17 +24,25 @@ class ExclusiveWritebackCache(tp.Generic[K, V]):
         ThreadPoolExecutor with 4 workers will be created
     :param no_concurrent_executors: number of concurrent jobs that the executor is able
         to handle. This is used by sync()
+    :param store_key_errors: whether to remember KeyErrors raised by read_method
     """
+    __slots__ = ('executor', 'read_method', 'write_method', 'delete_method',
+                 'no_concurrent_executors', 'in_cache', 'cache_lock',
+                 'cache', 'operations', '_get_queue_length',
+                 'store_key_errors')
+
     def __init__(self, write_method: tp.Callable[[K, V], None],
                  read_method: tp.Callable[[K], V],
                  delete_method: tp.Optional[tp.Callable[[K], None]] = None,
                  executor: tp.Optional[Executor] = None,
-                 no_concurrent_executors: tp.Optional[int] = None
+                 no_concurrent_executors: tp.Optional[int] = None,
+                 store_key_errors: bool = True
                  ):
         if executor is None:
             self.executor = ThreadPoolExecutor(max_workers=4)
         else:
             self.executor = executor
+        self.store_key_errors = store_key_errors
         self.write_method = write_method
         self.delete_method = delete_method
         self.read_method = read_method
@@ -89,11 +97,12 @@ class ExclusiveWritebackCache(tp.Generic[K, V]):
                     self.cache[item] = value
                 return value
             except KeyError:
-                with self.cache_lock:
-                    self.in_cache.add(item)
+                if self.store_key_errors:
+                    with self.cache_lock:
+                        self.in_cache.add(item)
                 raise
         else:
-            if item not in self.cache:
+            if item not in self.cache and self.store_key_errors:
                 raise KeyError()
             else:
                 return self.cache[item]
@@ -101,8 +110,9 @@ class ExclusiveWritebackCache(tp.Generic[K, V]):
     def __delitem__(self, key: K) -> None:
         if self.delete_method is None:
             raise TypeError('Cannot delete from this writeback cache!')
-        with self.cache_lock:
-            self.in_cache.add(key)
+        if self.store_key_errors:
+            with self.cache_lock:
+                self.in_cache.add(key)
         with silence_excs(KeyError):
             del self.cache[key]
         self.executor.submit(self.delete_method, key)
