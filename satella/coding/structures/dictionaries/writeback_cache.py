@@ -2,6 +2,8 @@ import time
 import typing as tp
 from concurrent.futures import Executor, ThreadPoolExecutor, wait, ProcessPoolExecutor
 
+from satella.coding.concurrent.monitor import Monitor
+
 from satella.coding.recast_exceptions import silence_excs
 
 K = tp.TypeVar('K')
@@ -38,7 +40,9 @@ class ExclusiveWritebackCache(tp.Generic[K, V]):
         self.read_method = read_method
         self.no_concurrent_executors = no_concurrent_executors or 4
         self.in_cache = set()
+        self.cache_lock = Monitor()
         self.cache = {}
+        self.operations = 0
 
         if isinstance(self.executor, ThreadPoolExecutor):
             def get_queue_length():
@@ -68,15 +72,25 @@ class ExclusiveWritebackCache(tp.Generic[K, V]):
         futures = [self.executor.submit(fix) for _ in range(self.no_concurrent_executors)]
         wait(futures)
 
+    def _operate(self):
+        self.operations += 1
+        if self.operations > 100:
+            with self.cache_lock:
+                self.in_cache = set(self.cache.keys())
+                self.operations = 0
+
     def __getitem__(self, item: K) -> V:
+        self._operate()
         if item not in self.in_cache:
             try:
                 value = self.executor.submit(self.read_method, item).result()
-                self.in_cache.add(item)
-                self.cache[item] = value
+                with self.cache_lock:
+                    self.in_cache.add(item)
+                    self.cache[item] = value
                 return value
             except KeyError:
-                self.in_cache.add(item)
+                with self.cache_lock:
+                    self.in_cache.add(item)
                 raise
         else:
             if item not in self.cache:
@@ -87,13 +101,17 @@ class ExclusiveWritebackCache(tp.Generic[K, V]):
     def __delitem__(self, key: K) -> None:
         if self.delete_method is None:
             raise TypeError('Cannot delete from this writeback cache!')
-        self.in_cache.add(key)
+        with self.cache_lock:
+            self.in_cache.add(key)
         with silence_excs(KeyError):
             del self.cache[key]
         self.executor.submit(self.delete_method, key)
+        self._operate()
 
     def __setitem__(self, key: K, value: V) -> None:
-        self.cache[key] = value
-        self.in_cache.add(key)
+        with self.cache_lock:
+            self.cache[key] = value
+            self.in_cache.add(key)
         self.executor.submit(self.write_method, key, value)
+        self._operate()
 
