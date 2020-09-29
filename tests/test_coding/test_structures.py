@@ -12,10 +12,44 @@ from satella.coding.structures import TimeBasedHeap, Heap, typednamedtuple, \
     DictionaryView, HashableWrapper, TwoWayDictionary, Ranking, SortedList, SliceableDeque, \
     DirtyDict, KeyAwareDefaultDict, Proxy, ReprableMixin, TimeBasedSetHeap, ExpiringEntryDict, SelfCleaningDefaultDict, \
     CacheDict, StrEqHashableMixin, ComparableIntEnum, HashableIntEnum, ComparableAndHashableBy, \
-    ComparableAndHashableByInt, SparseMatrix
+    ComparableAndHashableByInt, SparseMatrix, ExclusiveWritebackCache
 
 
 class TestMisc(unittest.TestCase):
+
+    def test_exclusive_writeback_cache(self):
+        a = {5: 3, 4: 2, 1: 0}
+        b = {'no_calls': 0}
+
+        def setitem(k, v):
+            nonlocal a, b
+            b['no_calls'] += 1
+            a[k] = v
+
+        def getitem(k):
+            nonlocal a, b
+            b['no_calls'] += 1
+            return a[k]
+
+        def delitem(k):
+            nonlocal a, b
+            b['no_calls'] += 1
+            del a[k]
+
+        wbc = ExclusiveWritebackCache(setitem, getitem, delitem)
+        self.assertEqual(wbc[5], 3)
+        self.assertEqual(b['no_calls'], 1)
+        self.assertRaises(KeyError, lambda: wbc[-1])
+        self.assertEqual(b['no_calls'], 2)
+        self.assertEqual(wbc[5], 3)
+        self.assertEqual(b['no_calls'], 2)
+        wbc[5] = 2
+        wbc.sync()
+        self.assertEqual(a[5], 2)
+        self.assertEqual(b['no_calls'], 3)
+        del wbc[4]
+        wbc.sync()
+        self.assertRaises(KeyError, lambda: a[4])
 
     def test_sparse_matrix(self):
         sm = SparseMatrix()

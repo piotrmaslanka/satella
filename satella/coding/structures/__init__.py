@@ -1,6 +1,6 @@
 from .dictionaries import DictObject, apply_dict_object, DictionaryView, TwoWayDictionary, \
     DirtyDict, KeyAwareDefaultDict, ExpiringEntryDict, SelfCleaningDefaultDict, \
-    CacheDict
+    CacheDict, ExclusiveWritebackCache
 from .hashable_objects import HashableWrapper
 from .heaps import Heap, SetHeap, TimeBasedHeap, TimeBasedSetHeap
 from .immutable import Immutable, frozendict
@@ -14,6 +14,7 @@ from .typednamedtuple import typednamedtuple
 from .sparse_matrix import SparseMatrix
 
 __all__ = [
+    'ExclusiveWritebackCache',
     'CacheDict',
     'KeyAwareDefaultDict',
     'Proxy',
