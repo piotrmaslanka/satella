@@ -47,6 +47,16 @@ class TestSequences(unittest.TestCase):
         b[0][2] = 4
         self.assertNotEqual(b[1][2], 4)
 
+    def test_make_list_deep_copy(self):
+        class A:
+            def __init__(self, c):
+                self.a = c
+        a = A(3)
+        b = make_list(a, 3, deep_copy=True)
+        self.assertEqual(len(b), 3)
+        b[0].a = 4
+        self.assertNotEqual(a.a, 4)
+
     def test_empty(self):
         def empty_iterator():
             if False:
@@ -82,6 +92,11 @@ class TestSequences(unittest.TestCase):
     def test_n_th(self):
         self.assertEqual(n_th(itertools.count()), 0)
         self.assertEqual(n_th(itertools.count(), 3), 3)
+
+    def test_multirun_empty(self):
+        a = Multirun([])
+        a += 3
+        self.assertFalse(a.sequence)
 
     def test_multirun(self):
         class Counter:
@@ -135,6 +150,15 @@ class TestSequences(unittest.TestCase):
         self.assertEqual(list(group_quantity(3, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10])),
                          [[1, 2, 3], [4, 5, 6], [7, 8, 9], [10]])
         self.assertEqual(list(group_quantity(3, 'ala ma kota')), ['ala', ' ma', ' ko', 'ta'])
+
+    def test_group_quantity_range(self):
+        def test_iter():
+            yield from range(10)
+
+        self.assertEqual(list(group_quantity(3, test_iter())),
+                         [[0, 1, 2], [3, 4, 5], [6, 7, 8], [9]])
+        self.assertEqual(list(group_quantity(3, range(10))),
+                         [[0, 1, 2], [3, 4, 5], [6, 7, 8], [9]])
 
     def test_stop_after(self):
         a = [1, 2, 3, 4, 5, 6, 7]
