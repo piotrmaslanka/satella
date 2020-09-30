@@ -16,35 +16,35 @@ jobs:
     - stage: test
       python: "3.5"
       script:
-        - pytest -n 4 --cov=satella
+        - pytest -n 8 --cov=satella
       after_script:
         - coverage xml
         - ./cc-test-reporter after-build -t coverage.py --exit-code $TRAVIS_TEST_RESULT
     - stage: test
       python: "3.6"
       script:
-        - pytest -n 4 --cov=satella
+        - pytest -n 8 --cov=satella
       after_script:
         - coverage xml
         - ./cc-test-reporter after-build -t coverage.py --exit-code $TRAVIS_TEST_RESULT
     - stage: test
       python: "3.7"
       script:
-        - pytest -n 4 --cov=satella
+        - pytest -n 8 --cov=satella
       after_script:
         - coverage xml
         - ./cc-test-reporter after-build -t coverage.py --exit-code $TRAVIS_TEST_RESULT
     - stage: test
       python: "3.8"
       script:
-        - pytest -n 4 --cov=satella
+        - pytest -n 8 --cov=satella
       after_script:
         - coverage xml
         - ./cc-test-reporter after-build -t coverage.py --exit-code $TRAVIS_TEST_RESULT
     - stage: test
       python: "pypy3.5"
       script:
-        - pytest -n 4 --cov=satella
+        - pytest -n 8 --cov=satella
       after_script:
         - coverage xml
         - ./cc-test-reporter after-build -t coverage.py --exit-code $TRAVIS_TEST_RESULT
