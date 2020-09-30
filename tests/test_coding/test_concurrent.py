@@ -1,19 +1,32 @@
 import copy
 import platform
+import random
 import sys
 import threading
 import time
 import unittest
-from concurrent.futures import Future
+from concurrent.futures import Future, ThreadPoolExecutor
 
 from satella.coding.concurrent import TerminableThread, CallableGroup, Condition, MonitorList, \
     LockedStructure, AtomicNumber, Monitor, IDAllocator, call_in_separate_thread, Timer, \
-    parallel_execute, run_as_future
+    parallel_execute, run_as_future, sync_threadpool
 from satella.coding.sequences import unique
 from satella.exceptions import WouldWaitMore, AlreadyAllocated
 
 
 class TestConcurrent(unittest.TestCase):
+
+    def test_sync_threadpool(self):
+        tp = ThreadPoolExecutor(max_workers=4)
+        a = {'cond': 4}
+        def wait():
+            nonlocal a
+            time.sleep(random.randint(0, 10) / 10)
+            a['cond'] -= 1
+        for _ in range(4):
+            tp.submit(wait)
+        sync_threadpool(tp)
+        self.assertEqual(a['cond'], 0)
 
     def test_run_as_future(self):
         a = {}
