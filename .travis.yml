@@ -10,7 +10,8 @@ before_script:
   - chmod +x ./cc-test-reporter
   - ./cc-test-reporter before-build
   - pip install -r requirements.txt
-  - pip install pytest-xdist pytest-cov pytest py pytest-forked pluggy
+  - pip install pytest-xdist pytest-cov pytest pytest-forked pluggy
+  - pip install -U py==1.4.29
 jobs:
   include:
     - stage: test

@@ -1,5 +1,5 @@
 import time
-from concurrent.futures.thread import ThreadPoolExecutor
+from concurrent.futures import wait, ThreadPoolExecutor
 
 from .atomic import AtomicNumber
 from .thread import Condition
@@ -25,8 +25,7 @@ def sync_threadpool(tp: ThreadPoolExecutor) -> None:
         atm_n -= 1
         cond.wait()
 
-    for _ in range(workers):
-        tp.submit(decrease_atm)
+    futures = [tp.submit(decrease_atm) for _ in range(workers)]
 
     # wait for all currently scheduled jobs to be picked up
     while tp._work_queue.qsize() > 0:
@@ -34,4 +33,5 @@ def sync_threadpool(tp: ThreadPoolExecutor) -> None:
 
     atm_n.wait_until_equal(0)
     cond.notify_all()
+    wait(futures)
 

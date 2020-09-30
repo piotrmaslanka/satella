@@ -148,9 +148,11 @@ Timer
 .. autoclass:: satella.coding.concurrent.Timer
     :members:
 
+Functions and decorators
+========================
 
 parallel_execute
-================
+----------------
 
 For executing those functions that return a Future in parallel.
 
@@ -160,6 +162,11 @@ parallel_execute will return you an iterator, returning the result
 .. autofunction:: satella.coding.concurrent.parallel_execute
 
 run_as_future
-=============
+-------------
 
 .. autofunction:: satella.coding.concurrent.run_as_future
+
+sync_threadpool
+---------------
+
+.. autofunction:: satella.coding.concurrent.sync_threadpool
