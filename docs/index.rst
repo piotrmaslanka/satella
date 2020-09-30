@@ -23,6 +23,7 @@ Visit the project's page at GitHub_!
            instrumentation/memory
            instrumentation/metrics
            exception_handling
+           dao
            json
            posix
            import
