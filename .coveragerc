@@ -2,7 +2,7 @@
 branch=1
 source=
   satella
-
+concurrency=thread
 omit=
   tests/*
   .eggs/*

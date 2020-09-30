@@ -1,1 +1,4 @@
 # v2.11.20
+
+* unit testing engine changed from nose2 to pytest, since nose2 couldn't run tests on multiple threads
+    It's much faster this way.
