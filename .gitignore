@@ -6,6 +6,8 @@ satella.sublime*
 hs_err_pid*.log
 *.pydevproject
 .project
+venv
+coverage.xml
 .metadata
 lock
 bin/
