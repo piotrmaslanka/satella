@@ -1,3 +1,1 @@
-# v2.11.23
-
-* add `TerminableThread.prepare`
+# v2.11.24
