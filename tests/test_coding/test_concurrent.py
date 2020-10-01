@@ -260,7 +260,11 @@ class TestConcurrent(unittest.TestCase):
 
     def test_terminable_thread(self):
         class MyTerminableThread(TerminableThread):
+            def prepare(self):
+                self.a = 5
+
             def loop(self):
+                self.a += 1
                 time.sleep(0.5)
 
         mtt = MyTerminableThread()
@@ -270,6 +274,7 @@ class TestConcurrent(unittest.TestCase):
     @unittest.skipIf(platform.python_implementation() != 'PyPy', 'this requires PyPy')
     def test_terminable_thread_force_notimplementederror(self):
         class MyTerminableThread(TerminableThread):
+
             def run(self):
                 a = 0
                 while not self.terminating:
