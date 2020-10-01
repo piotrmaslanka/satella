@@ -7,15 +7,33 @@ import unittest
 
 import mock
 
+from satella.coding.concurrent import call_in_separate_thread
 from satella.coding.structures import TimeBasedHeap, Heap, typednamedtuple, \
     OmniHashableMixin, DictObject, apply_dict_object, Immutable, frozendict, SetHeap, \
     DictionaryView, HashableWrapper, TwoWayDictionary, Ranking, SortedList, SliceableDeque, \
     DirtyDict, KeyAwareDefaultDict, Proxy, ReprableMixin, TimeBasedSetHeap, ExpiringEntryDict, SelfCleaningDefaultDict, \
     CacheDict, StrEqHashableMixin, ComparableIntEnum, HashableIntEnum, ComparableAndHashableBy, \
-    ComparableAndHashableByInt, SparseMatrix, ExclusiveWritebackCache
+    ComparableAndHashableByInt, SparseMatrix, ExclusiveWritebackCache, Subqueue
 
 
 class TestMisc(unittest.TestCase):
+
+    def test_subqueue(self):
+        a = Subqueue()
+        a.put('test', 2)
+        self.assertEqual(a.get('test'), 2)
+
+        @call_in_separate_thread()
+        def put_a_message():
+            nonlocal a
+            time.sleep(1)
+            a.put('test', 5)
+
+        put_a_message()
+        self.assertEqual(a.get('test'), 5)
+        a.put('test2', 4)
+        self.assertEqual(a.qsize(), 1)
+        self.assertEqual(a.get_any(), ('test2', 4))
 
     def test_exclusive_writeback_cache(self):
         a = {5: 3, 4: 2, 1: 0}

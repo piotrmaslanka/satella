@@ -277,3 +277,10 @@ Proxy
 
 .. autoclass:: satella.coding.structures.Proxy
     :members:
+
+Subqueue
+--------
+
+.. autoclass:: satella.coding.structures.Subqueue
+    :members:
+

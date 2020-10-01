@@ -19,13 +19,18 @@ def call_in_separate_thread(*t_args, **t_kwargs):
     Decorator to mark given routine as callable in a separate thread.
 
     The decorated routine will return a Future that is waitable to get the result
-    (or the exception) of the function
+    (or the exception) of the function.
 
-    The arguments given here will be passed to thread's constructor.
+    The arguments given here will be passed to thread's constructor, so use like:
+
+    >>> @call_in_separate_thread(daemon=True)
+    >>> def handle_messages():
+    >>>     while True:
+    >>>         ...
     """
     def outer(fun):
         @wraps(fun)
-        def inner(*args, **kwargs):
+        def inner(*args, **kwargs) -> Future:
             class MyThread(threading.Thread):
                 def __init__(self):
                     self.future = Future()

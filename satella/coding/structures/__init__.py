@@ -12,8 +12,10 @@ from .singleton import Singleton, SingletonWithRegardsTo
 from .sorted_list import SortedList, SliceableDeque
 from .typednamedtuple import typednamedtuple
 from .sparse_matrix import SparseMatrix
+from .queues import Subqueue
 
 __all__ = [
+    'Subqueue',
     'ExclusiveWritebackCache',
     'CacheDict',
     'KeyAwareDefaultDict',
