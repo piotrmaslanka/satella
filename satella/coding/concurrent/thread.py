@@ -1,4 +1,3 @@
-import concurrent
 import ctypes
 import platform
 import threading
@@ -189,6 +188,10 @@ class TerminableThread(threading.Thread):
     """
 
     def __init__(self, *args, **kwargs):
+        """
+        Note that this is called in the constructor's thread. Use .prepare() to
+        run statements that should be ran in new thread.
+        """
         super().__init__(*args, **kwargs)
         self._terminating = False  # type: bool
 
@@ -196,6 +199,13 @@ class TerminableThread(threading.Thread):
     def terminating(self) -> bool:
         """Return whether a termination of this thread was requested"""
         return self._terminating
+
+    def prepare(self) -> None:
+        """
+        This is called before the .loop() looping loop is entered.
+
+        This is invoked already in a separate thread.
+        """
 
     def loop(self) -> None:
         """
@@ -218,6 +228,7 @@ class TerminableThread(threading.Thread):
         """
         Calls self.loop() indefinitely, until terminating condition is met
         """
+        self.prepare()
         while not self._terminating:
             self.loop()
         self.cleanup()
