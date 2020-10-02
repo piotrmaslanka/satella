@@ -53,7 +53,7 @@ class Monitor:
         self._monitor_lock = threading.Lock()  # type: threading.Lock
 
     @staticmethod
-    def synchronized(fun):
+    def synchronized(fun: tp.Callable) -> tp.Callable:
         """
         This is a decorator. Class method decorated with that will lock the
         global lock of given instance, making it threadsafe. Depending on
@@ -125,7 +125,7 @@ class Monitor:
             return False
 
     @classmethod
-    def synchronize_on(cls, monitor):
+    def synchronize_on(cls, monitor: 'Monitor') -> tp.Callable[[tp.Callable], tp.Callable]:
         """
         A decorator for locking on non-self Monitor objects
 
