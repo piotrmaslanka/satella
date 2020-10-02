@@ -4,7 +4,7 @@ from .locked_dataset import LockedDataset
 from .locked_structure import LockedStructure
 from .monitor import MonitorList, Monitor, MonitorDict, RMonitor
 from .thread import TerminableThread, Condition, SingleStartThread, call_in_separate_thread, \
-    BogusTerminableThread
+    BogusTerminableThread, IntervalTerminableThread
 from .id_allocator import IDAllocator
 from .timer import Timer
 from .functions import parallel_execute, run_as_future
@@ -14,4 +14,4 @@ __all__ = ['LockedDataset', 'Monitor', 'RMonitor', 'CallableGroup', 'TerminableT
            'MonitorDict', 'MonitorList', 'Condition', 'LockedStructure', 'AtomicNumber',
            'CallNoOftenThan', 'SingleStartThread', 'IDAllocator', 'call_in_separate_thread',
            'BogusTerminableThread', 'Timer', 'parallel_execute', 'run_as_future',
-           'sync_threadpool']
+           'sync_threadpool', 'IntervalTerminableThread']

@@ -32,6 +32,12 @@ It means that if it's hanging on I/O, for example, it won't be affected.
 .. autoclass:: satella.coding.concurrent.TerminableThread
     :members:
 
+IntervalTerminableThread
+------------------------
+
+.. autoclass:: satella.coding.concurrent.IntervalTerminableThread
+    :members:
+
 BogusTerminableThread
 =====================
 

@@ -9,7 +9,7 @@ from concurrent.futures import Future, ThreadPoolExecutor
 
 from satella.coding.concurrent import TerminableThread, CallableGroup, Condition, MonitorList, \
     LockedStructure, AtomicNumber, Monitor, IDAllocator, call_in_separate_thread, Timer, \
-    parallel_execute, run_as_future, sync_threadpool
+    parallel_execute, run_as_future, sync_threadpool, IntervalTerminableThread
 from satella.coding.sequences import unique
 from satella.exceptions import WouldWaitMore, AlreadyAllocated
 
@@ -269,6 +269,37 @@ class TestConcurrent(unittest.TestCase):
 
         mtt = MyTerminableThread()
         mtt.start()
+        mtt.terminate().join()
+
+    def test_interval_terminable_thread(self):
+        class MyTerminableThread(IntervalTerminableThread):
+            def __init__(self):
+                super().__init__(1)
+                self.a = 0
+                self.overrun = False
+
+            def prepare(self) -> None:
+                self.a = 1
+
+            def on_overrun(self, time_taken: float) -> None:
+                self.overrun = True
+
+            def loop(self) -> None:
+                if self.a == 3:
+                    time.sleep(3)
+                self.a += 1
+
+        mtt = MyTerminableThread()
+        mtt.start()
+        a = mtt.a
+        time.sleep(0.3)
+        self.assertEqual(mtt.a, a)
+        self.assertFalse(mtt.overrun)
+        time.sleep(1.2)
+        self.assertEqual(mtt.a, a+1)
+        self.assertFalse(mtt.overrun)
+        time.sleep(4)
+        self.assertTrue(mtt.overrun)
         mtt.terminate().join()
 
     @unittest.skipIf(platform.python_implementation() != 'PyPy', 'this requires PyPy')

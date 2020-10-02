@@ -1,5 +1,6 @@
 import ctypes
 import platform
+from abc import ABCMeta, abstractmethod
 import threading
 import time
 import typing as tp
@@ -296,3 +297,50 @@ class TerminableThread(threading.Thread):
                 raise RuntimeError('Multiple threads killed!')
 
         return self
+
+
+class IntervalTerminableThread(TerminableThread, metaclass=ABCMeta):
+    """
+    A TerminableThread that calls .loop() once per x seconds.
+
+    If executing .loop() takes more than x seconds, on_overrun() will be called.
+
+    :param seconds: time that a single looping through should take. This will
+        include the time spent on calling .loop(), the rest of this time will
+        be spent safe_sleep()ing.
+    """
+    def __init__(self, seconds: float, *args, **kwargs):
+        self.seconds = seconds
+        super().__init__(*args, **kwargs)
+
+    @abstractmethod
+    def loop(self) -> tp.Optional[bool]:
+        """
+        Override me!
+
+        If True is returned, the thread will not sleep and .loop() will be executed
+        once more.
+        """
+
+    def on_overrun(self, time_taken: float) -> None:
+        """
+        Called when executing .loop() takes more than x seconds.
+
+        Called each cycle.
+
+        :param time_taken: how long did calling .loop() take
+        """
+
+    def run(self):
+        self.prepare()
+        while not self._terminating:
+            with measure() as measurement:
+                v = self.loop()
+            if not v:
+                time_taken = measurement()
+                time_to_sleep = self.seconds - time_taken
+                if time_to_sleep < 0:
+                    self.on_overrun(time_taken)
+                else:
+                    self.safe_sleep(time_to_sleep)
+        self.cleanup()
