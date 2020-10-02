@@ -1,3 +1,1 @@
-# v2.11.24
-
-* added `IntervalTerminableThread`
+# v2.11.25
