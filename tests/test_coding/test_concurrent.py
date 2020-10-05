@@ -5,16 +5,48 @@ import sys
 import threading
 import time
 import unittest
-from concurrent.futures import Future, ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, Future as PythonFuture
 
 from satella.coding.concurrent import TerminableThread, CallableGroup, Condition, MonitorList, \
     LockedStructure, AtomicNumber, Monitor, IDAllocator, call_in_separate_thread, Timer, \
-    parallel_execute, run_as_future, sync_threadpool, IntervalTerminableThread
+    parallel_execute, run_as_future, sync_threadpool, IntervalTerminableThread, Future, \
+    WrappingFuture
 from satella.coding.sequences import unique
 from satella.exceptions import WouldWaitMore, AlreadyAllocated
 
 
 class TestConcurrent(unittest.TestCase):
+
+    def test_wrapping_future(self):
+        fut = PythonFuture()
+        wrap = WrappingFuture(fut)
+        self.assertEqual(wrap._state, fut._state)
+        fut.set_running_or_notify_cancel()
+        self.assertEqual(wrap._state, fut._state)
+        fut.set_result(3)
+        self.assertEqual(wrap.result(), 3)
+
+    def test_future(self):
+        fut = Future()
+        fut.set_running_or_notify_cancel()
+
+        def transform_future(future):
+            future.set_result(future.result() + 2)
+
+        fut.add_pre_done_callback(transform_future)
+        fut.set_result(2)
+        self.assertEqual(fut.result(), 4)
+
+    def test_future_exception(self):
+        fut = Future()
+        fut.set_running_or_notify_cancel()
+
+        def transform_future(future):
+            future.set_exception(ValueError())
+
+        fut.add_pre_done_callback(transform_future)
+        fut.set_exception(KeyError())
+        self.assertRaises(ValueError, fut.result)
 
     def test_sync_threadpool(self):
         tp = ThreadPoolExecutor(max_workers=4)
