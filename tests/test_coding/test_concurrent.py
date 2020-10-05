@@ -26,6 +26,20 @@ class TestConcurrent(unittest.TestCase):
         fut.set_result(3)
         self.assertEqual(wrap.result(), 3)
 
+    def test_wrapping_future_callback(self):
+        fut = PythonFuture()
+        wrap = WrappingFuture(fut)
+
+        def transform_future(future):
+            future.set_result(future.result() + 2)
+
+        wrap.add_pre_done_callback(transform_future)
+        self.assertEqual(wrap._state, fut._state)
+        fut.set_running_or_notify_cancel()
+        self.assertEqual(wrap._state, fut._state)
+        fut.set_result(3)
+        self.assertEqual(wrap.result(), 5)
+
     def test_future(self):
         fut = Future()
         fut.set_running_or_notify_cancel()
