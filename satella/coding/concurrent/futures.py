@@ -1,8 +1,13 @@
 import logging
 from concurrent.futures import Future as PythonFuture
-from concurrent.futures._base import CANCELLED, CANCELLED_AND_NOTIFIED, FINISHED, RUNNING, \
-    InvalidStateError
+from concurrent.futures._base import CANCELLED, CANCELLED_AND_NOTIFIED, FINISHED
 import concurrent.futures._base
+
+try:
+    from concurrent.futures import InvalidStateError
+except ImportError:
+    class InvalidStateError(Exception):
+        pass
 
 LOGGER = logging.getLogger('concurrent.futures')
 PRE_FINISHED = 'PRE-FINISHED'
