@@ -6,8 +6,8 @@ import concurrent.futures._base
 try:
     from concurrent.futures import InvalidStateError
 except ImportError:
-    class InvalidStateError(Exception):
-        pass
+    class InvalidStateError(concurrent.futures._base.Error):
+        """Raised when the future is in invalid state to execute given operation"""
 
 LOGGER = logging.getLogger('concurrent.futures')
 PRE_FINISHED = 'PRE-FINISHED'

@@ -12,6 +12,9 @@ Python futures in their own right, and can be wait'ed upon.
 .. autoclass:: satella.coding.concurrent.WrappingFuture
     :members:
 
+.. autoclass:: satella.coding.concurrent.InvalidStateError
+    :members:
+
 ==========================
 Concurrent data structures
 ==========================
