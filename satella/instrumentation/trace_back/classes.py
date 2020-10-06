@@ -56,11 +56,11 @@ class GenerationPolicy:
         """
         return len(pickle_data) > self.compress_at
 
-    def get_compression_level(self, pickledata: bytes) -> int:
+    def get_compression_level(self, data_to_pickle: bytes) -> int:
         """
         What compression level to use to pickle this?
 
-        :param pickledata: bytes, pickle value
+        :param data_to_pickle: pickle value
         :return: int, 1-9, where "1" is the fastest, and "9" is the slowest,
             but produces best compression
         """
