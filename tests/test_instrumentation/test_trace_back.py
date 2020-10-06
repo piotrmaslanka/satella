@@ -7,7 +7,7 @@ from satella.instrumentation import Traceback
 
 class TestTraceback(unittest.TestCase):
     def test_no_exc(self):
-        self.assertRaises(ValueError, Traceback)
+        Traceback()
 
     def test_json(self):
         try:

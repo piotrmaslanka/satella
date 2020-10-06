@@ -33,6 +33,8 @@ Usage:
 
 Traceback should be created in the exception it is supposed to capture,
 as it captures exception info from _sys.exc_info()_.
+If no exception is in progress, current stack frame will be fetched
+from `inspect.currentframe()`.
 
 Alternatively, you can pass a `<frame>` object to Traceback, in order to serialize it, for example:
 

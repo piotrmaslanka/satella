@@ -42,16 +42,16 @@ class Traceback(JSONAble):
         else:
             value_pickling_policy = policy
 
-        tb = sys.exc_info()[2]
-
         self.frames = []  # type: tp.List[StackFrame]
 
         if starting_frame is None:
-            if tb is None:
-                raise ValueError('No traceback')
-            while tb.tb_next:
-                tb = tb.tb_next
-            f = tb.tb_frame
+            tb = sys.exc_info()[2]
+            if tb is not None:
+                while tb.tb_next:
+                    tb = tb.tb_next
+                f = tb.tb_frame
+            else:
+                f = inspect.currentframe()
         else:
             f = starting_frame
 
