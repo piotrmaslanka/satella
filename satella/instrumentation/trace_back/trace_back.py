@@ -35,6 +35,12 @@ class Traceback(JSONAble):
      """
     __slots__ = ('formatted_traceback', 'frames')
 
+    def __str__(self) -> str:
+        out = ['Traceback:\n']
+        for frame in self.frames:
+            out.append(str(frame))
+        return ''.join(out)
+
     def __init__(self, starting_frame: tp.Optional[types.FrameType] = None,
                  policy=GenerationPolicy):
         if inspect.isclass(policy):

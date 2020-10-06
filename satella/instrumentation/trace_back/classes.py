@@ -130,6 +130,12 @@ class StoredVariableValue(JSONAble):
             dct['pickle'] = base64.b64encode(self.pickle).decode('utf8')
         return dct
 
+    def __repr__(self) -> str:
+        return '<stored variable %s of type %s>' % (self.repr, self.type_)
+
+    def __str__(self) -> str:
+        return self.repr
+
     def __init__(self, value: tp.Any, policy: tp.Optional[GenerationPolicy] = None):
         self.repr = repr(value)  # type: str
         self.type_ = repr(type(value))  # type: str
@@ -199,6 +205,18 @@ class StackFrame(JSONAble):
     """
     __slots__ = ('locals', 'globals', 'name', 'filename', 'lineno')
 
+    def __str__(self) -> str:
+        output = ['%s - %s:%s\n' % (self.name, self.filename, self.lineno)]
+        if self.locals:
+            output.append('    Locals: \n')
+            for local_name, local_value in self.locals.items():
+                output.append('        %s: %s\n' % (local_name, str(local_value)))
+        if self.globals:
+            output.append('    Globals: \n')
+            for glob_name, glob_value in self.globals.items():
+                output.append('        %s: %s\n' % (glob_name, str(glob_value)))
+        return ''.join(output)
+
     def __init__(self, frame: types.FrameType, policy: GenerationPolicy):
         self.name = frame.f_code.co_name  # type: str
         self.filename = frame.f_code.co_filename  # type: str
@@ -222,7 +240,7 @@ class StackFrame(JSONAble):
         sv = StackFrame.__new__(StackFrame)
         sv.name = x['name']
         sv.filename = x['filename']
-        sv.lineno = x['line_no'],
+        sv.lineno = x['line_no']
         sv.locals = {k: StoredVariableValue.from_json(v) for k, v in x['locals'].items()}
         sv.globals = {k: StoredVariableValue.from_json(v) for k, v in x['globals'].items()}
         return sv

@@ -28,6 +28,7 @@ class TestTraceback(unittest.TestCase):
         self.assertIn('frames', js)
         self.assertIn('formatted_traceback', js)
         self.assertIsInstance(Traceback.from_json(js), Traceback)
+        self.assertEqual(tb, Traceback.from_json(js))
 
     def test_tb(self):
 
