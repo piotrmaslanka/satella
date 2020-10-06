@@ -61,6 +61,9 @@ class Traceback(JSONAble):
 
         self.formatted_traceback = str(traceback.format_exc())
 
+    def __eq__(self, other: 'Traceback') -> bool:
+        return self.frames == other.frames
+
     def pickle_to(self, stream: tp.BinaryIO) -> None:
         """Pickle self to target stream"""
         pickle.dump(self, stream, pickle.HIGHEST_PROTOCOL)
@@ -70,6 +73,19 @@ class Traceback(JSONAble):
         bio = io.BytesIO()
         self.pickle_to(bio)
         return bio.getvalue()
+
+    @classmethod
+    def from_pickle(cls, pick: tp.Union[io.BytesIO, bytes]) -> 'Traceback':
+        """
+        Load a traceback from a pickle
+
+        :param pick: either bytes or a BytesIO to load it from
+        :return: previously serialized Traceback
+        """
+        if isinstance(pick, io.BytesIO):
+            return pickle.load(pick)
+        else:
+            return pickle.loads(pick)
 
     def to_json(self) -> dict:
         return {

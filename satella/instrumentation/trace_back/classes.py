@@ -189,6 +189,9 @@ class StoredVariableValue(JSONAble):
             raise ValueError(
                 'object picklable, but cannot load in this environment')
 
+    def __eq__(self, other: 'StoredVariableValue') -> bool:
+        return self.repr == other.repr and self.type_ == other.type_
+
 
 class StackFrame(JSONAble):
     """
@@ -208,6 +211,11 @@ class StackFrame(JSONAble):
         self.globals = {}  # type: tp.Dict[str, StoredVariableValue]
         for key, value in frame.f_globals.items():
             self.globals[key] = StoredVariableValue(value, policy)
+
+    def __eq__(self, other: 'StackFrame') -> bool:
+        return self.name == other.name and self.filename == other.filename and \
+               self.lineno == other.lineno and self.locals == other.locals and \
+               self.globals == other.globals
 
     @classmethod
     def from_json(cls, x: dict) -> 'StackFrame':

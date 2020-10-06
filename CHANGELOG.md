@@ -2,3 +2,5 @@
 
 * fix exception hierarchy in futures
 * extended Traceback to fetch current stack frame if no exception is in progress and no stack frame is given
+* added a feature to load a Traceback from a stream
+* added __eq__ methods to Traceback classes

@@ -6,7 +6,7 @@ Traceback object is used to preserve all the information you can get
 in case of an exception. It preserves:
 * Information about all stack frames in this thread
 * Every local and global variable at every stack frame
-    * If the variable is pickable, and pickling is enabled, it is pickled on the spot
+    * If the variable is picklable, and pickling is enabled, it is pickled on the spot
     * Variable's _repr_ is always preserved
     * Of course variable name is saved
 

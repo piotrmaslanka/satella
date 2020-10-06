@@ -1,3 +1,4 @@
+import io
 import pickle
 import sys
 import unittest
@@ -7,7 +8,15 @@ from satella.instrumentation import Traceback
 
 class TestTraceback(unittest.TestCase):
     def test_no_exc(self):
-        Traceback()
+        tb = Traceback()
+        byte = io.BytesIO()
+        byte2 = tb.pickle()
+        tb.pickle_to(byte)
+        byte.seek(0)
+        tb2 = Traceback.from_pickle(byte)
+        tb3 = Traceback.from_pickle(byte2)
+        self.assertEqual(tb, tb2)
+        self.assertEqual(tb2, tb3)
 
     def test_json(self):
         try:
