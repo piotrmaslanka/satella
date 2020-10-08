@@ -93,7 +93,7 @@ class Traceback(JSONAble):
             a = pickle.load(pick)
         else:
             a = pickle.loads(pick)
-        if not isinstance(a, ValueError):
+        if not isinstance(a, Traceback):
             raise ValueError('%s is not a traceback!' % (type(a), ))
         return a
 

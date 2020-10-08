@@ -1,6 +1,6 @@
 from .dictionaries import DictObject, apply_dict_object, DictionaryView, TwoWayDictionary, \
     DirtyDict, KeyAwareDefaultDict, ExpiringEntryDict, SelfCleaningDefaultDict, \
-    CacheDict, ExclusiveWritebackCache
+    CacheDict, ExclusiveWritebackCache, CountingDict
 from .hashable_objects import HashableWrapper
 from .heaps import Heap, SetHeap, TimeBasedHeap, TimeBasedSetHeap
 from .immutable import Immutable, frozendict
@@ -15,6 +15,7 @@ from .sparse_matrix import SparseMatrix
 from .queues import Subqueue
 
 __all__ = [
+    'CountingDict',
     'Subqueue',
     'ExclusiveWritebackCache',
     'CacheDict',

@@ -157,6 +157,12 @@ created instance, keying on the first *n* arguments.
 Dictionaries
 ============
 
+CountingDict
+------------
+
+.. autoclass:: satella.coding.structures.CountingDict
+    :members:
+
 ExclusiveWritebackCache
 -----------------------
 

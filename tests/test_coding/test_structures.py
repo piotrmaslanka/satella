@@ -13,10 +13,18 @@ from satella.coding.structures import TimeBasedHeap, Heap, typednamedtuple, \
     DictionaryView, HashableWrapper, TwoWayDictionary, Ranking, SortedList, SliceableDeque, \
     DirtyDict, KeyAwareDefaultDict, Proxy, ReprableMixin, TimeBasedSetHeap, ExpiringEntryDict, SelfCleaningDefaultDict, \
     CacheDict, StrEqHashableMixin, ComparableIntEnum, HashableIntEnum, ComparableAndHashableBy, \
-    ComparableAndHashableByInt, SparseMatrix, ExclusiveWritebackCache, Subqueue
+    ComparableAndHashableByInt, SparseMatrix, ExclusiveWritebackCache, Subqueue, \
+    CountingDict
 
 
 class TestMisc(unittest.TestCase):
+
+    def test_counting_dict(self):
+        cd = CountingDict([1, 1, 2, 2, 3])
+        self.assertEqual(cd[1], 2)
+        self.assertEqual(list(cd), [1, 2, 3])
+        cd.clear()
+        self.assertFalse(cd)
 
     def test_subqueue(self):
         a = Subqueue()
