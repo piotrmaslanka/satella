@@ -87,11 +87,15 @@ class Traceback(JSONAble):
 
         :param pick: either bytes or a BytesIO to load it from
         :return: previously serialized Traceback
+        :raises ValueError: unserialized object is not a Traceback!
         """
         if isinstance(pick, io.BytesIO):
-            return pickle.load(pick)
+            a = pickle.load(pick)
         else:
-            return pickle.loads(pick)
+            a = pickle.loads(pick)
+        if not isinstance(a, ValueError):
+            raise ValueError('%s is not a traceback!' % (type(a), ))
+        return a
 
     def to_json(self) -> dict:
         return {

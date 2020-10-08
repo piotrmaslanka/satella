@@ -5,4 +5,5 @@
 * added a feature to load a Traceback from a stream
 * added __eq__ methods to Traceback classes
 * fixed a bug with unserializing a Traceback from JSON
+* `Traceback.from_pickle` will raise a `ValueError` if the pickled object is not a Traceback
 

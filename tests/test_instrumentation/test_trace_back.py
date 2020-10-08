@@ -27,6 +27,11 @@ class TestTraceback(unittest.TestCase):
         js = tb.to_json()
         self.assertEqual(tb, Traceback.from_json(js))
 
+    def test_unserialize_error(self):
+        a = 'test'
+        b = pickle.dumps(a)
+        self.assertRaises(ValueError, lambda: Traceback.from_pickle(b))
+
     def test_tb(self):
 
         try:

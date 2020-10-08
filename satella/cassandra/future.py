@@ -6,6 +6,7 @@ from .common import ResponseFuture
 def wrap_future(future: ResponseFuture) -> Future:
     """
     Convert a Cassandra's future to a normal Python future.
+    The future is returned already
 
     :param future: cassandra future to wrap
     :return: a standard Python future
