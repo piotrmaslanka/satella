@@ -15,9 +15,10 @@ class ExclusiveWritebackCache(tp.Generic[K, V]):
     A dictionary implementing an exclusive write-back cache. By exclusive it is understood
     that only this object will be modifying the storage.
 
-    :param write_method: a blocking callable (key, value) that writes the value to underlying storage.
-    :param read_method: a blocking callable (key) -> value that retrieves the piece of data from the cache,
-        or throws a KeyError to signal that the value does not exist
+    :param write_method: a blocking callable (key, value) that writes the value to underlying
+        storage.
+    :param read_method: a blocking callable (key) -> value that retrieves the piece of data from
+        the cache, or throws a KeyError to signal that the value does not exist
     :param delete_method: optional, a blocking callable (key) that erases the data from the storage.
         If not given, it will be a TypeError to delete the data from this storage
     :param executor: an executor to execute the calls with. If None (default) is given, a

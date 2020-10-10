@@ -15,7 +15,8 @@ def extract_type_signature_from(fun: tp.Callable) -> tp.Tuple[type, ...]:
     return tuple(sign)
 
 
-# Taken from https://stackoverflow.com/questions/28237955/same-name-for-classmethod-and-instancemethod
+# Taken from https://stackoverflow.com/questions/28237955/same-name-for-classmethod-and-
+# instancemethod
 class class_or_instancemethod(classmethod):
     """
     A decorator to make your methods both classmethods (they will receive an instance of type

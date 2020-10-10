@@ -71,7 +71,7 @@ class DictObject(tp.MutableMapping[str, T]):
         return DictObject(self.__data.copy())
 
     def __deepcopy__(self, memo) -> 'DictObject':
-        return DictObject(copy.deepcopy(self.__data, memo))
+        return DictObject(copy.deepcopy(self.__data, memo=memo))
 
     @rethrow_as(KeyError, AttributeError)
     def __getattr__(self, item: str) -> T:
@@ -92,8 +92,10 @@ class DictObject(tp.MutableMapping[str, T]):
         """
         Check if this dictionary conforms to particular schema.
 
-        Schema is either a Descriptor, or a JSON-based schema. See satella.configuration.schema for details.
-        Schema can be passed as well using kwargs. Note that the schema argument will be ignored if kwargs are passed.
+        Schema is either a Descriptor, or a JSON-based schema. See satella.configuration.schema
+        for details.
+        Schema can be passed as well using kwargs. Note that the schema argument will be ignored
+        if kwargs are passed.
 
         :param schema: schema to verify against
         :return: whether is conformant

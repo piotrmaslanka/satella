@@ -29,11 +29,16 @@ def clip(v: Number, minimum: Number, maximum: Number) -> Number:
     return v
 
 
+class AppendableSequence(tp.Sequence[T]):
+    def append(self, item: T) -> None:
+        ...
+
+
 @for_argument(list)
-def pad_to_multiple_of_length(seq: tp.Sequence[T], multiple_of: int,
+def pad_to_multiple_of_length(seq: AppendableSequence, multiple_of: int,
                               pad_with: tp.Optional[T] = None,
                               pad_with_factory: tp.Optional[tp.Callable[[], T]] = None) -> \
-        tp.List[T]:
+        AppendableSequence:
     """
     Make sequence multiple of length, ie. append elements to the sequence
     until it's length is a multiple of multiple_of.
@@ -70,14 +75,14 @@ def one_tuple(x: tp.Iterable[T]) -> tp.Iterator[tp.Tuple[T]]:
     Change a sequence of iterables into a sequence that displays each element as
     a part of one-element tuple. Essentially syntactic sugar for:
 
-    >>> for y in x:
-    >>>     yield y,
+    >>> for z in x:
+    >>>     yield z,
 
     :param x: sequence to tupleify
     :return: a iterator of one-element tuples
     """
-    for y in x:
-        yield y,
+    for z in x:
+        yield z,
 
 
 def split_shuffle_and_join(entries: tp.List[T],
@@ -116,7 +121,7 @@ def split_shuffle_and_join(entries: tp.List[T],
 
 def stringify(obj: tp.Union[tp.Any], stringifier: tp.Callable[[tp.Any], str] = str,
               recursively: bool = False,
-              str_none: bool = False) -> tp.Dict[str, str]:
+              str_none: bool = False) -> tp.Union[tp.List[str], tp.Dict[str, str], str]:
     """
     Stringify all object:
 
@@ -124,13 +129,15 @@ def stringify(obj: tp.Union[tp.Any], stringifier: tp.Callable[[tp.Any], str] = s
         if a list, put every item through stringify
         else just call stringify on it.
 
-        Note that if you use recursively, then dicts and lists are allowed to be valid elements of the returned
-        representation!
+    Note that if you use recursively, then dicts and lists are allowed to be valid elements of the
+    returned representation!
 
     :param obj: a list or a dict
     :param stringifier: function that accepts any arguments and returns a string representation
-    :param recursively: whether to recursively stringify elements, ie. stringify will be called on all the children
-    :param str_none: whether to return None if given a None. If True, "None" will be returned instead
+    :param recursively: whether to recursively stringify elements, ie. stringify will be called on
+        all the children
+    :param str_none: whether to return None if given a None. If True, "None" will be returned
+        instead
     :return: stringified object
     """
     if isinstance(obj, collections.abc.Mapping):

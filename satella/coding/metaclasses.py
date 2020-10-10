@@ -104,7 +104,9 @@ def remove_redundant(metaclasses):
 memoized_metaclasses_map = {}
 
 
-def get_noconflict_metaclass(bases, left_metas, right_metas):
+def get_noconflict_metaclass(bases,
+                             left_metas,
+                             right_metas) -> tp.Callable[[str, tuple, dict], tp.Type]:
     """Not intended to be used outside of this module, unless you know
     what you are doing."""
     # make tuple of needed metaclasses in specified priority order
@@ -130,14 +132,14 @@ def get_noconflict_metaclass(bases, left_metas, right_metas):
 
 
 def metaclass_maker_f(left_metas=(), right_metas=()):
-    def make_class(name, bases, a_dict):
+    def make_class(name: str, bases: tuple, a_dict: dict) -> tp.Type:
         metaclass = get_noconflict_metaclass(bases, left_metas, right_metas)
         return metaclass(name, bases, a_dict)
 
     return make_class
 
 
-def metaclass_maker(name, bases, adict):
+def metaclass_maker(name: str, bases: tuple, a_dict: dict) -> tp.Type:
     """
     Automatically construct a compatible meta-class like interface. Use like:
 
@@ -145,7 +147,7 @@ def metaclass_maker(name, bases, adict):
     >>>     pass
     """
     metaclass = get_noconflict_metaclass(bases, (), ())
-    return metaclass(name, bases, adict)
+    return metaclass(name, bases, a_dict)
 
 
 GetterDefinition = tp.Callable[[object], tp.Any]

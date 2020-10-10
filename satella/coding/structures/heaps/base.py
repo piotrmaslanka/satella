@@ -58,7 +58,7 @@ class Heap(collections.UserList, tp.Generic[T]):
         heapq.heappush(self.data, item)
 
     def __deepcopy__(self, memo) -> 'Heap':
-        return self.__class__(copy.deepcopy(self.data, memo))
+        return self.__class__(copy.deepcopy(self.data, memo=memo))
 
     def __copy__(self) -> 'Heap':
         return self.__class__(copy.copy(self.data))
@@ -131,7 +131,8 @@ class SetHeap(Heap):
     """
     A heap with additional invariant that no two elements are the same.
 
-    Note that elements you insert in this must be eq-able and hashable, ie. you can put them in a dict.
+    Note that elements you insert in this must be eq-able and hashable, ie. you can put them in a
+    dict.
 
     Optimized for fast insertions and fast __contains__
 

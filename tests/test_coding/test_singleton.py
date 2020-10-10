@@ -54,6 +54,6 @@ class TestSingleton(unittest.TestCase):
         self.assertEqual(b.device_id, 'b')
         a.device_id = 'c'
         self.assertEqual(c.device_id, 'c')
-        self.assertEqual(get_instances_for_singleton(MyClass), [('a',), ('b',)])
+        self.assertEqual(set(get_instances_for_singleton(MyClass)), {('a',), ('b',)})
         delete_singleton_for(MyClass, 'a')
-        self.assertEqual(get_instances_for_singleton(MyClass), [('b',)])
+        self.assertEqual(set(get_instances_for_singleton(MyClass)), {('b',)})

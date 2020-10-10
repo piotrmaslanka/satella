@@ -40,7 +40,7 @@ class Subqueue(tp.Generic[T]):
 
     def qsize(self) -> int:
         """Calculate the total of entries"""
-        return sum(queue.qsize() for queue in self.subqueues.values())
+        return sum(que.qsize() for que in self.subqueues.values())
 
     def get_any(self) -> tp.Tuple[str, T]:
         """

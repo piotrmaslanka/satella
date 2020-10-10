@@ -180,7 +180,7 @@ def for_argument(*t_ops: ForArgumentArg, **t_kwops: ForArgumentArg):
         def inner(*args, **kwargs):
             # add extra 'None' argument if unbound method
             assert len(args) >= len(t_ops)
-            a = fun(*((_NOP if op is None else op)(arg) for arg, op in
+            a = fun(*((_NOP if op2 is None else op2)(arg) for arg, op2 in
                       itertools.zip_longest(args, t_ops, fillvalue=None)),
                     **{k: t_kwops.get(k, _NOP)(v) for k, v in kwargs.items()})
             return returns(a)

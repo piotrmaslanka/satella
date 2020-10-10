@@ -79,7 +79,7 @@ class LockedDataset:
             raise ResourceNotLocked('No lock held on this object for a write operation')
         return super(LockedDataset, self).__setattr__(key, value)
 
-    def __call__(self, blocking=True, timeout=-1):
+    def __call__(self, blocking: bool = True, timeout: float = -1):
         _get_internal(self).args = blocking, timeout
         return self
 

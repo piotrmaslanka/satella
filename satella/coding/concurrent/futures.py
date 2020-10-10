@@ -1,3 +1,4 @@
+import typing as tp
 import logging
 from concurrent.futures import Future as PythonFuture
 from concurrent.futures._base import CANCELLED, CANCELLED_AND_NOTIFIED, FINISHED
@@ -48,6 +49,7 @@ class Future(PythonFuture):
             if self._state not in [CANCELLED, CANCELLED_AND_NOTIFIED, FINISHED]:
                 self._pre_done_callbacks.append(fn)
                 return
+        # noinspection PyBroadException
         try:
             fn(self)
         except Exception:
@@ -55,24 +57,11 @@ class Future(PythonFuture):
 
     def _invoke_pre_callbacks(self):
         for callback in self._pre_done_callbacks:
+            # noinspection PyBroadException
             try:
                 callback(self)
             except Exception:
                 LOGGER.exception('exception calling callback for %r', self)
-
-    def set_result(self, result) -> None:
-        if self._state == PRE_FINISHED:
-            self._result = result
-            self._exception = None
-        else:
-            super().set_result(result)
-
-    def set_exception(self, exception) -> None:
-        if self._state == PRE_FINISHED:
-            self._exception = exception
-            self._result = None
-        else:
-            super().set_exception(exception)
 
     def result(self, timeout=None):
         if self._state == PRE_FINISHED:
@@ -80,7 +69,7 @@ class Future(PythonFuture):
         else:
             return super().result(timeout)
 
-    def exception(self, timeout: None):
+    def exception(self, timeout: None) -> tp.Type[Exception]:
         if self._state == PRE_FINISHED:
             return self._exception
         else:

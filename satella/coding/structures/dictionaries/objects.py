@@ -1,7 +1,9 @@
 import copy
 import typing as tp
 
-K, V, T = tp.TypeVar('K'), tp.TypeVar('V'), tp.TypeVar('T')
+K = tp.TypeVar('K')
+V = tp.TypeVar('V')
+T = tp.TypeVar('T')
 
 
 class DirtyDict(tp.MutableMapping[K, V]):
@@ -122,7 +124,8 @@ class TwoWayDictionary(tp.MutableMapping[K, V]):
     >>> twd[2] = 3
     >>> self.assertEqual(twd.reverse[3], 2)
 
-    When you're done using a given TwoWayDictionary, please call .done(). This will make it easier for the GC to collect
+    When you're done using a given TwoWayDictionary, please call .done(). This will make it easier
+    for the GC to collect
     the dictionaries.
 
     You can also use the context manager to make the TwoWayDictionary clean up itself, eg.
@@ -226,7 +229,7 @@ class DictionaryView(tp.MutableMapping[K, V]):
         return DictionaryView(*copy.copy(self.dictionaries))
 
     def __deepcopy__(self, memo) -> 'DictionaryView':
-        return DictionaryView(*copy.deepcopy(self.dictionaries, memo))
+        return DictionaryView(*copy.deepcopy(self.dictionaries, memo=memo))
 
     def __init__(self, master_dict: tp.Dict[K, V], *rest_of_dicts: tp.Dict[K, V],
                  propagate_deletes: bool = True,

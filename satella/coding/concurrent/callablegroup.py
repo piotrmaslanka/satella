@@ -83,14 +83,17 @@ class CallNoOftenThan:
     A class that will ensure that calls to given callable are made no more often
     than some interval.
 
+    Even if it's call is called more often than specified value, the callable just
+    won't be called and None will be returned.
+
     :param interval: interval in seconds
     :param callable_: callable to call
     """
     __slots__ = ('interval', 'callable', 'last_called')
 
-    def __init__(self, interval: float, callable_: tp.Callable[[], None]):
+    def __init__(self, interval: float, callable_: tp.Callable):
         self.interval = interval  # type: float
-        self.callable = callable_  # type: tp.Callable[[], None]
+        self.callable = callable_  # type: tp.Callable
         self.last_called = 0  # type: float
 
     def __call__(self, *args, **kwargs):

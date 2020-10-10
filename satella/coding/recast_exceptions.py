@@ -105,6 +105,7 @@ class log_exceptions:
         if inspect.isgeneratorfunction(fun):
             @wraps(fun)
             def inner(*args, **kwargs):
+                # noinspection PyBroadException
                 try:
                     yield from fun(*args, **kwargs)
                 except Exception as e:
@@ -117,6 +118,7 @@ class log_exceptions:
         else:
             @wraps(fun)
             def inner(*args, **kwargs):
+                # noinspection PyBroadException
                 try:
                     return fun(*args, **kwargs)
                 except Exception as e:
@@ -160,7 +162,7 @@ class rethrow_as:
     __slots__ = ('mapping', 'exception_preprocessor', 'returns', '__exception_remapped',
                  'returns_factory')
 
-    def __init__(self, *pairs: tp.Union[ExcType, tp.Tuple[ExcType, ExcType]],
+    def __init__(self, *pairs: tp.Union[ExcType, tp.Tuple[ExcType, ...]],
                  exception_preprocessor: tp.Optional[tp.Callable[[Exception], str]] = repr,
                  returns=None,
                  returns_factory: tp.Optional[tp.Callable[[], tp.Any]] = None):

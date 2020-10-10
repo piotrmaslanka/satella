@@ -48,7 +48,7 @@ class SelfClosingGenerator:
     """
     __slots__ = ('generator', 'stopped')
 
-    def __init__(self, generator: tp.Generator):
+    def __init__(self, generator: tp.Union[tp.Generator, tp.Callable[[tp.Any], tp.Generator]]):
         self.generator = generator
         self.stopped = False  # type: bool
 
@@ -77,8 +77,8 @@ class SelfClosingGenerator:
 
     def close(self) -> None:
         if not self.stopped:
-            with silence_excs(TypeError):  # we might get a generator-generating function
-                                           # as an argument
+            # we might get a generator-generating function as an argument
+            with silence_excs(TypeError):
                 exhaust(self.generator)
 
             self.stopped = True

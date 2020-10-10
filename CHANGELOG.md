@@ -8,3 +8,7 @@
 * `Traceback.from_pickle` will raise a `ValueError` if the pickled object is not a Traceback
 * added `CountingDict`
 * added get_instances_for_singleton and delete_singleton_for
+* some minor corrections thanks to PyCharm
+* deprecated `count(start_at=)`
+* renamed the argument in `half_cartesian`
+* minor typing and docs changes

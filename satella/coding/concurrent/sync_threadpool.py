@@ -5,18 +5,18 @@ from .atomic import AtomicNumber
 from .thread import Condition
 
 
-def sync_threadpool(tp: ThreadPoolExecutor) -> None:
+def sync_threadpool(tpe: ThreadPoolExecutor) -> None:
     """
     Make sure that every thread of given thread pool executor is done processing
     jobs scheduled until this moment.
 
     Make sure that other tasks do not submit anything to this thread pool executor.
 
-    :param tp: thread pool executor to sync
+    :param tpe: thread pool executor to sync
     """
-    assert isinstance(tp, ThreadPoolExecutor), 'Must be a ThreadPoolExecutor!'
+    assert isinstance(tpe, ThreadPoolExecutor), 'Must be a ThreadPoolExecutor!'
 
-    workers = tp._max_workers
+    workers = tpe._max_workers
     atm_n = AtomicNumber(workers)
     cond = Condition()
 
@@ -25,10 +25,10 @@ def sync_threadpool(tp: ThreadPoolExecutor) -> None:
         atm_n -= 1
         cond.wait()
 
-    futures = [tp.submit(decrease_atm) for _ in range(workers)]
+    futures = [tpe.submit(decrease_atm) for _ in range(workers)]
 
     # wait for all currently scheduled jobs to be picked up
-    while tp._work_queue.qsize() > 0:
+    while tpe._work_queue.qsize() > 0:
         time.sleep(0.5)
 
     atm_n.wait_until_equal(0)

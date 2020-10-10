@@ -7,7 +7,8 @@ from .decorators import wraps, ExcType
 Queue = tp.TypeVar('Queue')
 
 
-def queue_get(queue_getter: tp.Union[str, tp.Callable[[object], Queue]], timeout: tp.Optional[float] = None,
+def queue_get(queue_getter: tp.Union[str, tp.Callable[[object], Queue]],
+              timeout: tp.Optional[float] = None,
               exception_empty: tp.Union[ExcType, tp.Tuple[ExcType, ...]] = queue.Empty,
               queue_get_method: tp.Callable[[Queue, tp.Optional[float]], tp.Any] =
               lambda x, timeout: x.get(
@@ -56,7 +57,8 @@ def queue_get(queue_getter: tp.Union[str, tp.Callable[[object], Queue]], timeout
     >>>         ...
     """
     if isinstance(queue_getter, str):
-        my_queue_getter = lambda x: getattr(x, queue_getter)
+        def my_queue_getter(x):
+            return getattr(x, queue_getter)
     else:
         my_queue_getter = queue_getter
 
@@ -113,7 +115,8 @@ def loop_while(pred: tp.Union[tp.Callable[[tp.Any], bool],
         def inner(*args, **kwargs):
             pred_f = pred
             if len(args):
-                pred_f = lambda: pred(args[0])
+                def pred_f():
+                    return pred(args[0])
             while pred_f():
                 fun(*args, **kwargs)
         return inner

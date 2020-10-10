@@ -59,6 +59,8 @@ class StrEqHashableMixin(metaclass=ABCMeta):
 class ComparableAndHashableBy(metaclass=ABCMeta):
     """
     A mix-in. Provides comparision (lt, gt, ge, le, eq) and hashing by a field of this class.
+    Hashing is done by invoking hash() on the value of the field, and comparison is done by
+    directly comparing given field's values.
 
     Example:
 
@@ -66,7 +68,7 @@ class ComparableAndHashableBy(metaclass=ABCMeta):
     >>>     _COMPARABLE_BY = 'length'
     >>>     @property
     >>>     def length(self):
-    >>>         ...
+    >>>         return 0
     >>>
     >>> assert Vector() > Vector()
     """
@@ -215,7 +217,8 @@ class ReprableMixin:
     This takes the values for the __repr__ from repr'ing list of fields defined as
     class property _REPR_FIELDS.
 
-    Set an optional class property of _REPR_FULL_CLASSNAME for __repr__ to output the repr alongside the module name.
+    Set an optional class property of _REPR_FULL_CLASSNAME for __repr__ to output the repr
+    alongside the module name.
 
     Example:
 

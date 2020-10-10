@@ -9,7 +9,9 @@ __all__ = [
     'Monitor', 'RMonitor', 'MonitorDict', 'MonitorList'
 ]
 
-K, V, T = tp.TypeVar('K'), tp.TypeVar('V'), tp.TypeVar('T')
+K = tp.TypeVar('K')
+V = tp.TypeVar('V')
+T = tp.TypeVar('T')
 
 
 class Monitor:
@@ -177,7 +179,7 @@ class MonitorList(tp.Generic[T], collections.UserList, Monitor):
         return MonitorList(copy.copy(self.data))
 
     def __deepcopy__(self, memo) -> 'MonitorList':
-        return MonitorList(copy.deepcopy(self.data, memo))
+        return MonitorList(copy.deepcopy(self.data, memo=memo))
 
     def __getitem__(self, item: tp.Union[slice, int]) -> T:
         return self.data[item]
@@ -214,4 +216,4 @@ class MonitorDict(tp.Generic[K, V], collections.UserDict, Monitor):
         return MonitorDict(copy.copy(self.data))
 
     def __deepcopy__(self, memo) -> 'MonitorDict':
-        return MonitorDict(copy.deepcopy(self.data, memo))
+        return MonitorDict(copy.deepcopy(self.data, memo=memo))

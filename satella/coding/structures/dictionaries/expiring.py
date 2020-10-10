@@ -9,7 +9,8 @@ from ..singleton import Singleton
 from ...concurrent.monitor import Monitor
 from ...recast_exceptions import rethrow_as, silence_excs
 
-K, V = tp.TypeVar('K'), tp.TypeVar('V')
+K = tp.TypeVar('K')
+V = tp.TypeVar('V')
 
 
 class Cleanupable(metaclass=ABCMeta):
@@ -199,7 +200,7 @@ class ExpiringEntryDict(Monitor, tp.MutableMapping[K, V], Cleanupable):
 
     def __iter__(self) -> tp.Iterator[K]:
         self.cleanup()
-        return super().__iter__(self)
+        return iter(self.data)
 
     @Monitor.synchronized
     def cleanup(self) -> None:

@@ -7,6 +7,14 @@ T = tp.TypeVar('T')
 KeyArg = tp.Tuple[tp.Union[int, slice], tp.Union[int, slice]]
 
 
+def _sanitize_coordinate(coord: tp.Union[int, slice],
+                         max_len: int) -> tp.Union[int, slice]:
+    if isinstance(coord, int):
+        if coord < 0:
+            coord += max_len
+    return coord
+
+
 class SparseMatrix(tp.Generic[T]):
     """
     A matrix of infinite size, that supports assignments.
@@ -59,13 +67,6 @@ class SparseMatrix(tp.Generic[T]):
     def __bool__(self) -> bool:
         return self.no_rows == 0
 
-    def _sanitize_coordinate(self, coord: tp.Union[int, slice],
-                             max_len: int) -> tp.Union[int, slice]:
-        if isinstance(coord, int):
-            if coord < 0:
-                coord += max_len
-        return coord
-
     def _sanitize_key(self, key: KeyArg) -> KeyArg:
         col, row = key
 
@@ -74,14 +75,14 @@ class SparseMatrix(tp.Generic[T]):
                 raise IndexError('Custom slicing is not supported!')
             col = Ellipsis
         elif isinstance(col, int):
-            col = self._sanitize_coordinate(col, self.no_cols)
+            col = _sanitize_coordinate(col, self.no_cols)
 
         if isinstance(row, slice):
             if not (row.start is None and row.stop is None and row.step is None):
                 raise IndexError('Custom slicing is not supported!')
             row = Ellipsis
         elif isinstance(row, int):
-            row = self._sanitize_coordinate(row, self.no_rows)
+            row = _sanitize_coordinate(row, self.no_rows)
 
         return col, row
 

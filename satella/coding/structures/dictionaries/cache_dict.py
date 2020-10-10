@@ -6,7 +6,8 @@ from concurrent.futures import ThreadPoolExecutor, Executor, Future
 from satella.coding.recast_exceptions import silence_excs
 
 logger = logging.getLogger(__name__)
-K, V = tp.TypeVar('K'), tp.TypeVar('V')
+K = tp.TypeVar('K')
+V = tp.TypeVar('V')
 
 
 class CacheDict(tp.Mapping[K, V]):

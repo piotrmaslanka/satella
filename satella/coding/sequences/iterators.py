@@ -6,7 +6,8 @@ import warnings
 from ..recast_exceptions import rethrow_as, silence_excs
 from ..decorators import for_argument, wraps
 
-T, U = tp.TypeVar('T'), tp.TypeVar('U')
+T = tp.TypeVar('T')
+U = tp.TypeVar('U')
 IteratorOrIterable = tp.Union[tp.Iterator[T], tp.Iterable[T]]
 
 
@@ -67,7 +68,7 @@ class ConstruableIterator:
     __slots__ = ('entries', )
 
     def __init__(self, *args, **kwargs):
-        self.entries = collections.deque(*args, **kwargs)       # type: tp.List[T]
+        self.entries = collections.deque(*args, **kwargs)
 
     def add_immediate(self, t: T) -> None:
         """
@@ -172,9 +173,12 @@ def count(sq: IteratorOrIterable, start: tp.Optional[int] = None, step: int = 1,
     :param sq: sequence to enumerate
     :param start: alias for start_at. Prefer it in regards to start_at. Default is 0
     :param step: number to add to internal counter after each element
+    :param start_at: deprecated alias for start
     :return: an iterator of subsequent integers
     """
     if start_at:
+        warnings.warn('This is deprecated and will be removed in Satella 3.0. Use start instead.',
+                      DeprecationWarning)
         start = start_at
     num = start or 0
     for _ in sq:
@@ -236,7 +240,8 @@ def other_sequence_no_longer_than(base_sequence: IteratorOrIterable,
             return
 
 
-def shift(iterable_: IteratorOrIterable, shift_factor: int) -> tp.Iterator[T]:
+def shift(iterable_: tp.Union[tp.Reversible[T], IteratorOrIterable],
+          shift_factor: int) -> tp.Iterator[T]:
     """
     Return this sequence, but shifted by factor elements, so that elements will appear
     sooner by factor.
@@ -372,7 +377,7 @@ class IteratorListAdapter:
 
     def __init__(self, iterator: tp.Iterator):
         self.iterator = iter(iterator)
-        self.list = None        # type: list
+        self.list = None
         self.unfolded = False
         self.pointer = 0
 

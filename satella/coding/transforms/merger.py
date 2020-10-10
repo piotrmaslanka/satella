@@ -75,7 +75,8 @@ class merge_series:
                     return False
             else:
                 try:
-                    while not (self.next_preloaded_values[i][0] <= for_ts < self.super_next_preloaded_values[i][0]):
+                    while not (self.next_preloaded_values[i][0] <= for_ts
+                               < self.super_next_preloaded_values[i][0]):
                         self.advance(i)
                 except TypeError:  # we've reached the finale
                     if self.next_preloaded_values[i][0] > for_ts:

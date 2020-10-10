@@ -137,9 +137,11 @@ class TimeBasedHeap(Heap):
 
 class TimeBasedSetHeap(Heap):
     """
-    A heap of items sorted by timestamps, with such invariant that every item can appear at most once.
+    A heap of items sorted by timestamps, with such invariant that every item can appear at most
+    once.
 
-    Note that elements you insert in this must be eq-able and hashable, ie. you can put them in a dict.
+    Note that elements you insert in this must be eq-able and hashable, ie. you can put them in a
+    dict.
 
     It is easy to ask for items, whose timestamps are LOWER than a value, and
     easy to remove them.

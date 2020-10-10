@@ -12,7 +12,8 @@ T = tp.TypeVar('T')
 def run_as_future(fun):
     """
     A decorator that accepts a function that should be executed in a separate thread,
-    and a Future returned instead of it's result, that will enable to watch the function for completion.
+    and a Future returned instead of it's result, that will enable to watch the function for
+    completion.
 
     The created thread will be non-demonic
 

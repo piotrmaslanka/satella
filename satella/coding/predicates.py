@@ -15,7 +15,7 @@ def _nop(v: tp.Any) -> tp.Any:
 def make_operation_two_args(operation_two_args: tp.Callable[[tp.Any, tp.Any], tp.Any],
                             docstring: tp.Optional[str] = None,
                             swap_order: bool = False) -> PredicateType:
-    def operation(self, a) -> PredicateType:
+    def operation(self, a: tp.Callable) -> PredicateType:
         if isinstance(a, Predicate):
             if swap_order:
                 def op(v):
