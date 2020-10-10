@@ -7,12 +7,16 @@ T = tp.TypeVar('T')
 KeyArg = tp.Tuple[tp.Union[int, slice], tp.Union[int, slice]]
 
 
-def _sanitize_coordinate(coord: tp.Union[int, slice],
-                         max_len: int) -> tp.Union[int, slice]:
-    if isinstance(coord, int):
-        if coord < 0:
-            coord += max_len
-    return coord
+def _cleanup_key(inst: tp.Union[int, slice], max_count: int):
+    if isinstance(inst, slice):
+        if not (inst.start is None and inst.stop is None and inst.step is None):
+            raise IndexError('Custom slicing is not supported!')
+        return Ellipsis
+    elif isinstance(inst, int):
+        if isinstance(inst, int):
+            if inst < 0:
+                inst += max_count
+        return inst
 
 
 class SparseMatrix(tp.Generic[T]):
@@ -36,6 +40,8 @@ class SparseMatrix(tp.Generic[T]):
 
     Iterating over this matrix will yield it's consecutive rows.
     """
+    __slots__ = ('rows_dict', 'known_column_count', 'no_cols', 'no_rows')
+
     def __init__(self):
         self.rows_dict = collections.defaultdict(lambda: collections.defaultdict(lambda: None))
         self.known_column_count = {}        # tp.Dict[int, int] column_no => amount
@@ -69,22 +75,7 @@ class SparseMatrix(tp.Generic[T]):
 
     def _sanitize_key(self, key: KeyArg) -> KeyArg:
         col, row = key
-
-        if isinstance(col, slice):
-            if not (col.start is None and col.stop is None and col.step is None):
-                raise IndexError('Custom slicing is not supported!')
-            col = Ellipsis
-        elif isinstance(col, int):
-            col = _sanitize_coordinate(col, self.no_cols)
-
-        if isinstance(row, slice):
-            if not (row.start is None and row.stop is None and row.step is None):
-                raise IndexError('Custom slicing is not supported!')
-            row = Ellipsis
-        elif isinstance(row, int):
-            row = _sanitize_coordinate(row, self.no_rows)
-
-        return col, row
+        return _cleanup_key(col, self.no_cols), _cleanup_key(row, self.no_rows)
 
     @classmethod
     def from_iterable(cls, y: tp.Iterable[tp.Iterable[T]]):

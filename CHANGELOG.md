@@ -11,4 +11,4 @@
 * some minor corrections thanks to PyCharm
 * deprecated `count(start_at=)`
 * renamed the argument in `half_cartesian`
-* minor typing and docs changes
+* minor typing, refactors and docs changes
