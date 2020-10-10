@@ -1,7 +1,8 @@
 import queue
 import unittest
 
-from satella.coding.structures import Singleton, SingletonWithRegardsTo
+from satella.coding.structures import Singleton, SingletonWithRegardsTo, \
+    get_instances_for_singleton, delete_singleton_for
 from satella.coding import queue_iterator
 
 
@@ -53,3 +54,6 @@ class TestSingleton(unittest.TestCase):
         self.assertEqual(b.device_id, 'b')
         a.device_id = 'c'
         self.assertEqual(c.device_id, 'c')
+        self.assertEqual(get_instances_for_singleton(MyClass), [('a',), ('b',)])
+        delete_singleton_for(MyClass, 'a')
+        self.assertEqual(get_instances_for_singleton(MyClass), [('b',)])

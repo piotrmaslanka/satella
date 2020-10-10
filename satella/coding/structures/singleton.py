@@ -1,3 +1,4 @@
+import typing as tp
 from ..decorators import wraps
 
 
@@ -81,3 +82,24 @@ def SingletonWithRegardsTo(num_args: int):
         return cls
 
     return inner
+
+
+def get_instances_for_singleton(x) -> tp.List[tp.Tuple]:
+    """
+    Obtain a list of arguments for which singletons exists for given
+    class decorated with SingletonWithRegardsTo
+
+    :param x: a class decorated with SingletonWithRegardsTo
+    :return: a list of arguments
+    """
+    return list(x.__it__)
+
+
+def delete_singleton_for(x, *args) -> None:
+    """
+    Delete singleton for given arguments in a class decorated with SingletonWithRegardsTo
+
+    :param x: class decorated with SingletonWithRegardsTo
+    :param args: arguments used in the constructor
+    """
+    del x.__it__[args]

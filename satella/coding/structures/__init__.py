@@ -8,7 +8,8 @@ from .mixins import OmniHashableMixin, ReprableMixin, StrEqHashableMixin, Compar
     HashableIntEnum, ComparableAndHashableBy, ComparableAndHashableByInt
 from .proxy import Proxy
 from .ranking import Ranking
-from .singleton import Singleton, SingletonWithRegardsTo
+from .singleton import Singleton, SingletonWithRegardsTo, get_instances_for_singleton, \
+    delete_singleton_for
 from .sorted_list import SortedList, SliceableDeque
 from .typednamedtuple import typednamedtuple
 from .sparse_matrix import SparseMatrix

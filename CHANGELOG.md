@@ -7,3 +7,4 @@
 * fixed a bug with unserializing a Traceback from JSON
 * `Traceback.from_pickle` will raise a `ValueError` if the pickled object is not a Traceback
 * added `CountingDict`
+* added get_instances_for_singleton and delete_singleton_for

@@ -154,6 +154,12 @@ instance will depend on first *n* arguments. This function makes it easy:
 It will remember instances already created and return you a previously
 created instance, keying on the first *n* arguments.
 
+There are also two functions to help you with managing your `SingletonWithRegardsTo`:
+
+.. autofunction:: satella.coding.structures.get_instances_for_singleton
+
+.. autofunction:: satella.coding.structures.delete_singleton_for
+
 Dictionaries
 ============
 
