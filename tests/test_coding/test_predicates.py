@@ -25,7 +25,7 @@ class TestPredicates(unittest.TestCase):
 
     def test_upper(self):
         p = x.upper()
-        self.assertEquals(p('ala ma kota'), 'ALA MA KOTA')
+        self.assertEqual(p('ala ma kota'), 'ALA MA KOTA')
 
     def test_instanceof(self):
         p = x.instanceof(int)

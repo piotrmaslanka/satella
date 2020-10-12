@@ -147,8 +147,8 @@ class TestConcurrent(unittest.TestCase):
             return 5
 
         fut = call_me()
-        self.assertEquals(fut.result(), 5)
-        self.assertEquals(a['test'], 2)
+        self.assertEqual(fut.result(), 5)
+        self.assertEqual(a['test'], 2)
 
     def test_id_allocator(self):
         id_alloc = IDAllocator()

@@ -25,7 +25,7 @@ class TestMisc(unittest.TestCase):
             B = 'test2'
 
         self.assertEqual(MyEnum.A, 'test')
-        self.assertNotEquals(MyEnum.B, 'test')
+        self.assertNotEqual(MyEnum.B, 'test')
 
     def test_counting_dict(self):
         cd = CountingDict([1, 1, 2, 2, 3])
