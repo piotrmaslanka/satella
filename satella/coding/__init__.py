@@ -13,7 +13,7 @@ from .iterators import hint_with_length, SelfClosingGenerator, exhaust, chain
 from .metaclasses import metaclass_maker, wrap_with, dont_wrap, wrap_property, DocsFromParent, \
     CopyDocsFrom
 from .misc import update_if_not_none, update_key_if_none, update_attr_if_none, queue_iterator, \
-    update_key_if_not_none, source_to_function
+    update_key_if_not_none, source_to_function, update_key_if_true
 from .recast_exceptions import rethrow_as, silence_excs, catch_exception, log_exceptions, \
     raises_exception
 from .overloading import overload, class_or_instancemethod
@@ -22,6 +22,7 @@ __all__ = [
     'overload', 'class_or_instancemethod',
     'update_if_not_none', 'DocsFromParent', 'update_key_if_none', 'queue_iterator',
     'update_attr_if_none', 'update_key_if_not_none', 'source_to_function',
+    'update_key_if_true',
     'hint_with_length', 'SelfClosingGenerator', 'exhaust', 'chain',
     'Monitor', 'RMonitor', 'merge_dicts',
     'short_none', 'has_keys', 'CopyDocsFrom',

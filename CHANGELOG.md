@@ -12,3 +12,4 @@
 * deprecated `count(start_at=)`
 * renamed the argument in `half_cartesian`
 * minor typing, refactors and docs changes
+* added `update_key_if_true`

@@ -1,8 +1,16 @@
-from satella.coding import update_key_if_not_none, overload, class_or_instancemethod
+from satella.coding import update_key_if_not_none, overload, class_or_instancemethod, \
+    update_key_if_true
 import unittest
 
 
 class TestCase(unittest.TestCase):
+
+    def test_update_key_if_true(self):
+        a = {5: False}
+        update_key_if_true(a, 5, True, False)
+        self.assertFalse(a[5])
+        update_key_if_true(a, 5, True, True)
+        self.assertTrue(a[5])
 
     def test_class_or_instancemethod(self):
 

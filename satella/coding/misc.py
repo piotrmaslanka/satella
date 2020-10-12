@@ -67,6 +67,21 @@ def update_attr_if_none(obj: object, attr: str, value: tp.Any,
                 raise
 
 
+def update_key_if_true(dictionary: dict, key: tp.Any, value: tp.Any, flag: bool):
+    """
+    If flag is True, execute dictionary[key] = value
+
+    :param dictionary: dictionary to mutate
+    :param key: dictionary key to use
+    :param value: dictionary value to set
+    :param flag: whether to execute the setting operation
+    :return: the dict itself
+    """
+    if flag:
+        dictionary[key] = value
+    return dictionary
+
+
 def update_key_if_none(dictionary: dict, key, value):
     """
     This is deprecated. Please use update_key_if_not_none instead!
