@@ -14,10 +14,18 @@ from satella.coding.structures import TimeBasedHeap, Heap, typednamedtuple, \
     DirtyDict, KeyAwareDefaultDict, Proxy, ReprableMixin, TimeBasedSetHeap, ExpiringEntryDict, SelfCleaningDefaultDict, \
     CacheDict, StrEqHashableMixin, ComparableIntEnum, HashableIntEnum, ComparableAndHashableBy, \
     ComparableAndHashableByInt, SparseMatrix, ExclusiveWritebackCache, Subqueue, \
-    CountingDict
+    CountingDict, ComparableEnum
 
 
 class TestMisc(unittest.TestCase):
+
+    def test_comparable_enum(self):
+        class MyEnum(ComparableEnum):
+            A = 'test'
+            B = 'test2'
+
+        self.assertEqual(MyEnum.A, 'test')
+        self.assertNotEquals(MyEnum.B, 'test')
 
     def test_counting_dict(self):
         cd = CountingDict([1, 1, 2, 2, 3])

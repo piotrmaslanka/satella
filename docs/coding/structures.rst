@@ -94,6 +94,14 @@ If you need to provide a quick __repr__ for your classes:
 .. autoclass:: satella.coding.structures.ReprableMixin
     :members:
 
+ComparableEnum
+--------------
+
+
+
+.. autoclass:: satella.coding.structures.ComparableEnum
+    :members:
+
 HashableIntEnum
 ---------------
 
