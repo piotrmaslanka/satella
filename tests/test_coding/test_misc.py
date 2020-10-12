@@ -11,6 +11,8 @@ class TestCase(unittest.TestCase):
         self.assertFalse(a[5])
         update_key_if_true(a, 5, True, True)
         self.assertTrue(a[5])
+        update_key_if_true(a, 6, True)
+        self.assertTrue(a[6])
 
     def test_class_or_instancemethod(self):
 
@@ -49,3 +51,5 @@ class TestCase(unittest.TestCase):
         update_key_if_not_none(a, 'test', None)
         update_key_if_not_none(a, 'test2', 2)
         self.assertEqual(a, {'test2': 2})
+        update_key_if_not_none(a, {'test3': 3, 'test4': None})
+        self.assertEqual(a, {'test2': 2, 'test3': 3})
