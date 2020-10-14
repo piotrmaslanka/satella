@@ -1,6 +1,9 @@
 import typing as tp
 import operator
 
+from satella.coding.structures.dictionaries.dict_object import DictObject
+from satella.configuration.schema import Descriptor
+
 __all__ = ['x']
 
 import warnings
@@ -108,6 +111,17 @@ class Predicate:
         warnings.warn('This is deprecated and will be removed in Satella 3.x.'
                       'Please use has() instead', DeprecationWarning)
         return self.has(predicate)
+
+    def is_valid_schema(self, schema: tp.Optional[tp.Union[Descriptor, tp.Dict]] = None, **kwargs):
+        """
+        Check if given value has the correct schema.
+        The schema is the same as in
+        :py:meth:`satella.coding.structures.DictObject.is_valid_schema`
+        """
+        def is_schema_correct(v):
+            return DictObject(self.operation(v)).is_valid_schema(schema, **kwargs)
+
+        return Predicate(is_schema_correct)
 
     def has(self, predicate: 'Predicate') -> PredicateType:
         """

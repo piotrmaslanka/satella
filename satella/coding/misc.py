@@ -14,7 +14,7 @@ def queue_iterator(queue: Queue) -> tp.Iterator:
         yield queue.get()
 
 
-def update_if_not_none(dictionary: dict, key, value) -> dict:
+def update_if_not_none(dictionary: tp.Dict, key: tp.Hashable, value) -> tp.Dict:
     """
     Deprecated alias for :func:`update_key_if_none`
     """
@@ -71,10 +71,10 @@ def update_attr_if_none(obj: object, attr: str, value: tp.Any,
 
 class _BLANK:
     pass
+_BlankType = tp.Type[_BLANK]
 
-
-def update_key_if_true(dictionary: dict, key: tp.Any, value: tp.Any,
-                       flag: tp.Union[bool, tp.Type[_BLANK]] = _BLANK) -> dict:
+def update_key_if_true(dictionary: tp.Dict, key: tp.Hashable, value: tp.Any,
+                       flag: tp.Union[bool, _BlankType] = _BLANK) -> tp.Dict:
     """
     If flag is True, execute dictionary[key] = value
 
@@ -92,7 +92,7 @@ def update_key_if_true(dictionary: dict, key: tp.Any, value: tp.Any,
     return dictionary
 
 
-def update_key_if_none(dictionary: dict, key, value) -> dict:
+def update_key_if_none(dictionary: tp.Dict, key: tp.Hashable, value) -> tp.Dict:
     """
     This is deprecated. Please use update_key_if_not_none instead!
     """
@@ -101,8 +101,8 @@ def update_key_if_none(dictionary: dict, key, value) -> dict:
     return update_key_if_not_none(dictionary, key, value)
 
 
-def update_key_if_not_none(dictionary: dict, key: tp.Optional[tp.Any, tp.Dict],
-                           value: tp.Union[tp.Any, tp.Type[_BLANK]]) -> dict:
+def update_key_if_not_none(dictionary: tp.Dict, key: tp.Union[tp.Hashable, tp.Dict],
+                           value: tp.Union[tp.Any, _BlankType] = _BLANK) -> tp.Dict:
     """
     Syntactic sugar for
 
