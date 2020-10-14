@@ -24,8 +24,8 @@ class DictObject(dict, tp.MutableMapping[str, T]):
     def __copy__(self):
         return DictObject(copy.copy(super()))
 
-    def __deepcopy__(self, memodict={}):
-        return DictObject(copy.deepcopy(super(), memodict=memodict))
+    def __deepcopy__(self, memo=None):
+        return DictObject(copy.deepcopy(super(), memo=memo))
 
     def __str__(self) -> str:
         return 'DictObject(%s)' % (super().__str__(),)
