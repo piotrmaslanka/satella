@@ -18,17 +18,11 @@ Satella lets you express lambdas in a Pythonic way, eg:
         assert(p(2) and not p(1))
 
 
-This behaviour extends to operators, item procurement and attr procurement. The only exception is the length,
-which due to Python limitations (namely __len__ being allowed to return an int only) is called
-via it's method .length(), eg:
+This behaviour extends to operators, item procurement and attr procurement.
+The only exceptions are operator subject to Python limitations (ie.
+__len__ being allowed to return an int only for example) is called.
 
-
-    ::
-
-        p = x.length() == 2
-
-        assert(p([1, 2]) and not p([3])
-
+These are mentioned in the docs below.
 
 You can also piece together multiple predicates.
 Because of Python limitations please use & and | operators in place of and and or.

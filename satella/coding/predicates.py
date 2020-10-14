@@ -116,7 +116,7 @@ class Predicate:
         """
         Check if given value has the correct schema.
         The schema is the same as in
-        :py:meth:`satella.coding.structures.DictObject.is_valid_schema`
+        :py:meth:`~satella.coding.structures.DictObject.is_valid_schema`
         """
         def is_schema_correct(v):
             return DictObject(self.operation(v)).is_valid_schema(schema, **kwargs)
