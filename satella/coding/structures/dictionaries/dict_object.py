@@ -21,6 +21,12 @@ class DictObject(dict, tp.MutableMapping[str, T]):
     >>> self.assertEqual(a.test, 5)
     """
 
+    def __copy__(self):
+        return DictObject(copy.copy(super()))
+
+    def __deepcopy__(self, memodict={}):
+        return DictObject(copy.deepcopy(super(), memodict=memodict))
+
     def __str__(self) -> str:
         return 'DictObject(%s)' % (super().__str__(),)
 
