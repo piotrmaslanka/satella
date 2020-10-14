@@ -112,6 +112,16 @@ class Predicate:
                       'Please use has() instead', DeprecationWarning)
         return self.has(predicate)
 
+    def is_instance(self, *args):
+        """
+        Check if given value is one of instances.
+
+        :param args: will be passed as argument to isinstance
+        """
+        def is_instance(v):
+            return isinstance(self.operation(v), args)
+        return Predicate(is_instance)
+
     def is_valid_schema(self, schema: tp.Optional[tp.Union[Descriptor, tp.Dict]] = None, **kwargs):
         """
         Check if given value has the correct schema.

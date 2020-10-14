@@ -6,6 +6,11 @@ from satella.coding.predicates import x
 
 class TestPredicates(unittest.TestCase):
 
+    def test_is_instance(self):
+        self.assertTrue(x.is_instance(str, int)('str'))
+        self.assertTrue(x.is_instance(str, int)(5))
+        self.assertFalse(x.is_instance(str, int)(5.0))
+
     def test_is_valid_schema(self):
         a = {"test": 5, "test2": "string"}
         self.assertTrue(x.is_valid_schema({"test": "int", "test2": "str"})(a))
