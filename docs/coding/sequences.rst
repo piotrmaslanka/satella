@@ -49,6 +49,18 @@ elements matching the callable. If there are, raises ValueError.
 .. autofunction:: satella.coding.sequences.choose_one
 
 
+filter_out_nones
+----------------
+
+.. autofunction:: satella.coding.sequences.filter_out_nones
+
+
+filter_out_false
+----------------
+
+.. autofunction:: satella.coding.sequences.filter_out_false
+
+
 n_th
 ----
 
