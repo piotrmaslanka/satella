@@ -35,7 +35,8 @@ def choose(filter_fun: tp.Callable[[tp.Any], bool], iterable: IteratorOrIterable
     :param filter_fun: function that returns bool on the single value
     :param iterable: iterable to examine
     :param check_multiple: if True, this will check if there are multiple entries matching
-        filter_fun, and will raise ValueError if so
+        filter_fun, and will raise ValueError if so. If True, this will exhaust the iterator.
+        If left at default, False, this may not exhaust the iterator.
     :return: single element in the iterable that matches given input
     :raises ValueError: on multiple elements matching (if check_multiple), or none at all
     """
