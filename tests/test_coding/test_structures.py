@@ -293,7 +293,7 @@ class TestMisc(unittest.TestCase):
         time.sleep(1.1)
         self.assertEqual(cd[2], 2)
 
-    def test_cache_dict_defaultvaluefactory(self):
+    def test_cache_dict_default_value_factory(self):
         class TestCacheGetter:
             def __call__(self, key):
                 raise KeyError('no value available')
@@ -515,7 +515,7 @@ class TestMisc(unittest.TestCase):
 
         self.assertEqual(len(dvb), 4)
 
-    def test_setheap(self):
+    def test_set_heap(self):
         a = SetHeap([1, 2, 3])
         self.assertIn(2, a)
         self.assertEqual(1, a.pop())
@@ -609,7 +609,7 @@ class TestMisc(unittest.TestCase):
         self.assertEqual(item, 'kota')
         self.assertNotIn((30, 'kota'), tbh)
 
-    def test_imprv(self):
+    def test_improve(self):
         tbh = TimeBasedHeap()
         tbh.put(10, 'ala')
 
