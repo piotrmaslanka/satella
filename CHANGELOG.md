@@ -5,3 +5,4 @@
 * fixed typing for `DictObject`
 * added `SparseMatrix.shoot`
 * added a `SparseMatrix` constructor
+* added `SparseMatrix.get_neighbour_coordinates`

@@ -50,6 +50,32 @@ class SparseMatrix(tp.Generic[T]):
         if matrix_data:
             self[:, :] = matrix_data
 
+    def get_neighbour_coordinates(self, col: int, row: int,
+                                  include_diagonals: bool = True) -> tp.Iterator[tp.Tuple[int, int]]:
+        """
+        Return an iterator of coordinates to points neighbouring given point.
+        :param col: column
+        :param row: row
+        :param include_diagonals: whether to include points having only a single point in common
+        :return: an iterable of coordinates of neighbouring points. An iterator of tuple
+            (col, row)
+        """
+
+        for delta_row in (-1, 0, 1):
+            for delta_col in (-1, 0, 1):
+                if not delta_row and not delta_col:
+                    continue
+                if abs(delta_col) + abs(delta_row) > 1:
+                    if not include_diagonals:
+                        continue
+                cand_col = col+delta_col
+                cand_row = row+delta_row
+                if cand_col < 0 or cand_row < 0:
+                    continue
+                if cand_col >= self.no_cols or cand_row >= self.no_rows:
+                    continue
+                yield cand_col, cand_row
+
     def append_row(self, y: tp.Iterable[T]) -> None:
         """
         Append a row to the bottom of the matrix
