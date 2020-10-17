@@ -116,6 +116,10 @@ class TestMisc(unittest.TestCase):
         self.assertEqual(list(sm), [])
         sm.append_row([1, 2])
         self.assertEqual(list(sm), [[1, 2]])
+        sm = SparseMatrix([[1, 2], [3, 4]])
+        self.assertEqual(list(sm), [[1, 2], [3, 4]])
+        sm2 = sm.shoot()
+        self.assertEqual(list(sm2), [[1, None, 2], [None, None, None], [3, None, 4]])
 
     def test_comparable_and_hashable_by_int(self):
         class MyClass(ComparableAndHashableByInt):

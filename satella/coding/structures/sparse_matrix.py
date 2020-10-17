@@ -42,11 +42,13 @@ class SparseMatrix(tp.Generic[T]):
     """
     __slots__ = ('rows_dict', 'known_column_count', 'no_cols', 'no_rows')
 
-    def __init__(self):
+    def __init__(self, matrix_data: tp.Optional[tp.List[tp.List[T]]] = None):
         self.rows_dict = collections.defaultdict(lambda: collections.defaultdict(lambda: None))
         self.known_column_count = {}        # tp.Dict[int, int] column_no => amount
         self.no_cols = 0
         self.no_rows = 0
+        if matrix_data:
+            self[:, :] = matrix_data
 
     def append_row(self, y: tp.Iterable[T]) -> None:
         """
@@ -126,6 +128,17 @@ class SparseMatrix(tp.Generic[T]):
             else:
                 output.append(None)
         return output
+
+    def shoot(self) -> 'SparseMatrix':
+        """
+        Insert an empty cell between current cells. So the matrix which looked like
+        [[1, 2], [3, 4]] will now look like [[1, None, 2], [None, None, None], [3, None, 4]]
+        """
+        new_sparse = SparseMatrix()
+        for row_no, row in enumerate(self):
+            for col_no, value in enumerate(row):
+                new_sparse[col_no*2, row_no*2] = value
+        return new_sparse
 
     def _increment_column_count(self, col_no: int) -> None:
         if col_no not in self.known_column_count:
