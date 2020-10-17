@@ -123,6 +123,9 @@ class TestMisc(unittest.TestCase):
         self.assertEqual(set(sm2.get_neighbour_coordinates(0, 0)), {(0, 1), (1, 0), (1, 1)})
         self.assertEqual(set(sm2.get_neighbour_coordinates(1, 1, False)), {(0, 1), (1, 0), (2, 1), (1, 2)})
         self.assertEqual(set(sm2.get_neighbour_coordinates(2, 2)), {(2, 1), (1, 1), (1, 2)})
+        self.assertEqual(sm2.min(), 1)
+        self.assertEqual(sm2.max(), 4)
+        self.assertRaises(IndexError, lambda: sm2[3, 3])
 
     def test_comparable_and_hashable_by_int(self):
         class MyClass(ComparableAndHashableByInt):

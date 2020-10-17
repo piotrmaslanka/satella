@@ -53,6 +53,37 @@ class SparseMatrix(tp.Generic[T]):
     """
     __slots__ = ('rows_dict', 'known_column_count', 'no_cols', 'no_rows')
 
+    def max(self) -> T:
+        """
+        Return maximum element.
+
+        None elements will be ignored.
+        """
+        item = self[0, 0]
+        for row in self:
+            for value in row:
+                if value is None:
+                    continue
+                if value > item:
+                    item = value
+        return item
+
+    def min(self) -> T:
+        """
+        Return minimum element.
+
+        None elements will be ignored.
+        """
+        item = self[0, 0]
+        for row in self:
+            for value in row:
+                if value is None:
+                    continue
+
+                if value < item:
+                    item = value
+        return item
+
     def __init__(self, matrix_data: tp.Optional[tp.List[tp.List[T]]] = None):
         self.rows_dict = collections.defaultdict(lambda: collections.defaultdict(lambda: None))
         self.known_column_count = {}        # tp.Dict[int, int] column_no => amount
@@ -257,6 +288,10 @@ class SparseMatrix(tp.Generic[T]):
         elif row is Ellipsis:
             return [self[col, row_no] for row_no in range(self.no_rows)]
         else:
+            if row >= self.no_rows:
+                raise IndexError()
+            elif col >= self.no_cols:
+                raise IndexError()
             if row not in self.rows_dict:    # check so as to avoid adding new entries
                 return None
             if col not in self.rows_dict[row]:
