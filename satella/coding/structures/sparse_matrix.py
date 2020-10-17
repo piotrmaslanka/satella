@@ -39,6 +39,17 @@ class SparseMatrix(tp.Generic[T]):
     Undefined elements are considered to be of value None.
 
     Iterating over this matrix will yield it's consecutive rows.
+
+    You can use the constructor in following way:
+
+    >>> sm = SparseMatrix([[1, 2], [3, 4]])
+
+    to construct a matrix that looks like
+
+    ::
+
+        |1 2|
+        |3 4|
     """
     __slots__ = ('rows_dict', 'known_column_count', 'no_cols', 'no_rows')
 
