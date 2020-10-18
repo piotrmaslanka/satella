@@ -60,6 +60,12 @@ index_of
 
 .. autofunction:: satella.coding.sequences.index_of
 
+index_of_max
+------------
+
+.. autofunction:: satella.coding.sequences.index_of_max
+
+
 filter_out_false
 ----------------
 
