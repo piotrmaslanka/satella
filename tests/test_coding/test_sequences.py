@@ -5,11 +5,16 @@ from satella.coding.sequences import choose, choose_one, infinite_counter, take_
     is_last, add_next, half_cartesian, skip_first, zip_shifted, stop_after, group_quantity, \
     iter_dict_of_list, shift, other_sequence_no_longer_than, count, even, odd, Multirun, n_th, \
     unique, length, map_list, smart_zip, is_empty, make_list, RollingArithmeticAverage, \
-    enumerate2, infinite_iterator, to_iterator, filter_out_false, filter_out_nones
+    enumerate2, infinite_iterator, to_iterator, filter_out_false, filter_out_nones, \
+    index_of
 from satella.coding.predicates import x
 
 
 class TestSequences(unittest.TestCase):
+
+    def test_index_of(self):
+        self.assertEqual(index_of(x == 2, [1, 2, 3]), 1)
+        self.assertRaises(ValueError, lambda: index_of(x == 3, [1, 2, 4]))
 
     def test_filter_out_false(self):
         a = [0, 1, 2, 3, 4, False, None]

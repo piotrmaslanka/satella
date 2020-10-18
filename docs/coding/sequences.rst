@@ -55,6 +55,11 @@ filter_out_nones
 .. autofunction:: satella.coding.sequences.filter_out_nones
 
 
+index_of
+--------
+
+.. autofunction:: satella.coding.sequences.index_of
+
 filter_out_false
 ----------------
 
