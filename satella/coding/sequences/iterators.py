@@ -415,19 +415,27 @@ class IteratorListAdapter:
         return len(self.list)
 
 
-def is_empty(iterable: IteratorOrIterable) -> bool:
+@silence_excs(StopIteration, returns=True)
+def is_empty(iterable: IteratorOrIterable, exhaust: bool = True) -> bool:
     """
     Checks whether an iterator is empty.
 
-    This will exhaust the iterator.
+    This will exhaust the iterator if exhaust is left at default, or True
 
     :param iterable: iterator to check
+    :param exhaust: if set to False, at most a single element will be consumed
+        from the iterator
     :return: whether the iterator is empty
     """
-    i = 0
-    for elem in iterable:
-        i += 1
-    return i == 0
+    iterator = iter(iterable)
+    if exhaust:
+        i = 0
+        for _ in iterator:
+            i += 1
+        return i == 0
+    else:
+        next(iterator)
+        return False
 
 
 def map_list(fun: tp.Callable, iterable: IteratorOrIterable) -> tp.List:

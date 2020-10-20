@@ -3,10 +3,18 @@ import unittest
 
 from satella.coding import SelfClosingGenerator, hint_with_length, chain
 from satella.coding.sequences import smart_enumerate, ConstruableIterator, walk, \
-    IteratorListAdapter
+    IteratorListAdapter, is_empty
 
 
 class TestIterators(unittest.TestCase):
+
+    def test_is_empty_not_exhaust(self):
+        def generator():
+            yield 1
+            raise ValueError()
+
+        self.assertFalse(is_empty(generator(), exhaust=False))
+        self.assertTrue(is_empty([], exhaust=False))
 
     def test_generator_list_adapter(self):
         gla = IteratorListAdapter(range(10))
