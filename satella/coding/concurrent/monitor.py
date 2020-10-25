@@ -3,7 +3,7 @@ import copy
 import threading
 import typing as tp
 
-from ..decorators import wraps
+from ..decorators.decorators import wraps
 
 __all__ = [
     'Monitor', 'RMonitor', 'MonitorDict', 'MonitorList'

@@ -3,7 +3,7 @@ import logging
 import threading
 import typing as tp
 
-from .decorators import wraps
+from .decorators.decorators import wraps
 
 ExcType = tp.Type[Exception]
 T = tp.TypeVar('T')

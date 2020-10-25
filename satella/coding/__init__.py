@@ -13,7 +13,8 @@ from .iterators import hint_with_length, SelfClosingGenerator, exhaust, chain
 from .metaclasses import metaclass_maker, wrap_with, dont_wrap, wrap_property, DocsFromParent, \
     CopyDocsFrom
 from .misc import update_if_not_none, update_key_if_none, update_attr_if_none, queue_iterator, \
-    update_key_if_not_none, source_to_function, update_key_if_true
+    update_key_if_not_none, source_to_function, update_key_if_true, \
+    get_arguments
 from .recast_exceptions import rethrow_as, silence_excs, catch_exception, log_exceptions, \
     raises_exception
 from .overloading import overload, class_or_instancemethod
@@ -30,6 +31,6 @@ __all__ = [
     'rethrow_as', 'silence_excs', 'raises_exception',
     'static_var', 'metaclass_maker',
     'catch_exception', 'wraps', 'wrap_with', 'dont_wrap', 'wrap_property', 'log_exceptions',
-    'chain_functions',
+    'chain_functions', 'get_arguments',
     'ListDeleter', 'DictDeleter', 'for_argument', 'attach_arguments', 'auto_adapt_to_methods',
 ]

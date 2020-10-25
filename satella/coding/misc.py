@@ -1,6 +1,9 @@
 import typing as tp
 import warnings
+from inspect import Parameter, signature
 from queue import Queue
+
+from satella.coding.recast_exceptions import rethrow_as
 
 
 def queue_iterator(queue: Queue) -> tp.Iterator:
@@ -71,7 +74,10 @@ def update_attr_if_none(obj: object, attr: str, value: tp.Any,
 
 class _BLANK:
     pass
+
+
 _BlankType = tp.Type[_BLANK]
+
 
 def update_key_if_true(dictionary: tp.Dict, key: tp.Hashable, value: tp.Any,
                        flag: tp.Union[bool, _BlankType] = _BLANK) -> tp.Dict:
@@ -90,6 +96,55 @@ def update_key_if_true(dictionary: tp.Dict, key: tp.Hashable, value: tp.Any,
     if flag:
         dictionary[key] = value
     return dictionary
+
+
+@rethrow_as(IndexError, TypeError)
+def get_arguments(function: tp.Callable, *args, **kwargs) -> tp.Dict[str, tp.Any]:
+    """
+    Return local variables that would be defined for given function if called with
+    provided arguments.
+
+    :param function: callable to examine
+    :param args: arguments to provide
+    :param kwargs: keyword arguments to provide
+    :return: a dictionary of local variables with their values, as they would
+        appear in function if called with provided arguments
+    :raise TypeError: the dictionary cannot be created with provided arguments
+    """
+    sig = signature(function)
+    params = sig.parameters.values()
+    local_vars = {}
+
+    positionals = [param for param in reversed(params) if
+                   param.kind in (Parameter.POSITIONAL_OR_KEYWORD,
+                                  Parameter.POSITIONAL_ONLY,
+                                  Parameter.VAR_POSITIONAL)]
+    args = list(reversed(args))
+
+    params_taken = set()
+    print(args, params, positionals)
+    while len(positionals) > 0:
+        arg = positionals.pop()
+        if arg.kind == Parameter.VAR_POSITIONAL:
+            local_vars[arg.name] = tuple(reversed(args))
+        else:
+            v = args.pop()
+            print(f'setting {arg.name} to {v}')
+            local_vars[arg.name] = v
+        params_taken.add(arg.name)
+
+    keywords = [param for param in params if param.kind in (Parameter.POSITIONAL_OR_KEYWORD,
+                                                            Parameter.KEYWORD_ONLY,
+                                                            Parameter.VAR_KEYWORD) \
+                and param.name not in params_taken]
+
+    for keyword in keywords:
+        if keyword.kind == Parameter.VAR_KEYWORD:
+            local_vars[keyword.name] = kwargs
+        else:
+            local_vars[keyword.name] = kwargs.pop(keyword.name)
+
+    return local_vars
 
 
 def update_key_if_none(dictionary: tp.Dict, key: tp.Hashable, value) -> tp.Dict:

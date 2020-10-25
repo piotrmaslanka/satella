@@ -6,6 +6,8 @@ Functions and decorators
 
 .. autofunction:: satella.coding.source_to_function
 
+.. autofunction:: satella.coding.get_arguments
+
 .. autofunction:: satella.coding.queue_iterator
 
 .. autofunction:: satella.coding.transforms.jsonify
