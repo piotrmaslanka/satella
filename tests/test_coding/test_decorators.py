@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 class TestDecorators(unittest.TestCase):
 
     def test_copy_arguments(self):
-        @copy_arguments
+        @copy_arguments()
         def alter_dict(dct):
             return dct.pop('a')
 

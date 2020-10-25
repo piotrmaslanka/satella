@@ -6,7 +6,7 @@ Functions and decorators
 
 .. autofunction:: satella.coding.source_to_function
 
-.. autofunction:: satella.coding.call_with_locals
+.. autofunction:: satella.coding.call_with_arguments
 
 .. autofunction:: satella.coding.get_arguments
 

@@ -1,9 +1,8 @@
-import itertools
 import typing as tp
 import copy
 
 from .decorators import wraps
-from ..misc import source_to_function
+from ..misc import source_to_function, get_arguments, call_with_arguments, _get_arguments
 
 T = tp.TypeVar('T')
 U = tp.TypeVar('U')
@@ -187,6 +186,14 @@ def for_argument(*t_ops: ForArgumentArg, **t_kwops: ForArgumentArg):
     >>> def accept_two(x):
     >>>     assert x == 2
     >>> accept_two(1)
+
+    for_argument will also recognize default values:
+
+    >>> @for_argument(k=int)
+    >>> def for_arg(k='5')
+    >>>     print(repr(k))
+    >>> for_arg()
+    will print `5` instead of `'5'`.
     """
     new_t_ops = []
     for op in t_ops:
@@ -211,12 +218,24 @@ def for_argument(*t_ops: ForArgumentArg, **t_kwops: ForArgumentArg):
     def outer(fun):
         @wraps(fun)
         def inner(*args, **kwargs):
-            # add extra 'None' argument if unbound method
-            assert len(args) >= len(t_ops)
-            a = fun(*((_NOP if op2 is None else op2)(arg) for arg, op2 in
-                      itertools.zip_longest(args, t_ops, fillvalue=None)),
-                    **{k: t_kwops.get(k, _NOP)(v) for k, v in kwargs.items()})
-            return returns(a)
+            dict_operations = _get_arguments(fun, True, *t_ops, **t_kwops)
+            dict_values = get_arguments(fun, *args, **kwargs)
+            arguments = {}
+            for arg_name in dict_values:
+                v = dict_values[arg_name]
+                if arg_name in dict_operations:
+                    f = dict_operations[arg_name]
+                    if callable(f) and f != v and f is not None:
+                        v = f(v)
+                arguments[arg_name] = v
+
+            return returns(call_with_arguments(fun, arguments))
+            # # add extra 'None' argument if unbound method
+            # assert len(args) >= len(t_ops)
+            # a = fun(*((_NOP if op2 is None else op2)(arg) for arg, op2 in
+            #           itertools.zip_longest(args, t_ops, fillvalue=None)),
+            #         **{k: t_kwops.get(k, _NOP)(v) for k, v in kwargs.items()})
+            # return returns(a)
 
         return inner
 

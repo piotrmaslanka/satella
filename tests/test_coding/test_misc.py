@@ -1,7 +1,7 @@
 import unittest
 
 from satella.coding import update_key_if_not_none, overload, class_or_instancemethod, \
-    update_key_if_true, get_arguments, call_with_locals
+    update_key_if_true, get_arguments, call_with_arguments
 from satella.coding.transforms import jsonify
 
 
@@ -15,13 +15,13 @@ class TestCase(unittest.TestCase):
                 d = 0
             return a + b + args[0] + c + d
 
-        self.assertEqual(call_with_locals(fun, {
+        self.assertEqual(call_with_arguments(fun, {
             'a': 5,
             'b': 5,
             'args': (5,),
             'c': 5
         }), 20)
-        self.assertEqual(call_with_locals(fun, {
+        self.assertEqual(call_with_arguments(fun, {
             'a': 5,
             'b': 5,
             'args': (5,),
@@ -30,8 +30,8 @@ class TestCase(unittest.TestCase):
             },
             'c': 5
         }), 30)
-        self.assertRaises(TypeError, lambda: call_with_locals(fun, {}))
-        self.assertRaises(ValueError, lambda: call_with_locals(fun, {
+        self.assertRaises(TypeError, lambda: call_with_arguments(fun, {}))
+        self.assertRaises(ValueError, lambda: call_with_arguments(fun, {
             'a': 5,
             'b': 5,
             'args': (5,),
@@ -65,6 +65,12 @@ class TestCase(unittest.TestCase):
             'd': 8,
             'kwargs': {}
         })
+
+        def fun(a=6):
+            ...
+
+        self.assertEqual(get_arguments(fun, 7),
+                         {'a': 7})
 
     def test_jsonify(self):
         def iterate():

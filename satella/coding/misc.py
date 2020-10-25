@@ -98,8 +98,8 @@ def update_key_if_true(dictionary: tp.Dict, key: tp.Hashable, value: tp.Any,
     return dictionary
 
 
-@rethrow_as(IndexError, TypeError)
-def get_arguments(function: tp.Callable, *args, **kwargs) -> tp.Dict[str, tp.Any]:
+def get_arguments(function: tp.Callable, *args, **kwargs) -> \
+        tp.Dict[str, tp.Any]:
     """
     Return local variables that would be defined for given function if called with
     provided arguments.
@@ -110,6 +110,14 @@ def get_arguments(function: tp.Callable, *args, **kwargs) -> tp.Dict[str, tp.Any
     :return: a dictionary of local variables with their values, as they would
         appear in function if called with provided arguments
     :raise TypeError: the dictionary cannot be created with provided arguments
+    """
+    return _get_arguments(function, False, *args, **kwargs)
+
+
+@rethrow_as(IndexError, TypeError)
+def _get_arguments(function: tp.Callable, special_behaviour: bool, *args, **kwargs):
+    """
+    :param special_behaviour: enable special behaviour to be used in for_arguments
     """
     sig = signature(function)
     params = sig.parameters.values()
@@ -124,14 +132,17 @@ def get_arguments(function: tp.Callable, *args, **kwargs) -> tp.Dict[str, tp.Any
     params_taken = set()
     while len(positionals) > 0:
         arg = positionals.pop()
-        if arg.kind == Parameter.VAR_POSITIONAL:
+        if arg.kind == Parameter.VAR_POSITIONAL and not special_behaviour:
             local_vars[arg.name] = tuple(reversed(args))
         else:
             try:
                 v = args.pop()
             except IndexError:
                 if arg.default == Parameter.empty:
-                    raise TypeError('Not enough arguments')
+                    if special_behaviour:
+                        v = None
+                    else:
+                        raise TypeError('Not enough arguments')
                 else:
                     v = arg.default
             local_vars[arg.name] = v
@@ -143,14 +154,17 @@ def get_arguments(function: tp.Callable, *args, **kwargs) -> tp.Dict[str, tp.Any
                 and param.name not in params_taken]
 
     for keyword in keywords:
-        if keyword.kind == Parameter.VAR_KEYWORD:
+        if keyword.kind == Parameter.VAR_KEYWORD and not special_behaviour:
             local_vars[keyword.name] = kwargs
         else:
             try:
                 v = kwargs.pop(keyword.name)
             except KeyError:
                 if keyword.default == Parameter.empty:
-                    raise TypeError('Not enough keyword arguments')
+                    if special_behaviour:
+                        v = None
+                    else:
+                        raise TypeError('Not enough keyword arguments')
                 else:
                     v = keyword.default
 
@@ -159,7 +173,7 @@ def get_arguments(function: tp.Callable, *args, **kwargs) -> tp.Dict[str, tp.Any
     return local_vars
 
 
-def call_with_locals(function: tp.Callable, arguments: tp.Dict[str, tp.Any]) -> tp.Any:
+def call_with_arguments(function: tp.Callable, arguments: tp.Dict[str, tp.Any]) -> tp.Any:
     """
     Call a function, but with giving it arguments via a dictionary.
 

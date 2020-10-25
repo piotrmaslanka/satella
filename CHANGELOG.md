@@ -4,5 +4,6 @@
   correctly processed by `jsonify` 
 * added `get_arguments`
 * added `copy_arguments`
-* added `call_with_locals`
-
+* added `call_with_arguments`
+* **IMPORTANT**: `for_arguments` now supports default arguments
+* `wraps` will copy the function signature as well

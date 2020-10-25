@@ -7,6 +7,14 @@ from satella.exceptions import PreconditionError
 
 class TestTypecheck(unittest.TestCase):
 
+    def test_for_argument_extended(self):
+        @for_argument(int)
+        def accept_default(a=5):
+            return a
+
+        self.assertEqual(accept_default(6), 6)
+        self.assertEqual(accept_default(), 5)
+
     def test_for_argument_str(self):
         @for_argument('x*2')
         def accept_two(x):

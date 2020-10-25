@@ -147,8 +147,8 @@ def even(sq: IteratorOrIterable) -> tp.Iterator[T]:
             return
 
 
-@for_argument(iter)
 @silence_excs(StopIteration)
+@for_argument(iter)
 def odd(sq: IteratorOrIterable) -> tp.Iterator[T]:
     """
     Return only elements with odd indices in this iterable.
@@ -328,8 +328,8 @@ def skip_first(iterator: IteratorOrIterable, n: int) -> tp.Iterator[T]:
     yield from iterator
 
 
-@for_argument(iter)
 @silence_excs(StopIteration)
+@for_argument(iter)
 def stop_after(iterator: IteratorOrIterable, n: int) -> tp.Iterator[T]:
     """
     Stop this iterator after returning n elements, even if it's longer than that.

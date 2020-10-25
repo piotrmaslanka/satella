@@ -1,3 +1,4 @@
+import inspect
 import typing as tp
 import warnings
 
@@ -113,6 +114,12 @@ def wraps(cls_to_wrap: tp.Type) -> tp.Callable[[tp.Type], tp.Type]:
             cls.__module__ = cls_to_wrap.__module__
         if hasattr(cls_to_wrap, '__annotations__'):
             cls.__annotations__ = cls_to_wrap.__annotations__
+        try:
+            sig = inspect.signature(cls_to_wrap)
+        except (TypeError, ValueError):
+            pass
+        else:
+            cls.__signature__ = sig
         return cls
 
     return outer
