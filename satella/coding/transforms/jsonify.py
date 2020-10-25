@@ -22,7 +22,10 @@ def jsonify(data: tp.Any) -> tp.Optional[tp.Union[str, int, float, list, dict]]:
     elif isinstance(data, JSONAble):
         return jsonify(data.to_json())
     elif isinstance(data, tp.Mapping):
-        return {jsonify(key): jsonify(value) for key, value in data.items()}
+        new_mapping = {}
+        for key in data:
+            new_mapping[jsonify(key)] = jsonify(data[key])
+        return new_mapping
     elif isinstance(data, (tp.Iterable, tp.Iterator)):
         return [jsonify(elem) for elem in data]
     else:
