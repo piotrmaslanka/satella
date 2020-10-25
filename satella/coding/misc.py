@@ -122,7 +122,6 @@ def get_arguments(function: tp.Callable, *args, **kwargs) -> tp.Dict[str, tp.Any
     args = list(reversed(args))
 
     params_taken = set()
-    print(args, params, positionals)
     while len(positionals) > 0:
         arg = positionals.pop()
         if arg.kind == Parameter.VAR_POSITIONAL:
@@ -140,7 +139,7 @@ def get_arguments(function: tp.Callable, *args, **kwargs) -> tp.Dict[str, tp.Any
 
     keywords = [param for param in params if param.kind in (Parameter.POSITIONAL_OR_KEYWORD,
                                                             Parameter.KEYWORD_ONLY,
-                                                            Parameter.VAR_KEYWORD) \
+                                                            Parameter.VAR_KEYWORD)
                 and param.name not in params_taken]
 
     for keyword in keywords:
@@ -160,7 +159,7 @@ def get_arguments(function: tp.Callable, *args, **kwargs) -> tp.Dict[str, tp.Any
     return local_vars
 
 
-def call_with_locals(function: tp.Callable, arguments: tp.Dict[str, tp.Any]):
+def call_with_locals(function: tp.Callable, arguments: tp.Dict[str, tp.Any]) -> tp.Any:
     """
     Call a function, but with giving it arguments via a dictionary.
 
@@ -178,24 +177,24 @@ def call_with_locals(function: tp.Callable, arguments: tp.Dict[str, tp.Any]):
     kwargs = {}
     for param in signature(function).parameters.values():
         param_name = param.name
+        param_kind = param.kind
         if param_name not in arguments:
-            if param.kind in (Parameter.VAR_KEYWORD, Parameter.VAR_POSITIONAL):
+            if param_kind in (Parameter.VAR_KEYWORD, Parameter.VAR_POSITIONAL):
                 continue
             elif param.default == Parameter.empty:
                 raise TypeError(f'Argument {param_name} not found')
             else:
                 continue
 
-        if param.kind in (Parameter.POSITIONAL_ONLY, Parameter.POSITIONAL_OR_KEYWORD):
+        if param_kind == Parameter.POSITIONAL_ONLY or param_kind == Parameter.POSITIONAL_OR_KEYWORD:
             args.append(arguments.pop(param_name))
-        elif param.kind == Parameter.VAR_POSITIONAL:
+        elif param_kind == Parameter.VAR_POSITIONAL:
             args.extend(arguments.pop(param_name))
-        elif param.kind == Parameter.KEYWORD_ONLY:
+        elif param_kind == Parameter.KEYWORD_ONLY:
             kwargs[param_name] = arguments.pop(param_name)
-        elif param.kind == Parameter.VAR_KEYWORD:
+        elif param_kind == Parameter.VAR_KEYWORD:
             kwargs.update(arguments.pop(param_name))
         else:
-            print(param.kind)
             raise TypeError('Unknown parameter type')
 
     if arguments:
