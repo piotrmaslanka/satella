@@ -3,4 +3,6 @@
 * mappings that don't have the `items` method will be 
   correctly processed by `jsonify` 
 * added `get_arguments`
+* added `copy_arguments`
+* added `call_with_locals`
 

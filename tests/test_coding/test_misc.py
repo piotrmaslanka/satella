@@ -1,21 +1,49 @@
-from satella.coding import update_key_if_not_none, overload, class_or_instancemethod, \
-    update_key_if_true, get_arguments, execute_with_locals
 import unittest
 
+from satella.coding import update_key_if_not_none, overload, class_or_instancemethod, \
+    update_key_if_true, get_arguments, call_with_locals
 from satella.coding.transforms import jsonify
 
 
 class TestCase(unittest.TestCase):
 
     def test_execute_with_locals(self):
-        def g(a):
-            return a+5
-        self.assertEqual(execute_with_locals(g, {'a': 5}), 10)
+        def fun(a, b, *args, c=None, **kwargs):
+            if len(kwargs):
+                d = kwargs[next(iter(kwargs))]
+            else:
+                d = 0
+            return a + b + args[0] + c + d
+
+        self.assertEqual(call_with_locals(fun, {
+            'a': 5,
+            'b': 5,
+            'args': (5,),
+            'c': 5
+        }), 20)
+        self.assertEqual(call_with_locals(fun, {
+            'a': 5,
+            'b': 5,
+            'args': (5,),
+            'kwargs': {
+                'd': 10,
+            },
+            'c': 5
+        }), 30)
+        self.assertRaises(TypeError, lambda: call_with_locals(fun, {}))
+        self.assertRaises(ValueError, lambda: call_with_locals(fun, {
+            'a': 5,
+            'b': 5,
+            'args': (5,),
+            'd': 10,
+            'c': 5
+        }))
 
     def test_get_arguments(self):
         def fun(a, b, *args, c=None, **kwargs):
             ...
 
+        self.assertRaises(TypeError, lambda: get_arguments(fun))
         self.assertEqual(get_arguments(fun, 3, 4, 5, 6, c=4, d=5),
                          {
                              'a': 3,
@@ -26,6 +54,17 @@ class TestCase(unittest.TestCase):
                                  'd': 5
                              }
                          })
+
+        def fun(a=5, c=7, *args, d=8, **kwargs):
+            ...
+
+        self.assertEqual(get_arguments(fun), {
+            'a': 5,
+            'c': 7,
+            'args': (),
+            'd': 8,
+            'kwargs': {}
+        })
 
     def test_jsonify(self):
         def iterate():
@@ -52,6 +91,7 @@ class TestCase(unittest.TestCase):
     def test_class_or_instancemethod(self):
 
         a = {}
+
         class MyClass:
             @class_or_instancemethod
             def method(self_or_cls):
@@ -68,9 +108,11 @@ class TestCase(unittest.TestCase):
 
     def test_overload(self):
         a = {}
+
         @overload
         def what_type(x: str):
             a['type'] = 'str'
+
         @what_type.overload
         def what_type(x: int):
             a['type'] = 'int'

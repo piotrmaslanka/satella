@@ -128,8 +128,13 @@ def get_arguments(function: tp.Callable, *args, **kwargs) -> tp.Dict[str, tp.Any
         if arg.kind == Parameter.VAR_POSITIONAL:
             local_vars[arg.name] = tuple(reversed(args))
         else:
-            v = args.pop()
-            print(f'setting {arg.name} to {v}')
+            try:
+                v = args.pop()
+            except IndexError:
+                if arg.default == Parameter.empty:
+                    raise TypeError('Not enough arguments')
+                else:
+                    v = arg.default
             local_vars[arg.name] = v
         params_taken.add(arg.name)
 
@@ -142,9 +147,61 @@ def get_arguments(function: tp.Callable, *args, **kwargs) -> tp.Dict[str, tp.Any
         if keyword.kind == Parameter.VAR_KEYWORD:
             local_vars[keyword.name] = kwargs
         else:
-            local_vars[keyword.name] = kwargs.pop(keyword.name)
+            try:
+                v = kwargs.pop(keyword.name)
+            except KeyError:
+                if keyword.default == Parameter.empty:
+                    raise TypeError('Not enough keyword arguments')
+                else:
+                    v = keyword.default
+
+            local_vars[keyword.name] = v
 
     return local_vars
+
+
+def call_with_locals(function: tp.Callable, arguments: tp.Dict[str, tp.Any]):
+    """
+    Call a function, but with giving it arguments via a dictionary.
+
+    Dictionary should be a mapping of argument name to it's value.
+
+    :param function: function to call
+    :param arguments:
+        a dict of arguments : argument name => argument value.
+        This dictionary will be modified!
+    :return: return value of the function
+    :raise TypeError: too few arguments, or some arguments required were missing
+    :raise ValueError: too many arguments given
+    """
+    args = []
+    kwargs = {}
+    for param in signature(function).parameters.values():
+        param_name = param.name
+        if param_name not in arguments:
+            if param.kind in (Parameter.VAR_KEYWORD, Parameter.VAR_POSITIONAL):
+                continue
+            elif param.default == Parameter.empty:
+                raise TypeError(f'Argument {param_name} not found')
+            else:
+                continue
+
+        if param.kind in (Parameter.POSITIONAL_ONLY, Parameter.POSITIONAL_OR_KEYWORD):
+            args.append(arguments.pop(param_name))
+        elif param.kind == Parameter.VAR_POSITIONAL:
+            args.extend(arguments.pop(param_name))
+        elif param.kind == Parameter.KEYWORD_ONLY:
+            kwargs[param_name] = arguments.pop(param_name)
+        elif param.kind == Parameter.VAR_KEYWORD:
+            kwargs.update(arguments.pop(param_name))
+        else:
+            print(param.kind)
+            raise TypeError('Unknown parameter type')
+
+    if arguments:
+        raise ValueError('Too many arguments provided')
+
+    return function(*args, **kwargs)
 
 
 def update_key_if_none(dictionary: tp.Dict, key: tp.Hashable, value) -> tp.Dict:
