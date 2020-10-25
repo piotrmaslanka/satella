@@ -8,6 +8,8 @@ Functions and decorators
 
 .. autofunction:: satella.coding.queue_iterator
 
+.. autofunction:: satella.coding.transforms.jsonify
+
 .. autofunction:: satella.coding.update_key_if_not_none
 
 .. autofunction:: satella.coding.update_key_if_true

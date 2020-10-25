@@ -5,9 +5,10 @@ import typing as tp
 from satella.coding.decorators import for_argument
 
 from .merger import merge_series
-
+from .jsonify import jsonify
 __all__ = ['stringify', 'split_shuffle_and_join', 'one_tuple',
-           'merge_series', 'pad_to_multiple_of_length', 'clip']
+           'merge_series', 'pad_to_multiple_of_length', 'clip',
+           'jsonify']
 
 T = tp.TypeVar('T')
 Number = tp.Union[int, float]

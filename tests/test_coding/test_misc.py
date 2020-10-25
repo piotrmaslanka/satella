@@ -2,8 +2,23 @@ from satella.coding import update_key_if_not_none, overload, class_or_instanceme
     update_key_if_true
 import unittest
 
+from satella.coding.transforms import jsonify
+
 
 class TestCase(unittest.TestCase):
+
+    def test_jsonify(self):
+        def iterate():
+            yield 5
+
+        class StrFails:
+            def __str__(self):
+                raise TypeError()
+
+        self.assertEqual(jsonify(iterate()), [5])
+        self.assertEqual(jsonify([iterate(), iterate()]), [[5], [5]])
+        self.assertEqual(jsonify({'5': iterate()}), {'5': [5, ]})
+        self.assertTrue(isinstance(jsonify(StrFails()), str))
 
     def test_update_key_if_true(self):
         a = {5: False}
