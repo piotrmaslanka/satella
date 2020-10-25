@@ -6,7 +6,7 @@ from socket import socket
 from satella.coding import wraps, chain_functions, postcondition, \
     log_exceptions, queue_get, precondition, short_none
 from satella.coding.decorators import auto_adapt_to_methods, attach_arguments, \
-    execute_before, loop_while, memoize
+    execute_before, loop_while, memoize, copy_arguments
 from satella.coding.predicates import x
 from satella.exceptions import PreconditionError
 
@@ -14,6 +14,15 @@ logger = logging.getLogger(__name__)
 
 
 class TestDecorators(unittest.TestCase):
+
+    def test_copy_arguments(self):
+        @copy_arguments
+        def alter_dict(dct):
+            return dct.pop('a')
+
+        b = {'a': 5}
+        self.assertEqual(alter_dict(b), 5)
+        self.assertEqual(b, {'a': 5})
 
     def test_memoize(self):
         a = {'call_count': 0}

@@ -5,6 +5,8 @@ Decorators
 
 .. autofunction:: satella.coding.decorators.queue_get
 
+.. autofunction:: satella.coding.decorators.copy_arguments
+
 .. autofunction:: satella.coding.decorators.loop_while
 
 .. autofunction:: satella.coding.for_argument

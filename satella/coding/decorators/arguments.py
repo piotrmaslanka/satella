@@ -1,5 +1,6 @@
 import itertools
 import typing as tp
+import copy
 
 from .decorators import wraps
 from ..misc import source_to_function
@@ -132,6 +133,38 @@ def attach_arguments(*args, **kwargs):
 
 
 ForArgumentArg = tp.Union[tp.Callable[[T], U], str]
+
+
+def copy_arguments(deep_copy: bool = False) -> tp.Callable:
+    """
+    Make every argument passe to this function be copied.
+
+    This way you can pass dictionaries to the function that would normally have modified them.
+
+    Use like this:
+
+    >>> @copy_arguments()
+    >>> def alter_dict(dct: dict)
+    >>>     return dct.pop('a')
+
+    Now you can use it like this:
+
+    >>> b = {'a': 5}
+    >>> assert alter_dict(b) == 5
+    >>> assert b == {'a': 5}
+
+    :param deep_copy: whether to use deepcopy instead of a plain copy
+    """
+    f_copy = copy.deepcopy if deep_copy else copy.copy
+
+    def outer(fun):
+        @wraps(fun)
+        def inner(*args, **kwargs):
+            args = tuple(f_copy(arg) for arg in args)
+            kwargs = {name: f_copy(value) for name, value in kwargs.items()}
+            return fun(*args, **kwargs)
+        return inner
+    return outer
 
 
 def for_argument(*t_ops: ForArgumentArg, **t_kwops: ForArgumentArg):
