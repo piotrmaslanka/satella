@@ -1,6 +1,4 @@
-# v2.11.35
+# v2.11.36
 
-* added `ListWrapperIterator`
-* fixed a bug where `wraps` would sometimes fail with RecursionError
 
 
