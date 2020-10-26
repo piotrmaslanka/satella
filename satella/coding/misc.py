@@ -104,6 +104,9 @@ def get_arguments(function: tp.Callable, *args, **kwargs) -> \
     Return local variables that would be defined for given function if called with
     provided arguments.
 
+    Note that this function will not return the "self" argument of methods
+    and it won't return the class of "cls" of classmethods.
+
     :param function: callable to examine
     :param args: arguments to provide
     :param kwargs: keyword arguments to provide
@@ -129,36 +132,36 @@ def _get_arguments(function: tp.Callable, special_behaviour: bool, *args, **kwar
                                   Parameter.VAR_POSITIONAL)]
     args = list(reversed(args))
 
-    params_taken = set()
-    while len(positionals) > 0:
+    arguments_left = set(param.name for param in params)
+    while len(positionals):
         arg = positionals.pop()
-        if arg.kind == Parameter.VAR_POSITIONAL and not special_behaviour:
-            local_vars[arg.name] = tuple(reversed(args))
+        arg_kind = arg.kind
+        arg_name = arg.name
+        if arg_kind == Parameter.VAR_POSITIONAL and not special_behaviour:
+            local_vars[arg_name] = tuple(reversed(args))
         else:
             try:
                 v = args.pop()
+                arguments_left.remove(arg_name)
             except IndexError:
                 if arg.default == Parameter.empty:
-                    if special_behaviour:
-                        v = None
-                    else:
-                        raise TypeError('Not enough arguments')
+                    break
                 else:
                     v = arg.default
-            local_vars[arg.name] = v
-        params_taken.add(arg.name)
+            local_vars[arg_name] = v
 
     keywords = [param for param in params if param.kind in (Parameter.POSITIONAL_OR_KEYWORD,
                                                             Parameter.KEYWORD_ONLY,
                                                             Parameter.VAR_KEYWORD)
-                and param.name not in params_taken]
+                and param.name in arguments_left]
 
     for keyword in keywords:
+        keyword_name = keyword.name
         if keyword.kind == Parameter.VAR_KEYWORD and not special_behaviour:
-            local_vars[keyword.name] = kwargs
+            local_vars[keyword_name] = kwargs
         else:
             try:
-                v = kwargs.pop(keyword.name)
+                v = kwargs.pop(keyword_name)
             except KeyError:
                 if keyword.default == Parameter.empty:
                     if special_behaviour:
@@ -168,7 +171,15 @@ def _get_arguments(function: tp.Callable, special_behaviour: bool, *args, **kwar
                 else:
                     v = keyword.default
 
-            local_vars[keyword.name] = v
+            local_vars[keyword_name] = v
+
+    for param in params:
+        param_name = param.name
+        if param_name not in local_vars:
+            if special_behaviour:
+                local_vars[param_name] = None
+            else:
+                raise TypeError('Not enough keyword arguments')
 
     return local_vars
 

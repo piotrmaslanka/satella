@@ -1,18 +1,54 @@
 import unittest
 
-from satella.coding import precondition, short_none, has_keys, update_if_not_none, postcondition
+from satella.coding import precondition, short_none, has_keys, update_if_not_none, postcondition, \
+    get_arguments
 from satella.coding.decorators import for_argument
 from satella.exceptions import PreconditionError
 
 
 class TestTypecheck(unittest.TestCase):
 
+    def test_get_arguments_bug(self):
+        class Class:
+
+            @classmethod
+            def execute(cls, password: str, service: str,
+                        absolute_expiration=None,
+                        metadata=None):
+                pass
+
+            def method_call(self, password: str, service: str,
+                        absolute_expiration=None,
+                        metadata=None):
+                pass
+        kls = Class()
+
+        args = get_arguments(Class.execute, '1234',
+                             'service', metadata={'ok': 'meta'})
+        self.assertEqual(args, {
+            'password': '1234',
+            'service': 'service',
+            'metadata': {'ok': 'meta'},
+            'absolute_expiration': None
+        })
+
+        args = get_arguments(kls.method_call, '1234', 'service', metadata={'ok': 'meta'})
+        self.assertEqual(args, {
+            'password': '1234',
+            'service': 'service',
+            'metadata': {'ok': 'meta'},
+            'absolute_expiration': None
+        })
+
+        self.assertRaises(TypeError, lambda: get_arguments(kls.method_call, '1234'))
+        self.assertRaises(TypeError, lambda: get_arguments(Class.execute, '1234'))
+
     def test_for_argument_extended(self):
         @for_argument(int)
-        def accept_default(a=5):
+        def accept_default(a='5'):
             return a
 
-        self.assertEqual(accept_default(6), 6)
+        self.assertEqual(accept_default('6'), 6)
         self.assertEqual(accept_default(), 5)
 
     def test_for_argument_str(self):
