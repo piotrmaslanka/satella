@@ -31,6 +31,7 @@ class TestIterators(unittest.TestCase):
         self.assertEqual(a['count'], 5)
         self.assertEqual(lwe2[2], 3)
         self.assertEqual(a['count'], 6)
+        self.assertEqual(lwe2[0:0], [])
         self.assertRaises(IndexError, lambda: lwe2[4])
 
     def test_is_empty_not_exhaust(self):

@@ -367,8 +367,7 @@ class ListWrapperIterator(tp.Generic[T]):
 
         while len(self.list) <= i:
             try:
-                elem = next(self.iterator)
-                self.list.append(elem)
+                self.list.append(next(self.iterator))
             except StopIteration:
                 self.exhausted = True
                 return
@@ -403,6 +402,9 @@ class ListWrapperIterator(tp.Generic[T]):
             def __init__(self, parent):
                 self.parent = parent
                 self.pos = 0
+
+            def __length_hint__(self) -> int:
+                return len(self.parent.list)
 
             def __iter__(self) -> tp.Iterator[T]:
                 return self
