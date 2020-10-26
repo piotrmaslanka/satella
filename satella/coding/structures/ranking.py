@@ -3,7 +3,7 @@ import typing as tp
 
 from .sorted_list import SortedList
 
-T = tp.TypeVar('T')
+from satella.coding.typing import T
 
 
 class Ranking(tp.Generic[T]):

@@ -4,7 +4,7 @@ import queue
 from satella.coding.recast_exceptions import silence_excs
 from satella.coding.concurrent.monitor import Monitor
 
-T = tp.TypeVar('T')
+from satella.coding.typing import T
 
 
 class Subqueue(tp.Generic[T]):

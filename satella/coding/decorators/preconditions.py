@@ -5,7 +5,7 @@ from satella.exceptions import PreconditionError
 from .decorators import wraps
 from ..misc import source_to_function
 
-T = tp.TypeVar('T')
+from satella.coding.typing import T
 Expression = tp.NewType('Expression', str)
 Condition = tp.Union[tp.Callable[[T], bool], Expression]
 

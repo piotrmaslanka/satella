@@ -5,7 +5,7 @@ from satella.coding.recast_exceptions import rethrow_as
 from satella.configuration.schema import Descriptor, descriptor_from_dict
 from satella.exceptions import ConfigurationValidationError
 
-T = tp.TypeVar('T')
+from satella.coding.typing import T
 
 
 class DictObject(dict, tp.MutableMapping[tp.Hashable, T]):

@@ -9,9 +9,7 @@ __all__ = [
     'Monitor', 'RMonitor', 'MonitorDict', 'MonitorList'
 ]
 
-K = tp.TypeVar('K')
-V = tp.TypeVar('V')
-T = tp.TypeVar('T')
+from ..typing import K, V, T
 
 
 class Monitor:

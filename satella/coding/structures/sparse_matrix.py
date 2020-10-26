@@ -3,7 +3,7 @@ import typing as tp
 
 from satella.coding.recast_exceptions import silence_excs
 
-T = tp.TypeVar('T')
+from satella.coding.typing import T
 KeyArg = tp.Tuple[tp.Union[int, slice], tp.Union[int, slice]]
 
 

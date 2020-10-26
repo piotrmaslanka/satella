@@ -5,9 +5,7 @@ from concurrent.futures import Executor, ThreadPoolExecutor, wait, ProcessPoolEx
 from satella.coding.concurrent.monitor import Monitor
 
 from satella.coding.recast_exceptions import silence_excs
-
-K = tp.TypeVar('K')
-V = tp.TypeVar('V')
+from satella.coding.typing import V, K
 
 
 class ExclusiveWritebackCache(tp.Generic[K, V]):

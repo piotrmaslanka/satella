@@ -3,7 +3,7 @@ import typing as tp
 
 from ..structures.proxy import Proxy
 
-T = tp.TypeVar('T')
+from satella.coding.typing import T
 
 
 class LockedStructure(Proxy, tp.Generic[T]):

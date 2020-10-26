@@ -1,9 +1,7 @@
 import copy
 import typing as tp
 
-K = tp.TypeVar('K')
-V = tp.TypeVar('V')
-T = tp.TypeVar('T')
+from satella.coding.typing import T, K, V
 
 
 class DirtyDict(tp.MutableMapping[K, V]):

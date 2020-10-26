@@ -10,7 +10,7 @@ __all__ = ['stringify', 'split_shuffle_and_join', 'one_tuple',
            'merge_series', 'pad_to_multiple_of_length', 'clip',
            'jsonify', 'intify']
 
-T = tp.TypeVar('T')
+from satella.coding.typing import T
 Number = tp.Union[int, float]
 
 
@@ -68,7 +68,7 @@ def _stringify_none(str_none, stringifier):
     return None
 
 
-T = tp.TypeVar('T')
+from satella.coding.typing import T
 
 
 def one_tuple(x: tp.Iterable[T]) -> tp.Iterator[tp.Tuple[T]]:

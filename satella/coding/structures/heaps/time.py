@@ -6,7 +6,7 @@ from satella.coding.recast_exceptions import rethrow_as
 from .base import Heap
 
 Number = tp.Union[int, float]
-T = tp.TypeVar('T')
+from satella.coding.typing import T
 
 
 class TimeBasedHeap(Heap):

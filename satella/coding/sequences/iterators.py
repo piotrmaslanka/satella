@@ -5,13 +5,10 @@ import warnings
 
 from ..recast_exceptions import rethrow_as, silence_excs
 from ..decorators import for_argument, wraps
-
-T = tp.TypeVar('T')
-U = tp.TypeVar('U')
-IteratorOrIterable = tp.Union[tp.Iterator[T], tp.Iterable[T]]
+from ..typing import Iteratable, T, U
 
 
-def length(iterator: IteratorOrIterable) -> int:
+def length(iterator: Iteratable) -> int:
     """
     Return the length of an iterator, exhausting it by the way
     """
@@ -114,7 +111,7 @@ class ConstruableIterator:
         return len(self.entries)
 
 
-def unique(lst: IteratorOrIterable) -> tp.Iterator[T]:
+def unique(lst: Iteratable) -> tp.Iterator[T]:
     """
     Return each element from lst, but return every element only once.
 
@@ -134,7 +131,7 @@ def unique(lst: IteratorOrIterable) -> tp.Iterator[T]:
 
 
 @for_argument(iter)
-def even(sq: IteratorOrIterable) -> tp.Iterator[T]:
+def even(sq: Iteratable) -> tp.Iterator[T]:
     """
     Return only elements with even indices in this iterable (first element will be returned,
     as indices are counted from 0)
@@ -149,7 +146,7 @@ def even(sq: IteratorOrIterable) -> tp.Iterator[T]:
 
 @silence_excs(StopIteration)
 @for_argument(iter)
-def odd(sq: IteratorOrIterable) -> tp.Iterator[T]:
+def odd(sq: Iteratable) -> tp.Iterator[T]:
     """
     Return only elements with odd indices in this iterable.
     """
@@ -161,7 +158,7 @@ def odd(sq: IteratorOrIterable) -> tp.Iterator[T]:
             return
 
 
-def count(sq: IteratorOrIterable, start: tp.Optional[int] = None, step: int = 1,
+def count(sq: Iteratable, start: tp.Optional[int] = None, step: int = 1,
           start_at: tp.Optional[int] = None) -> tp.Iterator[int]:
     """
     Return a sequence of integers, for each entry in the sequence with provided step.
@@ -222,8 +219,8 @@ def is_instance(classes: tp.Union[tp.Tuple[type, ...], type]) -> tp.Callable[[ob
 
 
 @for_argument(iter, iter)
-def other_sequence_no_longer_than(base_sequence: IteratorOrIterable,
-                                  other_sequence: IteratorOrIterable) -> tp.Iterator[T]:
+def other_sequence_no_longer_than(base_sequence: Iteratable,
+                                  other_sequence: Iteratable) -> tp.Iterator[T]:
     """
     Return every item in other_sequence, but limit it's p_len to that of base_sequence.
 
@@ -240,7 +237,7 @@ def other_sequence_no_longer_than(base_sequence: IteratorOrIterable,
             return
 
 
-def shift(iterable_: tp.Union[tp.Reversible[T], IteratorOrIterable],
+def shift(iterable_: tp.Union[tp.Reversible[T], Iteratable],
           shift_factor: int) -> tp.Iterator[T]:
     """
     Return this sequence, but shifted by factor elements, so that elements will appear
@@ -277,7 +274,7 @@ def shift(iterable_: tp.Union[tp.Reversible[T], IteratorOrIterable],
 
 
 @silence_excs(StopIteration)
-def zip_shifted(*args: tp.Union[IteratorOrIterable, tp.Tuple[IteratorOrIterable, int]]) -> \
+def zip_shifted(*args: tp.Union[Iteratable, tp.Tuple[Iteratable, int]]) -> \
         tp.Iterator[tp.Tuple[T, ...]]:
     """
     Construct an iterator, just like zip but first by cycling it's elements by it's shift factor.
@@ -314,7 +311,7 @@ def zip_shifted(*args: tp.Union[IteratorOrIterable, tp.Tuple[IteratorOrIterable,
 
 @for_argument(iter)
 @silence_excs(StopIteration)
-def skip_first(iterator: IteratorOrIterable, n: int) -> tp.Iterator[T]:
+def skip_first(iterator: Iteratable, n: int) -> tp.Iterator[T]:
     """
     Skip first n elements from given iterator.
 
@@ -364,7 +361,7 @@ class ListWrapperIterator(tp.Generic[T]):
     """
     __slots__ = ('iterator', 'exhausted', 'list')
 
-    def __init__(self, iterator: IteratorOrIterable):
+    def __init__(self, iterator: Iteratable):
         self.iterator = iter(iterator)
         self.exhausted = False
         self.list = []
@@ -424,7 +421,7 @@ class ListWrapperIterator(tp.Generic[T]):
 
 @silence_excs(StopIteration)
 @for_argument(iter)
-def stop_after(iterator: IteratorOrIterable, n: int) -> tp.Iterator[T]:
+def stop_after(iterator: Iteratable, n: int) -> tp.Iterator[T]:
     """
     Stop this iterator after returning n elements, even if it's longer than that.
 
@@ -441,7 +438,7 @@ def stop_after(iterator: IteratorOrIterable, n: int) -> tp.Iterator[T]:
 
 
 @for_argument(iter)
-def n_th(iterator: IteratorOrIterable, n: int = 0) -> T:
+def n_th(iterator: Iteratable, n: int = 0) -> T:
     """
     Obtain n-th element (counting from 0) of an iterable
 
@@ -510,7 +507,7 @@ class IteratorListAdapter:
 
 
 @silence_excs(StopIteration, returns=True)
-def is_empty(iterable: IteratorOrIterable, exhaust: bool = True) -> bool:
+def is_empty(iterable: Iteratable, exhaust: bool = True) -> bool:
     """
     Checks whether an iterator is empty.
 
@@ -532,7 +529,7 @@ def is_empty(iterable: IteratorOrIterable, exhaust: bool = True) -> bool:
         return False
 
 
-def map_list(fun: tp.Callable, iterable: IteratorOrIterable) -> tp.List:
+def map_list(fun: tp.Callable, iterable: Iteratable) -> tp.List:
     """
     A syntactic sugar for
 
@@ -568,7 +565,7 @@ def to_iterator(fun):
     return inner
 
 
-def smart_zip(*iterators: IteratorOrIterable) -> tp.Iterator[tp.Tuple[T, ...]]:
+def smart_zip(*iterators: Iteratable) -> tp.Iterator[tp.Tuple[T, ...]]:
     """
     Zip in such a way that resulted tuples are automatically expanded.
 
@@ -593,7 +590,7 @@ def smart_zip(*iterators: IteratorOrIterable) -> tp.Iterator[tp.Tuple[T, ...]]:
         yield tuple(a)
 
 
-def enumerate2(iterable: IteratorOrIterable, start: int = 0,
+def enumerate2(iterable: Iteratable, start: int = 0,
                step: int = 1) -> tp.Iterator[tp.Tuple[int, T]]:
     """
     Enumerate with a custom step
@@ -608,7 +605,7 @@ def enumerate2(iterable: IteratorOrIterable, start: int = 0,
         v += step
 
 
-def smart_enumerate(iterator: IteratorOrIterable, start: int = 0,
+def smart_enumerate(iterator: Iteratable, start: int = 0,
                     step: int = 1) -> tp.Iterator[tp.Tuple]:
     """
     An enumerate that talks pretty with lists of tuples. Consider
@@ -640,7 +637,7 @@ def smart_enumerate(iterator: IteratorOrIterable, start: int = 0,
 
 
 @for_argument(iter)
-def take_n(iterator: IteratorOrIterable, n: int, skip: int = 0) -> tp.List[T]:
+def take_n(iterator: Iteratable, n: int, skip: int = 0) -> tp.List[T]:
     """
     Take (first) n elements of an iterator, or the entire iterator, whichever comes first
 

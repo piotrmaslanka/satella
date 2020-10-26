@@ -1,15 +1,14 @@
-import inspect
 import typing as tp
 import queue
-from .decorators import wraps, ExcType
-
+from .decorators import wraps
+from ..typing import ExceptionClassType
 
 Queue = tp.TypeVar('Queue')
 
 
 def queue_get(queue_getter: tp.Union[str, tp.Callable[[object], Queue]],
               timeout: tp.Optional[float] = None,
-              exception_empty: tp.Union[ExcType, tp.Tuple[ExcType, ...]] = queue.Empty,
+              exception_empty: tp.Union[ExceptionClassType, tp.Tuple[ExceptionClassType, ...]] = queue.Empty,
               queue_get_method: tp.Callable[[Queue, tp.Optional[float]], tp.Any] =
               lambda x, timeout: x.get(
                   timeout=timeout),

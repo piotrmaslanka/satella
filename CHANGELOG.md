@@ -1,4 +1,5 @@
-# v2.11.36
+# v2.12
 
 * added `intify`
+* added `satella.coding.typing`
 

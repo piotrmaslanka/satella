@@ -5,7 +5,7 @@ import typing as tp
 
 from satella.coding.decorators import wraps
 
-T = tp.TypeVar('T')
+from satella.coding.typing import T
 
 
 def _extras_to_one(fun):

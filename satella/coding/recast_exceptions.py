@@ -4,12 +4,10 @@ import threading
 import typing as tp
 
 from .decorators.decorators import wraps
-
-ExcType = tp.Type[Exception]
-T = tp.TypeVar('T')
+from .typing import ExceptionClassType, T
 
 
-def silence_excs(*exc_types: ExcType, returns=None,
+def silence_excs(*exc_types: ExceptionClassType, returns=None,
                  returns_factory: tp.Optional[tp.Callable[[], tp.Any]] = None):
     """
     Silence given exception types.
@@ -68,7 +66,7 @@ class log_exceptions:
                  severity: int = logging.ERROR,
                  format_string: str = '{e}',
                  locals_: tp.Optional[tp.Dict] = None,
-                 exc_types: tp.Union[ExcType, tp.Sequence[ExcType]] = Exception,
+                 exc_types: tp.Union[ExceptionClassType, tp.Sequence[ExceptionClassType]] = Exception,
                  swallow_exception: bool = False):
         self.logger = logger
         self.swallow_exception = swallow_exception
@@ -162,7 +160,7 @@ class rethrow_as:
     __slots__ = ('mapping', 'exception_preprocessor', 'returns', '__exception_remapped',
                  'returns_factory')
 
-    def __init__(self, *pairs: tp.Union[ExcType, tp.Tuple[ExcType, ...]],
+    def __init__(self, *pairs: tp.Union[ExceptionClassType, tp.Tuple[ExceptionClassType, ...]],
                  exception_preprocessor: tp.Optional[tp.Callable[[Exception], str]] = repr,
                  returns=None,
                  returns_factory: tp.Optional[tp.Callable[[], tp.Any]] = None):
@@ -221,7 +219,7 @@ class rethrow_as:
                         raise to(self.exception_preprocessor(exc_val))
 
 
-def raises_exception(exc_class: tp.Union[ExcType, tp.Tuple[ExcType, ...]],
+def raises_exception(exc_class: tp.Union[ExceptionClassType, tp.Tuple[ExceptionClassType, ...]],
                      clb: tp.Callable[[], None]) -> bool:
     """
     Does the callable raise a given exception?
@@ -234,7 +232,7 @@ def raises_exception(exc_class: tp.Union[ExcType, tp.Tuple[ExcType, ...]],
         return False
 
 
-def catch_exception(exc_class: tp.Union[ExcType, tp.Tuple[ExcType, ...]],
+def catch_exception(exc_class: tp.Union[ExceptionClassType, tp.Tuple[ExceptionClassType, ...]],
                     clb: tp.Callable[[], tp.Optional[T]],
                     return_instead: tp.Optional[T] = None,
                     return_value_on_no_exception: bool = False) -> tp.Union[Exception, T]:

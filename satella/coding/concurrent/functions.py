@@ -6,7 +6,7 @@ from satella.coding.decorators.decorators import wraps
 
 from satella.coding.sequences.sequences import infinite_iterator
 
-T = tp.TypeVar('T')
+from satella.coding.typing import T
 
 
 def run_as_future(fun):

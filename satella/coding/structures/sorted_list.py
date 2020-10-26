@@ -1,7 +1,7 @@
 import collections
 import typing as tp
 
-T = tp.TypeVar('T')
+from satella.coding.typing import T
 
 
 class SortedList(tp.Generic[T]):

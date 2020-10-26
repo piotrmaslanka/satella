@@ -2,12 +2,11 @@ import inspect
 import typing as tp
 import warnings
 
+from satella.coding.typing import T, U
 from satella.exceptions import PreconditionError
 
-T = tp.TypeVar('T')
-U = tp.TypeVar('U')
 Expression = tp.NewType('Expression', str)
-ExcType = tp.Type[Exception]
+
 
 
 # noinspection PyPep8Naming

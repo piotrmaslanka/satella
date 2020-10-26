@@ -8,9 +8,7 @@ from ..heaps import TimeBasedSetHeap
 from ..singleton import Singleton
 from ...concurrent.monitor import Monitor
 from ...recast_exceptions import rethrow_as, silence_excs
-
-K = tp.TypeVar('K')
-V = tp.TypeVar('V')
+from ...typing import K, V
 
 
 class Cleanupable(metaclass=ABCMeta):

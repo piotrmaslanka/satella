@@ -3,7 +3,7 @@ import copy
 import time
 import typing as tp
 
-T = tp.TypeVar('T')
+from satella.coding.typing import T
 
 
 class CallableGroup(tp.Generic[T]):

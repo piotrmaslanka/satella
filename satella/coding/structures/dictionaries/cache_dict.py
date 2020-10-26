@@ -4,10 +4,9 @@ import typing as tp
 from concurrent.futures import ThreadPoolExecutor, Executor, Future
 
 from satella.coding.recast_exceptions import silence_excs
+from satella.coding.typing import K, V
 
 logger = logging.getLogger(__name__)
-K = tp.TypeVar('K')
-V = tp.TypeVar('V')
 
 
 class CacheDict(tp.Mapping[K, V]):

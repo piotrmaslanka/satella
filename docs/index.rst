@@ -19,6 +19,7 @@ Visit the project's page at GitHub_!
            coding/concurrent
            coding/sequences
            coding/transforms
+           coding/typing
            instrumentation/traceback
            instrumentation/memory
            instrumentation/metrics

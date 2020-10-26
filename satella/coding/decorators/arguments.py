@@ -7,7 +7,7 @@ from inspect import Parameter
 from .decorators import wraps
 from ..misc import source_to_function, get_arguments, call_with_arguments, _get_arguments
 
-T = tp.TypeVar('T')
+from satella.coding.typing import T
 U = tp.TypeVar('U')
 
 
