@@ -5,7 +5,7 @@ import typing as tp
 
 from satella.coding.decorators import wraps
 
-from satella.coding.typing import T
+from satella.coding.typing import T, Predicate
 
 
 def _extras_to_one(fun):
@@ -57,7 +57,7 @@ class Heap(collections.UserList, tp.Generic[T]):
         """
         heapq.heappush(self.data, item)
 
-    def __deepcopy__(self, memo) -> 'Heap':
+    def __deepcopy__(self, memo={}) -> 'Heap':
         return self.__class__(copy.deepcopy(self.data, memo=memo))
 
     def __copy__(self) -> 'Heap':
@@ -74,7 +74,7 @@ class Heap(collections.UserList, tp.Generic[T]):
         """
         return heapq.heappop(self.data)
 
-    def filter_map(self, filter_fun: tp.Optional[tp.Callable[[T], bool]] = None,
+    def filter_map(self, filter_fun: tp.Optional[Predicate[T]] = None,
                    map_fun: tp.Optional[tp.Callable[[T], tp.Any]] = None):
         """
         Get only items that return True when condition(item) is True. Apply a
@@ -156,7 +156,7 @@ class SetHeap(Heap):
     def __contains__(self, item: T) -> bool:
         return item in self.set
 
-    def filter_map(self, filter_fun: tp.Optional[tp.Callable[[T], bool]] = None,
+    def filter_map(self, filter_fun: tp.Optional[Predicate[T]] = None,
                    map_fun: tp.Optional[tp.Callable[[T], tp.Any]] = None):
         super().filter_map(filter_fun=filter_fun, map_fun=map_fun)
         self.set = set(self.data)

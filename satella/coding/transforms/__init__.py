@@ -10,9 +10,7 @@ __all__ = ['stringify', 'split_shuffle_and_join', 'one_tuple',
            'merge_series', 'pad_to_multiple_of_length', 'clip',
            'jsonify', 'intify']
 
-from satella.coding.typing import T, NoArgCallable
-
-Number = tp.Union[int, float]
+from satella.coding.typing import T, NoArgCallable, Appendable, Number, Predicate
 
 
 def clip(v: Number, minimum: Number, maximum: Number) -> Number:
@@ -31,16 +29,11 @@ def clip(v: Number, minimum: Number, maximum: Number) -> Number:
     return v
 
 
-class AppendableSequence(tp.Sequence[T]):
-    def append(self, item: T) -> None:
-        ...
-
-
 @for_argument(list)
-def pad_to_multiple_of_length(seq: AppendableSequence, multiple_of: int,
+def pad_to_multiple_of_length(seq: Appendable[T], multiple_of: int,
                               pad_with: tp.Optional[T] = None,
                               pad_with_factory: tp.Optional[NoArgCallable[T]] = None) -> \
-        AppendableSequence:
+        Appendable[T]:
     """
     Make sequence multiple of length, ie. append elements to the sequence
     until it's length is a multiple of multiple_of.
@@ -63,13 +56,11 @@ def pad_to_multiple_of_length(seq: AppendableSequence, multiple_of: int,
     return seq
 
 
-def _stringify_none(str_none, stringifier):
+def _stringify_none(str_none: tp.Optional[str],
+                    stringifier: tp.Callable[[tp.Any], str]) -> tp.Optional[str]:
     if str_none:
         return stringifier(None)
     return None
-
-
-from satella.coding.typing import T
 
 
 def one_tuple(x: tp.Iterable[T]) -> tp.Iterator[tp.Tuple[T]]:
@@ -115,7 +106,7 @@ def intify(v: tp.Any) -> int:
 
 
 def split_shuffle_and_join(entries: tp.List[T],
-                           whether_to_shuffle: tp.Callable[[T], bool] = lambda x: True,
+                           whether_to_shuffle: Predicate[T] = lambda x: True,
                            not_shuffled_to_front: bool = True) -> tp.List[T]:
     """
     Split elements in entries into two groups - one group, called True, is the one for which

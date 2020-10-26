@@ -5,7 +5,7 @@ import warnings
 
 from ..recast_exceptions import rethrow_as, silence_excs
 from ..decorators import for_argument, wraps
-from ..typing import Iteratable, T, U
+from ..typing import Iteratable, T, U, Predicate
 
 
 def length(iterator: Iteratable) -> int:
@@ -210,7 +210,7 @@ def infinite_counter(start_at: int = 0, step: int = 1) -> tp.Iterator[int]:
         i += step
 
 
-def is_instance(classes: tp.Union[tp.Tuple[type, ...], type]) -> tp.Callable[[object], bool]:
+def is_instance(classes: tp.Union[tp.Tuple[type, ...], type]) -> Predicate[object]:
     def inner(object_):
         return isinstance(object_, classes)
 

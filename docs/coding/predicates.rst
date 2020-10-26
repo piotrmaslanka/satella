@@ -35,9 +35,9 @@ Also use ^ in place of xor and ~ in place of not.
 
         assert(p(4) and not p(8) and not p(1))
 
-Predicate class is documented here:
+PredicateClass class is documented here:
 
-.. autoclass:: satella.coding.predicates.Predicate
+.. autoclass:: satella.coding.predicates.PredicateClass
     :members:
 
 To use the predicate you are to execute the following import:

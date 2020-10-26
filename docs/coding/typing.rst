@@ -11,6 +11,7 @@ They are as follows:
 * `Iteratable` - a generic iterator or an iterable of `T`
 * `NoArgCallable` - a callable with no arguments returning `T`
 * `Appendable` - an object which has the `append` method
+* `Predicate` - a callable that accepts a `T` and returns a bool
 
 You may use these generics in your classes, eg.
 

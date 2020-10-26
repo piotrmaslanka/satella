@@ -1,9 +1,9 @@
 import typing as tp
 
-from satella.coding.typing import Iteratable
+from satella.coding.typing import Iteratable, Predicate, T
 
 
-def choose_one(filter_fun: tp.Callable[[tp.Any], bool], iterable: Iteratable) -> tp.Any:
+def choose_one(filter_fun: Predicate[T], iterable: Iteratable) -> T:
     """
     Syntactic sugar for
 
@@ -19,8 +19,8 @@ def choose_one(filter_fun: tp.Callable[[tp.Any], bool], iterable: Iteratable) ->
     return choose(filter_fun, iterable, True)
 
 
-def choose(filter_fun: tp.Callable[[tp.Any], bool], iterable: Iteratable,
-           check_multiple: bool = False) -> tp.Any:
+def choose(filter_fun: Predicate[T], iterable: Iteratable,
+           check_multiple: bool = False) -> T:
     """
     Return a single value that exists in given iterable.
 

@@ -2,6 +2,7 @@ import inspect
 
 from .decorators import wraps
 from .sequences.iterators import walk
+from .typing import Predicate
 
 """
 Taken from http://code.activestate.com/recipes/204197-solving-the-metaclass-conflict/ and slightly
@@ -183,8 +184,8 @@ def wrap_property(getter: tp.Callable[[GetterDefinition], GetterDefinition] = la
 
 def wrap_with(callables: tp.Callable[[tp.Callable], tp.Callable] = lambda x: x,
               properties: tp.Callable[[property], property] = lambda x: x,
-              selector_callables: tp.Callable[[tp.Callable], bool] = lambda clb: True,
-              selector_properties: tp.Callable[[property], bool] = lambda clb: True):
+              selector_callables: Predicate[tp.Callable] = lambda clb: True,
+              selector_properties: Predicate[property] = lambda clb: True):
     """
     A metaclass that wraps all elements discovered in this class with something
 

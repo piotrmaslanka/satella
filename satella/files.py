@@ -11,6 +11,7 @@ __all__ = ['read_re_sub_and_write', 'find_files', 'split', 'read_in_file', 'writ
 
 
 from satella.coding import silence_excs
+from satella.coding.typing import Predicate
 
 SEPARATORS = {'\\', '/'}
 SEPARATORS.add(os.path.sep)
@@ -75,7 +76,7 @@ def _has_separator(path: str) -> bool:
 
 
 def make_noncolliding_name(path: str,
-                           exists_checker: tp.Callable[[str], bool] = os.path.exists) -> str:
+                           exists_checker: Predicate[str] = os.path.exists) -> str:
     """
     Try to make a noncolliding name in such a way that .1, .2, .3, and so on will be appended
     to the file name right before the extension (yielding test.1.txt) or at the end of the file

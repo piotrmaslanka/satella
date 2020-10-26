@@ -2,13 +2,12 @@ import typing as tp
 import operator
 
 from satella.coding.structures.dictionaries.dict_object import DictObject
+from satella.coding.typing import Predicate
 from satella.configuration.schema import Descriptor
 
 __all__ = ['x']
 
 import warnings
-
-PredicateType = tp.Callable[[tp.Any], bool]
 
 
 def _nop(v: tp.Any) -> tp.Any:
@@ -17,26 +16,26 @@ def _nop(v: tp.Any) -> tp.Any:
 
 def make_operation_two_args(operation_two_args: tp.Callable[[tp.Any, tp.Any], tp.Any],
                             docstring: tp.Optional[str] = None,
-                            swap_order: bool = False) -> PredicateType:
-    def operation(self, a: tp.Callable) -> PredicateType:
-        if isinstance(a, Predicate):
+                            swap_order: bool = False) -> Predicate:
+    def operation(self, a: tp.Callable) -> Predicate:
+        if isinstance(a, PredicateClass):
             if swap_order:
                 def op(v):
                     return operation_two_args(a(v), self(v))
-                return Predicate(op)
+                return PredicateClass(op)
             else:
                 def op(v):
                     return operation_two_args(self(v), a(v))
-                return Predicate(op)
+                return PredicateClass(op)
         else:
             if swap_order:
                 def op(v):
                     return operation_two_args(a, self(v))
-                return Predicate(op)
+                return PredicateClass(op)
             else:
                 def op(v):
                     return operation_two_args(self(v), a)
-                return Predicate(op)
+                return PredicateClass(op)
 
     if docstring:
         operation.__doc__ = docstring
@@ -45,11 +44,11 @@ def make_operation_two_args(operation_two_args: tp.Callable[[tp.Any, tp.Any], tp
 
 
 def make_operation_single_arg(operation: tp.Callable[[tp.Any], tp.Any],
-                              docstring: tp.Optional[str] = None) -> PredicateType:
-    def operation_v(self) -> PredicateType:
+                              docstring: tp.Optional[str] = None) -> Predicate:
+    def operation_v(self) -> Predicate:
         def operate(v):
             return operation(self.operation(v))
-        return Predicate(operate)
+        return PredicateClass(operate)
 
     if docstring:
         operation_v.__doc__ = docstring
@@ -68,7 +67,7 @@ def _one_of(a, values: tp.Container) -> bool:
     return a in values
 
 
-class Predicate:
+class PredicateClass:
     """
     A shorthand to create lambdas using such statements, for example:
 
@@ -86,23 +85,23 @@ class Predicate:
 
     def __call__(self, *args) -> bool:
         if len(args) == 0:
-            return Predicate(lambda y: self.operation(y)())
+            return PredicateClass(lambda y: self.operation(y)())
         else:
             return self.operation(args[0])
 
-    def has_keys(self, *keys) -> PredicateType:
+    def has_keys(self, *keys) -> Predicate:
         """
         Return a predicate checking whether this value has provided keys
         """
         return make_operation_two_args(_has_keys)(self, keys)
 
-    def one_of(self, *values) -> PredicateType:
+    def one_of(self, *values) -> Predicate:
         """
         Return a predicate checking if x is amongst values
         """
         return make_operation_two_args(_one_of)(self, values)
 
-    def has_p(self, predicate: 'Predicate') -> PredicateType:
+    def has_p(self, predicate: 'PredicateClass') -> Predicate:
         """
         An old name for has().
 
@@ -120,7 +119,7 @@ class Predicate:
         """
         def is_instance(v):
             return isinstance(self.operation(v), args)
-        return Predicate(is_instance)
+        return PredicateClass(is_instance)
 
     def is_valid_schema(self, schema: tp.Optional[tp.Union[Descriptor, tp.Dict]] = None, **kwargs):
         """
@@ -131,9 +130,9 @@ class Predicate:
         def is_schema_correct(v):
             return DictObject(self.operation(v)).is_valid_schema(schema, **kwargs)
 
-        return Predicate(is_schema_correct)
+        return PredicateClass(is_schema_correct)
 
-    def has(self, predicate: 'Predicate') -> PredicateType:
+    def has(self, predicate: 'PredicateClass') -> Predicate:
         """
         Check if any element of the current value (which must be an iterable)
         returns True when applied to predicate
@@ -146,7 +145,7 @@ class Predicate:
                 if predicate(e):
                     return True
             return False
-        return Predicate(op)
+        return PredicateClass(op)
 
     inside = make_operation_two_args(operator.contains,
                                      'Return a predicate checking if x is inside value')
@@ -197,4 +196,4 @@ class Predicate:
     __abs__ = make_operation_single_arg(abs)
 
 
-x = Predicate()
+x = PredicateClass()

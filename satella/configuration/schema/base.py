@@ -3,9 +3,10 @@ import typing as tp
 from satella.coding.concurrent import CallableGroup
 from satella.exceptions import ConfigurationValidationError
 from .registry import register_custom_descriptor
+from ...coding.typing import Predicate
 
 ConfigDictValue = tp.Optional[tp.Union[int, float, str, dict, list, bool]]
-CheckerConditionType = tp.Callable[[ConfigDictValue], bool]
+CheckerConditionType = Predicate[ConfigDictValue]
 ObjectMakerType = tp.Callable[
     [ConfigDictValue], tp.Any]  # might raise ConfigurationSchemaError as well
 

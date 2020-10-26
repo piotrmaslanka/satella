@@ -7,6 +7,7 @@ V = tp.TypeVar('V')
 K = tp.TypeVar('K')
 Number = tp.Union[int, float]
 NoArgCallable = tp.Callable[[], T]
+Predicate = tp.Callable[[T], bool]
 
 ExceptionClassType = tp.Type[Exception]
 
@@ -17,4 +18,4 @@ class Appendable(tp.Protocol[T]):
 
 
 __all__ = ['Iteratable', 'T', 'U', 'V', 'K', 'Number', 'ExceptionClassType',
-           'NoArgCallable', 'Appendable']
+           'NoArgCallable', 'Appendable', 'Predicate']

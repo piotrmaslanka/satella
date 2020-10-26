@@ -6,6 +6,7 @@ from satella.coding.recast_exceptions import rethrow_as
 from .base import BaseSource
 from .derivative import MergingSource
 from .format import FORMAT_SOURCES, FormatSource
+from ...coding.typing import Predicate
 from ...exceptions import ConfigurationError
 
 logger = logging.getLogger(__name__)
@@ -72,7 +73,7 @@ class DirectorySource(FileSource):
 
     def __init__(self, path, encoding: str = 'utf-8',
                  interpret_as=FORMAT_SOURCES,
-                 fname_filter: tb.Callable[[str], bool] = lambda fullpath: True,
+                 fname_filter: Predicate[str] = lambda fullpath: True,
                  scan_subdirectories: bool = True,
                  on_fail: int = RAISE):
 
