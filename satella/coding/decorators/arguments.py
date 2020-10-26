@@ -236,8 +236,9 @@ def for_argument(*t_ops: ForArgumentArg, **t_kwops: ForArgumentArg):
                     v = dict_values[arg_name]
                     if arg_name in dict_operations:
                         f = dict_operations[arg_name]
-                        if callable(f) and f != v and f is not None:
+                        if callable(f) and f is not None:
                             v = f(v)
+
                     arguments[arg_name] = v
 
                 return returns(call_with_arguments(fun, arguments))

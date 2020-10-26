@@ -8,6 +8,20 @@ from satella.exceptions import PreconditionError
 
 class TestTypecheck(unittest.TestCase):
 
+    def test_for_argument_bug(self):
+        class Device:
+            @for_argument(None, str)
+            def __init__(self, device_id: str, init_true: bool = False):
+                self.device_id = device_id
+                self.init_true = init_true
+
+            def __eq__(self, other):
+                return self.device_id == other.device_id
+
+        d = Device(1234)
+        self.assertEqual(d.device_id, '1234')
+        self.assertFalse(d.init_true)
+
     def test_get_arguments_bug(self):
         class Class:
 
