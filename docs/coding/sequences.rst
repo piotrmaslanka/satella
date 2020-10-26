@@ -217,6 +217,9 @@ Multirun
 Generators
 ==========
 
+.. autoclass:: satella.coding.sequences.ListWrapperIterator
+    :members:
+
 .. autoclass:: satella.coding.sequences.ConstruableIterator
     :members:
 

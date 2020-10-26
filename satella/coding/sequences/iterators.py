@@ -328,6 +328,95 @@ def skip_first(iterator: IteratorOrIterable, n: int) -> tp.Iterator[T]:
     yield from iterator
 
 
+class ListWrapperIterator(tp.Generic[T]):
+    """
+    A wrapped for an iterator, enabling using it as a normal list.
+
+    The first time this is evaluated, list is populated with elements.
+
+    The second time, items are taken from the list.
+
+    It never computes more than it needs to.
+
+    Essentially a class that lets you reuse one-shot iterators.
+    """
+    __slots__ = ('iterator', 'exhausted', 'list')
+
+    @for_argument(None, iter)
+    def __init__(self, iterator: IteratorOrIterable):
+        self.iterator = iterator
+        self.exhausted = False
+        self.list = []
+
+    def exhaust(self) -> None:
+        """
+        Load all elements of this iterator into memory.
+        """
+        if self.exhausted:
+            return
+        for elem in self.iterator:
+            self.list.append(elem)
+        self.exhausted = True
+
+    def advance_to_item(self, i: int) -> None:
+        """
+        Makes the list be at least i+1 in size
+        """
+        if self.exhausted:
+            return
+
+        while len(self.list) <= i:
+            try:
+                elem = next(self.iterator)
+                self.list.append(elem)
+            except StopIteration:
+                self.exhausted = True
+                return
+
+    def __len__(self) -> int:
+        self.exhaust()
+        return len(self.list)
+
+    def __getitem__(self, item: tp.Union[slice, int]):
+        if isinstance(item, int):
+            if len(self.list) < item+1:
+                self.advance_to_item(item)
+        else:
+            self.advance_to_item(item.stop - 1)
+        return self.list[item]
+
+    def next(self) -> T:
+        """
+        Get the next item
+        """
+        if self.exhausted:
+            raise StopIteration()
+        else:
+            item = next(self.iterator)
+            self.list.append(item)
+            return item
+
+    def __iter__(self) -> tp.Iterator[T]:
+        class Iterator:
+            __slots__ = ('parent', 'pos')
+
+            def __init__(self, parent):
+                self.parent = parent
+                self.pos = 0
+
+            def __iter__(self) -> tp.Iterator[T]:
+                return self
+
+            def __next__(self) -> T:
+                if self.pos >= len(self.parent.list):
+                    item = self.parent.next()
+                else:
+                    item = self.parent.list[self.pos]
+                self.pos += 1
+                return item
+        return Iterator(self)
+
+
 @silence_excs(StopIteration)
 @for_argument(iter)
 def stop_after(iterator: IteratorOrIterable, n: int) -> tp.Iterator[T]:

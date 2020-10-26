@@ -3,10 +3,35 @@ import unittest
 
 from satella.coding import SelfClosingGenerator, hint_with_length, chain
 from satella.coding.sequences import smart_enumerate, ConstruableIterator, walk, \
-    IteratorListAdapter, is_empty
+    IteratorListAdapter, is_empty, ListWrapperIterator
 
 
 class TestIterators(unittest.TestCase):
+
+    def test_list_wrapper_iterator(self):
+        a = {'count': 0}
+
+        def iterate():
+            nonlocal a
+
+            a['count'] += 1
+            yield 1
+            a['count'] += 1
+            yield 2
+            a['count'] += 1
+            yield 3
+
+        lwe = ListWrapperIterator(iterate())
+        self.assertEqual(list(iter(lwe)), [1, 2, 3])
+        self.assertEqual(a['count'], 3)
+        self.assertEqual(list(iter(lwe)), [1, 2, 3])
+        self.assertEqual(a['count'], 3)
+        lwe2 = ListWrapperIterator(iterate())
+        self.assertEqual(lwe2[1:2], [2])
+        self.assertEqual(a['count'], 5)
+        self.assertEqual(lwe2[2], 3)
+        self.assertEqual(a['count'], 6)
+        self.assertRaises(IndexError, lambda: lwe2[4])
 
     def test_is_empty_not_exhaust(self):
         def generator():
