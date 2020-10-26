@@ -1,9 +1,9 @@
 import inspect
 import time
-import typing as tp
 from concurrent.futures import Future
 
 from satella.coding import wraps
+from satella.coding.typing import NoArgCallable
 from .base import MetricLevel
 
 
@@ -14,7 +14,7 @@ class MeasurableMixin:
     __slots__ = ()
 
     def measure_future(self, future: Future, logging_level: MetricLevel = MetricLevel.RUNTIME,
-                       value_getter: tp.Callable[[], float] = time.monotonic, **labels):
+                       value_getter: NoArgCallable[float] = time.monotonic, **labels):
         """
         A function to measure a difference between some value after the method call
         and before it.
@@ -37,7 +37,7 @@ class MeasurableMixin:
 
     def measure(self, include_exceptions: bool = True,
                 logging_level: MetricLevel = MetricLevel.RUNTIME,
-                value_getter: tp.Callable[[], float] = time.monotonic, **labels):
+                value_getter: NoArgCallable[float] = time.monotonic, **labels):
         """
         A decorator to measure a difference between some value after the method call
         and before it.

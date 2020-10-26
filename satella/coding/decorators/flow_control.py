@@ -1,7 +1,7 @@
 import typing as tp
 import queue
 from .decorators import wraps
-from ..typing import ExceptionClassType
+from ..typing import ExceptionClassType, NoArgCallable
 
 Queue = tp.TypeVar('Queue')
 
@@ -82,7 +82,7 @@ def queue_get(queue_getter: tp.Union[str, tp.Callable[[object], Queue]],
 
 
 def loop_while(pred: tp.Union[tp.Callable[[tp.Any], bool],
-                              tp.Callable[[], bool]] = lambda: True):
+                              NoArgCallable[bool]] = lambda: True):
     """
     Decorator to loop the following function while predicate called on it's first argument is True.
 

@@ -10,7 +10,8 @@ __all__ = ['stringify', 'split_shuffle_and_join', 'one_tuple',
            'merge_series', 'pad_to_multiple_of_length', 'clip',
            'jsonify', 'intify']
 
-from satella.coding.typing import T
+from satella.coding.typing import T, NoArgCallable
+
 Number = tp.Union[int, float]
 
 
@@ -38,7 +39,7 @@ class AppendableSequence(tp.Sequence[T]):
 @for_argument(list)
 def pad_to_multiple_of_length(seq: AppendableSequence, multiple_of: int,
                               pad_with: tp.Optional[T] = None,
-                              pad_with_factory: tp.Optional[tp.Callable[[], T]] = None) -> \
+                              pad_with_factory: tp.Optional[NoArgCallable[T]] = None) -> \
         AppendableSequence:
     """
     Make sequence multiple of length, ie. append elements to the sequence

@@ -9,3 +9,13 @@ They are as follows:
 * `Number` - an amalgam of int and float
 * `T`, `U`, `K`, `V` - type vars to use
 * `Iteratable` - a generic iterator or an iterable of `T`
+* `NoArgCallable` - a callable with no arguments returning `T`
+
+You may use these generics in your classes, eg.
+
+::
+
+    def enumerate(v: Iteratable[int]) -> int:
+        ...
+
+

@@ -4,11 +4,11 @@ import threading
 import typing as tp
 
 from .decorators.decorators import wraps
-from .typing import ExceptionClassType, T
+from .typing import ExceptionClassType, T, NoArgCallable
 
 
 def silence_excs(*exc_types: ExceptionClassType, returns=None,
-                 returns_factory: tp.Optional[tp.Callable[[], tp.Any]] = None):
+                 returns_factory: tp.Optional[NoArgCallable[tp.Any]] = None):
     """
     Silence given exception types.
 
@@ -163,7 +163,7 @@ class rethrow_as:
     def __init__(self, *pairs: tp.Union[ExceptionClassType, tp.Tuple[ExceptionClassType, ...]],
                  exception_preprocessor: tp.Optional[tp.Callable[[Exception], str]] = repr,
                  returns=None,
-                 returns_factory: tp.Optional[tp.Callable[[], tp.Any]] = None):
+                 returns_factory: tp.Optional[NoArgCallable[tp.Any]] = None):
         try:
             a, b = pairs  # throws ValueError
             op = issubclass(b, BaseException)  # throws TypeError
@@ -220,7 +220,7 @@ class rethrow_as:
 
 
 def raises_exception(exc_class: tp.Union[ExceptionClassType, tp.Tuple[ExceptionClassType, ...]],
-                     clb: tp.Callable[[], None]) -> bool:
+                     clb: NoArgCallable[None]) -> bool:
     """
     Does the callable raise a given exception?
     """
@@ -233,7 +233,7 @@ def raises_exception(exc_class: tp.Union[ExceptionClassType, tp.Tuple[ExceptionC
 
 
 def catch_exception(exc_class: tp.Union[ExceptionClassType, tp.Tuple[ExceptionClassType, ...]],
-                    clb: tp.Callable[[], tp.Optional[T]],
+                    clb: NoArgCallable[tp.Optional[T]],
                     return_instead: tp.Optional[T] = None,
                     return_value_on_no_exception: bool = False) -> tp.Union[Exception, T]:
     """

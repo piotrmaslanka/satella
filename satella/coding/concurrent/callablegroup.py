@@ -3,7 +3,7 @@ import copy
 import time
 import typing as tp
 
-from satella.coding.typing import T
+from satella.coding.typing import T, NoArgCallable
 
 
 class CallableGroup(tp.Generic[T]):
@@ -36,7 +36,7 @@ class CallableGroup(tp.Generic[T]):
         self.gather = gather  # type: bool
         self.swallow_exceptions = swallow_exceptions  # type: bool
 
-    def add(self, callable_: tp.Callable[[], T], one_shot: bool = False):
+    def add(self, callable_: NoArgCallable[T], one_shot: bool = False):
         """
         :param callable_: callable
         :param one_shot: if True, callable will be unregistered after single call

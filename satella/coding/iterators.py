@@ -1,6 +1,7 @@
 import typing as tp
 
 from satella.coding.recast_exceptions import silence_excs
+from satella.coding.typing import NoArgCallable
 
 
 def chain(*args) -> tp.Iterator:
@@ -105,7 +106,7 @@ class hint_with_length:
     __slots__ = ('generator', 'length', 'length_factory')
 
     def __init__(self, generator: tp.Generator, length: tp.Optional[int],
-                 length_factory: tp.Optional[tp.Callable[[], int]] = None):
+                 length_factory: tp.Optional[NoArgCallable[int]] = None):
         self.generator = generator
         if length is None and length_factory is None:
             raise ValueError('Give either length or length_factory')

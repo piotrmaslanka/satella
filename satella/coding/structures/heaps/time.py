@@ -5,8 +5,7 @@ import typing as tp
 from satella.coding.recast_exceptions import rethrow_as
 from .base import Heap
 
-Number = tp.Union[int, float]
-from satella.coding.typing import T
+from satella.coding.typing import T, Number, NoArgCallable
 
 
 class TimeBasedHeap(Heap):
@@ -41,7 +40,7 @@ class TimeBasedHeap(Heap):
         """
         return (ob for ts, ob in self.data)
 
-    def __init__(self, default_clock_source: tp.Callable[[], Number] = time.monotonic):
+    def __init__(self, default_clock_source: NoArgCallable[Number] = time.monotonic):
         """
         Initialize an empty heap
         """
@@ -180,7 +179,7 @@ class TimeBasedSetHeap(Heap):
         """
         return (ob for ts, ob in self.data)
 
-    def __init__(self, default_clock_source: tp.Callable[[], Number] = None):
+    def __init__(self, default_clock_source: NoArgCallable[Number] = None):
         """
         Initialize an empty heap
         """

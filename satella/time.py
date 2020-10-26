@@ -7,6 +7,8 @@ from functools import wraps     # import from functools to prevent circular impo
 
 __all__ = ['measure', 'time_as_int', 'time_ms', 'sleep', 'time_us']
 
+TimeSignal = tp.Callable[[], float]
+
 
 def sleep(x: float, abort_on_interrupt: bool = False) -> bool:
     """
@@ -139,7 +141,7 @@ class measure:
                  'create_stopped')
 
     def __init__(self, future_to_measure: tp.Optional[Future] = None, stop_on_stop: bool = True,
-                 adjust: float = 0.0, time_getter_callable: tp.Callable[[], float] = time.monotonic,
+                 adjust: float = 0.0, time_getter_callable: TimeSignal = time.monotonic,
                  create_stopped: bool = False):
         self.time_getter_callable = time_getter_callable
         self.started_on = time_getter_callable() + adjust

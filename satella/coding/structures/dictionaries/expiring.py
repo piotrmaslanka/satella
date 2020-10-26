@@ -8,7 +8,7 @@ from ..heaps import TimeBasedSetHeap
 from ..singleton import Singleton
 from ...concurrent.monitor import Monitor
 from ...recast_exceptions import rethrow_as, silence_excs
-from ...typing import K, V
+from ...typing import K, V, NoArgCallable
 
 
 class Cleanupable(metaclass=ABCMeta):
@@ -86,7 +86,7 @@ class SelfCleaningDefaultDict(Monitor, tp.MutableMapping[K, V], Cleanupable):
         self.cleanup()
         return len(self.data)
 
-    def __init__(self, default_factory: tp.Callable[[], V],
+    def __init__(self, default_factory: NoArgCallable[V],
                  background_maintenance: bool = True, *args, **kwargs):
         super().__init__()  # initialize the inner Monitor
         self.data = dict(*args, **kwargs)
@@ -160,7 +160,7 @@ class ExpiringEntryDict(Monitor, tp.MutableMapping[K, V], Cleanupable):
         return len(self.data)
 
     def __init__(self, expiration_timeout: float, *args,
-                 time_getter: tp.Callable[[], float] = time.monotonic,
+                 time_getter: NoArgCallable[float] = time.monotonic,
                  external_cleanup: bool = False, **kwargs):
         super().__init__()  # initialize the inner Monitor
         self.data = dict()

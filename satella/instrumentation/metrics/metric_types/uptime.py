@@ -1,6 +1,6 @@
 import time
-import typing as tp
 
+from satella.coding.typing import NoArgCallable
 from .base import LeafMetric
 from .registry import register_metric
 from ..data import MetricDataCollection, MetricData
@@ -19,7 +19,7 @@ class UptimeMetric(LeafMetric):
 
     CLASS_NAME = 'uptime'
 
-    def __init__(self, *args, time_getter: tp.Callable[[], float] = time.monotonic,
+    def __init__(self, *args, time_getter: NoArgCallable[float] = time.monotonic,
                  **kwargs):
         super().__init__(*args, **kwargs)
         self.time_getter = time_getter

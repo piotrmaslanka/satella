@@ -4,7 +4,7 @@ import typing as tp
 from concurrent.futures import ThreadPoolExecutor, Executor, Future
 
 from satella.coding.recast_exceptions import silence_excs
-from satella.coding.typing import K, V
+from satella.coding.typing import K, V, NoArgCallable
 
 logger = logging.getLogger(__name__)
 
@@ -74,8 +74,8 @@ class CacheDict(tp.Mapping[K, V]):
                  value_getter: tp.Callable[[K], V],
                  value_getter_executor: tp.Optional[Executor] = None,
                  cache_failures_interval: tp.Optional[float] = None,
-                 time_getter: tp.Callable[[], float] = time.monotonic,
-                 default_value_factory: tp.Optional[tp.Callable[[], V]] = None):
+                 time_getter: NoArgCallable[float] = time.monotonic,
+                 default_value_factory: tp.Optional[NoArgCallable[V]] = None):
         assert stale_interval <= expiration_interval, 'Stale interval may not be larger ' \
                                                       'than expiration interval!'
         self.stale_interval = stale_interval

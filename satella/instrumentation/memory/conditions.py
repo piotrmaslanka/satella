@@ -8,6 +8,8 @@ __all__ = ['GB', 'MB', 'KB', 'Any', 'All', 'GlobalAbsoluteValue', 'GlobalRelativ
            'LocalRelativeValue', 'LocalAbsoluteValue', 'BaseCondition', 'ZerothSeverity',
            'CustomCondition', 'Not']
 
+from satella.coding.typing import NoArgCallable
+
 GB = 1024 * 1024 * 1024
 MB = 1024 * 1024
 KB = 1024
@@ -130,7 +132,7 @@ class CustomCondition(BaseCondition):
     """
     __slots__ = ('callable',)
 
-    def __init__(self, callable_: tp.Callable[[], bool]):
+    def __init__(self, callable_: NoArgCallable[bool]):
         self.callable = callable_
 
     def can_fire(self, local_memory_data, local_maximum_consume: tp.Optional[int]) -> bool:
