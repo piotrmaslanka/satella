@@ -10,6 +10,7 @@ They are as follows:
 * `T`, `U`, `K`, `V` - type vars to use
 * `Iteratable` - a generic iterator or an iterable of `T`
 * `NoArgCallable` - a callable with no arguments returning `T`
+* `Appendable` - an object which has the `append` method
 
 You may use these generics in your classes, eg.
 

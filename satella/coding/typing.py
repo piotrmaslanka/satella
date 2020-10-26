@@ -10,5 +10,11 @@ NoArgCallable = tp.Callable[[], T]
 
 ExceptionClassType = tp.Type[Exception]
 
+
+class Appendable(tp.Protocol[T]):
+    def append(self, item: T) -> None:
+        pass
+
+
 __all__ = ['Iteratable', 'T', 'U', 'V', 'K', 'Number', 'ExceptionClassType',
-           'NoArgCallable']
+           'NoArgCallable', 'Appendable']
