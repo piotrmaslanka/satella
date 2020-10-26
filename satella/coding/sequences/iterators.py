@@ -328,6 +328,28 @@ def skip_first(iterator: IteratorOrIterable, n: int) -> tp.Iterator[T]:
     yield from iterator
 
 
+class _ListWrapperIteratorIterator(tp.Iterator[T]):
+    __slots__ = ('parent', 'pos')
+
+    def __init__(self, parent):
+        self.parent = parent
+        self.pos = 0
+
+    def __length_hint__(self) -> int:
+        return len(self.parent.list)
+
+    def __iter__(self) -> tp.Iterator[T]:
+        return self
+
+    def __next__(self) -> T:
+        if self.pos >= len(self.parent.list):
+            item = self.parent.next()
+        else:
+            item = self.parent.list[self.pos]
+        self.pos += 1
+        return item
+
+
 class ListWrapperIterator(tp.Generic[T]):
     """
     A wrapped for an iterator, enabling using it as a normal list.
@@ -342,9 +364,8 @@ class ListWrapperIterator(tp.Generic[T]):
     """
     __slots__ = ('iterator', 'exhausted', 'list')
 
-    @for_argument(None, iter)
     def __init__(self, iterator: IteratorOrIterable):
-        self.iterator = iterator
+        self.iterator = iter(iterator)
         self.exhausted = False
         self.list = []
 
@@ -360,12 +381,12 @@ class ListWrapperIterator(tp.Generic[T]):
 
     def advance_to_item(self, i: int) -> None:
         """
-        Makes the list be at least i+1 in size
+        Makes the list be at least i in size
         """
         if self.exhausted:
             return
 
-        while len(self.list) <= i:
+        while len(self.list) < i:
             try:
                 self.list.append(next(self.iterator))
             except StopIteration:
@@ -376,17 +397,19 @@ class ListWrapperIterator(tp.Generic[T]):
         self.exhaust()
         return len(self.list)
 
-    def __getitem__(self, item: tp.Union[slice, int]):
+    def __getitem__(self, item: tp.Union[slice, int]) -> tp.Union[tp.List[T], T]:
         if isinstance(item, int):
             if len(self.list) < item+1:
-                self.advance_to_item(item)
+                self.advance_to_item(item+1)
         else:
-            self.advance_to_item(item.stop - 1)
+            self.advance_to_item(item.stop)
         return self.list[item]
 
     def next(self) -> T:
         """
         Get the next item
+
+        :raises StopIteration: next element is not available due to iterator finishing
         """
         if self.exhausted:
             raise StopIteration()
@@ -396,27 +419,7 @@ class ListWrapperIterator(tp.Generic[T]):
             return item
 
     def __iter__(self) -> tp.Iterator[T]:
-        class Iterator:
-            __slots__ = ('parent', 'pos')
-
-            def __init__(self, parent):
-                self.parent = parent
-                self.pos = 0
-
-            def __length_hint__(self) -> int:
-                return len(self.parent.list)
-
-            def __iter__(self) -> tp.Iterator[T]:
-                return self
-
-            def __next__(self) -> T:
-                if self.pos >= len(self.parent.list):
-                    item = self.parent.next()
-                else:
-                    item = self.parent.list[self.pos]
-                self.pos += 1
-                return item
-        return Iterator(self)
+        return _ListWrapperIteratorIterator(self)
 
 
 @silence_excs(StopIteration)
