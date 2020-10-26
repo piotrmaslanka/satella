@@ -8,7 +8,7 @@ from .merger import merge_series
 from .jsonify import jsonify
 __all__ = ['stringify', 'split_shuffle_and_join', 'one_tuple',
            'merge_series', 'pad_to_multiple_of_length', 'clip',
-           'jsonify']
+           'jsonify', 'intify']
 
 T = tp.TypeVar('T')
 Number = tp.Union[int, float]
@@ -84,6 +84,33 @@ def one_tuple(x: tp.Iterable[T]) -> tp.Iterator[tp.Tuple[T]]:
     """
     for z in x:
         yield z,
+
+
+def intify(v: tp.Any) -> int:
+    """
+    Attempt to convert v to an int.
+
+    None will be converted to 0.
+
+    Any object will have int() called on it.
+
+    Failing that, it's length will be taken.
+
+    Failing that, ValueError will be raised
+
+    :param v: parameter
+    :return: int representation
+    """
+    if v is None:
+        return 0
+
+    try:
+        return int(v)
+    except (TypeError, ValueError):
+        try:
+            return len(v)
+        except (AttributeError, TypeError, ValueError):
+            raise ValueError('Unable to convert %s to int' % (v, ))
 
 
 def split_shuffle_and_join(entries: tp.List[T],

@@ -2,10 +2,16 @@ import unittest
 
 from satella.coding import update_key_if_not_none, overload, class_or_instancemethod, \
     update_key_if_true, get_arguments, call_with_arguments
-from satella.coding.transforms import jsonify
+from satella.coding.transforms import jsonify, intify
 
 
 class TestCase(unittest.TestCase):
+
+    def test_intify(self):
+        self.assertEqual(intify(None), 0)
+        self.assertEqual(intify('2'), 2)
+        self.assertRaises(ValueError, lambda: intify(object()))
+        self.assertEqual(intify([1, 2, 3]), 3)
 
     def test_execute_with_locals(self):
         def fun(a, b, *args, c=None, **kwargs):
