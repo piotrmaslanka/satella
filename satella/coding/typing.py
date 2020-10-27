@@ -1,5 +1,10 @@
 import typing as tp
 
+try:
+    from typing import Protocol
+except ImportError:
+    Protocol = tp.TypeVar('Protocol')
+
 T = tp.TypeVar('T')
 Iteratable = tp.Union[tp.Iterator[T], tp.Iterable[T]]
 U = tp.TypeVar('U')
@@ -12,7 +17,7 @@ Predicate = tp.Callable[[T], bool]
 ExceptionClassType = tp.Type[Exception]
 
 
-class Appendable(tp.Protocol[T]):
+class Appendable(Protocol[T]):
     def append(self, item: T) -> None:
         pass
 
