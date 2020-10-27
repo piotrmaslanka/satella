@@ -12,3 +12,9 @@ trace_function
 --------------
 
 .. autofunction:: satella.opentracing.trace_function
+
+trace_exception
+---------------
+
+.. autofunction:: satella.opentracing.trace_exception
+
