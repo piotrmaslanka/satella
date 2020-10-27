@@ -1,6 +1,3 @@
-# v2.12
+# v2.12.1
 
-* added `intify`
-* added `satella.coding.typing`
-* added `satella.opentracing.trace_exception`
 
