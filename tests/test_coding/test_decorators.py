@@ -29,6 +29,13 @@ class TestDecorators(unittest.TestCase):
         only_odds(0)
         only_odds(1)
 
+        @replace_argument_if('args', (x[0], ), predicate=x.len() > 1)
+        def args_len_1(*args):
+            self.assertEqual(len(args), 1)
+
+        args_len_1(1)
+        args_len_1(1, 1)
+
     def test_copy_arguments(self):
         @copy_arguments()
         def alter_dict(dct):
