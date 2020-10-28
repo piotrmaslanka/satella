@@ -2,6 +2,16 @@ from abc import ABCMeta, abstractmethod
 import typing as tp
 
 
+class HashableMixin:
+    """
+    Make a class hashable by it's ID
+    """
+    __slots__ = ()
+
+    def __hash__(self) -> int:
+        return id(self)
+
+
 class ComparableAndHashableBy(metaclass=ABCMeta):
     """
     A mix-in. Provides comparision (lt, gt, ge, le, eq) and hashing by a field of this class.

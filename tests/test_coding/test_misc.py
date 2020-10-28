@@ -2,10 +2,21 @@ import unittest
 
 from satella.coding import update_key_if_not_none, overload, class_or_instancemethod, \
     update_key_if_true, get_arguments, call_with_arguments
+from satella.coding.structures import HashableMixin
 from satella.coding.transforms import jsonify, intify
 
 
 class TestCase(unittest.TestCase):
+
+    def test_hashable_mixin(self):
+        class MixedIn(HashableMixin):
+            pass
+
+        a = MixedIn()
+        b = MixedIn()
+
+        self.assertNotEqual(hash(a), hash(b))
+        self.assertNotEqual(a, b)
 
     def test_intify(self):
         self.assertEqual(intify(None), 0)

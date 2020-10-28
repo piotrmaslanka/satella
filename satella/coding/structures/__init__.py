@@ -5,7 +5,8 @@ from .hashable_objects import HashableWrapper
 from .heaps import Heap, SetHeap, TimeBasedHeap, TimeBasedSetHeap
 from .immutable import Immutable, frozendict
 from .mixins import OmniHashableMixin, ReprableMixin, StrEqHashableMixin, ComparableIntEnum, \
-    HashableIntEnum, ComparableAndHashableBy, ComparableAndHashableByInt, ComparableEnum
+    HashableIntEnum, ComparableAndHashableBy, ComparableAndHashableByInt, ComparableEnum, \
+    HashableMixin
 from .proxy import Proxy
 from .ranking import Ranking
 from .singleton import Singleton, SingletonWithRegardsTo, get_instances_for_singleton, \
@@ -16,6 +17,7 @@ from .sparse_matrix import SparseMatrix
 from .queues import Subqueue
 
 __all__ = [
+    'HashableMixin',
     'CountingDict',
     'Subqueue',
     'ExclusiveWritebackCache',
