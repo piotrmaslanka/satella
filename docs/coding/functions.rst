@@ -8,6 +8,8 @@ Functions and decorators
 
 .. autofunction:: satella.coding.call_with_arguments
 
+.. autofunction:: satella.coding.decorators.replace_argument_if
+
 .. autofunction:: satella.coding.get_arguments
 
 .. autofunction:: satella.coding.queue_iterator

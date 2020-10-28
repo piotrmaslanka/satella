@@ -1,9 +1,6 @@
 import typing as tp
 import operator
 
-from satella.coding.structures.hashable_objects import HashableWrapper
-from satella.coding.structures.mixins.hashable import HashableMixin
-from satella.coding.structures.dictionaries.dict_object import DictObject
 from satella.coding.typing import Predicate
 from satella.configuration.schema import Descriptor
 
@@ -69,7 +66,7 @@ def _one_of(a, values: tp.Container) -> bool:
     return a in values
 
 
-class PredicateClass(HashableMixin):
+class PredicateClass:
     """
     A shorthand to create lambdas using such statements, for example:
 
@@ -113,6 +110,14 @@ class PredicateClass(HashableMixin):
                       'Please use has() instead', DeprecationWarning)
         return self.has(predicate)
 
+    def type(self) -> tp.Type:
+        """
+        Return a predicate returning the type of it's argument
+        """
+        def type_of(v):
+            return type(self.operation(v))
+        return PredicateClass(type_of)
+
     def is_instance(self, *args):
         """
         Check if given value is one of instances.
@@ -138,6 +143,7 @@ class PredicateClass(HashableMixin):
         :py:meth:`~satella.coding.structures.DictObject.is_valid_schema`
         """
         def is_schema_correct(v):
+            from satella.coding.structures import DictObject
             return DictObject(self.operation(v)).is_valid_schema(schema, **kwargs)
 
         return PredicateClass(is_schema_correct)
@@ -205,8 +211,8 @@ class PredicateClass(HashableMixin):
     __invert__ = make_operation_single_arg(operator.invert)
     __abs__ = make_operation_single_arg(abs)
 
-    __hash__ = HashableMixin.__hash__
-
+    def __hash__(self) -> int:
+        return hash(id(self))
 
 x = PredicateClass()
 
@@ -233,6 +239,7 @@ def build_structure(struct: tp.Union[tuple, list, dict],
         v = build_structure(struct, argument, None, True)
         return final_operator(v)
 
+    from satella.coding.structures import HashableWrapper
     if isinstance(struct, tp.MutableMapping):
         new_dict = {}
         for key, value in struct.items():

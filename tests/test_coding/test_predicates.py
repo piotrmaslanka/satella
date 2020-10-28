@@ -20,6 +20,7 @@ class TestPredicates(unittest.TestCase):
         self.assertEqual(build_structure(2, 2), 2)
 
     def test_is_instance(self):
+        self.assertEqual(x.type()(2), int)
         self.assertTrue(x.is_instance(str, int)('str'))
         self.assertTrue(x.is_instance(str, int)(5))
         self.assertFalse(x.is_instance(str, int)(5.0))

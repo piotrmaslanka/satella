@@ -1,5 +1,5 @@
 import typing as tp
-from ..decorators import wraps
+from ..decorators.decorators import wraps
 
 
 # noinspection PyPep8Naming

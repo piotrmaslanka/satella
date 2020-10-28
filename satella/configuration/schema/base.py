@@ -1,6 +1,6 @@
 import typing as tp
 
-from satella.coding.concurrent import CallableGroup
+from satella.coding.concurrent.callablegroup import CallableGroup
 from satella.exceptions import ConfigurationValidationError
 from .registry import register_custom_descriptor
 from ...coding.typing import Predicate

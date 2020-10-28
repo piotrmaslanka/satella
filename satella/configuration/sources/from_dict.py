@@ -1,7 +1,6 @@
 import copy
 import importlib
 
-from satella.coding.decorators import for_argument
 from satella.coding.recast_exceptions import rethrow_as
 from satella.configuration import sources
 from satella.configuration.sources.base import BaseSource
@@ -32,7 +31,6 @@ EXTRA_TYPES = {
 
 
 @rethrow_as(Exception, ConfigurationError)
-@for_argument(copy.copy)  # since we are modyfing that dict
 def load_source_from_dict(dct: dict) -> BaseSource:
     """
     obj has a form of
@@ -45,6 +43,7 @@ def load_source_from_dict(dct: dict) -> BaseSource:
 
     :raises ConfigurationError: upon failure to instantiate
     """
+    dct = copy.copy(dct)
     type_ = dct.pop('type')  # type: str
     args = dct.pop('args', [])  # type: tp.List
     optional = dct.pop('optional', False)  # type: bool

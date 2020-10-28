@@ -7,7 +7,9 @@ from inspect import Parameter
 from .decorators import wraps
 from ..misc import source_to_function, get_arguments, call_with_arguments, _get_arguments
 
-from satella.coding.typing import T
+from satella.coding.typing import T, Predicate
+from ..predicates import PredicateClass, build_structure
+
 U = tp.TypeVar('U')
 
 
@@ -59,6 +61,46 @@ def execute_before(callable_: tp.Callable) -> tp.Callable:
                 return inner2
             return inner
 
+    return outer
+
+
+def replace_argument_if(arg_name: str,
+                        structure: tp.Union[dict, list, tuple, PredicateClass],
+                        instance_of: tp.Optional[tp.Union[tp.Type, tp.Tuple[tp.Type, ...]]] = None,
+                        predicate: tp.Optional[Predicate] = None,
+                        ):
+    """
+    Examine arguments of the callable that will be decorated with this.
+
+    If argument arg_name is found to be an instance of instance_of, it will be replaced
+    by a structure defined a structure.
+
+    :param arg_name: argument to replace
+    :param instance_of: type
+    :param predicate: alternative condition of replacement. If this is given,
+        predicate is called on the value of the argument and replacement is done
+        if it returns True
+    :param structure: a callable that takes original argument and returns new, or a
+        structure made of these
+    """
+    def outer(fun):
+        @wraps(fun)
+        def inner(*args, **kwargs):
+            args_dict = get_arguments(fun, *args, **kwargs)
+            altered = False
+            if arg_name in args_dict:
+                v = args_dict[arg_name]
+                if predicate is not None:
+                    args_dict[arg_name] = build_structure(structure, v)
+                    altered = True
+                elif isinstance(v, instance_of):
+                    args_dict[arg_name] = build_structure(structure, v)
+                    altered = True
+            if altered:
+                return call_with_arguments(fun, args_dict)
+            else:
+                return fun(*args, **kwargs)
+        return inner
     return outer
 
 
