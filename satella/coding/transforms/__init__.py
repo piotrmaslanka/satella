@@ -160,7 +160,9 @@ def stringify(obj: tp.Union[tp.Any], stringifier: tp.Callable[[tp.Any], str] = s
         instead
     :return: stringified object
     """
-    if isinstance(obj, collections.abc.Mapping):
+    if isinstance(obj, str):
+        return obj
+    elif isinstance(obj, collections.abc.Mapping):
         make_str = (lambda obj2: stringify(obj2, stringifier, True, str_none)) if recursively else \
             stringifier
         return {make_str(k): make_str(v) for k, v in obj.items()}
