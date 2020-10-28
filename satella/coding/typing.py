@@ -3,7 +3,7 @@ import typing as tp
 try:
     from typing import Protocol
 except ImportError:
-    Protocol = tp.TypeVar('Protocol')
+    Protocol = tp.Generic
 
 T = tp.TypeVar('T')
 Iteratable = tp.Union[tp.Iterator[T], tp.Iterable[T]]
