@@ -1,11 +1,13 @@
 import typing as tp
 import operator
 
+from satella.coding.structures.hashable_objects import HashableWrapper
+from satella.coding.structures.mixins.hashable import HashableMixin
 from satella.coding.structures.dictionaries.dict_object import DictObject
 from satella.coding.typing import Predicate
 from satella.configuration.schema import Descriptor
 
-__all__ = ['x']
+__all__ = ['x', 'build_structure']
 
 import warnings
 
@@ -67,7 +69,7 @@ def _one_of(a, values: tp.Container) -> bool:
     return a in values
 
 
-class PredicateClass:
+class PredicateClass(HashableMixin):
     """
     A shorthand to create lambdas using such statements, for example:
 
@@ -120,6 +122,14 @@ class PredicateClass:
         def is_instance(v):
             return isinstance(self.operation(v), args)
         return PredicateClass(is_instance)
+
+    def identity(self) -> Predicate:
+        """
+        Spawn another object with the same operation, but different identity.
+
+        Used for constructing dicts keyed by predicates.
+        """
+        return PredicateClass(self.operation)
 
     def is_valid_schema(self, schema: tp.Optional[tp.Union[Descriptor, tp.Dict]] = None, **kwargs):
         """
@@ -195,5 +205,55 @@ class PredicateClass:
     __invert__ = make_operation_single_arg(operator.invert)
     __abs__ = make_operation_single_arg(abs)
 
+    __hash__ = HashableMixin.__hash__
+
 
 x = PredicateClass()
+
+
+def build_structure(struct: tp.Union[tuple, list, dict],
+                    argument,
+                    final_operator=lambda y: y,
+                    nested_call=False) -> tp.Union[tuple, list, dict]:
+    """
+    Given a structure (tuple, list, dict) that contains x's as some of the elements,
+    build such a structure corresponding to given that all x's are replaced
+    by result of their calculation on argument.
+
+    Just note that if you're constructing dictionaries, use the .identity() method of predicate,
+    to randomize it's identity.
+
+    :param struct: structure to build
+    :param argument: argument
+    :param final_operator: an operator to call on the result
+    :param nested_call: internal, don't use
+    :return: analogous structure
+    """
+    if not nested_call:
+        v = build_structure(struct, argument, None, True)
+        return final_operator(v)
+
+    if isinstance(struct, tp.MutableMapping):
+        new_dict = {}
+        for key, value in struct.items():
+            key = build_structure(key, argument, None, True)
+            value = build_structure(value, argument, None, True)
+            new_dict[key] = value
+            return new_dict
+    elif isinstance(struct, tp.Sequence):
+        new_seq = []
+        for elem in struct:
+            if isinstance(elem, PredicateClass):
+                elem = elem(argument)
+            else:
+                elem = build_structure(elem, argument, None, True)
+            new_seq.append(elem)
+        return struct.__class__(new_seq)
+    elif isinstance(struct, HashableWrapper):
+        obj = getattr(struct, '_Proxy__obj')
+        return build_structure(obj, argument, None, True)
+    elif isinstance(struct, PredicateClass):
+        return struct(argument)
+    else:
+        return struct
+

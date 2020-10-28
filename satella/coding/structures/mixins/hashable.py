@@ -4,12 +4,21 @@ import typing as tp
 
 class HashableMixin:
     """
-    Make a class hashable by it's ID
+    Make a class hashable by it's ID.
+
+    Just remember to add the following to your class definition
+    if you're overriding __eq__:
+
+    >>> class MyClass(HashableMixin):
+    >>>     __hash__ = HashableMixin.__hash__
     """
     __slots__ = ()
 
     def __hash__(self) -> int:
         return id(self)
+
+    def __eq__(self, other) -> bool:
+        return id(self) == id(other)
 
 
 class ComparableAndHashableBy(metaclass=ABCMeta):

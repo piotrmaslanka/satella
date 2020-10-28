@@ -1,10 +1,23 @@
 import unittest
 
 
-from satella.coding.predicates import x
+from satella.coding.predicates import x, build_structure
 
 
 class TestPredicates(unittest.TestCase):
+
+    def test_build_structure(self):
+        a = {x: x*2}
+        b = [x, x*2, x*3]
+        c = (x, x*2, x*3)
+        self.assertEqual(build_structure(a, 2), {2: 4})
+        self.assertEqual(build_structure(b, 2), [2, 4, 6])
+        self.assertEqual(build_structure(c, 2), (2, 4, 6))
+        self.assertEqual(build_structure([(x, [x, x+1, x+2]),
+                                          (x+1, [x, x+1, x+2])], 2, dict),
+                         {2: [2, 3, 4],
+                          3: [2, 3, 4]})
+        self.assertEqual(build_structure(2, 2), 2)
 
     def test_is_instance(self):
         self.assertTrue(x.is_instance(str, int)('str'))

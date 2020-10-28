@@ -75,3 +75,15 @@ don't do this:
 
 
 Because Python will compare first 2 with x using int's __gt__, which will fail.
+
+If you specify a structure, using predicates, say:
+
+::
+    struct = [(x, x*2)]
+
+Then to get the corresponding {2: 4} you can use:
+
+::
+    a = build_structure(struct, 2, dict)
+    assert a == {2: 4}
+
