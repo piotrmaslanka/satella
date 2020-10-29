@@ -1,3 +1,4 @@
+import copy
 import typing as tp
 import sys
 import warnings
@@ -14,19 +15,38 @@ except ImportError:
         pass
 
 
-def trace_function(tracer, name: str, tags: tp.Optional[dict] = None):
+def trace_function(tracer, name: str, tags: tp.Optional[dict] = None,
+                   tags_factory: tp.Optional[tp.List[tp.Tuple[str, tp.Callable]]] = None):
     """
     Return a decorator that will trace the execution of a given function
-    using tracer.start_active_span
+    using tracer.start_active_span.
+
+    Can optionally construct it's tags from a predicate building, example:
+
+    >>> class Device:
+    >>>     device_id = 'test'
+    >>> @trace_function(tracer, 'Processing', tags_factory=[('device_id', x[0].device_id)])
+    >>> def process(device: Device):
+    >>>     ...
 
     :param tracer: tracer to use
     :param name: Name of the trace
     :param tags: optional tags to use
+    :param tags_factory: a list of tuple (tag name, callable that is called with *args passed to
+        this function as a sole argument). Extra tags will be generated from this.
     """
     def outer(fun):
         @wraps(fun)
         def inner(*args, **kwargs):
-            with tracer.start_active_span(name, tags=tags):
+            nonlocal tags, tags_factory
+            my_tags = tags
+            if tags_factory is not None:
+                if tags is None:
+                    tags = {}
+                my_tags = copy.copy(tags)
+                for key, value in tags_factory:
+                    my_tags[key] = value(args)
+            with tracer.start_active_span(name, tags=my_tags):
                 return fun(*args, **kwargs)
         return inner
     return outer
