@@ -39,7 +39,7 @@ def sync_threadpool(tpe: ThreadPoolExecutor,
                 if measurement() > max_wait:
                     for future in futures:
                         future.cancel()
-                raise WouldWaitMore('timeout exceeded')
+                    raise WouldWaitMore('timeout exceeded')
             time.sleep(0.5)
 
         if max_wait is None:

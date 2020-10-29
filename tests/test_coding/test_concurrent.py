@@ -74,10 +74,15 @@ class TestConcurrent(unittest.TestCase):
         sync_threadpool(tp)
         self.assertEqual(a['cond'], 0)
 
-    def test_sync_threadpool_wait_max(self):
+    def test_sync_threadpool_wait_max_error(self):
         tp = ThreadPoolExecutor(max_workers=1)
         tp.submit(lambda: time.sleep(3))
         self.assertRaises(WouldWaitMore, lambda: sync_threadpool(tp, 2))
+
+    def test_sync_threadpool_wait_max_correct(self):
+        tp = ThreadPoolExecutor(max_workers=1)
+        tp.submit(lambda: time.sleep(0.4))
+        sync_threadpool(tp, 2)
 
     def test_run_as_future(self):
         a = {}
