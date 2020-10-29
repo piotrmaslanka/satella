@@ -1,4 +1,2 @@
-# v2.12.4
+# v2.12.5
 
-* `tags_factory` in `trace_function` can be also a dict
-* added `timeout` to `sync_threadpool`
