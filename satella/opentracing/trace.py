@@ -16,7 +16,7 @@ except ImportError:
 
 
 def trace_function(tracer, name: str, tags: tp.Optional[dict] = None,
-                   tags_factory: tp.Optional[tp.List[tp.Tuple[str, tp.Callable]]] = None):
+                   tags_factory: tp.Optional[tp.Union[tp.Dict[str, tp.Callable], tp.List[tp.Tuple[str, tp.Callable]]]] = None):
     """
     Return a decorator that will trace the execution of a given function
     using tracer.start_active_span.
@@ -34,7 +34,11 @@ def trace_function(tracer, name: str, tags: tp.Optional[dict] = None,
     :param tags: optional tags to use
     :param tags_factory: a list of tuple (tag name, callable that is called with *args passed to
         this function as a sole argument). Extra tags will be generated from this.
+        Can be also a dict.
     """
+    if isinstance(tags_factory, dict):
+        tags_factory = list(tags_factory.items())
+
     def outer(fun):
         @wraps(fun)
         def inner(*args, **kwargs):
