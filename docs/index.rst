@@ -13,6 +13,7 @@ Visit the project's page at GitHub_!
            configuration/schema
            configuration/sources
            coding/functions
+           coding/futures
            coding/structures
            coding/decorators
            coding/predicates
