@@ -217,7 +217,7 @@ class ExecutionEnvironment:
 
 
 def call_with_ee(callable_: tp.Callable, ee: ExecutionEnvironment,
-                 copy_call_stack_from: tp.Optional[tp.List[tp.Callable]] = None) -> tp.Callable:
+                 _copy_call_stack_from: tp.Optional[tp.List[tp.Callable]] = None) -> tp.Callable:
     """
     Return a callable that will invoke the target callable with specified execution environment,
     but only if an EE is not defined right now.
@@ -230,14 +230,14 @@ def call_with_ee(callable_: tp.Callable, ee: ExecutionEnvironment,
 
     :param callable_: callable to invoke
     :param ee: execution environment to use
-    :param copy_call_stack_from: used internally, don't use
+    :param _copy_call_stack_from: used internally, don't use
     :return: a new callable
     """
 
     def inner(*args, **kwargs):
         if not hasattr(local_ee, 'ee'):
-            if copy_call_stack_from is not None:
-                ef = ee._set_call_stack_to(copy_call_stack_from)
+            if _copy_call_stack_from is not None:
+                ef = ee._set_call_stack_to(_copy_call_stack_from)
             else:
                 ef = ee
             return ef(callable_, *args, **kwargs)
