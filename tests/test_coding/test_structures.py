@@ -662,6 +662,11 @@ class TestMisc(unittest.TestCase):
 
 class TestDictObject(unittest.TestCase):
 
+    def test_constructor(self):
+        a = DictObject({'a': 5})
+        b = apply_dict_object(a)
+        self.assertIs(a, b)
+
     def test_valid_schema(self):
         self.assertTrue(DictObject({'a': 5, 'b': 'test'}).is_valid_schema({'a': int, 'b': str}))
         self.assertFalse(DictObject({'a': 5, 'b': 'test'}).is_valid_schema({'a': int, 'b': int}))

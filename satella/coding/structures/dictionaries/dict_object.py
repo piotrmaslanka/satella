@@ -81,7 +81,9 @@ def apply_dict_object(v: tp.Union[tp.Any, tp.Dict[tp.Hashable, T]]) -> tp.Union[
 
     If you pass a non-dict and a non-list, they will be returned as is.
     """
-    if isinstance(v, list):
+    if isinstance(v, DictObject):
+        return v
+    elif isinstance(v, list):
         return [apply_dict_object(x) for x in v]
     elif isinstance(v, dict):
         return DictObject({
