@@ -2,12 +2,11 @@ import copy
 import typing as tp
 
 from satella.coding.recast_exceptions import rethrow_as
-from satella.coding.typing import T
 from satella.configuration.schema import Descriptor, descriptor_from_dict
 from satella.exceptions import ConfigurationValidationError
 
 
-class DictObject(dict, tp.MutableMapping[tp.Hashable, T]):
+class DictObject(dict):
     """
     A dictionary wrapper that can be accessed by attributes.
 
@@ -33,14 +32,14 @@ class DictObject(dict, tp.MutableMapping[tp.Hashable, T]):
         return 'DictObject(%s)' % (super().__repr__(),)
 
     @rethrow_as(KeyError, AttributeError)
-    def __getattr__(self, item: tp.Hashable) -> T:
+    def __getattr__(self, item):
         return self[item]
 
-    def __setattr__(self, key: tp.Hashable, value: T) -> None:
+    def __setattr__(self, key, value):
         self[key] = value
 
     @rethrow_as(KeyError, AttributeError)
-    def __delattr__(self, key: tp.Hashable) -> None:
+    def __delattr__(self, key):
         del self[key]
 
     def is_valid_schema(self, schema: tp.Optional[tp.Union[Descriptor, tp.Dict]] = None,
@@ -73,7 +72,7 @@ class DictObject(dict, tp.MutableMapping[tp.Hashable, T]):
             return True
 
 
-def apply_dict_object(v: tp.Union[tp.Any, tp.Dict[tp.Hashable, T]]) -> tp.Union[DictObject, tp.Any]:
+def apply_dict_object(v: tp.Union[tp.Any, tp.Dict]) -> tp.Union[DictObject, tp.Any]:
     """
     Apply DictObject() to every dict inside v.
 
