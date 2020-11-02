@@ -29,3 +29,5 @@ but that is deprecated! Please import them from `satella.coding.concurrent.futur
 
 .. autofunction:: satella.coding.concurrent.futures.call_in_future
 
+.. autofunction:: satella.coding.concurrent.futures.wrap_if
+

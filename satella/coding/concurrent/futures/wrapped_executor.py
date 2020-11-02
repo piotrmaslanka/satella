@@ -1,6 +1,6 @@
 from concurrent.futures import Executor
 
-from .futures import WrappingFuture, Future
+from .futures import Future, wrap_if
 
 
 class ExecutorWrapper(Executor):
@@ -12,8 +12,7 @@ class ExecutorWrapper(Executor):
         self.executor = executor
 
     def submit(self, fn, *args, **kwargs) -> Future:
-        fut = self.executor.submit(fn, *args, **kwargs)
-        return WrappingFuture(fut)
+        return wrap_if(self.executor.submit(fn, *args, **kwargs))
 
     def shutdown(self, wait=True):
         """Clean-up the resources associated with the Executor.

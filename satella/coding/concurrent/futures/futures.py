@@ -209,3 +209,16 @@ class WrappingFuture(Future):
     def cancel(self) -> bool:
         super().cancel()
         return self.source_future.cancel()
+
+
+def wrap_if(fut: tp.Union[PythonFuture, Future]) -> Future:
+    """
+    Wrap a future, if it isn't already wrapped
+
+    :param fut: either a Python Future or a Satella Future
+    :return: a Satella future
+    """
+    if not isinstance(fut, Future):
+        return WrappingFuture(fut)
+    else:
+        return fut

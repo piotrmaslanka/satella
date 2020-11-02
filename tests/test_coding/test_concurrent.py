@@ -56,6 +56,20 @@ class TestConcurrent(unittest.TestCase):
         sync_threadpool(tpe_w)
         self.assertTrue(a['test'])
 
+    def test_wrapped_executor_nested(self):
+        tpe = ThreadPoolExecutor(max_workers=2)
+        tpe_w = ExecutorWrapper(ExecutorWrapper(tpe))
+        a = {'test': False}
+
+        def call_me():
+            nonlocal a
+            a['test'] = True
+
+        fut = tpe_w.submit(call_me)
+        self.assertIsInstance(fut, Future)
+        sync_threadpool(tpe_w)
+        self.assertTrue(a['test'])
+
     def test_call_in_future(self):
         a = {'test': False}
 

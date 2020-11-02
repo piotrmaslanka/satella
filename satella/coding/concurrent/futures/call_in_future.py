@@ -1,6 +1,8 @@
 import typing as tp
 from concurrent.futures import Executor
 
+from satella.coding.concurrent.futures.futures import wrap_if
+
 
 def call_in_future(executor: Executor, function: tp.Callable,
                    *args, **kwargs) -> tp.Callable[[], 'Future']:
@@ -19,11 +21,6 @@ def call_in_future(executor: Executor, function: tp.Callable,
     """
 
     def inner(*my_args, **my_kwargs):
-        fut = executor.submit(function, *args, **kwargs)
-        from satella.coding.concurrent import Future, WrappingFuture
-        if not isinstance(fut, Future):
-            return WrappingFuture(fut)
-        else:
-            return fut
+        return wrap_if(executor.submit(function, *args, **kwargs))
 
     return inner
