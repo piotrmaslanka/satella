@@ -11,11 +11,26 @@ from satella.coding.concurrent import TerminableThread, CallableGroup, Condition
     LockedStructure, AtomicNumber, Monitor, IDAllocator, call_in_separate_thread, Timer, \
     parallel_execute, run_as_future, sync_threadpool, IntervalTerminableThread, Future, \
     WrappingFuture
+from satella.coding.concurrent.futures import call_in_future
 from satella.coding.sequences import unique
 from satella.exceptions import WouldWaitMore, AlreadyAllocated
 
 
 class TestConcurrent(unittest.TestCase):
+
+    def test_call_in_future(self):
+        a = {'test': False}
+
+        def call_me(arg):
+            nonlocal a
+            a['test'] = arg
+        tpe = ThreadPoolExecutor(max_workers=2)
+
+        callable_ = call_in_future(tpe, call_me, True)
+        self.assertFalse(a['test'])
+        callable_()
+        sync_threadpool(tpe)
+        self.assertTrue(a['test'])
 
     def test_wrapping_future(self):
         fut = PythonFuture()

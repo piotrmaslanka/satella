@@ -1,20 +1,3 @@
-================
-Improved Futures
-================
-
-Satella presents the user with Future's that can register callbacks that will change
-it's value before returning it to waiting consumers. These futures are normal
-Python futures in their own right, and can be wait'ed upon.
-
-.. autoclass:: satella.coding.concurrent.Future
-    :members:
-
-.. autoclass:: satella.coding.concurrent.WrappingFuture
-    :members:
-
-.. autoclass:: satella.coding.concurrent.InvalidStateError
-    :members:
-
 ==========================
 Concurrent data structures
 ==========================

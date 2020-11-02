@@ -35,6 +35,7 @@ class Future(PythonFuture):
     def __init__(self):
         super().__init__()
         self._pre_done_callbacks = []
+        self._done_callbacks = []
 
     def add_pre_done_callback(self, fn):
         """
