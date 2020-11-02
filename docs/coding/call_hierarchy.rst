@@ -52,6 +52,8 @@ Note that you need to go through ExecutionEnvironment if you want to make use of
 
 .. autofunction:: satella.coding.call_hierarchy.call
 
+.. autofunction:: satella.coding.call_hierarchy.package_for_execution
+
 While inside such calls, you can use the following functions:
 
 .. autofunction:: satella.coding.call_hierarchy.current_ee
