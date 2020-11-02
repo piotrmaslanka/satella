@@ -9,7 +9,28 @@ local_ee = threading.local()
 logger = logging.getLogger(__name__)
 
 __all__ = ['Call', 'CallIf', 'CallWithArgumentSet', 'ExecutionEnvironment', 'call_with_ee',
-           'package_for_execution']
+           'package_for_execution', 'current_call', 'current_args', 'current_history',
+           'current_kwargs', 'current_ee']
+
+
+def push_call_stack(cs: tp.Callable, args: tuple = (), kwargs: tp.Optional[dict] = None) -> None:
+    kwargs = kwargs or {}
+    arg_tuple = ((cs, args, kwargs), )
+    if not hasattr(local_ee, 'cs'):
+        local_ee.cs = arg_tuple
+    else:
+        local_ee.cs = local_ee.cs + arg_tuple
+
+
+def pop_call_stack() -> tp.Optional[tp.Tuple[tp.Callable, tuple, dict]]:
+    if not hasattr(local_ee, 'cs'):
+        return None
+    cs = local_ee.cs
+    if not cs:
+        return None
+    v = cs[-1]
+    local_ee.cs = local_ee.cs[:-1]
+    return v
 
 
 def before_call(fun):
@@ -47,7 +68,11 @@ class Call:
         :param kwargs: kwargs to use as the 0-th set of arguments
         :return: return value
         """
-        return self.fn(*self.args, **self.kwargs)
+        push_call_stack(self, self.args, self.kwargs)
+        try:
+            return self.fn(*self.args, **self.kwargs)
+        finally:
+            pop_call_stack()
 
 
 class CallWithArgumentSet(Call):
@@ -66,8 +91,11 @@ class CallWithArgumentSet(Call):
         except AttributeError:
             raise RuntimeError('Execution environment is required!')
         args, kwargs = ee[self.arg_set_no]
-        v = self.fn(*args, **kwargs)
-        return v
+        push_call_stack(self, args, kwargs)
+        try:
+            return self.fn(*args, **kwargs)
+        finally:
+            pop_call_stack()
 
 
 class CallIf(Call):
@@ -113,11 +141,12 @@ class Reduce(Call):
 
     @before_call
     def __call__(self, *args, **kwargs):
+        push_call_stack(self)
         if self.do_parallel:
             if local_ee.ee.executor is not None:
                 executor = local_ee.ee.executor
                 sv = self.starting_value
-                futures = [executor.submit(call_with_ee(callable_, local_ee.ee))
+                futures = [executor.submit(call_with_ee(callable_, local_ee.ee, local_ee.cs))
                            for callable_ in self.callables]
                 for future in futures:
                     sv = self.reducing_op(sv, future.result())
@@ -126,18 +155,24 @@ class Reduce(Call):
         for callable_ in self.callables:
             b = callable_()
             sv = self.reducing_op(sv, b)
+        pop_call_stack()
         return sv
 
 
 class ExecutionEnvironment:
-    __slots__ = ('arg_sets', 'executor')
+    __slots__ = ('arg_sets', 'executor', 'cs')
 
     def __init__(self, argument_sets: tp.Iterable[tp.Tuple[tp.Tuple[tp.Any], tp.Dict]],
-                 executor: tp.Optional[Executor] = None):
+                 executor: tp.Optional[Executor] = None,
+                 cs=()):
         self.arg_sets = []
         for args, kwargs in argument_sets:
             self.arg_sets.append((args, kwargs))
         self.executor = executor
+        self.cs = cs
+
+    def set_call_stack_to(self, cs: tp.Optional[tp.List[tp.Callable]] = None):
+        return ExecutionEnvironment(self.arg_sets, self.executor, cs)
 
     def __call__(self, callable_: Call, *args, **kwargs):
         """
@@ -146,6 +181,12 @@ class ExecutionEnvironment:
         :param callable_: callable to run
         :return: value returned by that callable
         """
+        had_cs = hasattr(local_ee, 'cs')
+        if had_cs:
+            prev_cs = local_ee.cs
+
+        local_ee.cs = self.cs
+
         had_ee = hasattr(local_ee, 'ee')
         if had_ee:
             prev_ee = local_ee.ee
@@ -157,14 +198,22 @@ class ExecutionEnvironment:
                 local_ee.ee = prev_ee
             else:
                 del local_ee.ee
+            if had_cs:
+                local_ee.cs = prev_cs
+            else:
+                del local_ee.cs
 
     def __getitem__(self, item: int) -> tp.Tuple[tp.Tuple, tp.Dict]:
         """Return the n-th argument set"""
-        v = self.arg_sets[item]
+        try:
+            v = self.arg_sets[item]
+        except IndexError:
+            v = (), {}
         return v
 
 
-def call_with_ee(callable_: tp.Callable, ee: ExecutionEnvironment) -> tp.Callable:
+def call_with_ee(callable_: tp.Callable, ee: ExecutionEnvironment,
+                 copy_call_stack_from: tp.Optional[tp.List[tp.Callable]] = None) -> tp.Callable:
     """
     Return a callable that will invoke the target callable with specified execution environment,
     but only if an EE is not defined right now.
@@ -177,12 +226,17 @@ def call_with_ee(callable_: tp.Callable, ee: ExecutionEnvironment) -> tp.Callabl
 
     :param callable_: callable to invoke
     :param ee: execution environment to use
+    :param copy_call_stack_from: used internally, don't use
     :return: a new callable
     """
 
     def inner(*args, **kwargs):
         if not hasattr(local_ee, 'ee'):
-            return ee(callable_, *args, **kwargs)
+            if copy_call_stack_from is not None:
+                ef = ee.set_call_stack_to(copy_call_stack_from)
+            else:
+                ef = ee
+            return ef(callable_, *args, **kwargs)
         else:
             return callable_(*args, **kwargs)
 
@@ -203,3 +257,52 @@ def package_for_execution(clbl: tp.Callable, ee: ExecutionEnvironment) -> tp.Cal
         return ee(clbl)
 
     return inner
+
+
+def call(fun):
+    """
+    Make the decorated function a callable, with it's args and kwargs to be set as a 0-th argument
+    set.
+    """
+    a = CallWithArgumentSet(fun, 0)
+    return wraps(fun)(a)
+
+
+def current_ee() -> ExecutionEnvironment:
+    return local_ee.ee
+
+
+def current_call() -> Call:
+    """
+    Return currently processed Call, or None if not available
+    """
+    return local_ee.cs[-1][0]
+
+
+def current_args() -> tp.Optional[tuple]:
+    """
+    Return currently used positional arguments, or None if not available
+    """
+    if not local_ee.cs:
+        return None
+    return local_ee.cs[-1][1]
+
+
+def current_kwargs() -> tp.Optional[dict]:
+    """
+    Return currently used kwargs, or None if not available
+    """
+    if not local_ee.cs:
+        return None
+    return local_ee.cs[-1][2]
+
+
+def current_history() -> tp.Tuple[tp.Tuple[Call, tuple, dict]]:
+    """
+    Return a tuple of subsequent calls that led to this call.
+
+    Position 0 will have the absolutely first call in the hierarchy, where -1 will have the current
+    one.
+    :return: a tuple of tuples (Call instance, args tuple, kwargs dict)
+    """
+    return local_ee.cs
