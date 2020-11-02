@@ -15,9 +15,6 @@ class ExecutorWrapper(Executor):
         fut = self.executor.submit(fn, *args, **kwargs)
         return WrappingFuture(fut)
 
-    def map(self, fn, *iterables, timeout=None, chunksize=1):
-        yield from self.executor.map(fn, *iterables, timeout=timeout, chunksize=chunksize)
-
     def shutdown(self, wait=True):
         """Clean-up the resources associated with the Executor.
 
@@ -30,10 +27,3 @@ class ExecutorWrapper(Executor):
                 executor have been reclaimed.
         """
         return self.executor.shutdown(wait=wait)
-
-    def __enter__(self):
-        return self.executor.__enter__()
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        self.executor.shutdown(wait=True)
-        return False
