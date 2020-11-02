@@ -1,5 +1,5 @@
 from concurrent.futures import Executor
-from .futures import WrappingFuture
+from .futures import WrappingFuture, Future
 
 
 class ExecutorWrapper(Executor):
@@ -11,7 +11,7 @@ class ExecutorWrapper(Executor):
     def __init__(self, executor: Executor):
         self.executor = executor
 
-    def submit(self, fn, *args, **kwargs):
+    def submit(self, fn, *args, **kwargs) -> Future:
         fut = self.executor.submit(fn, *args, **kwargs)
         return WrappingFuture(fut)
 
