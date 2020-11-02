@@ -17,8 +17,9 @@ def sync_threadpool(tpe: tp.Union[ExecutorWrapper, ThreadPoolExecutor],
 
     Make sure that other tasks do not submit anything to this thread pool executor.
 
-    :param tpe: thread pool executor to sync
-    :raises WouldWaitMore: timeout exceeded
+    :param tpe: thread pool executor to sync. Can be also a ExecutorWrapper.
+    :param max_wait: maximum time to wait. Default, None, means wait forever
+    :raises WouldWaitMore: timeout exceeded. Raised only when max_wait is not None.
     """
     if isinstance(tpe, ExecutorWrapper):
         return sync_threadpool(tpe.executor, max_wait=max_wait)
