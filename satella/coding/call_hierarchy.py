@@ -1,5 +1,5 @@
-import threading
 import logging
+import threading
 import typing as tp
 from concurrent.futures import Executor
 
@@ -7,7 +7,6 @@ from satella.coding.decorators.decorators import wraps
 
 local_ee = threading.local()
 logger = logging.getLogger(__name__)
-
 
 __all__ = ['Call', 'CallIf', 'CallWithArgumentSet', 'ExecutionEnvironment', 'call_with_ee',
            'package_for_execution']
@@ -21,6 +20,7 @@ def before_call(fun):
             return v(self, *args, **kwargs)
         else:
             return fun(self, *args, **kwargs)
+
     return inner
 
 
@@ -54,6 +54,7 @@ class CallWithArgumentSet(Call):
     """
     Call a function with a set of arguments provided by the environment
     """
+
     def __init__(self, fn, arg_set_no: int = 0):
         self.fn = fn
         self.arg_set_no = arg_set_no
@@ -73,6 +74,7 @@ class CallIf(Call):
     """
     Call a function only if fn_if_call returned True
     """
+
     def __init__(self, fn_if_call: Call, fn_to_call: Call):
         self.fn_to_call = fn_to_call
         self.fn_call_if = fn_if_call
@@ -99,6 +101,7 @@ class Reduce(Call):
     :param do_parallel: whether try to execute these calls in parallel, if possible.
         Parallel execution will be done only if an executor is given in the execution environment.
     """
+
     def __init__(self, *callables: Call,
                  reducing_op: tp.Callable[[tp.Any, tp.Any], tp.Any] = lambda a, b: None,
                  starting_value: tp.Any = 0,
@@ -147,12 +150,13 @@ class ExecutionEnvironment:
         if had_ee:
             prev_ee = local_ee.ee
         local_ee.ee = self
-        v = callable_(*args, **kwargs)
-        if had_ee:
-            local_ee.ee = prev_ee
-        else:
-            del local_ee.ee
-        return v
+        try:
+            return callable_(*args, **kwargs)
+        finally:
+            if had_ee:
+                local_ee.ee = prev_ee
+            else:
+                del local_ee.ee
 
     def __getitem__(self, item: int) -> tp.Tuple[tp.Tuple, tp.Dict]:
         """Return the n-th argument set"""
@@ -175,11 +179,13 @@ def call_with_ee(callable_: tp.Callable, ee: ExecutionEnvironment) -> tp.Callabl
     :param ee: execution environment to use
     :return: a new callable
     """
+
     def inner(*args, **kwargs):
         if not hasattr(local_ee, 'ee'):
             return ee(callable_, *args, **kwargs)
         else:
             return callable_(*args, **kwargs)
+
     return inner
 
 
@@ -192,6 +198,8 @@ def package_for_execution(clbl: tp.Callable, ee: ExecutionEnvironment) -> tp.Cal
     :param ee: EE to use
     :return: a callable
     """
+
     def inner():
         return ee(clbl)
+
     return inner
