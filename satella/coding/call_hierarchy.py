@@ -9,7 +9,8 @@ local_ee = threading.local()
 logger = logging.getLogger(__name__)
 
 
-__all__ = ['Call', 'CallIf', 'CallWithArgumentSet', 'ExecutionEnvironment', 'call_with_ee']
+__all__ = ['Call', 'CallIf', 'CallWithArgumentSet', 'ExecutionEnvironment', 'call_with_ee',
+           'package_for_execution']
 
 
 def before_call(fun):
@@ -179,4 +180,18 @@ def call_with_ee(callable_: tp.Callable, ee: ExecutionEnvironment) -> tp.Callabl
             return ee(callable_, *args, **kwargs)
         else:
             return callable_(*args, **kwargs)
+    return inner
+
+
+def package_for_execution(clbl: tp.Callable, ee: ExecutionEnvironment) -> tp.Callable:
+    """
+    Return a callable that, when called, will call specified callable in target
+    execution environment.
+
+    :param clbl: callable to run
+    :param ee: EE to use
+    :return: a callable
+    """
+    def inner():
+        return ee(clbl)
     return inner

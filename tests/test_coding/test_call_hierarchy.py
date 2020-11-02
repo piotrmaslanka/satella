@@ -2,7 +2,7 @@ import unittest
 from concurrent.futures.thread import ThreadPoolExecutor
 
 from satella.coding.call_hierarchy import Call, CallWithArgumentSet, Reduce, CallIf, \
-    ExecutionEnvironment
+    ExecutionEnvironment, package_for_execution
 
 
 class TestCallHierarchy(unittest.TestCase):
@@ -24,8 +24,10 @@ class TestCallHierarchy(unittest.TestCase):
             calls.append(CallWithArgumentSet(mult, i))
         call_v = Reduce(*calls, reducing_op=lambda a, b: a+b, starting_value=0)
         tpe = ThreadPoolExecutor(max_workers=4)
+
         ee = ExecutionEnvironment(arg_sets, tpe)
-        self.assertEqual(ee(call_v), 56)
+        pp = package_for_execution(call_v, ee)
+        self.assertEqual(pp(), 56)
 
     def test_arg_sets(self):
         def add(a, b):
