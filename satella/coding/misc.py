@@ -26,6 +26,29 @@ def update_if_not_none(dictionary: tp.Dict, key: tp.Hashable, value) -> tp.Dict:
     return update_key_if_none(dictionary, key, value)
 
 
+def chain_callables(callable1: tp.Callable, callable2: tp.Callable) -> tp.Callable:
+    """
+    Link two callables together. callable2, if it takes an argument, will receive
+    callables'1 result, and if it takes no arguments it will received nothing.
+
+    :param callable1: first callable to call
+    :param callable2: callable to call with callable1's result
+    :return: result of callable2
+    """
+    def inner(*args, **kwargs):
+        res = callable1(*args, **kwargs)
+        try:
+            res = callable2(res)
+        except TypeError as e:
+            if 'positional arguments but' in e.args[0] \
+                    and 'was given' in e.args[0] and 'takes' in e.args[0]:
+                res = callable2()
+            else:
+                raise
+        return res
+    return inner
+
+
 def source_to_function(src: str) -> tp.Callable[[tp.Any], tp.Any]:
     """
     Transform a string containing a Python expression with a variable x to a lambda.

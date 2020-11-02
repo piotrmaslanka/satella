@@ -1,12 +1,26 @@
 import unittest
 
 from satella.coding import update_key_if_not_none, overload, class_or_instancemethod, \
-    update_key_if_true, get_arguments, call_with_arguments
+    update_key_if_true, get_arguments, call_with_arguments, chain_callables
 from satella.coding.structures import HashableMixin
 from satella.coding.transforms import jsonify, intify
 
 
 class TestCase(unittest.TestCase):
+
+    def test_chain_callables(self):
+        def a():
+            return 5
+
+        def mul2(b):
+            return b*2
+
+        self.assertEqual(chain_callables(a, mul2)(), 10)
+
+        def two():
+            return 2
+
+        self.assertEqual(chain_callables(a, two)(), 2)
 
     def test_hashable_mixin(self):
         class MixedIn(HashableMixin):

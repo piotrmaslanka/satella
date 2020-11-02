@@ -4,6 +4,8 @@ Functions and decorators
 
 .. autoclass:: satella.coding.class_or_instancemethod
 
+.. autofunction:: satella.coding.chain_callables
+
 .. autofunction:: satella.coding.source_to_function
 
 .. autofunction:: satella.coding.call_with_arguments
