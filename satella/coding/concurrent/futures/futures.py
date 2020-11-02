@@ -37,12 +37,42 @@ class Future(PythonFuture):
         self._pre_done_callbacks = []
         self._done_callbacks = []
 
-    def chain(self, fun):
+    def on_success(self, fun) -> 'Future':
+        """
+        Schedule function to be called with the result of this future as it's argument only if
+        this future succeeds.
+
+        :param fun: function to call
+        :return: self
+        """
+        def inner(fut: PythonFuture):
+            if fut._exception is not None:
+                return
+            return fun(fut._result)
+        self.add_done_callback(inner)
+        return self
+
+    def on_failure(self, fun):
+        """
+        Schedule function to be called with the exception value that befall this future
+
+        :param fun: function to call
+        :return: self
+        """
+        def inner(fut: PythonFuture):
+            if fut._exception is None:
+                return
+            return fun(fut._exception)
+        self.add_done_callback(inner)
+        return self
+
+    def chain(self, fun) -> 'Future':
         """
         Schedule function to be called with the result of this future as it's argument (or
         exception value if the future excepted).
 
         :param fun: function to call
+        :return: self
         """
         def inner(future):
             if future._exception is not None:
@@ -51,6 +81,7 @@ class Future(PythonFuture):
                 result = future._result
             fun(result)
         self.add_done_callback(inner)
+        return self
 
     def add_pre_done_callback(self, fn):
         """

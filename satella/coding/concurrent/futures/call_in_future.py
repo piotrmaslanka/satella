@@ -2,7 +2,8 @@ import typing as tp
 from concurrent.futures import Executor
 
 
-def call_in_future(executor: Executor, function: tp.Callable, *args, **kwargs):
+def call_in_future(executor: Executor, function: tp.Callable,
+                   *args, **kwargs) -> tp.Callable[[], 'Future']:
     """
     Return a callable, whose calling will schedule function to be executed on a target Executor.
 
@@ -17,5 +18,10 @@ def call_in_future(executor: Executor, function: tp.Callable, *args, **kwargs):
         will return the Future for that function
     """
     def inner(*my_args, **my_kwargs):
-        return executor.submit(function, *args, **kwargs)
+        fut = executor.submit(function, *args, **kwargs)
+        from satella.coding.concurrent import Future, WrappingFuture
+        if not isinstance(fut, Future):
+            return WrappingFuture(fut)
+        else:
+            return fut
     return inner

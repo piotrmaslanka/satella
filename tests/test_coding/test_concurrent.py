@@ -18,6 +18,30 @@ from satella.exceptions import WouldWaitMore, AlreadyAllocated
 
 class TestConcurrent(unittest.TestCase):
 
+    def test_future_on(self):
+        fut = Future()
+        a = {'success': False, 'exception': False}
+
+        def on_success(arg):
+            nonlocal a
+            a['success'] = True
+
+        def on_failure(exc_val):
+            nonlocal a
+            a['exception'] = True
+
+        fut.on_success(on_success).on_failure(on_failure)
+        fut.set_running_or_notify_cancel()
+        fut.set_exception(RuntimeError())
+        self.assertEqual(a, {'success': False, 'exception': True})
+
+        fut = Future()
+        a = {'success': False, 'exception': False}
+        fut.on_success(on_success).on_failure(on_failure)
+        fut.set_running_or_notify_cancel()
+        fut.set_result(5)
+        self.assertEqual(a, {'success': True, 'exception': False})
+
     def test_wrapped_executor(self):
         tpe = ThreadPoolExecutor(max_workers=2)
         tpe_w = ExecutorWrapper(tpe)
