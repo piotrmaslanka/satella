@@ -3,12 +3,13 @@ import time
 from concurrent.futures import wait, ThreadPoolExecutor
 
 from .atomic import AtomicNumber
+from .futures import ExecutorWrapper
 from .thread import Condition
 from ...exceptions import WouldWaitMore
 from ...time import measure
 
 
-def sync_threadpool(tpe: ThreadPoolExecutor,
+def sync_threadpool(tpe: tp.Union[ExecutorWrapper, ThreadPoolExecutor],
                     max_wait: tp.Optional[float] = None) -> None:
     """
     Make sure that every thread of given thread pool executor is done processing
@@ -19,6 +20,9 @@ def sync_threadpool(tpe: ThreadPoolExecutor,
     :param tpe: thread pool executor to sync
     :raises WouldWaitMore: timeout exceeded
     """
+    if isinstance(tpe, ExecutorWrapper):
+        return sync_threadpool(tpe.executor, max_wait=max_wait)
+
     assert isinstance(tpe, ThreadPoolExecutor), 'Must be a ThreadPoolExecutor!'
 
     with measure() as measurement:

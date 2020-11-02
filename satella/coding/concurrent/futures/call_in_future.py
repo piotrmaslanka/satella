@@ -13,8 +13,9 @@ def call_in_future(executor: Executor, function: tp.Callable, *args, **kwargs):
     :param function: callable to schedule
     :param args: arguments to provide to the callable
     :param kwargs: keyword arguments to provide to the callable
-    :return: a callable, calling which will schedule function to run at executor
+    :return: a callable, calling which will schedule function to run at executor. Calling this callable
+        will return the Future for that function
     """
     def inner(*my_args, **my_kwargs):
-        executor.submit(function, *args, **kwargs)
+        return executor.submit(function, *args, **kwargs)
     return inner

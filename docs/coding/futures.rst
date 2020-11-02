@@ -21,8 +21,11 @@ Python futures in their own right, and can be wait'ed upon.
 .. autoclass:: satella.coding.concurrent.futures.InvalidStateError
     :members:
 
-These modules are also allowed to be imported from `satella.coding.concurrent`,
-but that is deprecated!
+.. autoclass:: satella.coding.concurrent.futures.ExecutorWrapper
+    :members:
+
+3 of the aforementioned modules are also allowed to be imported from `satella.coding.concurrent`,
+but that is deprecated! Please import them from `satella.coding.concurrent.futures`.
 
 .. autofunction:: satella.coding.concurrent.futures.call_in_future
 

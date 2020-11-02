@@ -11,12 +11,26 @@ from satella.coding.concurrent import TerminableThread, CallableGroup, Condition
     LockedStructure, AtomicNumber, Monitor, IDAllocator, call_in_separate_thread, Timer, \
     parallel_execute, run_as_future, sync_threadpool, IntervalTerminableThread, Future, \
     WrappingFuture
-from satella.coding.concurrent.futures import call_in_future
+from satella.coding.concurrent.futures import call_in_future, ExecutorWrapper
 from satella.coding.sequences import unique
 from satella.exceptions import WouldWaitMore, AlreadyAllocated
 
 
 class TestConcurrent(unittest.TestCase):
+
+    def test_wrapped_executor(self):
+        tpe = ThreadPoolExecutor(max_workers=2)
+        tpe_w = ExecutorWrapper(tpe)
+        a = {'test': False}
+
+        def call_me():
+            nonlocal a
+            a['test'] = True
+
+        fut = tpe_w.submit(call_me)
+        self.assertIsInstance(fut, Future)
+        sync_threadpool(tpe_w)
+        self.assertTrue(a['test'])
 
     def test_call_in_future(self):
         a = {'test': False}
@@ -28,7 +42,8 @@ class TestConcurrent(unittest.TestCase):
 
         callable_ = call_in_future(tpe, call_me, True)
         self.assertFalse(a['test'])
-        callable_()
+        fut = callable_()
+        self.assertIsInstance(fut, PythonFuture)
         sync_threadpool(tpe)
         self.assertTrue(a['test'])
 
