@@ -37,6 +37,21 @@ class Future(PythonFuture):
         self._pre_done_callbacks = []
         self._done_callbacks = []
 
+    def chain(self, fun):
+        """
+        Schedule function to be called with the result of this future as it's argument (or
+        exception value if the future excepted).
+
+        :param fun: function to call
+        """
+        def inner(future):
+            if future._exception is not None:
+                result = future._exception
+            else:
+                result = future._result
+            fun(result)
+        self.add_done_callback(inner)
+
     def add_pre_done_callback(self, fn):
         """
         Attaches a callable that will be called just before the future finishes

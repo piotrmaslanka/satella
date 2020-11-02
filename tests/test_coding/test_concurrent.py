@@ -55,6 +55,16 @@ class TestConcurrent(unittest.TestCase):
         fut.set_result(3)
         self.assertEqual(wrap.result(), 5)
 
+    def test_future_chain(self):
+        fut = Future()
+
+        def assert_five(arg):
+            self.assertEqual(arg, 5)
+
+        fut.chain(assert_five)
+        fut.set_running_or_notify_cancel()
+        fut.set_result(5)
+
     def test_future(self):
         fut = Future()
         fut.set_running_or_notify_cancel()
