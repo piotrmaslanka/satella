@@ -162,7 +162,9 @@ class Reduce(Call):
 
 
 class ExecutionEnvironment:
-    __slots__ = ('arg_sets', 'executor', 'cs')
+    """
+    This has no __slots__ so you can add anything here really
+    """
 
     def __init__(self, argument_sets: tp.Iterable[tp.Tuple[tp.Tuple[tp.Any], tp.Dict]],
                  executor: tp.Optional[Executor] = None,
@@ -173,7 +175,7 @@ class ExecutionEnvironment:
         self.executor = executor
         self.cs = cs
 
-    def set_call_stack_to(self, cs: tp.Optional[tp.List[tp.Callable]] = None):
+    def _set_call_stack_to(self, cs: tp.Optional[tp.List[tp.Callable]] = None):
         return ExecutionEnvironment(self.arg_sets, self.executor, cs)
 
     def __call__(self, callable_: Call, *args, **kwargs):
@@ -235,7 +237,7 @@ def call_with_ee(callable_: tp.Callable, ee: ExecutionEnvironment,
     def inner(*args, **kwargs):
         if not hasattr(local_ee, 'ee'):
             if copy_call_stack_from is not None:
-                ef = ee.set_call_stack_to(copy_call_stack_from)
+                ef = ee._set_call_stack_to(copy_call_stack_from)
             else:
                 ef = ee
             return ef(callable_, *args, **kwargs)
