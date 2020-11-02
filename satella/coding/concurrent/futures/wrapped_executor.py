@@ -6,7 +6,6 @@ class ExecutorWrapper(Executor):
     """
     A wrapping for Python executors to return Satella futures instead of standard Python ones.
     """
-    __slots__ = ('executor', )
 
     def __init__(self, executor: Executor):
         self.executor = executor
