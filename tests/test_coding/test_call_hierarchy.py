@@ -7,8 +7,8 @@ from satella.coding.call_hierarchy import Call, CallWithArgumentSet, Reduce, Cal
 
 class TestCallHierarchy(unittest.TestCase):
     def test_call(self):
-        call = Call(lambda: 5)
-        self.assertEqual(call(), 5)
+        call_ = Call(lambda: 5)
+        self.assertEqual(call_(), 5)
 
     def test_exec_parallel(self):
         arg_sets = []
