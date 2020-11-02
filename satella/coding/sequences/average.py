@@ -43,5 +43,3 @@ class RollingArithmeticAverage:
         """
         self.queue.clear()
         self.tot_sum = 0
-
-

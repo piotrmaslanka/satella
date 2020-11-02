@@ -1,7 +1,6 @@
 import typing as tp
 
 from satella.coding.recast_exceptions import rethrow_as
-
 from satella.coding.structures import SetHeap
 
 
@@ -47,7 +46,7 @@ class merge_series:
 
     def advance(self, i: int) -> None:
         if self.super_next_preloaded_values[i] is None:
-            raise RuntimeError('Cannot advance on series %s which is empty' % (i, ))
+            raise RuntimeError('Cannot advance on series %s which is empty' % (i,))
         else:
             self.next_preloaded_values[i] = self.super_next_preloaded_values[i]
             try:

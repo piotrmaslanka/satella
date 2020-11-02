@@ -1,5 +1,5 @@
-import typing as tp
 import time
+import typing as tp
 from concurrent.futures import wait, ThreadPoolExecutor
 
 from .atomic import AtomicNumber
@@ -60,4 +60,3 @@ def sync_threadpool(tpe: tp.Union[ExecutorWrapper, ThreadPoolExecutor],
                 raise WouldWaitMore('timeout exceeded')
         cond.notify_all()
         wait(futures)
-

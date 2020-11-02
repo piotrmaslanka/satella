@@ -1,12 +1,12 @@
 import copy
-import typing as tp
 import sys
+import typing as tp
 import warnings
 from concurrent.futures import Future
 
-from ..cassandra.future import wrap_future
-from ..cassandra.common import ResponseFuture
 from satella.coding.decorators import wraps
+from ..cassandra.common import ResponseFuture
+from ..cassandra.future import wrap_future
 
 try:
     from opentracing import Span
@@ -16,7 +16,8 @@ except ImportError:
 
 
 def trace_function(tracer, name: str, tags: tp.Optional[dict] = None,
-                   tags_factory: tp.Optional[tp.Union[tp.Dict[str, tp.Callable], tp.List[tp.Tuple[str, tp.Callable]]]] = None):
+                   tags_factory: tp.Optional[tp.Union[
+                       tp.Dict[str, tp.Callable], tp.List[tp.Tuple[str, tp.Callable]]]] = None):
     """
     Return a decorator that will trace the execution of a given function
     using tracer.start_active_span.
@@ -52,7 +53,9 @@ def trace_function(tracer, name: str, tags: tp.Optional[dict] = None,
                     my_tags[key] = value(args)
             with tracer.start_active_span(name, tags=my_tags):
                 return fun(*args, **kwargs)
+
         return inner
+
     return outer
 
 

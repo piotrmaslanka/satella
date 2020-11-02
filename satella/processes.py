@@ -1,10 +1,8 @@
 import subprocess
-import threading
 import typing as tp
 
 from satella.coding.recast_exceptions import silence_excs
 from .coding.concurrent import call_in_separate_thread
-
 from .exceptions import ProcessFailed
 
 __all__ = ['call_and_return_stdout', 'read_nowait']
@@ -69,7 +67,7 @@ def call_and_return_stdout(args: tp.Union[str, tp.List[str]],
     except subprocess.TimeoutExpired:
         proc.kill()
         proc.wait()
-        raise TimeoutError('Process did not complete within %s seconds' % (timeout, ))
+        raise TimeoutError('Process did not complete within %s seconds' % (timeout,))
     finally:
         fut.result()
 

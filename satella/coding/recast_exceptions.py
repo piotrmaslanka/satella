@@ -66,7 +66,8 @@ class log_exceptions:
                  severity: int = logging.ERROR,
                  format_string: str = '{e}',
                  locals_: tp.Optional[tp.Dict] = None,
-                 exc_types: tp.Union[ExceptionClassType, tp.Sequence[ExceptionClassType]] = Exception,
+                 exc_types: tp.Union[
+                     ExceptionClassType, tp.Sequence[ExceptionClassType]] = Exception,
                  swallow_exception: bool = False):
         self.logger = logger
         self.swallow_exception = swallow_exception
@@ -124,6 +125,7 @@ class log_exceptions:
                         raise
                     elif not self.swallow_exception:
                         raise
+
             return inner
 
 

@@ -207,7 +207,7 @@ def call_with_arguments(function: tp.Callable, arguments: tp.Dict[str, tp.Any]) 
             if param_kind in (Parameter.VAR_KEYWORD, Parameter.VAR_POSITIONAL):
                 continue
             elif param.default == Parameter.empty:
-                raise TypeError('Argument %s not found' % (param_name, ))
+                raise TypeError('Argument %s not found' % (param_name,))
             else:
                 continue
 

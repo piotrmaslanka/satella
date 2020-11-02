@@ -1,3 +1,4 @@
+from .average import RollingArithmeticAverage
 from .choose import choose, choose_one
 from .iterators import infinite_counter, take_n, is_instance, skip_first, zip_shifted, \
     stop_after, iter_dict_of_list, shift, other_sequence_no_longer_than, count, even, \
@@ -5,7 +6,6 @@ from .iterators import infinite_counter, take_n, is_instance, skip_first, zip_sh
     is_empty, IteratorListAdapter, enumerate2, to_iterator, ListWrapperIterator
 from .sequences import is_last, add_next, half_cartesian, group_quantity, Multirun, make_list, \
     infinite_iterator, filter_out_false, filter_out_nones, index_of, index_of_max
-from .average import RollingArithmeticAverage
 
 __all__ = ['choose', 'choose_one', 'infinite_counter', 'take_n', 'is_instance', 'is_last',
            'add_next', 'ConstruableIterator', 'walk', 'length', 'smart_zip',

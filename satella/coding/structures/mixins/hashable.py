@@ -1,5 +1,5 @@
-from abc import ABCMeta, abstractmethod
 import typing as tp
+from abc import ABCMeta, abstractmethod
 
 
 class HashableMixin:
@@ -173,4 +173,3 @@ class OmniHashableMixin(metaclass=ABCMeta):
             return False
         else:
             return super().__ne__(other)
-

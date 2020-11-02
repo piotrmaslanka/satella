@@ -8,13 +8,13 @@ from .mixins import OmniHashableMixin, ReprableMixin, StrEqHashableMixin, Compar
     HashableIntEnum, ComparableAndHashableBy, ComparableAndHashableByInt, ComparableEnum, \
     HashableMixin
 from .proxy import Proxy
+from .queues import Subqueue
 from .ranking import Ranking
 from .singleton import Singleton, SingletonWithRegardsTo, get_instances_for_singleton, \
     delete_singleton_for
 from .sorted_list import SortedList, SliceableDeque
-from .typednamedtuple import typednamedtuple
 from .sparse_matrix import SparseMatrix
-from .queues import Subqueue
+from .typednamedtuple import typednamedtuple
 
 __all__ = [
     'HashableMixin',

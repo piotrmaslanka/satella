@@ -2,10 +2,9 @@ import copy
 import typing as tp
 
 from satella.coding.recast_exceptions import rethrow_as
+from satella.coding.typing import T
 from satella.configuration.schema import Descriptor, descriptor_from_dict
 from satella.exceptions import ConfigurationValidationError
-
-from satella.coding.typing import T
 
 
 class DictObject(dict, tp.MutableMapping[tp.Hashable, T]):

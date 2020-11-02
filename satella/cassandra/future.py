@@ -20,4 +20,3 @@ def wrap_future(future: ResponseFuture) -> Future:
     future.add_callback(lambda result: fut.set_result(result))
     future.add_errback(lambda exception: fut.set_exception(exception))
     return fut
-

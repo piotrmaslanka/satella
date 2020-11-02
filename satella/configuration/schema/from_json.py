@@ -13,7 +13,7 @@ def _get_descriptor_for_str(key: str, value: str) -> Descriptor:
             return create_key(BASE_LOOKUP_TABLE[value](),
                               key, False, None)
     except KeyError:
-        raise ConfigurationSchemaError('Unknown descriptor type %s' % (value, ))
+        raise ConfigurationSchemaError('Unknown descriptor type %s' % (value,))
 
 
 def _get_descriptor_for_dict(key: str, value: dict) -> Descriptor:

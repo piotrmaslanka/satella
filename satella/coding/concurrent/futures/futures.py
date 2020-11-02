@@ -1,8 +1,8 @@
-import typing as tp
+import concurrent.futures._base
 import logging
+import typing as tp
 from concurrent.futures import Future as PythonFuture
 from concurrent.futures._base import CANCELLED, CANCELLED_AND_NOTIFIED, FINISHED
-import concurrent.futures._base
 
 try:
     from concurrent.futures import InvalidStateError
@@ -32,6 +32,7 @@ class Future(PythonFuture):
     >>> fut.set_result(2)
     >>> assert fut.result() == 4
     """
+
     def __init__(self):
         super().__init__()
         self._pre_done_callbacks = []
@@ -45,10 +46,12 @@ class Future(PythonFuture):
         :param fun: function to call
         :return: self
         """
+
         def inner(fut: PythonFuture):
             if fut._exception is not None:
                 return
             return fun(fut._result)
+
         self.add_done_callback(inner)
         return self
 
@@ -59,10 +62,12 @@ class Future(PythonFuture):
         :param fun: function to call
         :return: self
         """
+
         def inner(fut: PythonFuture):
             if fut._exception is None:
                 return
             return fun(fut._exception)
+
         self.add_done_callback(inner)
         return self
 
@@ -74,12 +79,14 @@ class Future(PythonFuture):
         :param fun: function to call
         :return: self
         """
+
         def inner(future):
             if future._exception is not None:
                 result = future._exception
             else:
                 result = future._result
             fun(result)
+
         self.add_done_callback(inner)
         return self
 
@@ -172,6 +179,7 @@ class WrappingFuture(Future):
 
     >> wrapped = WrappingFuture(existing_python_future)
     """
+
     def __init__(self, source_future: PythonFuture):
         super().__init__()
         self.source_future = source_future
@@ -201,5 +209,3 @@ class WrappingFuture(Future):
     def cancel(self) -> bool:
         super().cancel()
         return self.source_future.cancel()
-
-

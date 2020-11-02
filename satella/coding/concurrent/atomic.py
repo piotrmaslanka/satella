@@ -51,7 +51,7 @@ class AtomicNumber(Monitor):
 
     @Monitor.synchronized
     def __repr__(self) -> str:
-        return 'AtomicNumber(%s)' % (self.value, )
+        return 'AtomicNumber(%s)' % (self.value,)
 
     @Monitor.synchronized
     def __and__(self, other: Number) -> Number:

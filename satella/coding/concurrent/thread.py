@@ -1,15 +1,14 @@
 import ctypes
 import platform
-from abc import ABCMeta, abstractmethod
 import threading
 import time
 import typing as tp
 import warnings
+from abc import ABCMeta, abstractmethod
 from concurrent.futures import Future
 from threading import Condition as PythonCondition
 
 from satella.coding.decorators import wraps
-
 from satella.time import measure
 from ...exceptions import ResourceLocked, WouldWaitMore
 
@@ -28,6 +27,7 @@ def call_in_separate_thread(*t_args, **t_kwargs):
     >>>     while True:
     >>>         ...
     """
+
     def outer(fun):
         @wraps(fun)
         def inner(*args, **kwargs) -> Future:
@@ -44,10 +44,13 @@ def call_in_separate_thread(*t_args, **t_kwargs):
                         self.future.set_result(res)
                     except Exception as e:
                         self.future.set_exception(e)
+
             t = MyThread()
             t.start()
             return t.future
+
         return inner
+
     return outer
 
 
@@ -135,6 +138,7 @@ class BogusTerminableThread:
     """
     A mock object that implements threading interface but does nothing
     """
+
     def __init__(self):
         self.running = False
         self.terminated = False
@@ -309,6 +313,7 @@ class IntervalTerminableThread(TerminableThread, metaclass=ABCMeta):
         include the time spent on calling .loop(), the rest of this time will
         be spent safe_sleep()ing.
     """
+
     def __init__(self, seconds: float, *args, **kwargs):
         self.seconds = seconds
         super().__init__(*args, **kwargs)

@@ -1,9 +1,8 @@
 import threading
 import typing as tp
 
-from ..structures.proxy import Proxy
-
 from satella.coding.typing import T
+from ..structures.proxy import Proxy
 
 
 class LockedStructure(Proxy, tp.Generic[T]):

@@ -1,5 +1,6 @@
-import typing as tp
 import queue
+import typing as tp
+
 from .decorators import wraps
 from ..typing import ExceptionClassType, NoArgCallable, Predicate
 
@@ -8,7 +9,8 @@ Queue = tp.TypeVar('Queue')
 
 def queue_get(queue_getter: tp.Union[str, tp.Callable[[object], Queue]],
               timeout: tp.Optional[float] = None,
-              exception_empty: tp.Union[ExceptionClassType, tp.Tuple[ExceptionClassType, ...]] = queue.Empty,
+              exception_empty: tp.Union[
+                  ExceptionClassType, tp.Tuple[ExceptionClassType, ...]] = queue.Empty,
               queue_get_method: tp.Callable[[Queue, tp.Optional[float]], tp.Any] =
               lambda x, timeout: x.get(
                   timeout=timeout),
@@ -108,6 +110,7 @@ def loop_while(pred: tp.Union[Predicate, NoArgCallable[bool]] = lambda: True):
     Note that the function you decorate may only take arguments if it's a class method.
     If it's a standard method, then it should not take any arguments.
     """
+
     def outer(fun):
         @wraps(fun)
         def inner(*args, **kwargs):
@@ -117,5 +120,7 @@ def loop_while(pred: tp.Union[Predicate, NoArgCallable[bool]] = lambda: True):
                     return pred(args[0])
             while pred_f():
                 fun(*args, **kwargs)
+
         return inner
+
     return outer

@@ -17,6 +17,7 @@ def call_in_future(executor: Executor, function: tp.Callable,
     :return: a callable, calling which will schedule function to run at executor. Calling this callable
         will return the Future for that function
     """
+
     def inner(*my_args, **my_kwargs):
         fut = executor.submit(function, *args, **kwargs)
         from satella.coding.concurrent import Future, WrappingFuture
@@ -24,4 +25,5 @@ def call_in_future(executor: Executor, function: tp.Callable,
             return WrappingFuture(fut)
         else:
             return fut
+
     return inner

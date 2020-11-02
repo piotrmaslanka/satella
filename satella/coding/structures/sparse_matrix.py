@@ -2,8 +2,8 @@ import collections
 import typing as tp
 
 from satella.coding.recast_exceptions import silence_excs
-
 from satella.coding.typing import T
+
 KeyArg = tp.Tuple[tp.Union[int, slice], tp.Union[int, slice]]
 
 
@@ -86,14 +86,15 @@ class SparseMatrix(tp.Generic[T]):
 
     def __init__(self, matrix_data: tp.Optional[tp.List[tp.List[T]]] = None):
         self.rows_dict = collections.defaultdict(lambda: collections.defaultdict(lambda: None))
-        self.known_column_count = {}        # tp.Dict[int, int] column_no => amount
+        self.known_column_count = {}  # tp.Dict[int, int] column_no => amount
         self.no_cols = 0
         self.no_rows = 0
         if matrix_data:
             self[:, :] = matrix_data
 
     def get_neighbour_coordinates(self, col: int, row: int,
-                                  include_diagonals: bool = True) -> tp.Iterator[tp.Tuple[int, int]]:
+                                  include_diagonals: bool = True) -> tp.Iterator[
+        tp.Tuple[int, int]]:
         """
         Return an iterator of coordinates to points neighbouring given point.
         :param col: column
@@ -110,8 +111,8 @@ class SparseMatrix(tp.Generic[T]):
                 if abs(delta_col) + abs(delta_row) > 1:
                     if not include_diagonals:
                         continue
-                cand_col = col+delta_col
-                cand_row = row+delta_row
+                cand_col = col + delta_col
+                cand_row = row + delta_row
                 if cand_col < 0 or cand_row < 0:
                     continue
                 if cand_col >= self.no_cols or cand_row >= self.no_rows:
@@ -133,7 +134,7 @@ class SparseMatrix(tp.Generic[T]):
         Clear the contents of the sparse matrix
         """
         self.rows_dict = collections.defaultdict(lambda: collections.defaultdict(lambda: None))
-        self.known_column_count = {}        # tp.Dict[int, int] column_no => amount
+        self.known_column_count = {}  # tp.Dict[int, int] column_no => amount
         self.no_cols = 0
         self.no_rows = 0
 
@@ -186,8 +187,8 @@ class SparseMatrix(tp.Generic[T]):
 
         :param row_no: row number, numbered from 0
         """
-        if row_no not in self.rows_dict:     # check so as to avoid adding new entries
-            return [None]*self.no_cols
+        if row_no not in self.rows_dict:  # check so as to avoid adding new entries
+            return [None] * self.no_cols
         cols = self.rows_dict[row_no]
         output = []
         for i in range(self.no_cols):
@@ -205,7 +206,7 @@ class SparseMatrix(tp.Generic[T]):
         new_sparse = SparseMatrix()
         for row_no, row in enumerate(self):
             for col_no, value in enumerate(row):
-                new_sparse[col_no*2, row_no*2] = value
+                new_sparse[col_no * 2, row_no * 2] = value
         return new_sparse
 
     def _increment_column_count(self, col_no: int) -> None:
@@ -292,7 +293,7 @@ class SparseMatrix(tp.Generic[T]):
                 raise IndexError()
             elif col >= self.no_cols:
                 raise IndexError()
-            if row not in self.rows_dict:    # check so as to avoid adding new entries
+            if row not in self.rows_dict:  # check so as to avoid adding new entries
                 return None
             if col not in self.rows_dict[row]:
                 return None
@@ -328,7 +329,7 @@ class SparseMatrix(tp.Generic[T]):
 
             del self.rows_dict[row][col]
 
-            if not self.rows_dict[row]:     # Have we got an empty row now?
+            if not self.rows_dict[row]:  # Have we got an empty row now?
                 del self.rows_dict[row]
 
             self._decrement_column_count(col)

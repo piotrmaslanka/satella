@@ -1,9 +1,8 @@
-import typing as tp
 import queue
+import typing as tp
 
-from satella.coding.recast_exceptions import silence_excs
 from satella.coding.concurrent.monitor import Monitor
-
+from satella.coding.recast_exceptions import silence_excs
 from satella.coding.typing import T
 
 
@@ -11,8 +10,9 @@ class Subqueue(tp.Generic[T]):
     """
     Or a named queue is a collection of thread safe queues identified by name
     """
+
     def __init__(self):
-        self.subqueues = {}     # type: tp.Dict[str, queue.Queue]
+        self.subqueues = {}  # type: tp.Dict[str, queue.Queue]
         self.subqueue_lock = Monitor()
 
     def assert_queue(self, queue_name: str) -> None:
@@ -21,7 +21,7 @@ class Subqueue(tp.Generic[T]):
         """
         if queue_name not in self.subqueues:
             with self.subqueue_lock:
-                if queue_name not in self.subqueues:    # double check for locking
+                if queue_name not in self.subqueues:  # double check for locking
                     self.subqueues[queue_name] = queue.Queue()
 
     def put(self, queue_name: str, obj: T) -> None:

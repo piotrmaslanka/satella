@@ -1,13 +1,12 @@
+import copy
 import inspect
 import itertools
 import typing as tp
-import copy
 from inspect import Parameter
 
+from satella.coding.typing import T, Predicate
 from .decorators import wraps
 from ..misc import source_to_function, get_arguments, call_with_arguments, _get_arguments
-
-from satella.coding.typing import T, Predicate
 from ..predicates import PredicateClass, build_structure
 
 U = tp.TypeVar('U')
@@ -58,7 +57,9 @@ def execute_before(callable_: tp.Callable) -> tp.Callable:
                 def inner2(*my_args, **my_kwargs):
                     callable_(*args, **kwargs)
                     return func(*my_args, **my_kwargs)
+
                 return inner2
+
             return inner
 
     return outer
@@ -83,6 +84,7 @@ def replace_argument_if(arg_name: str,
     :param structure: a callable that takes original argument and returns new, or a
         structure made of these
     """
+
     def outer(fun):
         @wraps(fun)
         def inner(*args, **kwargs):
@@ -100,7 +102,9 @@ def replace_argument_if(arg_name: str,
                 return call_with_arguments(fun, args_dict)
             else:
                 return fun(*args, **kwargs)
+
         return inner
+
     return outer
 
 
@@ -207,7 +211,9 @@ def copy_arguments(deep_copy: bool = False) -> tp.Callable:
             args = tuple(f_copy(arg) for arg in args)
             kwargs = {name: f_copy(value) for name, value in kwargs.items()}
             return fun(*args, **kwargs)
+
         return inner
+
     return outer
 
 

@@ -3,9 +3,9 @@ import random
 import typing as tp
 
 from satella.coding.decorators import for_argument
-
-from .merger import merge_series
 from .jsonify import jsonify
+from .merger import merge_series
+
 __all__ = ['stringify', 'split_shuffle_and_join', 'one_tuple',
            'merge_series', 'pad_to_multiple_of_length', 'clip',
            'jsonify', 'intify']
@@ -102,7 +102,7 @@ def intify(v: tp.Any) -> int:
         try:
             return len(v)
         except (AttributeError, TypeError, ValueError):
-            raise ValueError('Unable to convert %s to int' % (v, ))
+            raise ValueError('Unable to convert %s to int' % (v,))
 
 
 def split_shuffle_and_join(entries: tp.List[T],

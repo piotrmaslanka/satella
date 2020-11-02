@@ -121,6 +121,7 @@ class CodedCustomException(CustomException, metaclass=CodedCustomExceptionMetacl
     >>  a.code = 5
     >>> assert not isinstance(a, MyCode5Diff)
     """
+
     def __init__(self, message, code=None, *args, **kwargs):
         super().__init__(message, code, *args, **kwargs)
         self.message = message  # type: str

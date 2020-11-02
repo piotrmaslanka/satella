@@ -1,11 +1,10 @@
 import itertools
 import typing as tp
 
+from satella.coding.typing import T, Predicate
 from satella.exceptions import PreconditionError
 from .decorators import wraps
 from ..misc import source_to_function
-
-from satella.coding.typing import T, Predicate
 
 Expression = tp.NewType('Expression', str)
 Condition = tp.Union[Predicate[T], Expression]

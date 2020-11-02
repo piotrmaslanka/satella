@@ -1,10 +1,10 @@
-import itertools
 import collections
+import itertools
 import typing as tp
 import warnings
 
-from ..recast_exceptions import rethrow_as, silence_excs
 from ..decorators import for_argument, wraps
+from ..recast_exceptions import rethrow_as, silence_excs
 from ..typing import Iteratable, T, U, Predicate
 
 
@@ -62,7 +62,7 @@ class ConstruableIterator:
 
     All arguments you provide to the constructor will be passed to underlying deque
     """
-    __slots__ = ('entries', )
+    __slots__ = ('entries',)
 
     def __init__(self, *args, **kwargs):
         self.entries = collections.deque(*args, **kwargs)
@@ -396,8 +396,8 @@ class ListWrapperIterator(tp.Generic[T]):
 
     def __getitem__(self, item: tp.Union[slice, int]) -> tp.Union[tp.List[T], T]:
         if isinstance(item, int):
-            if len(self.list) < item+1:
-                self.advance_to_item(item+1)
+            if len(self.list) < item + 1:
+                self.advance_to_item(item + 1)
         else:
             self.advance_to_item(item.stop)
         return self.list[item]
@@ -482,7 +482,7 @@ class IteratorListAdapter:
     def __next__(self):
         if self.unfolded:
             self.pointer += 1
-            return self.list[self.pointer-1]    # throws: IndexError
+            return self.list[self.pointer - 1]  # throws: IndexError
         else:
             return next(self.iterator)
 
@@ -558,10 +558,12 @@ def to_iterator(fun):
     and now call fun instead of iterator. fun will accept a single argument - the iterable,
     and assume that the function you decorate also takes a single argument - the item
     """
+
     @wraps(fun)
     def inner(iterable):
         for item in iterable:
             yield fun(item)
+
     return inner
 
 

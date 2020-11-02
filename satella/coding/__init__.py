@@ -15,9 +15,9 @@ from .metaclasses import metaclass_maker, wrap_with, dont_wrap, wrap_property, D
 from .misc import update_if_not_none, update_key_if_none, update_attr_if_none, queue_iterator, \
     update_key_if_not_none, source_to_function, update_key_if_true, \
     get_arguments, call_with_arguments
+from .overloading import overload, class_or_instancemethod
 from .recast_exceptions import rethrow_as, silence_excs, catch_exception, log_exceptions, \
     raises_exception
-from .overloading import overload, class_or_instancemethod
 
 __all__ = [
     'overload', 'class_or_instancemethod',

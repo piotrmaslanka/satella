@@ -36,10 +36,10 @@ class IDAllocator(Monitor):
         :raises ValueError: x was not allocated or less than start_at
         """
         if x < self.start_at:
-            raise ValueError('%s is less than start_at' % (x, ))
+            raise ValueError('%s is less than start_at' % (x,))
         x -= self.start_at
         if x not in self.ints_allocated:
-            raise ValueError('%s was not allocated' % (x, ))
+            raise ValueError('%s was not allocated' % (x,))
         self.ints_allocated.remove(x)
         self.free_ints.add(x)
 
@@ -51,10 +51,10 @@ class IDAllocator(Monitor):
         :return: an allocated int
         """
         if not self.free_ints:
-            self._extend_the_bound_to(self.bound+10)
+            self._extend_the_bound_to(self.bound + 10)
         x = self.free_ints.pop()
         self.ints_allocated.add(x)
-        return x+self.start_at
+        return x + self.start_at
 
     @Monitor.synchronized
     def mark_as_allocated(self, x: int):
@@ -66,10 +66,10 @@ class IDAllocator(Monitor):
         :raises ValueError: x is less than start_at
         """
         if x < self.start_at:
-            raise ValueError('%s is less than start_at' % (x, ))
+            raise ValueError('%s is less than start_at' % (x,))
         x -= self.start_at
         if x >= self.bound:
-            self._extend_the_bound_to(x+1)
+            self._extend_the_bound_to(x + 1)
             self.free_ints.remove(x)
             self.ints_allocated.add(x)
         else:

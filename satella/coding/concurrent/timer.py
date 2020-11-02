@@ -1,15 +1,11 @@
+import logging
 import threading
 import time
-import logging
 
 from satella.coding.recast_exceptions import log_exceptions
-
-from ..structures.heaps.time import TimeBasedHeap
-
 from .monitor import Monitor
-
+from ..structures.heaps.time import TimeBasedHeap
 from ..structures.singleton import Singleton
-
 
 logger = logging.getLogger(__name__)
 
@@ -31,6 +27,7 @@ class Timer:
     :param kwargs: kwargs for function
     :param spawn_separate: whether to call the function in a separate thread
     """
+
     def __init__(self, interval, function, args=None, kwargs=None, spawn_separate=False):
         self.args = args or []
         self.kwargs = kwargs or {}
@@ -68,14 +65,14 @@ class TimerBackgroundThread(threading.Thread, Monitor):
     def __init__(self):
         super().__init__(name='timer background thread', daemon=True)
         Monitor.__init__(self)
-        self.timer_objects = TimeBasedHeap()        # type: TimeBasedHeap[Timer]
+        self.timer_objects = TimeBasedHeap()  # type: TimeBasedHeap[Timer]
         self.start()
 
     def run(self):
         while True:
             try:
                 ts, _ = self.timer_objects.peek_closest()
-                delay = min(ts-time.monotonic(), 1)
+                delay = min(ts - time.monotonic(), 1)
                 if delay < 0:
                     delay = 0
             except IndexError:
@@ -87,4 +84,3 @@ class TimerBackgroundThread(threading.Thread, Monitor):
             for item in items_to_exec:
                 with log_exceptions(logger, swallow_exception=True):
                     item[1]._try_execute()
-

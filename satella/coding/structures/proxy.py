@@ -4,8 +4,8 @@ import typing as tp
 
 from satella.coding.decorators.decorators import wraps
 from satella.coding.recast_exceptions import rethrow_as
-
 from satella.coding.typing import T
+
 logger = logging.getLogger(__name__)
 
 _SETTABLE_KEYS = {'_Proxy__obj', '_Proxy__wrap_operations'}

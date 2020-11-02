@@ -3,9 +3,7 @@ from concurrent.futures import Future
 from threading import Thread
 
 from satella.coding.decorators.decorators import wraps
-
 from satella.coding.sequences.sequences import infinite_iterator
-
 from satella.coding.typing import T
 
 
@@ -25,6 +23,7 @@ def run_as_future(fun):
     >>> fut = parse_a_file('test.txt')
     >>> result = fut.result()
     """
+
     @wraps(fun)
     def inner(*args, **kwargs):
         fut = Future()
@@ -38,6 +37,7 @@ def run_as_future(fun):
 
         Thread(target=separate_target).start()
         return fut
+
     return inner
 
 

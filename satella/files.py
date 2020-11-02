@@ -2,13 +2,12 @@ import codecs
 import io
 import os
 import re
-import typing as tp
 import shutil
+import typing as tp
 
 __all__ = ['read_re_sub_and_write', 'find_files', 'split', 'read_in_file', 'write_to_file',
            'write_out_file_if_different', 'make_noncolliding_name', 'try_unlink',
            'DevNullFilelikeObject']
-
 
 from satella.coding import silence_excs
 from satella.coding.typing import Predicate
@@ -21,7 +20,7 @@ class DevNullFilelikeObject:
     """
     A /dev/null filelike object. For multiple uses.
     """
-    __slots__ = ('is_closed', )
+    __slots__ = ('is_closed',)
 
     def __init__(self):
         self.is_closed = False
@@ -90,15 +89,15 @@ def make_noncolliding_name(path: str,
     if '.' in filename:
         *filename, extension = filename.split('.')
         filename = '.'.join(filename)
-        extension = '.'+extension
+        extension = '.' + extension
     else:
         extension = ''
     addition = ''
     addition_counter = 0
-    while exists_checker(os.path.join(path, filename+addition+extension)):
+    while exists_checker(os.path.join(path, filename + addition + extension)):
         addition_counter += 1
         addition = '.' + str(addition_counter)
-    return os.path.join(path, filename+addition+extension)
+    return os.path.join(path, filename + addition + extension)
 
 
 def split(path: str) -> tp.List[str]:
@@ -150,7 +149,7 @@ def read_in_file(path: str, encoding: tp.Optional[str] = None,
     if os.path.isdir(path):
         if default:
             return default
-        raise FileNotFoundError('%s found and is a directory' % (path, ))
+        raise FileNotFoundError('%s found and is a directory' % (path,))
 
     try:
         if encoding is None:

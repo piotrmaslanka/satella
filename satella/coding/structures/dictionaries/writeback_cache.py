@@ -3,7 +3,6 @@ import typing as tp
 from concurrent.futures import Executor, ThreadPoolExecutor, wait, ProcessPoolExecutor
 
 from satella.coding.concurrent.monitor import Monitor
-
 from satella.coding.recast_exceptions import silence_excs
 from satella.coding.typing import V, K
 
@@ -123,4 +122,3 @@ class ExclusiveWritebackCache(tp.Generic[K, V]):
             self.in_cache.add(key)
         self.executor.submit(self.write_method, key, value)
         self._operate()
-

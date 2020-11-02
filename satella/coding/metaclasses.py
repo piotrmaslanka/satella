@@ -33,6 +33,7 @@ def CopyDocsFrom(target_cls: tp.Type):
 
     :param target_cls: class from which to copy the docs
     """
+
     def inner(name, bases, dictionary):
         if '__doc__' not in dictionary:
             if hasattr(target_cls, '__doc__'):
@@ -48,6 +49,7 @@ def CopyDocsFrom(target_cls: tp.Type):
                         break
 
         return type(name, bases, dictionary)
+
     return inner
 
 

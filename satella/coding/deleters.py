@@ -1,6 +1,6 @@
+import collections
 import copy
 import typing as tp
-import collections
 
 from satella.coding.typing import T
 
@@ -120,7 +120,7 @@ class ListDeleter(tp.Generic[T]):
         self.direction = DIR_FORWARD
         # pointer to currently processed element
         self.current_index = -1 if self.direction == DIR_FORWARD else len(self.list_to_process)
-        self.indices_to_delete = set()      # type: tp.Set[int]
+        self.indices_to_delete = set()  # type: tp.Set[int]
 
     def __enter__(self) -> 'ListDeleter':
         return self

@@ -1,5 +1,5 @@
-import typing as tp
 import operator
+import typing as tp
 
 from satella.coding.typing import Predicate
 from satella.configuration.schema import Descriptor
@@ -21,19 +21,23 @@ def make_operation_two_args(operation_two_args: tp.Callable[[tp.Any, tp.Any], tp
             if swap_order:
                 def op(v):
                     return operation_two_args(a(v), self(v))
+
                 return PredicateClass(op)
             else:
                 def op(v):
                     return operation_two_args(self(v), a(v))
+
                 return PredicateClass(op)
         else:
             if swap_order:
                 def op(v):
                     return operation_two_args(a, self(v))
+
                 return PredicateClass(op)
             else:
                 def op(v):
                     return operation_two_args(self(v), a)
+
                 return PredicateClass(op)
 
     if docstring:
@@ -47,6 +51,7 @@ def make_operation_single_arg(operation: tp.Callable[[tp.Any], tp.Any],
     def operation_v(self) -> Predicate:
         def operate(v):
             return operation(self.operation(v))
+
         return PredicateClass(operate)
 
     if docstring:
@@ -73,7 +78,7 @@ class PredicateClass:
     >>> add_two = x + 2
     >>> assert add_two(2) == 4
     """
-    __slots__ = ('operation', )
+    __slots__ = ('operation',)
 
     def __init__(self, operation: tp.Callable[[tp.Any], tp.Any] = _nop):
         self.operation = operation
@@ -114,8 +119,10 @@ class PredicateClass:
         """
         Return a predicate returning the type of it's argument
         """
+
         def type_of(v):
             return type(self.operation(v))
+
         return PredicateClass(type_of)
 
     def is_instance(self, *args):
@@ -124,8 +131,10 @@ class PredicateClass:
 
         :param args: will be passed as argument to isinstance
         """
+
         def is_instance(v):
             return isinstance(self.operation(v), args)
+
         return PredicateClass(is_instance)
 
     def identity(self) -> Predicate:
@@ -142,6 +151,7 @@ class PredicateClass:
         The schema is the same as in
         :py:meth:`~satella.coding.structures.DictObject.is_valid_schema`
         """
+
         def is_schema_correct(v):
             from satella.coding.structures import DictObject
             return DictObject(self.operation(v)).is_valid_schema(schema, **kwargs)
@@ -156,11 +166,13 @@ class PredicateClass:
         :param predicate: predicate that has to return True for at least one of this predicate's
             values
         """
+
         def op(v):
             for e in self.operation(v):
                 if predicate(e):
                     return True
             return False
+
         return PredicateClass(op)
 
     inside = make_operation_two_args(operator.contains,
@@ -214,6 +226,7 @@ class PredicateClass:
     def __hash__(self) -> int:
         return hash(id(self))
 
+
 x = PredicateClass()
 
 
@@ -263,4 +276,3 @@ def build_structure(struct: tp.Union[tuple, list, dict],
         return struct(argument)
     else:
         return struct
-

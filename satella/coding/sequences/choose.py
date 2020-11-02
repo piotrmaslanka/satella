@@ -1,5 +1,3 @@
-import typing as tp
-
 from satella.coding.typing import Iteratable, Predicate, T
 
 

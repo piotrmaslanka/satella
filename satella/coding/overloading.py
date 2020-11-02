@@ -1,5 +1,5 @@
-import typing as tp
 import inspect
+import typing as tp
 from inspect import Parameter
 
 
@@ -32,6 +32,7 @@ class class_or_instancemethod(classmethod):
     >>>         else:
     >>>             # classmethod code
     """
+
     def __get__(self, instance, type_):
         descr_get = super().__get__ if instance is None else self.__func__.__get__
         return descr_get(instance, type_)
@@ -70,7 +71,7 @@ class overload:
         sign = extract_type_signature_from(fun)
         if sign in self.type_signatures_to_functions:
             f = self.type_signatures_to_functions[sign]
-            raise ValueError('Method of this signature is already overloaded with %s' % (f, ))
+            raise ValueError('Method of this signature is already overloaded with %s' % (f,))
         self.type_signatures_to_functions[sign] = fun
         return self
 
@@ -92,6 +93,3 @@ class overload:
             except ValueError:
                 pass
         raise TypeError('No matching functions found')
-
-
-

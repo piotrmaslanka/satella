@@ -1,6 +1,6 @@
-import typing as tp
 import inspect
 import threading
+import typing as tp
 
 from ..decorators import wraps
 from ...exceptions import ResourceLocked, ResourceNotLocked, WouldWaitMore

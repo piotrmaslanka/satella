@@ -10,21 +10,18 @@ from satella.files import DevNullFilelikeObject
 from satella.instrumentation import Traceback
 from .exception_handlers import BaseExceptionHandler
 
-
 AsStreamTypeAccept = tp.Union[str, tp.IO, None]
 AsStreamTypeAcceptHR = tp.Union[str, tp.TextIO]
 AsStreamTypeAcceptIN = tp.Union[str, tp.BinaryIO]
 
 
-
 class StreamType(enum.IntEnum):
-    MODE_FILE = 0       # write to file
-    MODE_STREAM = 1     # a file-like object was provided
-    MODE_DEVNULL = 2    # just redirect to /dev/null
+    MODE_FILE = 0  # write to file
+    MODE_STREAM = 1  # a file-like object was provided
+    MODE_DEVNULL = 2  # just redirect to /dev/null
 
 
 class AsStream:
-
     __slots__ = ('o', 'human_readable', 'mode', 'file')
 
     def __init__(self, o: AsStreamTypeAccept, human_readable: bool):

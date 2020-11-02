@@ -8,7 +8,7 @@ class CountingDict:
     :param set_to_count: a sequence, whose elements should be counted.
         The elements should support being keys in a dictionary.
     """
-    __slots__ = ('dct', )
+    __slots__ = ('dct',)
 
     def __init__(self, set_to_count: tp.Sequence = ()):
         self.dct = {}

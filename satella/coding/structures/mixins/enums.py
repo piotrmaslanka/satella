@@ -11,6 +11,7 @@ class ComparableEnum(enum.Enum):
     >>>     A = 'test'
     >>> assert Enum.A == a
     """
+
     def __eq__(self, other):
         if not isinstance(other, self.__class__):
             return self.__class__(other) == self

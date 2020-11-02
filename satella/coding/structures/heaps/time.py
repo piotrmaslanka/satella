@@ -3,9 +3,8 @@ import time
 import typing as tp
 
 from satella.coding.recast_exceptions import rethrow_as
-from .base import Heap
-
 from satella.coding.typing import T, Number, NoArgCallable
+from .base import Heap
 
 
 class TimeBasedHeap(Heap):

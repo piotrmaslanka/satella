@@ -94,7 +94,7 @@ class Traceback(JSONAble):
         else:
             a = pickle.loads(pick)
         if not isinstance(a, Traceback):
-            raise ValueError('%s is not a traceback!' % (type(a), ))
+            raise ValueError('%s is not a traceback!' % (type(a),))
         return a
 
     def to_json(self) -> dict:
