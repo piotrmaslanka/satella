@@ -6,6 +6,11 @@ from satella.coding.transforms import stringify, split_shuffle_and_join, one_tup
 
 class TestTransforms(unittest.TestCase):
 
+    def test_empty_merge_series(self):
+        sm = merge_series([], [])
+        a = list(sm)
+        self.assertFalse(a)
+
     def test_stringify_bug(self):
         self.assertEqual(stringify('test'), 'test')
 
