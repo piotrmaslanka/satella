@@ -221,8 +221,12 @@ class LRUCacheDict(CacheDict):
         Assure that there's place for at least one element
         """
         while len(self) > self.max_size-1:
-            key = self.lru.get_item_to_evict()
-            self.invalidate(key)
+            self.evict()
+
+    @silence_excs(KeyError)
+    def evict(self):
+        key = self.lru.get_item_to_evict()
+        self.invalidate(key)
 
     @silence_excs(KeyError)
     def invalidate(self, key: K) -> None:
@@ -242,6 +246,11 @@ class LRUCacheDict(CacheDict):
     def __getitem__(self, key: K) -> V:
         self.lru.mark_as_used(key)
         return super().__getitem__(key)
+
+    def get_value_block(self, key: K) -> V:
+        v = super().get_value_block(key)
+        self.lru.add(key)
+        return v
 
     def __delitem__(self, key: K) -> None:
         super().__delitem__(key)

@@ -5,7 +5,7 @@ from satella.instrumentation.metrics import getMetric
 
 import time
 from satella.instrumentation.metrics.structures import MetrifiedThreadPoolExecutor, \
-    MetrifiedCacheDict
+    MetrifiedCacheDict, MetrifiedLRUCacheDict
 from .test_metrics import choose
 
 
@@ -42,6 +42,42 @@ class TestThreadPoolExecutor(unittest.TestCase):
         self.assertEqual(n_th(cache_hits.to_metric_data().values).value, 1)
         self.assertEqual(n_th(cache_miss.to_metric_data().values).value, 1)
         self.assertEqual(n_th(refreshes.to_metric_data().values).value, 1)
+
+    def test_metrified_lru_cache_dict(self):
+        cache_hits = getMetric('lrucachedict.hits', 'counter')
+        cache_miss = getMetric('lrucachedict.miss', 'counter')
+        refreshes = getMetric('lrurefreshes', 'counter')
+        evictions = getMetric('lruevictions', 'counter')
+        how_long_takes = getMetric('lruhow_long_takes', 'summary')
+        value = 2
+
+        def getter(key):
+            nonlocal value
+            time.sleep(0.5)
+            if value is None:
+                raise KeyError()
+            else:
+                return value
+
+        mcd = MetrifiedLRUCacheDict(1, 2, getter, cache_hits=cache_hits,
+                                 cache_miss=cache_miss,
+                                 refreshes=refreshes,
+                                 how_long_refresh_takes=how_long_takes,
+                                 evictions=evictions,
+                                 max_size=2)
+        mcd[2]
+        self.assertEqual(n_th(cache_hits.to_metric_data().values).value, 0)
+        self.assertEqual(n_th(cache_miss.to_metric_data().values).value, 1)
+        self.assertEqual(n_th(refreshes.to_metric_data().values).value, 1)
+        self.assertGreaterEqual(n_th(how_long_takes.to_metric_data().values).value, 0.5)
+        mcd[2]
+        self.assertEqual(n_th(cache_hits.to_metric_data().values).value, 1)
+        self.assertEqual(n_th(cache_miss.to_metric_data().values).value, 1)
+        self.assertEqual(n_th(refreshes.to_metric_data().values).value, 1)
+        mcd[3]
+        self.assertEqual(n_th(evictions.to_metric_data().values).value, 0)
+        mcd[4]
+        self.assertEqual(n_th(evictions.to_metric_data().values).value, 1)
 
     def test_metrified_thread_pool_executor(self):
         waiting_summary = getMetric('mtpe.summary', 'summary')

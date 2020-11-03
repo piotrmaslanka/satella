@@ -243,3 +243,5 @@ Here go they:
 
 .. autoclass:: satella.instrumentation.metrics.structures.MetrifiedCacheDict
 
+.. autoclass:: satella.instrumentation.metrics.structures.MetrifiedLRUCacheDict
+
