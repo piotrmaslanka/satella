@@ -2,6 +2,7 @@
 Structures
 ==========
 
+
 SparseMatrix
 ------------
 
@@ -183,6 +184,12 @@ CountingDict
 .. autoclass:: satella.coding.structures.CountingDict
     :members:
 
+LRU
+---
+
+.. autoclass:: satella.coding.structures.LRU
+    :members:
+
 ExclusiveWritebackCache
 -----------------------
 
@@ -225,6 +232,13 @@ CacheDict
 ---------
 
 .. autoclass:: satella.coding.structures.CacheDict
+    :members:
+
+
+LRUCacheDict
+---------
+
+.. autoclass:: satella.coding.structures.LRUCacheDict
     :members:
 
 SelfCleaningDefaultDict

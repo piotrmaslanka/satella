@@ -14,10 +14,41 @@ from satella.coding.structures import TimeBasedHeap, Heap, typednamedtuple, \
     DirtyDict, KeyAwareDefaultDict, Proxy, ReprableMixin, TimeBasedSetHeap, ExpiringEntryDict, SelfCleaningDefaultDict, \
     CacheDict, StrEqHashableMixin, ComparableIntEnum, HashableIntEnum, ComparableAndHashableBy, \
     ComparableAndHashableByInt, SparseMatrix, ExclusiveWritebackCache, Subqueue, \
-    CountingDict, ComparableEnum
+    CountingDict, ComparableEnum, LRU, LRUCacheDict
 
 
 class TestMisc(unittest.TestCase):
+
+    def test_lru_cache_dict(self):
+        class TestCacheGetter:
+            def __init__(self):
+                self.called_on = {}
+                self.value = 2
+
+            def __call__(self, key):
+                if self.value is None:
+                    raise KeyError('no value available')
+                self.called_on[key] = time.monotonic()
+                return self.value
+
+        cg = TestCacheGetter()
+        cd = LRUCacheDict(1, 2, cg, max_size=3)
+
+        self.assertEqual(cd[1], 2)
+        self.assertEqual(cd[2], 2)
+        self.assertEqual(cd[3], 2)
+        self.assertEqual(cd[4], 2)
+        self.assertEqual(len(cd), 3)
+
+    def test_lru(self):
+        lru = LRU()
+        lru.add('a')
+        lru.add('b')
+        lru.add('c')
+        self.assertEqual(lru.get_item_to_evict(), 'a')
+        lru.mark_as_used('b')
+        self.assertEqual(lru.get_item_to_evict(), 'c')
+        self.assertEqual(len(lru), 1)
 
     def test_comparable_enum(self):
         class MyEnum(ComparableEnum):

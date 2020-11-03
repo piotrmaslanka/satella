@@ -106,17 +106,29 @@ def wraps(cls_to_wrap: tp.Type) -> tp.Callable[[tp.Type], tp.Type]:
 
     def outer(cls: tp.Type) -> tp.Type:
         if hasattr(cls_to_wrap, '__doc__'):
-            cls.__doc__ = cls_to_wrap.__doc__
+            try:
+                cls.__doc__ = cls_to_wrap.__doc__
+            except AttributeError:
+                pass
         if hasattr(cls_to_wrap, '__name__'):
-            cls.__name__ = cls_to_wrap.__name__
+            try:
+                cls.__name__ = cls_to_wrap.__name__
+            except AttributeError:
+                pass
         if hasattr(cls_to_wrap, '__module__'):
-            cls.__module__ = cls_to_wrap.__module__
+            try:
+                cls.__module__ = cls_to_wrap.__module__
+            except AttributeError:
+                pass
         if hasattr(cls_to_wrap, '__annotations__'):
-            cls.__annotations__ = cls_to_wrap.__annotations__
+            try:
+                cls.__annotations__ = cls_to_wrap.__annotations__
+            except AttributeError:
+                pass
         try:
             sig = inspect.signature(cls_to_wrap)
             cls.__signature__ = sig
-        except (TypeError, ValueError, RecursionError):
+        except (TypeError, ValueError, RecursionError, AttributeError):
             pass
         return cls
 

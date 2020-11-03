@@ -1,6 +1,6 @@
 from .dictionaries import DictObject, apply_dict_object, DictionaryView, TwoWayDictionary, \
     DirtyDict, KeyAwareDefaultDict, ExpiringEntryDict, SelfCleaningDefaultDict, \
-    CacheDict, ExclusiveWritebackCache, CountingDict
+    CacheDict, ExclusiveWritebackCache, CountingDict, LRUCacheDict
 from .hashable_objects import HashableWrapper
 from .heaps import Heap, SetHeap, TimeBasedHeap, TimeBasedSetHeap
 from .immutable import Immutable, frozendict
@@ -15,8 +15,10 @@ from .singleton import Singleton, SingletonWithRegardsTo, get_instances_for_sing
 from .sorted_list import SortedList, SliceableDeque
 from .sparse_matrix import SparseMatrix
 from .typednamedtuple import typednamedtuple
-
+from .lru import LRU
 __all__ = [
+    'LRU',
+    'LRUCacheDict',
     'HashableMixin',
     'CountingDict',
     'Subqueue',

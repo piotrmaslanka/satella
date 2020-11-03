@@ -4,6 +4,7 @@ import typing as tp
 from concurrent.futures import ThreadPoolExecutor, Executor, Future
 
 from satella.coding.recast_exceptions import silence_excs
+from satella.coding.structures.lru import LRU
 from satella.coding.typing import K, V, NoArgCallable
 
 logger = logging.getLogger(__name__)
@@ -200,3 +201,56 @@ class CacheDict(tp.Mapping[K, V]):
         self.timestamp_data[key] = self.time_getter()
         with silence_excs(KeyError):
             self.cache_missed.remove(key)
+
+
+class LRUCacheDict(CacheDict):
+    """
+    A dictionary that you can use as a cache with a maximum size, items evicted by LRU policy.
+
+    :param max_size: maximum size
+    """
+
+    def __init__(self, *args, max_size: int = 100, **kwargs):
+        super().__init__(*args, **kwargs)
+        assert max_size > 0, 'Too small max_size!'
+        self.max_size = max_size
+        self.lru = LRU()
+
+    def make_room(self) -> None:
+        """
+        Assure that there's place for at least one element
+        """
+        while len(self) > self.max_size-1:
+            key = self.lru.get_item_to_evict()
+            self.invalidate(key)
+
+    @silence_excs(KeyError)
+    def invalidate(self, key: K) -> None:
+        """
+        Remove all information about given key from the cache
+
+        Syntactic sugar for:
+
+        >>> try:
+        >>>   del self[key]
+        >>> except KeyError:
+        >>>   pass
+        """
+        super().invalidate(key)
+        self.lru.remove(key)
+
+    def __getitem__(self, key: K) -> V:
+        self.lru.mark_as_used(key)
+        return super().__getitem__(key)
+
+    def __delitem__(self, key: K) -> None:
+        super().__delitem__(key)
+        self.lru.remove(key)
+
+    def __setitem__(self, key: K, value: V) -> None:
+        """
+        Store a value with current timestamp
+        """
+        self.make_room()
+        self.lru.mark_as_used(key)
+        super().__setitem__(key, value)
