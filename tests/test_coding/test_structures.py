@@ -333,6 +333,8 @@ class TestMisc(unittest.TestCase):
         self.assertRaises(KeyError, lambda: cd[2])
         time.sleep(1.1)
         self.assertEqual(cd[2], 2)
+        cd.feed(5, 6)
+        self.assertEqual(cd[5], 6)
 
     def test_cache_dict_default_value_factory(self):
         class TestCacheGetter:

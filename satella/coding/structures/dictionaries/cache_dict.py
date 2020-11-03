@@ -50,7 +50,14 @@ class CacheDict(tp.Mapping[K, V]):
     def __iter__(self) -> tp.Iterator[K]:
         return iter(self.data)
 
-    def has_info_about(self, key: str) -> bool:
+    def feed(self, key: K, value: V, timestamp: tp.Optional[float] = None):
+        """
+        Feed this data into the cache
+        """
+        self.data[key] = value
+        self.timestamp_data[key] = timestamp or self.time_getter()
+
+    def has_info_about(self, key: K) -> bool:
         """
         Is provided key cached, or failure about it is cached?
         """
@@ -255,6 +262,15 @@ class LRUCacheDict(CacheDict):
     def __delitem__(self, key: K) -> None:
         super().__delitem__(key)
         self.lru.remove(key)
+
+    def feed(self, key: K, value: V, timestamp: tp.Optional[float] = None):
+        """
+        Feed this data into the cache
+        """
+        if key not in self.data:
+            self.make_room()
+        super().feed(key, value, timestamp)
+        self.lru.add(key)
 
     def __setitem__(self, key: K, value: V) -> None:
         """
