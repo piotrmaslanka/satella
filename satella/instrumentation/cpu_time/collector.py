@@ -105,16 +105,18 @@ def sleep_cpu_aware(seconds: float, of_below: tp.Optional[float] = None,
     if of_below is None and of_above is None:
         time.sleep(seconds)
         return False
-    of = calculate_occupancy_factor()
+    calculate_occupancy_factor()        # prime the counter
     while seconds > 0:
+        time_to_sleep = min(seconds, check_each)
+        time.sleep(time_to_sleep)
+        of = calculate_occupancy_factor()
+
         if of_above is not None:
             if of > of_above:
                 return True
         if of_below is not None:
             if of < of_below:
                 return True
-        time_to_sleep = min(seconds, check_each)
-        time.sleep(time_to_sleep)
         seconds -= time_to_sleep
         if seconds <= 0:
             return False
@@ -159,10 +161,11 @@ def _calculate_occupancy_factor() -> float:
 
 def calculate_occupancy_factor() -> float:
     """
-    Note that this will be the average between now and the time it was last called.
+    IMPORTANT!
 
-    This in rare cases (being called the first or the second time)
-    may block for up to 0.1 seconds
+    This will be the average between now and the time it was last called.
+
+    This in rare cases (being called the first or the second time) may block for up to 0.1 seconds
 
     :return: a float between 0 and 1 telling you how occupied CPU-wise is your system.
     """
