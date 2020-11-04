@@ -5,10 +5,11 @@ import typing as tp
 from satella.coding.decorators import for_argument
 from .jsonify import jsonify
 from .merger import merge_series
+from .percentile import percentile
 
 __all__ = ['stringify', 'split_shuffle_and_join', 'one_tuple',
            'merge_series', 'pad_to_multiple_of_length', 'clip',
-           'jsonify', 'intify']
+           'jsonify', 'intify', 'percentile']
 
 from satella.coding.typing import T, NoArgCallable, Appendable, Number, Predicate
 

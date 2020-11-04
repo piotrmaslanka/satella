@@ -1,6 +1,13 @@
 Rudimentary data transforms
 ===========================
 
+
+.. autofunction:: satella.coding.transforms.intify
+
+.. autofunction:: satella.coding.transforms.jsonify
+
+.. autofunction:: satella.coding.transforms.percentile
+
 pad_to_multiple_of_length
 -------------------------
 
