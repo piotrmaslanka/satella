@@ -34,9 +34,6 @@ class CPUTimeAwareIntervalTerminableThread(IntervalTerminableThread, metaclass=A
     def loop(self) -> None:
         """
         Override me!
-
-        If True is returned, the thread will not sleep and .loop() will be executed
-        once more.
         """
 
     def _execute_measured(self) -> float:

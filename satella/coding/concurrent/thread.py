@@ -319,12 +319,9 @@ class IntervalTerminableThread(TerminableThread, metaclass=ABCMeta):
         super().__init__(*args, **kwargs)
 
     @abstractmethod
-    def loop(self) -> tp.Optional[bool]:
+    def loop(self) -> None:
         """
         Override me!
-
-        If True is returned, the thread will not sleep and .loop() will be executed
-        once more.
         """
 
     def on_overrun(self, time_taken: float) -> None:
@@ -340,12 +337,11 @@ class IntervalTerminableThread(TerminableThread, metaclass=ABCMeta):
         self.prepare()
         while not self._terminating:
             with measure() as measurement:
-                v = self.loop()
-            if not v:
-                time_taken = measurement()
-                time_to_sleep = self.seconds - time_taken
-                if time_to_sleep < 0:
-                    self.on_overrun(time_taken)
-                else:
-                    self.safe_sleep(time_to_sleep)
+                self.loop()
+            time_taken = measurement()
+            time_to_sleep = self.seconds - time_taken
+            if time_to_sleep < 0:
+                self.on_overrun(time_taken)
+            else:
+                self.safe_sleep(time_to_sleep)
         self.cleanup()
