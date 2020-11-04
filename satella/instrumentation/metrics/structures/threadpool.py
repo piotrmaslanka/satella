@@ -66,8 +66,8 @@ def _worker(executor_reference, work_queue, initializer, initargs):
                 work_queue.put(None)
                 return
             del executor
-    except BaseException:
-        _base.LOGGER.critical('Exception in worker', exc_info=True)
+    except BaseException as e:
+        _base.LOGGER.critical('Exception in worker', exc_info=e)
 
 
 class MetrifiedThreadPoolExecutor(ThreadPoolExecutor):
