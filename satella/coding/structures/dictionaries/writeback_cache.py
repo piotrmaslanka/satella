@@ -2,6 +2,7 @@ import time
 import typing as tp
 from concurrent.futures import Executor, ThreadPoolExecutor, wait, ProcessPoolExecutor
 
+from satella.coding.concurrent import sync_threadpool
 from satella.coding.concurrent.monitor import Monitor
 from satella.coding.recast_exceptions import silence_excs
 from satella.coding.typing import V, K
@@ -62,11 +63,12 @@ class ExclusiveWritebackCache(tp.Generic[K, V]):
         else:
             return 0
 
-    def sync(self) -> None:
+    def sync(self, timeout: tp.Optional[float] = None) -> None:
         """
         Wait until current tasks are complete.
 
-        Note that this guarantees nothing, and is best-effort only
+        :param timeout: timeout to wait. None means wait indefinitely.
+        :raises WouldWaitMore: if timeout has expired
         """
         while self.get_queue_length() > 0:
             time.sleep(0.1)
@@ -74,8 +76,7 @@ class ExclusiveWritebackCache(tp.Generic[K, V]):
         def fix():
             return
 
-        futures = [self.executor.submit(fix) for _ in range(self.no_concurrent_executors)]
-        wait(futures)
+        sync_threadpool(self.executor, max_wait=timeout)
 
     def _operate(self):
         self.operations += 1

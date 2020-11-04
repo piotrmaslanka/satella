@@ -106,7 +106,13 @@ class MetrifiedThreadPoolExecutor(ThreadPoolExecutor):
         self.executing_time_metric = time_spent_executing or EmptyMetric('')
         self.metric_level = metric_level
         if waiting_tasks is not None:
-            waiting_tasks.callable = lambda: self._work_queue.qsize()
+            waiting_tasks.callable = lambda: self.get_queue_length()
+
+    def get_queue_length(self) -> int:
+        """
+        Return the amount of tasks currently in the queue
+        """
+        return self._work_queue.qsize()
 
     def submit(*args, **kwargs):
         if len(args) >= 2:
