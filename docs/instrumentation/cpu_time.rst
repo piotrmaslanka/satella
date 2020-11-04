@@ -7,20 +7,20 @@ non-critical tasks to until CPU usage falls lower than the average.
 cpu_time does this by periodically monitoring CPU's usage and building your usage profile.
 The profile is refreshed each X minutes.
 
-.. autofunction:: satella.cpu_time.calculate_occupancy_factor
+.. autofunction:: satella.instrumentation.cpu_time.calculate_occupancy_factor
 
-.. autofunction:: satella.cpu_time.sleep_cpu_aware
+.. autofunction:: satella.instrumentation.cpu_time.sleep_cpu_aware
 
 
 Here's the primary thread you can use to work with things:
 
-.. autoclass:: satella.cpu_time.CPUTimeManager
+.. autoclass:: satella.instrumentation.cpu_time.CPUTimeManager
     :members:
 
 And here's a helpful variant of
 :py:class:`satella.coding.concurrent.IntervalTerminableThread`:
 
-.. autoclass:: satella.cpu_time.CPUTimeAwareIntervalTerminableThread
+.. autoclass:: satella.instrumentation.cpu_time.CPUTimeAwareIntervalTerminableThread
     :members:
 
 

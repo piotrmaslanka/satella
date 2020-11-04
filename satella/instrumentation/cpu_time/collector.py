@@ -78,6 +78,16 @@ class CPUTimeManager:
         cp = CPUProfileBuilderThread()
         return cp.percentile(percent)
 
+    @staticmethod
+    def set_window_size(window_size: float) -> None:
+        """
+        Set the time that should be observed in order to build an execution profile.
+
+        :param window_size: time, in seconds
+        """
+        cp = CPUProfileBuilderThread()
+        cp.window_size = window_size
+
 
 def sleep_cpu_aware(seconds: float, of_below: tp.Optional[float] = None,
                     of_above: tp.Optional[float] = None,
@@ -130,7 +140,7 @@ def _calculate_occupancy_factor() -> float:
             used = c.user + c.nice + c.system
     except AttributeError:
         # windows?
-        used = c.user + c.system + c.interrupt
+        used = c.user + c.system + c.interrupt + c.dpc
     cur_time = time.monotonic()
     occupation_factor = used / multiprocessing.cpu_count()
     global previous_timestamp, previous_cf
@@ -149,11 +159,12 @@ def _calculate_occupancy_factor() -> float:
 
 def calculate_occupancy_factor() -> float:
     """
-    Return a float between 0 and 1 telling you how occupied is your system.
-
     Note that this will be the average between now and the time it was last called.
 
-    This in rare cases may block for up to 0.1 seconds
+    This in rare cases (being called the first or the second time)
+    may block for up to 0.1 seconds
+
+    :return: a float between 0 and 1 telling you how occupied CPU-wise is your system.
     """
     c = _calculate_occupancy_factor()
     while c is None:
