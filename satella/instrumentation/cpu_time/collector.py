@@ -23,8 +23,6 @@ class CPUProfileBuilderThread(threading.Thread):
         self.window_size = window_seconds
         self.refresh_each = refresh_each
         self.data = []
-        self.minimum_of = None
-        self.maximum_of = None
         self.percentiles_requested = list(percentiles_requested)
         self.percentile_values = []
         self.percentiles_regenerated = False
@@ -33,7 +31,7 @@ class CPUProfileBuilderThread(threading.Thread):
     def request_percentile(self, percent: float) -> None:
         if percent not in self.percentiles_requested:
             self.percentiles_requested.append(percent)
-        self.percentiles_regenerated = False
+            self.percentiles_regenerated = False
 
     def percentile(self, percent: float) -> float:
         if not self.data:
@@ -57,8 +55,6 @@ class CPUProfileBuilderThread(threading.Thread):
             percentiles.append(percentile(data, percent))
         self.percentile_values = percentiles
         self.percentiles_regenerated = True
-        self.minimum_of = min(data)
-        self.maximum_of = max(data)
         self.data = data
 
     def run(self):
