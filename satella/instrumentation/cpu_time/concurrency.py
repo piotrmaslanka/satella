@@ -2,8 +2,7 @@ import typing as tp
 from abc import abstractmethod, ABCMeta
 
 from satella.coding.concurrent import IntervalTerminableThread
-from satella.instrumentation.cpu_time import sleep_cpu_aware
-from satella.instrumentation.cpu_time.collector import CPUProfileBuilderThread
+from .collector import sleep_cpu_aware, CPUProfileBuilderThread
 from satella.time import measure
 
 
