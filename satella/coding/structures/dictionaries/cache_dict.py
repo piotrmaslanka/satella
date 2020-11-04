@@ -209,7 +209,7 @@ class CacheDict(tp.Mapping[K, V]):
             self.cache_missed.remove(key)
 
 
-class LRUCacheDict(CacheDict):
+class LRUCacheDict(CacheDict[K, V]):
     """
     A dictionary that you can use as a cache with a maximum size, items evicted by LRU policy.
 

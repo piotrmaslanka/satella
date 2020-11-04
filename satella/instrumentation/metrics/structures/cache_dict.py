@@ -3,6 +3,7 @@ import time
 import typing as tp
 
 from satella.coding.structures import CacheDict, LRUCacheDict, ExclusiveWritebackCache
+from satella.coding.typing import K, V
 from .. import Metric
 from ..metric_types.callable import CallableMetric
 from ..metric_types.counter import CounterMetric
@@ -12,7 +13,7 @@ from ..metric_types.measurable_mixin import MeasurableMixin
 logger = logging.getLogger(__name__)
 
 
-class MetrifiedCacheDict(CacheDict):
+class MetrifiedCacheDict(CacheDict[K, V]):
     """
     A CacheDict with metrics!
 
@@ -63,7 +64,7 @@ class MetrifiedCacheDict(CacheDict):
         return super().__getitem__(item)
 
 
-class MetrifiedLRUCacheDict(LRUCacheDict):
+class MetrifiedLRUCacheDict(LRUCacheDict[K, V]):
     """
     A LRUCacheDict with metrics!
 
@@ -123,7 +124,7 @@ class MetrifiedLRUCacheDict(LRUCacheDict):
         return super().__getitem__(item)
 
 
-class MetrifiedExclusiveWritebackCache(ExclusiveWritebackCache):
+class MetrifiedExclusiveWritebackCache(ExclusiveWritebackCache[K, V]):
     __slots__ = ('cache_miss', 'cache_hits')
 
     def __init__(self, *args,
