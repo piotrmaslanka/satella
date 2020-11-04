@@ -51,6 +51,7 @@ class CPUProfileBuilderThread(threading.Thread):
             time.sleep(1)
             data.append(calculate_occupancy_factor())
         percentiles = []
+        data.sort()
         for percent in self.percentiles_requested:
             percentiles.append(percentile(data, percent))
         self.percentile_values = percentiles
@@ -116,7 +117,6 @@ def sleep_cpu_aware(seconds: float, of_below: tp.Optional[float] = None,
         seconds -= time_to_sleep
         if seconds <= 0:
             return False
-        of = calculate_occupancy_factor()
     return False
 
 
