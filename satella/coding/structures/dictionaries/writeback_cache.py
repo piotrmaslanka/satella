@@ -1,8 +1,8 @@
 import time
 import typing as tp
-from concurrent.futures import Executor, ThreadPoolExecutor, wait, ProcessPoolExecutor
+from concurrent.futures import Executor, ThreadPoolExecutor, ProcessPoolExecutor
 
-from satella.coding.concurrent import sync_threadpool
+from satella.coding.concurrent.sync import sync_threadpool
 from satella.coding.concurrent.monitor import Monitor
 from satella.coding.recast_exceptions import silence_excs
 from satella.coding.typing import V, K
@@ -54,11 +54,10 @@ class ExclusiveWritebackCache(tp.Generic[K, V]):
         """
         Return current amount of entries waiting for writeback
         """
+        # noinspection PyProtectedMember
         if isinstance(self.executor, ThreadPoolExecutor):
-            # noinspection PyProtectedMember
             return self.executor._work_queue.qsize()
         elif isinstance(self.executor, ProcessPoolExecutor):
-            # noinspection PyProtectedMember
             return self.executor._call_queue.qsize()
         else:
             return 0

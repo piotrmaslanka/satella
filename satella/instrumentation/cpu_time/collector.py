@@ -12,7 +12,7 @@ from satella.coding.transforms import percentile
 @Singleton
 class CPUProfileBuilderThread(threading.Thread):
     """
-    A CPU profile builder thread
+    A CPU profile builder thread and a core singleton object to use.
 
     :param window_seconds: the amount of seconds for which to collect data
     :param refresh_each: time of seconds to sleep between rebuilding of profiles
@@ -67,26 +67,41 @@ class CPUProfileBuilderThread(threading.Thread):
             self.recalculate()
 
 
-def sleep_except(seconds: float, of_below: tp.Optional[float] = None,
-                 of_above: tp.Optional[float] = None,
-                 check_each: float = 1) -> bool:
+class CPUTimeManager:
+    @staticmethod
+    def percentile(percent: float) -> float:
+        """
+        Return given percentile of current CPU time's profile
+        :param percent: float between 0 and 1
+        :return: the value of the percentile
+        """
+        cp = CPUProfileBuilderThread()
+        return cp.percentile(percent)
+
+
+def sleep_cpu_aware(seconds: float, of_below: tp.Optional[float] = None,
+                    of_above: tp.Optional[float] = None,
+                    check_each: float = 1) -> bool:
     """
     Sleep for specified number of seconds.
 
     Quit earlier if the occupancy factor goes below of_below or above of_above
-    :param seconds:
-    :param of_below:
-    :param of_above:
+    :param seconds: time to sleep
+    :param of_below: occupancy factor below which the sleep will return
+    :param of_above: occupancy factor above which the sleep will return
     :param check_each: amount of seconds to sleep at once
     :return: whether was awoken due to CPU time condition
     """
+    if of_below is None and of_above is None:
+        time.sleep(seconds)
+        return False
     of = calculate_occupancy_factor()
     while seconds > 0:
         if of_above is not None:
-            if of_above < of:
+            if of > of_above:
                 return True
         if of_below is not None:
-            if of_below > of:
+            if of < of_below:
                 return True
         time_to_sleep = min(seconds, check_each)
         time.sleep(time_to_sleep)
@@ -146,5 +161,3 @@ def calculate_occupancy_factor() -> float:
         c = _calculate_occupancy_factor()
     return c
 
-
-calculate_occupancy_factor()

@@ -42,7 +42,6 @@ class TestThreadPoolExecutor(unittest.TestCase):
                                                entries_waiting=entries_waiting)
         self.assertEqual(wbc[5], 3)
         self.assertEqual(b['no_calls'], 1)
-        self.assertEqual(n_th(entries_waiting.to_metric_data().values).value, 0)
         self.assertRaises(KeyError, lambda: wbc[-1])
         self.assertEqual(b['no_calls'], 2)
         self.assertEqual(wbc[5], 3)

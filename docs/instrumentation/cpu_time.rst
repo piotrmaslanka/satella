@@ -1,4 +1,3 @@
-========
 CPU time
 ========
 
@@ -10,6 +9,18 @@ The profile is refreshed each X minutes.
 
 .. autofunction:: satella.cpu_time.calculate_occupancy_factor
 
-.. autofunction:: satella.cpu_time.sleep_except
+.. autofunction:: satella.cpu_time.sleep_cpu_aware
+
+
+Here's the primary thread you can use to work with things:
+
+.. autoclass:: satella.cpu_time.CPUTimeManager
+    :members:
+
+And here's a helpful variant of
+:py:class:`satella.coding.concurrent.IntervalTerminableThread`:
+
+.. autoclass:: satella.cpu_time.CPUTimeAwareIntervalTerminableThread
+    :members:
 
 

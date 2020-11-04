@@ -22,6 +22,7 @@ Visit the project's page at GitHub_!
            coding/sequences
            coding/transforms
            coding/typing
+           instrumentation/cpu_time
            instrumentation/traceback
            instrumentation/memory
            instrumentation/metrics

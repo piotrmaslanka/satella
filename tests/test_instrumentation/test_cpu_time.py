@@ -1,7 +1,7 @@
 import time
 import unittest
 
-from satella.cpu_time import calculate_occupancy_factor, sleep_except, \
+from satella.instrumentation.cpu_time import calculate_occupancy_factor, sleep_cpu_aware, \
     CPUTimeAwareIntervalTerminableThread
 
 
@@ -25,13 +25,12 @@ class TestCPUTime(unittest.TestCase):
 
     def test_sleep_except(self):
         c = time.monotonic()
-        sleep_except(1)
+        sleep_cpu_aware(1)
         self.assertGreaterEqual(time.monotonic() - c, 1)
 
     def test_calculate_occupancy_factor(self):
         c = calculate_occupancy_factor()
         self.assertGreaterEqual(c, 0)
-        self.assertLessEqual(c, 1)
         c = calculate_occupancy_factor()
         self.assertGreaterEqual(c, 0)
         self.assertLessEqual(c, 1)

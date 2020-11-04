@@ -6,7 +6,7 @@ from .id_allocator import IDAllocator
 from .locked_dataset import LockedDataset
 from .locked_structure import LockedStructure
 from .monitor import MonitorList, Monitor, MonitorDict, RMonitor
-from .sync_threadpool import sync_threadpool
+from .sync import sync_threadpool
 from .thread import TerminableThread, Condition, SingleStartThread, call_in_separate_thread, \
     BogusTerminableThread, IntervalTerminableThread
 from .timer import Timer
