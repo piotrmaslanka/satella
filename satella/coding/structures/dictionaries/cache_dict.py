@@ -43,7 +43,6 @@ class CacheDict(tp.Mapping[K, V]):
         that will be given to user instead of throwing KeyError. If not given (default),
         KeyError will be thrown
     """
-
     def __len__(self) -> int:
         return len(self.data)
 

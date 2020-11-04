@@ -2,8 +2,10 @@ import logging
 import time
 import typing as tp
 
-from satella.coding.structures import CacheDict, LRUCacheDict
+from satella.coding.structures import CacheDict, LRUCacheDict, ExclusiveWritebackCache
 from .. import Metric
+from ..metric_types.callable import CallableMetric
+from ..metric_types.counter import CounterMetric
 from ..metric_types.measurable_mixin import MeasurableMixin
 
 
@@ -24,9 +26,9 @@ class MetrifiedCacheDict(CacheDict):
                  value_getter_executor=None, cache_failures_interval=None,
                  time_getter=time.monotonic,
                  default_value_factory=None,
-                 cache_hits: tp.Optional[Metric] = None,
-                 cache_miss: tp.Optional[Metric] = None,
-                 refreshes: tp.Optional[Metric] = None,
+                 cache_hits: tp.Optional[CounterMetric] = None,
+                 cache_miss: tp.Optional[CounterMetric] = None,
+                 refreshes: tp.Optional[CounterMetric] = None,
                  how_long_refresh_takes: tp.Optional[MeasurableMixin] = None):
         if refreshes:
             old_value_getter = value_getter
@@ -119,3 +121,28 @@ class MetrifiedLRUCacheDict(LRUCacheDict):
             if self.cache_miss:
                 self.cache_miss.runtime(+1)
         return super().__getitem__(item)
+
+
+class MetrifiedExclusiveWritebackCache(ExclusiveWritebackCache):
+    __slots__ = ('cache_miss', 'cache_hits')
+
+    def __init__(self, *args,
+                 cache_hits: tp.Optional[CounterMetric] = None,
+                 cache_miss: tp.Optional[CounterMetric] = None,
+                 entries_waiting: tp.Optional[CallableMetric] = None,
+                 **kwargs):
+        super().__init__(*args,**kwargs)
+        self.cache_miss = cache_miss
+        self.cache_hits = cache_hits
+        if entries_waiting is not None:
+            entries_waiting.callable = self.get_queue_length()
+
+    def __getitem__(self, item):
+        if item in self.in_cache:
+            if self.cache_hits:
+                self.cache_hits.runtime(+1)
+        else:
+            if self.cache_miss:
+                self.cache_miss.runtime(+1)
+        return super().__getitem__(item)
+

@@ -5,7 +5,7 @@ from satella.instrumentation.metrics import getMetric
 
 import time
 from satella.instrumentation.metrics.structures import MetrifiedThreadPoolExecutor, \
-    MetrifiedCacheDict, MetrifiedLRUCacheDict
+    MetrifiedCacheDict, MetrifiedLRUCacheDict, MetrifiedExclusiveWritebackCache
 from .test_metrics import choose
 
 
@@ -14,6 +14,49 @@ def wait():
 
 
 class TestThreadPoolExecutor(unittest.TestCase):
+    def test_exclusive_writeback_cache(self):
+        cache_hits = getMetric('wbc.cachedict.hits', 'counter')
+        cache_miss = getMetric('wbc.cachedict.miss', 'counter')
+        entries_waiting = getMetric('wbc.cachedict.waiting', 'callable')
+        a = {5: 3, 4: 2, 1: 0}
+        b = {'no_calls': 0}
+
+        def setitem(k, v):
+            nonlocal a, b
+            b['no_calls'] += 1
+            a[k] = v
+
+        def getitem(k):
+            nonlocal a, b
+            b['no_calls'] += 1
+            return a[k]
+
+        def delitem(k):
+            nonlocal a, b
+            b['no_calls'] += 1
+            del a[k]
+
+        wbc = MetrifiedExclusiveWritebackCache(setitem, getitem, delitem,
+                                               cache_hits=cache_hits,
+                                               cache_miss=cache_miss,
+                                               entries_waiting=entries_waiting)
+        self.assertEqual(wbc[5], 3)
+        self.assertEqual(b['no_calls'], 1)
+        self.assertEqual(n_th(entries_waiting.to_metric_data().values).value, 0)
+        self.assertRaises(KeyError, lambda: wbc[-1])
+        self.assertEqual(b['no_calls'], 2)
+        self.assertEqual(wbc[5], 3)
+        self.assertEqual(b['no_calls'], 2)
+        self.assertEqual(n_th(cache_miss.to_metric_data().values).value, 2)
+        self.assertEqual(n_th(cache_hits.to_metric_data().values).value, 1)
+        wbc[5] = 2
+        wbc.sync()
+        self.assertEqual(a[5], 2)
+        self.assertEqual(b['no_calls'], 3)
+        del wbc[4]
+        wbc.sync()
+        self.assertRaises(KeyError, lambda: a[4])
+
     def test_metrified_cache_dict(self):
         cache_hits = getMetric('cachedict.hits', 'counter')
         cache_miss = getMetric('cachedict.miss', 'counter')

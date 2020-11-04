@@ -26,8 +26,7 @@ class ExclusiveWritebackCache(tp.Generic[K, V]):
     """
     __slots__ = ('executor', 'read_method', 'write_method', 'delete_method',
                  'no_concurrent_executors', 'in_cache', 'cache_lock',
-                 'cache', 'operations', '_get_queue_length',
-                 'store_key_errors')
+                 'cache', 'operations', 'store_key_errors')
 
     def __init__(self, write_method: tp.Callable[[K, V], None],
                  read_method: tp.Callable[[K], V],
@@ -50,26 +49,26 @@ class ExclusiveWritebackCache(tp.Generic[K, V]):
         self.cache = {}
         self.operations = 0
 
+    def get_queue_length(self) -> int:
+        """
+        Return current amount of entries waiting for writeback
+        """
         if isinstance(self.executor, ThreadPoolExecutor):
-            def get_queue_length():
-                # noinspection PyProtectedMember
-                return self.executor._work_queue.qsize()
+            # noinspection PyProtectedMember
+            return self.executor._work_queue.qsize()
         elif isinstance(self.executor, ProcessPoolExecutor):
-            def get_queue_length():
-                # noinspection PyProtectedMember
-                return self.executor._call_queue.qsize()
+            # noinspection PyProtectedMember
+            return self.executor._call_queue.qsize()
         else:
-            def get_queue_length():
-                return 0
-        self._get_queue_length = get_queue_length
+            return 0
 
-    def sync(self):
+    def sync(self) -> None:
         """
         Wait until current tasks are complete.
 
         Note that this guarantees nothing, and is best-effort only
         """
-        while self._get_queue_length() > 0:
+        while self.get_queue_length() > 0:
             time.sleep(0.1)
 
         def fix():
