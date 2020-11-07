@@ -21,6 +21,8 @@ class Closeable:
 
     You should extend both __init__ and close()
     """
+    __slots__ = ('__finalized', )
+
     def __init__(self):
         self.__finalized = False
 
@@ -36,9 +38,12 @@ class Closeable:
         >>>             .. clean up ..
 
         :return: whether the cleanup should proceed
+        :raises RuntimeError: the constructor was not invoked
         """
         try:
             return not self.__finalized
+        except AttributeError:
+            raise RuntimeError('__finalized not found, did you forget to call the constructor?')
         finally:
             self.__finalized = True
 
