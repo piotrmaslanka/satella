@@ -120,8 +120,8 @@ def sleep_cpu_aware(seconds: float, of_below: tp.Optional[float] = None,
     return False
 
 
-previous_cf: float = None
-previous_timestamp: float = None
+previous_cf = None           # type: float
+previous_timestamp = None    # type: float
 
 
 def _calculate_occupancy_factor() -> float:

@@ -20,6 +20,12 @@ LockedDataset
 .. autoclass:: satella.coding.concurrent.LockedDataset
     :members:
 
+PeekableQueue
+=============
+
+.. autoclass:: satella.coding.concurrent.PeekableQueue
+    :members:
+
 TerminableThread
 ================
 
