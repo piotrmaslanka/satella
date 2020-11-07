@@ -20,6 +20,7 @@ from .recast_exceptions import rethrow_as, silence_excs, catch_exception, log_ex
     raises_exception
 
 __all__ = [
+    'Closeable',
     'overload', 'class_or_instancemethod',
     'update_if_not_none', 'DocsFromParent', 'update_key_if_none', 'queue_iterator',
     'update_attr_if_none', 'update_key_if_not_none', 'source_to_function',
