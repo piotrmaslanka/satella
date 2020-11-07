@@ -6,6 +6,52 @@ from queue import Queue
 from satella.coding.recast_exceptions import rethrow_as
 
 
+class Closeable:
+    """
+    A class that needs to clean up it's own resources.
+
+    It's destructor calls .close(). Use like this:
+
+    >>> class MyClose(Closeable):
+    >>>     def close(self):
+    >>>         if super().close():
+    >>>             .. clean up ..
+
+    Can be also used as a context manager, with close() called upon __exit__.
+
+    You should extend both __init__ and close()
+    """
+    def __init__(self):
+        self.__finalized = False
+
+    def close(self) -> bool:
+        """
+        Check if the resource needs cleanup, and clean up this resource.
+
+        Use like this:
+
+        >>> class MyClose(Closeable):
+        >>>     def close(self):
+        >>>         if super().close():
+        >>>             .. clean up ..
+
+        :return: whether the cleanup should proceed
+        """
+        try:
+            return not self.__finalized
+        finally:
+            self.__finalized = True
+
+    def __del__(self) -> None:
+        self.close()
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.close()
+
+
 def queue_iterator(queue: Queue) -> tp.Iterator:
     """
     Syntactic sugar for

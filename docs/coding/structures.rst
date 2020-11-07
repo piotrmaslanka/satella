@@ -324,3 +324,8 @@ Subqueue
 .. autoclass:: satella.coding.structures.Subqueue
     :members:
 
+Closeable
+---------
+
+.. autoclass:: satella.coding.Closeable
+    :members:

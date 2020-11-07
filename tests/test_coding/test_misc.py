@@ -1,12 +1,26 @@
+import gc
 import unittest
 
 from satella.coding import update_key_if_not_none, overload, class_or_instancemethod, \
-    update_key_if_true, get_arguments, call_with_arguments, chain_callables
+    update_key_if_true, get_arguments, call_with_arguments, chain_callables, Closeable
 from satella.coding.structures import HashableMixin
 from satella.coding.transforms import jsonify, intify
 
 
 class TestCase(unittest.TestCase):
+
+    def test_closeable(self):
+        a = {'test': False}
+
+        class MyClose(Closeable):
+            def close(self):
+                if super().close():
+                    a['test'] = True
+
+        b = MyClose()
+        del b
+        gc.collect()
+        self.assertTrue(a['test'])
 
     def test_chain_callables(self):
         def a():
