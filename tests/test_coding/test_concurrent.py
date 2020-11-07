@@ -393,6 +393,7 @@ class TestConcurrent(unittest.TestCase):
 
         class MyThread(TerminableThread):
             def run(self) -> None:
+                self.safe_sleep(-2)
                 self.safe_sleep(0.5)
                 interlock_cond.notify()
                 cond.wait()

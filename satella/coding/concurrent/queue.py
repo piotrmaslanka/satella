@@ -64,6 +64,9 @@ class PeekableQueue(tp.Generic[T]):
                                 return item_getter(self.queue)
                             finally:
                                 self.lock.release()
+                    else:
+                        self.lock.release()
+                        raise Empty('queue is empty')
 
     def get(self, timeout: tp.Optional[float] = None) -> T:
         """

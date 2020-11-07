@@ -263,6 +263,8 @@ class TerminableThread(threading.Thread):
         Sleep for interval, waking up each wake_up_each seconds to check if terminating,
         finish earlier if is terminating.
 
+        This will do *the right thing* when passed a negative interval.
+
         :param interval: Time to sleep in total
         :param wake_up_each: Amount of seconds to wake up each
         :return: status of _terminating flag at the exit
