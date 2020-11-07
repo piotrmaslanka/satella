@@ -78,6 +78,9 @@ class Condition(PythonCondition):
         :raises ResourceLocked: unable to acquire the underlying lock within specified timeout.
         :raises WouldWaitMore: wait's timeout has expired
         """
+        if timeout < 0:
+            timeout = 0
+
         with measure() as measurement:
             if timeout is None:
                 self.acquire()

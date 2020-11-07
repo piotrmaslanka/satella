@@ -1,3 +1,4 @@
+import queue
 import typing as tp
 import warnings
 
@@ -5,7 +6,7 @@ __all__ = ['BaseSatellaError', 'ResourceLockingError', 'ResourceNotLocked', 'Res
            'ConfigurationValidationError', 'ConfigurationError', 'ConfigurationSchemaError',
            'PreconditionError', 'MetricAlreadyExists', 'BaseSatellaException', 'CustomException',
            'CodedCustomException', 'CodedCustomExceptionMetaclass', 'WouldWaitMore',
-           'ProcessFailed', 'AlreadyAllocated']
+           'ProcessFailed', 'AlreadyAllocated', 'Empty']
 
 
 class CustomException(Exception):
@@ -160,6 +161,10 @@ class PreconditionError(BaseSatellaError, ValueError):
     """
     A precondition was not met for the argument
     """
+
+
+class Empty(BaseSatellaError, queue.Empty):
+    """The queue was empty"""
 
 
 class ConfigurationError(BaseSatellaError, ValueError):

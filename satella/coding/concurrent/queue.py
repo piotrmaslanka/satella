@@ -3,36 +3,67 @@ import typing as tp
 import collections
 import threading
 
+from satella.coding.recast_exceptions import rethrow_as
+from satella.coding.concurrent.thread import Condition
 from satella.coding.typing import T
-from satella.exceptions import WouldWaitMore
+from satella.exceptions import WouldWaitMore, Empty
+from satella.time import measure
 
 
 class PeekableQueue(tp.Generic[T]):
     """
     A thread-safe FIFO queue that supports peek()ing for elements.
     """
-    __slots__ = ('queue', 'lock')
+    __slots__ = ('queue', 'lock', 'inserted_condition')
 
     def __init__(self):
         super().__init__()
         self.queue = collections.deque()
         self.lock = threading.Lock()
+        self.inserted_condition = Condition()
 
     def put(self, item: T) -> None:
         """
         Add an element to the queue
-        :param item:
-        :return:
+
+        :param item: element to add
         """
         with self.lock:
             self.queue.append(item)
+        self.inserted_condition.notify()
 
-    def __acquire(self, timeout: tp.Optional[float]) -> None:
-        if timeout is None:
-            self.lock.acquire()
+    @rethrow_as(WouldWaitMore, Empty)
+    def __get(self, timeout, item_getter) -> T:
+        self.lock.acquire()
+        if len(self.queue):
+            # Fast path
+            try:
+                return item_getter(self.queue)
+            finally:
+                self.lock.release()
         else:
-            if not self.lock.acquire(blocking=False, timeout=timeout):
-                raise WouldWaitMore()
+            if timeout is None:
+                while True:
+                    self.lock.release()
+                    self.inserted_condition.wait()
+                    self.lock.acquire()
+                    if len(self.queue):
+                        try:
+                            return item_getter(self.queue)
+                        finally:
+                            self.lock.release()
+            else:
+                with measure() as measurement:
+                    while measurement() < timeout:
+                        self.lock.release()
+                        # raises WouldWaitMore
+                        self.inserted_condition.wait(timeout=timeout-measurement())
+                        self.lock.acquire()
+                        if len(self.queue):
+                            try:
+                                return item_getter(self.queue)
+                            finally:
+                                self.lock.release()
 
     def get(self, timeout: tp.Optional[float] = None) -> T:
         """
@@ -41,14 +72,9 @@ class PeekableQueue(tp.Generic[T]):
         :param timeout: maximum amount of seconds to wait. Default value of None
             means wait as long as necessary
         :return: the item
-        :raise WouldWaitMore: timeout has expired
+        :raise Empty: queue was empty
         """
-        self.__acquire(timeout)
-
-        try:
-            return self.queue.popleft()
-        finally:
-            self.lock.release()
+        return self.__get(timeout, lambda queue: queue.popleft())
 
     def peek(self, timeout: tp.Optional[float] = None) -> T:
         """
@@ -59,12 +85,7 @@ class PeekableQueue(tp.Generic[T]):
         :return: the item
         :raise WouldWaitMore: timeout has expired
         """
-        self.__acquire(timeout)
-
-        try:
-            return self.queue[0]
-        finally:
-            self.lock.release()
+        return self.__get(timeout, lambda queue: queue[0])
 
     def qsize(self) -> int:
         """

@@ -13,17 +13,28 @@ from satella.coding.concurrent import TerminableThread, CallableGroup, Condition
     WrappingFuture, PeekableQueue
 from satella.coding.concurrent.futures import call_in_future, ExecutorWrapper
 from satella.coding.sequences import unique
-from satella.exceptions import WouldWaitMore, AlreadyAllocated
+from satella.exceptions import WouldWaitMore, AlreadyAllocated, Empty
 
 
 class TestConcurrent(unittest.TestCase):
 
     def test_peekable_queue(self):
         pkb = PeekableQueue()
+
+        @call_in_separate_thread()
+        def put_to_queue():
+            time.sleep(0.5)
+            pkb.put(1)
         pkb.put(1)
         self.assertEqual(pkb.qsize(), 1)
         self.assertEqual(pkb.peek(), 1)
         self.assertEqual(pkb.qsize(), 1)
+        self.assertEqual(pkb.get(), 1)
+        self.assertEqual(pkb.qsize(), 0)
+        put_to_queue()
+        self.assertRaises(Empty, lambda: pkb.get(0.2))
+        self.assertEqual(pkb.get(0.7), 1)
+        put_to_queue()
         self.assertEqual(pkb.get(), 1)
         self.assertEqual(pkb.qsize(), 0)
 
