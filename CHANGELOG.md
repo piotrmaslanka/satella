@@ -4,3 +4,4 @@
 * `Closeable` has __slots__
 * fixed a bug in `PeekableQueue`
 * `TerminableThread.safe_sleep` will do the right thing when passed a negative value
+* `Closeable` will output a message if you forgot to call the constructor
