@@ -4,6 +4,8 @@ import typing as tp
 from concurrent.futures import Future as PythonFuture
 from concurrent.futures._base import CANCELLED, CANCELLED_AND_NOTIFIED, FINISHED
 
+from satella.coding.typing import T
+
 try:
     from concurrent.futures import InvalidStateError
 except ImportError:
@@ -17,7 +19,7 @@ concurrent.futures._base._STATE_TO_DESCRIPTION_MAP[PRE_FINISHED] = 'pre-finished
 concurrent.futures._base._FUTURE_STATES.append(PRE_FINISHED)
 
 
-class Future(PythonFuture):
+class Future(PythonFuture, tp.Generic[T]):
     """
     A future that allows it's callback handlers to change it's result before presenting
     it to the user.
@@ -117,7 +119,7 @@ class Future(PythonFuture):
             except Exception:
                 LOGGER.exception('exception calling callback for %r', self)
 
-    def result(self, timeout=None):
+    def result(self, timeout=None) -> T:
         if self._state == PRE_FINISHED:
             return self.__get_result()
         else:
@@ -129,7 +131,7 @@ class Future(PythonFuture):
         else:
             return super().exception(timeout)
 
-    def set_result(self, result):
+    def set_result(self, result: T) -> None:
         """Sets the return value of work associated with the future.
 
         Should only be used by Executor implementations and unit tests.
