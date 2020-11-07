@@ -27,6 +27,13 @@ class PeekableQueue(tp.Generic[T]):
         with self.lock:
             self.queue.append(item)
 
+    def __acquire(self, timeout: tp.Optional[float]) -> None:
+        if timeout is None:
+            self.lock.acquire()
+        else:
+            if not self.lock.acquire(blocking=False, timeout=timeout):
+                raise WouldWaitMore()
+
     def get(self, timeout: tp.Optional[float] = None) -> T:
         """
         Get an element.
@@ -36,17 +43,12 @@ class PeekableQueue(tp.Generic[T]):
         :return: the item
         :raise WouldWaitMore: timeout has expired
         """
-        if timeout is None:
-            self.lock.acquire()
-        else:
-            if not self.lock.acquire(blocking=False, timeout=timeout):
-                raise WouldWaitMore()
+        self.__acquire(timeout)
 
-        # protected section
-        item = self.queue.popleft()
-
-        self.lock.release()
-        return item
+        try:
+            return self.queue.popleft()
+        finally:
+            self.lock.release()
 
     def peek(self, timeout: tp.Optional[float] = None) -> T:
         """
@@ -57,17 +59,12 @@ class PeekableQueue(tp.Generic[T]):
         :return: the item
         :raise WouldWaitMore: timeout has expired
         """
-        if timeout is None:
-            self.lock.acquire()
-        else:
-            if not self.lock.acquire(blocking=False, timeout=timeout):
-                raise WouldWaitMore()
+        self.__acquire(timeout)
 
-        # protected section
-        item = self.queue[0]
-
-        self.lock.release()
-        return item
+        try:
+            return self.queue[0]
+        finally:
+            self.lock.release()
 
     def qsize(self) -> int:
         """
