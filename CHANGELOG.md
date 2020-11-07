@@ -1,4 +1,2 @@
-# v2.14.2
+# v2.14.3
 
-* satella futures are now generic
-* added `Closeable`
