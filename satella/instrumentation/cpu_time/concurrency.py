@@ -15,7 +15,7 @@ class CPUTimeAwareIntervalTerminableThread(IntervalTerminableThread, metaclass=A
         include the time spent on calling .loop(), the rest of this time will
         be spent safe_sleep()ing.
     :param max_sooner: amount of seconds that is ok to call this earlier.
-        Default is 6 times seconds.
+        Default is 10% seconds.
     :param percentile: percentile that CPU usage has to fall below to call it earlier.
     :param wakeup_interval: amount of seconds to wake up between to check for _terminating status
     """
@@ -24,7 +24,7 @@ class CPUTimeAwareIntervalTerminableThread(IntervalTerminableThread, metaclass=A
                  wakeup_interval: float = 3.0, *args, **kwargs):
         self.seconds = seconds
         self.wakeup_interval = wakeup_interval
-        self.max_sooner = max_sooner or seconds * 6
+        self.max_sooner = max_sooner or seconds * 0.1
         cp_bt = CPUProfileBuilderThread()
         cp_bt.request_percentile(percentile)
         self.percentile = percentile
