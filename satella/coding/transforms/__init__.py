@@ -1,4 +1,5 @@
 import collections
+import enum
 import random
 import typing as tp
 
@@ -153,6 +154,12 @@ def stringify(obj: tp.Union[tp.Any], stringifier: tp.Callable[[tp.Any], str] = s
     Note that if you use recursively, then dicts and lists are allowed to be valid elements of the
     returned representation!
 
+    Note that enums will be converted to their labels. eg:
+
+    >>> class Enum(enum.Enum):
+    >>>     A = 0
+    >>> assert stringify(Enum.A) == 'A'
+
     :param obj: a list or a dict
     :param stringifier: function that accepts any arguments and returns a string representation
     :param recursively: whether to recursively stringify elements, ie. stringify will be called on
@@ -163,6 +170,8 @@ def stringify(obj: tp.Union[tp.Any], stringifier: tp.Callable[[tp.Any], str] = s
     """
     if isinstance(obj, str):
         return obj
+    elif isinstance(obj, enum.Enum):
+        return obj.name
     elif isinstance(obj, collections.abc.Mapping):
         make_str = (lambda obj2: stringify(obj2, stringifier, True, str_none)) if recursively else \
             stringifier

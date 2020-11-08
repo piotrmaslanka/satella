@@ -1,3 +1,4 @@
+import enum
 import gc
 import unittest
 
@@ -125,6 +126,10 @@ class TestCase(unittest.TestCase):
             def __str__(self):
                 raise TypeError()
 
+        class Enu(enum.IntEnum):
+            A = 0
+
+        self.assertEqual(jsonify(Enu.A), 0)
         self.assertEqual(jsonify(iterate()), [5])
         self.assertEqual(jsonify([iterate(), iterate()]), [[5], [5]])
         self.assertEqual(jsonify({'5': iterate()}), {'5': [5, ]})

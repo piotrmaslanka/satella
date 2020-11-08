@@ -5,3 +5,4 @@
 * fixed a bug in `PeekableQueue`
 * `TerminableThread.safe_sleep` will do the right thing when passed a negative value
 * `Closeable` will output a message if you forgot to call the constructor
+* fixed handling of enums by `stringify` and `jsonify`

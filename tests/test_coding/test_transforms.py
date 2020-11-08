@@ -1,3 +1,4 @@
+import enum
 import unittest
 
 from satella.coding.transforms import stringify, split_shuffle_and_join, one_tuple, \
@@ -93,6 +94,11 @@ class TestTransforms(unittest.TestCase):
         self.assertTrue(x == [2, 4, 1, 3] or x == [4, 2, 1, 3])
 
     def test_stringify(self):
+        class Enum(enum.Enum):
+            A = 0
+
+        self.assertEqual(stringify(Enum.A), 'A')
+
         dct = {1: 2, 3: 4, 5: 6}
         self.assertEqual(stringify(dct), {'1': '2', '3': '4', '5': '6'})
 
