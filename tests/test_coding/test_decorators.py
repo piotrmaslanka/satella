@@ -6,7 +6,8 @@ from socket import socket
 from satella.coding import wraps, chain_functions, postcondition, \
     log_exceptions, queue_get, precondition, short_none
 from satella.coding.decorators import auto_adapt_to_methods, attach_arguments, \
-    execute_before, loop_while, memoize, copy_arguments, replace_argument_if
+    execute_before, loop_while, memoize, copy_arguments, replace_argument_if, \
+    retry
 from satella.coding.predicates import x
 from satella.exceptions import PreconditionError
 
@@ -15,10 +16,23 @@ logger = logging.getLogger(__name__)
 
 class TestDecorators(unittest.TestCase):
 
+    def test_retry(self):
+        a = {'test': 0, 'limit': 2}
+
+        @retry(3, ValueError, swallow_exception=False)
+        def do_op():
+            a['test'] += 1
+            if a['test'] < a['limit']:
+                raise ValueError()
+
+        do_op()
+        a['limit'] = 10
+        self.assertRaises(ValueError, do_op)
+
     def test_replace_argument_if(self):
-        @replace_argument_if('x', x.int(), str)
-        def ints_only(x):
-            self.assertEqual(x, 2)
+        @replace_argument_if('y', x.int(), str)
+        def ints_only(y):
+            self.assertEqual(y, 2)
         ints_only(2)
         ints_only('2')
 
