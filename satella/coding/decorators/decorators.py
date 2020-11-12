@@ -113,7 +113,7 @@ def wraps(cls_to_wrap: tp.Type) -> tp.Callable[[tp.Type], tp.Type]:
         if hasattr(cls_to_wrap, '__name__'):
             try:
                 cls.__name__ = cls_to_wrap.__name__
-            except AttributeError:
+            except (AttributeError, TypeError):
                 pass
         if hasattr(cls_to_wrap, '__module__'):
             try:
