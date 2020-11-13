@@ -123,7 +123,7 @@ def wraps(cls_to_wrap: tp.Type) -> tp.Callable[[tp.Type], tp.Type]:
         if hasattr(cls_to_wrap, '__annotations__'):
             try:
                 cls.__annotations__ = cls_to_wrap.__annotations__
-            except AttributeError:
+            except (AttributeError, TypeError):
                 pass
         try:
             sig = inspect.signature(cls_to_wrap)
