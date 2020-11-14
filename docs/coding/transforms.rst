@@ -1,5 +1,5 @@
-Rudimentary data transforms
-===========================
+Rudimentary data transforms and algorithms
+==========================================
 
 
 .. autofunction:: satella.coding.transforms.intify
