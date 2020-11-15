@@ -3,14 +3,11 @@ import itertools
 import math
 from abc import ABCMeta, abstractmethod
 import typing as tp
-import logging
 
-from satella.coding import RMonitor
+from satella.coding.concurrent.monitor import RMonitor
 from satella.coding.recast_exceptions import silence_excs
 from satella.coding.sequences import try_close
 from satella.coding.typing import V, K, KVTuple
-
-logger = logging.getLogger(__name__)
 
 
 class DBStorage(metaclass=ABCMeta):
