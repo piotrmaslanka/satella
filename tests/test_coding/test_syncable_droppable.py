@@ -8,6 +8,21 @@ from satella.coding.structures import DBStorage, SyncableDroppable
 from satella.coding.typing import K, KVTuple, V
 
 
+class Iterator:
+    def __init__(self, db_storage, it: tp.Iterator):
+        self.it = it
+        self.db_storage = db_storage
+
+    def __iter__(self):
+        return self.it
+
+    def __next__(self):
+        return next(self.it)
+
+    def close(self):
+        self.db_storage.iterators -= 1
+
+
 class MyDBStorage(DBStorage):
     def delete(self, key: K) -> None:
         index = index_of(x[0] == key, self.data)
@@ -21,16 +36,19 @@ class MyDBStorage(DBStorage):
 
     def iterate(self, starting_key: tp.Optional[K]) -> tp.Iterator[KVTuple]:
         if starting_key is None:
-            return iter(self.data)
+            it = iter(self.data)
         else:
             index = bisect.bisect_left([y[0] for y in self.data], starting_key)
-            return iter(self.data[index:])
+            it = iter(self.data[index:])
+        self.iterators += 1
+        return Iterator(self, it)
 
     def __init__(self):
         self.data = []          # type: tp.List[KVtuple]
         self.started = None
         self.stopped = None
         self.synced = None
+        self.iterators = 0
 
     def on_change_start_entry(self, start_entry: tp.Optional[K]) -> None:
         self.started = start_entry
@@ -76,3 +94,4 @@ class TestSyncableDroppable(unittest.TestCase):
         self.assertEqual(db.data, [(200, 5), (220, 5), (305, 5), (400, 5), (405, 5), (409, 5)])
         sd.cleanup_keep_in_db()
         self.assertEqual(db.data, [(400, 5), (405, 5), (409, 5)])
+        self.assertFalse(db.iterators)

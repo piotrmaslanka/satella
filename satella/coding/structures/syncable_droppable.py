@@ -192,8 +192,7 @@ class SyncableDroppable(RMonitor, tp.Generic[K, V]):
                     self.start_entry = self.stop_entry = None
                 return True
         finally:
-            with silence_excs(AttributeError):
-                iterator.close()
+            try_close(iterator)
         return False
 
     @RMonitor.synchronized
@@ -298,19 +297,22 @@ class SyncableDroppable(RMonitor, tp.Generic[K, V]):
                 # We have to start off the disk
                 data = []
                 iterator = self.db_storage.iterate(self.start_entry)
-                while len(data) < maximum_entries:
-                    try:
-                        data.append(next(iterator))
-                    except StopIteration:
-                        for index, tpl in enumerate(self.data_in_memory):
-                            if len(data) >= maximum_entries:
-                                break
-                            if self.synced_up_to is not None:
-                                if tpl[0] > self.synced_up_to:
+                try:
+                    while len(data) < maximum_entries:
+                        try:
+                            data.append(next(iterator))
+                        except StopIteration:
+                            for index, tpl in enumerate(self.data_in_memory):
+                                if len(data) >= maximum_entries:
                                     break
-                        return itertools.chain(data, self.data_in_memory[:index])
-                else:
-                    return data
+                                if self.synced_up_to is not None:
+                                    if tpl[0] > self.synced_up_to:
+                                        break
+                            return itertools.chain(data, self.data_in_memory[:index])
+                    else:
+                        return data
+                finally:
+                    try_close(iterator)
 
     def on_synced_up_to(self, key: K) -> None:
         """
