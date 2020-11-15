@@ -92,6 +92,8 @@ class TestSyncableDroppable(unittest.TestCase):
         sd.on_new_data(510, 5)
         sd.cleanup_keep_in_memory()
         self.assertEqual(db.data, [(200, 5), (220, 5), (305, 5), (400, 5), (405, 5), (409, 5)])
+        self.assertEqual(list(sd.get_archive(220, 420)), [(220, 5), (305, 5), (400, 5), (405, 5), (409, 5)])
         sd.cleanup_keep_in_db()
         self.assertEqual(db.data, [(400, 5), (405, 5), (409, 5)])
         self.assertFalse(db.iterators)
+        self.assertEqual(sd.get_latest_value(), (510, 5))

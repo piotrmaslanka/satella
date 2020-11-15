@@ -88,6 +88,8 @@ class SyncableDroppable(RMonitor, tp.Generic[K, V]):
     For brevity, this will refer to keys as timestamps. The keys must be __eq__able, comparable
     and subtractable.
 
+    A rule is that an item can never be both in memory and in the DB.
+
     :param db_storage: a DBStorage implementation of your own provision, that serves as class'
         interface with the database
     :param start_entry: earliest timestamp stored or None if no data is stored
@@ -111,6 +113,7 @@ class SyncableDroppable(RMonitor, tp.Generic[K, V]):
                  span_to_keep_in_memory: int, span_to_keep_in_db: int):
         super().__init__()
         assert span_to_keep_in_memory and span_to_keep_in_db, 'One of spans was false!'
+        assert span_to_keep_in_db > span_to_keep_in_memory, 'Invalid span'
         self.db_storage = db_storage                              # type: DBStorage
         self._start_entry = start_entry                            # type: K
         self._stop_entry = stop_entry                              # type: K
@@ -195,8 +198,62 @@ class SyncableDroppable(RMonitor, tp.Generic[K, V]):
             try_close(iterator)
         return False
 
+    def get_archive(self, start: K, stop: K) -> tp.Iterator[KVTuple]:
+        """
+        Get some historic data that is kept both in the DB and in the memory
+
+        :param start: starting key (included)
+        :param stop: stopping key (included)
+        :return: a iterator of KVTuple
+        """
+        if not self.data_in_memory:
+            return []
+        if self.first_key_in_memory <= start:
+            # We'll serve it from memory
+            for key, value in self.data_in_memory:
+                if key < start:
+                    continue
+                if key > stop:
+                    return
+                yield key, value
+        else:
+            it = self.db_storage.iterate(start)
+            try:
+                for key, value in it:
+                    if key < start:
+                        continue
+                    if key > stop:
+                        return
+                    yield key, value
+                # We must iterate from the memory
+                if self.data_in_memory:
+                    yield from self.get_archive(self.first_key_in_memory, stop)
+            finally:
+                try_close(it)
+
+    def get_latest_value(self) -> KVTuple:
+        """
+        Get the piece of data that was added here last
+
+        :return: a tuple of (key, value)
+        :raise ValueError: no data in series
+        """
+        if self.stop_entry is None:
+            raise ValueError('No data in series')
+        if self.data_in_memory:
+            return self.data_in_memory[-1]
+        else:
+            iterator = self.db_storage.iterate(self.stop_entry)
+            try:
+                return next(iterator)
+            finally:
+                iterator.close()
+
     @RMonitor.synchronized
     def cleanup_keep_in_memory(self) -> None:
+        """
+        Eject values from memory that should reside in the DB onto the DB
+        """
         first_key = self.first_key_in_memory
         if first_key is None:
             return
