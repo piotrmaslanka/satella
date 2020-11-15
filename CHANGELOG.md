@@ -3,3 +3,4 @@
 * added `KVTuple`
 * fixed `Appendable`
 * added `Comparable`
+* added `try_close`

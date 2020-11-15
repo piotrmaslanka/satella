@@ -8,6 +8,19 @@ from ..recast_exceptions import rethrow_as, silence_excs
 from ..typing import Iteratable, T, U, Predicate
 
 
+def try_close(iterator: tp.Iterator) -> None:
+    """
+    Try to invoke close() on an iterator. Do nothing if provided iterator doesn't have a .close()
+    method.
+
+    :param iterator: iterator to close
+    """
+    try:
+        iterator.close()
+    except AttributeError:
+        pass
+
+
 def length(iterator: Iteratable) -> int:
     """
     Return the length of an iterator, exhausting it by the way

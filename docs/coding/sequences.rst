@@ -72,10 +72,17 @@ filter_out_false
 .. autofunction:: satella.coding.sequences.filter_out_false
 
 
+try_close
+---------
+
+.. autofunction:: satella.coding.sequences.try_close
+
+
 n_th
 ----
 
 .. autofunction:: satella.coding.sequences.n_th
+
 
 take_n
 ------
@@ -92,10 +99,12 @@ However, this function comes to the rescue:
 
 .. autofunction:: satella.coding.sequences.take_n
 
+
 infinite_iterator
 -----------------
 
 .. autofunction:: satella.coding.sequences.infinite_iterator
+
 
 is_instance
 -----------
@@ -111,25 +120,30 @@ of classes). Use like that
 
 .. autofunction:: satella.coding.sequences.is_instance
 
+
 is_last
 -------
 
 .. autofunction:: satella.coding.sequences.is_last
+
 
 enumerate2
 ----------
 
 .. autofunction:: satella.coding.sequences.enumerate2
 
+
 smart_enumerate
 ---------
 
 .. autofunction:: satella.coding.sequences.smart_enumerate
 
+
 smart_zip
 ---------
 
 .. autofunction:: satella.coding.sequences.smart_zip
+
 
 add_next
 --------
@@ -138,6 +152,7 @@ Sometimes you need to iterate through list and take also the next
 element.
 
 .. autofunction:: satella.coding.sequences.add_next
+
 
 half_cartesian
 --------------
@@ -153,6 +168,7 @@ from the same set (ie. it will do something like a cartesian power of two).
 
 .. autofuction:: satella.coding.sequences.half_cartesian
 
+
 skip_first
 ----------
 
@@ -166,35 +182,42 @@ zip_shifted
 
 This is deprecated. Use ``zip(shift(...))`` instead.
 
+
 stop_after
 ----------
 
 .. autofunction:: satella.coding.sequences.stop_after
+
 
 group_quantity
 --------------
 
 .. autofunction:: satella.coding.sequences.group_quantity
 
+
 iter_dict_of_list
 -----------------
 
 .. autofunction:: satella.coding.sequences.iter_dict_of_list
+
 
 shift
 -----
 
 .. autofunction:: satella.coding.sequences.shift
 
+
 other_sequence_no_longer_than
 -----------------------------
 
 .. autofunction:: satella.coding.sequences.other_sequence_no_longer_than
 
+
 count
 -----
 
 .. autofunction:: satella.coding.sequences.count
+
 
 length
 ------
@@ -208,6 +231,7 @@ Even and odd
 .. autofunction:: satella.coding.sequences.even
 
 .. autofunction:: satella.coding.sequences.odd
+
 
 Multirun
 --------
