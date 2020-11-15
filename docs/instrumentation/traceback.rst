@@ -56,3 +56,7 @@ Alternatively, you can pass a `<frame>` object to Traceback, in order to seriali
 
 .. autoclass:: satella.instrumentation.GenerationPolicy
     :members:
+
+There's a helper function as well
+
+.. autofunction:: satella.instrumentation.frame_from_traceback

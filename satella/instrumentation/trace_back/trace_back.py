@@ -15,6 +15,18 @@ from satella.json import JSONAble
 from .classes import StackFrame, GenerationPolicy
 
 
+def frame_from_traceback(tb: types.TracebackType) -> types.FrameType:
+    """
+    Extract the bottom stack frame from a traceback
+
+    :param tb: traceback to extract the frame
+    :return: bottom stack frame
+    """
+    while tb.tb_next:
+        tb = tb.tb_next
+    return tb.tb_frame
+
+
 class Traceback(JSONAble):
     """
     Class used to preserve exceptions and chains of stack frames.
@@ -53,9 +65,7 @@ class Traceback(JSONAble):
         if starting_frame is None:
             tb = sys.exc_info()[2]
             if tb is not None:
-                while tb.tb_next:
-                    tb = tb.tb_next
-                f = tb.tb_frame
+                f = frame_from_traceback(tb)
             else:
                 f = inspect.currentframe()
         else:
