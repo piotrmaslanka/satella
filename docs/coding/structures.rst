@@ -3,6 +3,16 @@ Structures
 ==========
 
 
+SyncableDroppable
+-----------------
+
+.. autoclass:: satella.coding.structures.SyncableDroppable
+    :members:
+
+.. autoclass:: satella.coding.structures.DBStorage
+    :members:
+
+
 SparseMatrix
 ------------
 

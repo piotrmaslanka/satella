@@ -3,3 +3,4 @@
 * added `KVTuple`
 * added `Comparable`
 * added `try_close`
+* added `SyncableDroppable`
