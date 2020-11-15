@@ -1,6 +1,7 @@
 import typing as tp
 from abc import ABCMeta, abstractmethod
 
+
 T = tp.TypeVar('T')
 Iteratable = tp.Union[tp.Iterator[T], tp.Iterable[T]]
 U = tp.TypeVar('U')
@@ -30,14 +31,15 @@ class ClassComparable(metaclass=ABCMeta):
 
 Comparable = tp.TypeVar('Comparable', bound=ClassComparable)
 
+try:
+    from typing import Protocol
+except ImportError:
+    Protocol = tp.Generic
 
-class ClassAppendable(metaclass=ABCMeta):
-    @abstractmethod
-    def append(self, item: tp.Any) -> None:
+
+class Appendable(Protocol[T]):
+    def append(self, item: T) -> None:
         ...
-
-
-Appendable = tp.TypeVar('Appendable', bound=ClassAppendable)
 
 
 __all__ = ['Iteratable', 'T', 'U', 'V', 'K', 'Number', 'ExceptionClassType',
