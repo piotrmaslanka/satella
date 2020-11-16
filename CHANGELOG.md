@@ -1,4 +1,1 @@
-# v2.14.12
-
-* added `b64encode`
-* added `SequentialIssuer`
+# v2.14.13
