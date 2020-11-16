@@ -1,11 +1,16 @@
 import enum
 import unittest
+import base64
 
 from satella.coding.transforms import stringify, split_shuffle_and_join, one_tuple, \
-    merge_series, pad_to_multiple_of_length, clip
+    merge_series, pad_to_multiple_of_length, clip, b64encode
 
 
 class TestTransforms(unittest.TestCase):
+
+    def test_base64(self):
+        a = b64encode(b'test')
+        self.assertEqual(base64.b64decode(a), b'test')
 
     def test_empty_merge_series(self):
         sm = merge_series([], [])

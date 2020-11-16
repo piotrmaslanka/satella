@@ -8,6 +8,8 @@ Rudimentary data transforms and algorithms
 
 .. autofunction:: satella.coding.transforms.percentile
 
+.. autofunction:: satella.coding.transforms.b64encode
+
 pad_to_multiple_of_length
 -------------------------
 
