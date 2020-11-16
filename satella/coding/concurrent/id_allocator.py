@@ -2,6 +2,51 @@ from .monitor import Monitor
 from ...exceptions import AlreadyAllocated
 
 
+class SequentialIssuer(Monitor):
+    """
+    A classs that issues an monotonically increasing value.
+
+    :param start: start issuing IDs from this value
+
+    :ivar start: next value to be issued
+    """
+    __slots__ = ('start', )
+
+    def __init__(self, start: int = 0):
+        super().__init__()
+        self.start = 0
+
+    @Monitor.synchronized
+    def issue(self) -> int:
+        """
+        Just issue a next identifier
+
+        :return: a next identifier
+        """
+        try:
+            return self.start
+        finally:
+            self.start += 1
+
+    @Monitor.synchronized
+    def no_less_than(self, no_less_than: int) -> int:
+        """
+        Issue an int, which is no less than a given value
+
+        :param no_less_than: value that the returned id will not be less than this
+        :return: an identifier, no less than no_less_than
+        """
+        try:
+            if self.start > no_less_than:
+                return self.start
+                self.start += 1
+            else:
+                self.start = no_less_than
+                return self.start
+        finally:
+            self.start += 1
+
+
 class IDAllocator(Monitor):
     """
     Reusable ID allocator

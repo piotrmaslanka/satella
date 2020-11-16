@@ -62,6 +62,13 @@ SingleStartThread
 .. autoclass:: satella.coding.concurrent.SingleStartThread
     :members:
 
+SequentialIssuer
+================
+
+.. autoclass:: satella.coding.concurrent.SequentialIssuer
+    :members:
+
+
 IDAllocator
 ===========
 

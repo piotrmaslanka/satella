@@ -10,13 +10,23 @@ from concurrent.futures import ThreadPoolExecutor, Future as PythonFuture
 from satella.coding.concurrent import TerminableThread, CallableGroup, Condition, MonitorList, \
     LockedStructure, AtomicNumber, Monitor, IDAllocator, call_in_separate_thread, Timer, \
     parallel_execute, run_as_future, sync_threadpool, IntervalTerminableThread, Future, \
-    WrappingFuture, PeekableQueue
+    WrappingFuture, PeekableQueue, SequentialIssuer
 from satella.coding.concurrent.futures import call_in_future, ExecutorWrapper
 from satella.coding.sequences import unique
 from satella.exceptions import WouldWaitMore, AlreadyAllocated, Empty
 
 
 class TestConcurrent(unittest.TestCase):
+
+    def test_sequential_issuer(self):
+        si = SequentialIssuer()
+        a = si.issue()
+        b = si.issue()
+        self.assertGreater(b, a)
+        c = si.no_less_than(100)
+        self.assertGreaterEqual(c, 100)
+        d = si.issue()
+        self.assertGreater(d, c)
 
     def test_peekable_queue(self):
         pkb = PeekableQueue()
