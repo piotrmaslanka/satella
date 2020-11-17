@@ -117,7 +117,8 @@ class Metric:
     def to_metric_data(self) -> MetricDataCollection:
         output = MetricDataCollection()
         for child in self.children:
-            output += child.to_metric_data()
+            if child.level <= self.level:
+                output += child.to_metric_data()
         output.prefix_with(self.name)
 
         if self.enable_timestamp:
@@ -219,7 +220,8 @@ class EmbeddedSubmetrics(LeafMetric):
         if self.embedded_submetrics_enabled:
             v = MetricDataCollection()
             for child in self.children:
-                v = v + child.to_metric_data()
+                if child.level <= self.level:
+                    v = v + child.to_metric_data()
             return v
         else:
             return super().to_metric_data()
@@ -239,3 +241,7 @@ class EmbeddedSubmetrics(LeafMetric):
 
         return self.__class__(self.name, self, MetricLevel.INHERIT, *self.args, labels=labels,
                               **self.kwargs)
+
+
+from .registry import register_metric
+register_metric(Metric)

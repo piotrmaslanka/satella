@@ -35,6 +35,9 @@ INHERIT is the default state for all other metrics than root,
 for root the default is RUNTIME. Root metric cannot be set to INHERIT,
 as it would not make sense.
 
+Also, if parent is RUNTIME and child is DEBUG, the metrics reported by the child won't be included
+in parent metric data.
+
 You can switch the metric anytime by assigning a correct value to
 it's ``level`` property, or by specifying it's metric level during a call to ``getMetric()``.
 

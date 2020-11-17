@@ -20,6 +20,15 @@ def choose(postfix: str, mdc: MetricDataCollection, labels=None) -> MetricData:
 
 class TestMetric(unittest.TestCase):
 
+    def test_child_metrics(self):
+        """A RUNTIME parent does not display DEBUG child's metric"""
+        parent = getMetric('test.child.metric', metric_level=MetricLevel.RUNTIME)
+        child = getMetric('test.child.metric.kid', 'int', metric_level=MetricLevel.DEBUG)
+        child.runtime(2)
+        data = parent.to_metric_data()
+        kid = choose('.kid', data)
+        self.assertIsNone(kid)
+
     def test_uptime_metric(self):
         up_metric = getMetric('uptime.metric', 'uptime')
         time.sleep(1)
@@ -250,6 +259,8 @@ class TestMetric(unittest.TestCase):
             counter.to_metric_data()))
 
     def test_base_metric(self):
+        root_metric = getMetric()
+        root_metric.level = MetricLevel.DEBUG
         metric2 = getMetric('root.test.FloatValue', 'float', MetricLevel.DEBUG, enable_timestamp=False)
         metric2.runtime(2.0)
         metric2.debug(1.0)
