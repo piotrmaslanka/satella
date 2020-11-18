@@ -3,10 +3,19 @@ import unittest
 import base64
 
 from satella.coding.transforms import stringify, split_shuffle_and_join, one_tuple, \
-    merge_series, pad_to_multiple_of_length, clip, b64encode
+    merge_series, pad_to_multiple_of_length, clip, b64encode, linear_interpolate
 
 
 class TestTransforms(unittest.TestCase):
+
+    def test_linear_interpolate(self):
+        self.assertEqual( linear_interpolate([(0, 10), (10, 20)], 5), 15)
+        self.assertEqual( linear_interpolate([(0, 10), (10, 20)], 2.5), 12.5)
+        self.assertEqual( linear_interpolate([(0, 10), (10, 20)], 0), 10)
+        self.assertEqual( linear_interpolate([(0, 10), (10, 20)], 10), 20)
+        self.assertEqual( linear_interpolate([(0, 10), (10, 20), (20, 10)], 15), 15)
+        self.assertRaises(ValueError, lambda: linear_interpolate([(0, 10), (10, 20)], 30))
+        self.assertRaises(ValueError, lambda: linear_interpolate([(0, 10), (10, 20)], -2))
 
     def test_base64(self):
         a = b64encode(b'test')

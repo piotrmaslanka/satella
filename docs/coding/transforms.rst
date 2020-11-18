@@ -1,6 +1,7 @@
 Rudimentary data transforms and algorithms
 ==========================================
 
+.. autofunction:: satella.coding.transforms.linear_interpolate
 
 .. autofunction:: satella.coding.transforms.intify
 
