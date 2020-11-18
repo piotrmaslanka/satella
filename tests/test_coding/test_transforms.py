@@ -17,6 +17,8 @@ class TestTransforms(unittest.TestCase):
         self.assertEqual( linear_interpolate([(0, 10), (10, 20), (20, 10)], 15), 15)
         self.assertRaises(ValueError, lambda: linear_interpolate([(0, 10), (10, 20)], 30))
         self.assertRaises(ValueError, lambda: linear_interpolate([(0, 10), (10, 20)], -2))
+        self.assertEqual(linear_interpolate([(0, 10), (10, 20)], 30, True), 20)
+        self.assertEqual(linear_interpolate([(0, 10), (10, 20)], -2, True), 10)
 
     def test_base64(self):
         a = b64encode(b'test')
