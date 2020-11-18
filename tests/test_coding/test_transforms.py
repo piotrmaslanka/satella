@@ -10,6 +10,7 @@ class TestTransforms(unittest.TestCase):
 
     def test_linear_interpolate(self):
         self.assertEqual( linear_interpolate([(0, 10), (10, 20)], 5), 15)
+        self.assertEqual( linear_interpolate([(0, 10), (10, 20)], 10), 20)
         self.assertEqual( linear_interpolate([(0, 10), (10, 20)], 2.5), 12.5)
         self.assertEqual( linear_interpolate([(0, 10), (10, 20)], 0), 10)
         self.assertEqual( linear_interpolate([(0, 10), (10, 20)], 10), 20)
