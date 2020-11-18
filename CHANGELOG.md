@@ -1,2 +1,3 @@
-# v2.14.14
-* added `linear_interpolate`
+# v2.14.15
+
+* _TBA_
