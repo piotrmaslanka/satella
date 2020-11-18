@@ -31,6 +31,46 @@ def length(iterator: Iteratable) -> int:
     return i
 
 
+def f_range(*args: float) -> tp.Iterator[float]:
+    """
+    A range() that supports float.
+
+    Note that this behaves correctly when given a negative step.
+
+    Call either:
+
+    >>> f_range(stop)   # will start from 0 and step 1
+    >>> f_range(start, stop)    # will start from start and continue until the result is gte stop
+    >>> # will start from start and continue by step until the result is gte stop
+    >>> f_range(start, stop, step)
+
+    :raise TypeError: invalid number of arguments
+    """
+    len_args = len(args)
+    if len_args == 1:
+        start, step = 0, 1
+        stop = args[0]
+    elif len_args == 2:
+        start, stop = args
+        step = 1
+    elif len_args == 3:
+        start, stop, step = args
+    else:
+        raise TypeError('Invalid number of arguments')
+
+    def iterate(f_start, f_stop, f_step):
+        if f_step > 0:
+            while f_start < f_stop:
+                yield f_start
+                f_start += f_step
+        else:
+            while f_start > f_stop:
+                yield f_start
+                f_start += f_step
+
+    return iterate(start, stop, step)
+
+
 def walk(obj: T, child_getter: tp.Callable[[T], tp.Optional[tp.List[T]]] = list,
          deep_first: bool = True,
          leaves_only: bool = False) -> tp.Iterator[T]:
