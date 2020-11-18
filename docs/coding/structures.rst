@@ -2,6 +2,9 @@
 Structures
 ==========
 
+.. autoclass:: satella.coding.structures.Vector
+    :members:
+
 
 SyncableDroppable
 -----------------

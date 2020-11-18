@@ -1,3 +1,3 @@
 # v2.14.15
 
-* _TBA_
+* added `Vector`

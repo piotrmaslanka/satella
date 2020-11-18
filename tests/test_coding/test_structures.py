@@ -14,10 +14,16 @@ from satella.coding.structures import TimeBasedHeap, Heap, typednamedtuple, \
     DirtyDict, KeyAwareDefaultDict, Proxy, ReprableMixin, TimeBasedSetHeap, ExpiringEntryDict, SelfCleaningDefaultDict, \
     CacheDict, StrEqHashableMixin, ComparableIntEnum, HashableIntEnum, ComparableAndHashableBy, \
     ComparableAndHashableByInt, SparseMatrix, ExclusiveWritebackCache, Subqueue, \
-    CountingDict, ComparableEnum, LRU, LRUCacheDict
+    CountingDict, ComparableEnum, LRU, LRUCacheDict, Vector
 
 
 class TestMisc(unittest.TestCase):
+
+    def test_vector(self):
+        a = Vector((2, 3))
+        self.assertEqual(a-Vector((1, 2)), Vector((1, 1)))
+        self.assertEqual(a*2, Vector((4, 6)))
+        self.assertEqual(a/2, Vector((1, 1.5)))
 
     def test_lru_cache_dict(self):
         class TestCacheGetter:
