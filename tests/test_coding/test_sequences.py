@@ -6,30 +6,11 @@ from satella.coding.sequences import choose, choose_one, infinite_counter, take_
     iter_dict_of_list, shift, other_sequence_no_longer_than, count, even, odd, Multirun, n_th, \
     unique, length, map_list, smart_zip, is_empty, make_list, RollingArithmeticAverage, \
     enumerate2, infinite_iterator, to_iterator, filter_out_false, filter_out_nones, \
-    index_of, index_of_max, try_close, f_range, return_as_list
+    index_of, index_of_max, try_close, f_range
 from satella.coding.predicates import x
 
 
 class TestSequences(unittest.TestCase):
-
-    def test_return_as_list(self):
-        @return_as_list(ignore_nulls=True)
-        def test():
-            yield 2
-            yield 3
-            yield None
-            yield 4
-
-        self.assertEqual(test(), [2, 3, 4])
-
-        @return_as_list()
-        def test():
-            yield 2
-            yield 3
-            yield None
-            yield 4
-
-        self.assertEqual(test(), [2, 3, None, 4])
 
     def test_f_range(self):
         self.assertRaises(TypeError, f_range)

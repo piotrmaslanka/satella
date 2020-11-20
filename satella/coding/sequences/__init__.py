@@ -4,7 +4,7 @@ from .iterators import infinite_counter, take_n, is_instance, skip_first, zip_sh
     stop_after, iter_dict_of_list, shift, other_sequence_no_longer_than, count, even, \
     odd, n_th, smart_enumerate, smart_zip, unique, ConstruableIterator, walk, length, map_list, \
     is_empty, IteratorListAdapter, enumerate2, to_iterator, ListWrapperIterator, try_close, \
-    f_range, return_as_list
+    f_range
 from .sequences import is_last, add_next, half_cartesian, group_quantity, Multirun, make_list, \
     infinite_iterator, filter_out_false, filter_out_nones, index_of, index_of_max
 
@@ -16,4 +16,4 @@ __all__ = ['choose', 'choose_one', 'infinite_counter', 'take_n', 'is_instance', 
            'make_list', 'RollingArithmeticAverage', 'index_of', 'index_of_max',
            'IteratorListAdapter', 'enumerate2', 'infinite_iterator', 'to_iterator',
            'filter_out_false', 'filter_out_nones', 'ListWrapperIterator', 'try_close',
-           'f_range', 'return_as_list']
+           'f_range']

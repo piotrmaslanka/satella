@@ -25,6 +25,8 @@ A ``functools.wraps()`` equivalent, but for classes
 
 .. autofunction:: satella.coding.decorators.execute_before
 
+.. autofunction:: satella.coding.decorators.return_as_list
+
 
 Preconditions and postconditions
 --------------------------------

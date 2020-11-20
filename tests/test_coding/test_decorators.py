@@ -7,7 +7,7 @@ from satella.coding import wraps, chain_functions, postcondition, \
     log_exceptions, queue_get, precondition, short_none
 from satella.coding.decorators import auto_adapt_to_methods, attach_arguments, \
     execute_before, loop_while, memoize, copy_arguments, replace_argument_if, \
-    retry
+    retry, return_as_list
 from satella.coding.predicates import x
 from satella.exceptions import PreconditionError
 
@@ -15,6 +15,25 @@ logger = logging.getLogger(__name__)
 
 
 class TestDecorators(unittest.TestCase):
+
+    def test_return_as_list(self):
+        @return_as_list(ignore_nulls=True)
+        def test():
+            yield 2
+            yield 3
+            yield None
+            yield 4
+
+        self.assertEqual(test(), [2, 3, 4])
+
+        @return_as_list()
+        def test():
+            yield 2
+            yield 3
+            yield None
+            yield 4
+
+        self.assertEqual(test(), [2, 3, None, 4])
 
     def test_retry(self):
         a = {'test': 0, 'limit': 2}

@@ -69,6 +69,40 @@ def chain_functions(fun_first: tp.Callable[..., tp.Union[tp.Tuple[tp.Tuple, tp.D
     return outer
 
 
+def return_as_list(ignore_nulls: bool = False):
+    """
+    Enables you to write a list-returning functions using a decorator. Example:
+
+    >>> def make_a_list(lst):
+    >>>     output = []
+    >>>     for item in lst:
+    >>>         output.append(item)
+    >>>     return output
+
+    Is equivalent to:
+
+    >>> @return_as_list()
+    >>> def make_a_list(lst):
+    >>>     for item in lst:
+    >>>         yield item
+
+    Essentially a syntactic sugar for @for_argument(returns=list)
+
+    :param ignore_nulls: if True, then if your function yields None, it won't be appended.
+    """
+    def outer(fun):
+        @wraps(fun)
+        def inner(*args, **kwargs):
+            output = []
+            for item in fun(*args, **kwargs):
+                if item is None and ignore_nulls:
+                    continue
+                output.append(item)
+            return output
+        return inner
+    return outer
+
+
 def memoize(fun):
     """
     A thread safe memoizer based on function's ONLY positional arguments.
