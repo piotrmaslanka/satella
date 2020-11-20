@@ -65,6 +65,10 @@ index_of_max
 
 .. autofunction:: satella.coding.sequences.index_of_max
 
+return_as_list
+---------------
+
+.. autofunction:: satella.coding.sequences.return_as_list
 
 f_range
 -------
