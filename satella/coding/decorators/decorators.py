@@ -69,6 +69,33 @@ def chain_functions(fun_first: tp.Callable[..., tp.Union[tp.Tuple[tp.Tuple, tp.D
     return outer
 
 
+def default_return(v: tp.Any):
+    """
+    Makes the decorated function return v instead of None, if it would return None.
+    If it would return something else, that else is returned.
+
+    Eg:
+
+    >>> @default_return(5)
+    >>> def return(v):
+    >>>     return v
+    >>> assert return(None) == 5
+    >>> assert return(2) == 2
+
+    :param v: value to return if calling the function would return None
+    """
+    def outer(fun):
+        @wraps(fun)
+        def inner(*args, **kwargs):
+            v_a = fun(*args, **kwargs)
+            if v_a is None:
+                return v
+            else:
+                return v_a
+        return inner
+    return outer
+
+
 def return_as_list(ignore_nulls: bool = False):
     """
     Enables you to write a list-returning functions using a decorator. Example:
