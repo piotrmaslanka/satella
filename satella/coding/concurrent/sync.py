@@ -27,6 +27,7 @@ def sync_threadpool(tpe: tp.Union[ExecutorWrapper, ThreadPoolExecutor],
     assert isinstance(tpe, ThreadPoolExecutor), 'Must be a ThreadPoolExecutor!'
 
     with measure(timeout=max_wait) as measurement:
+        # noinspection PyProtectedMember
         workers = tpe._max_workers
         atm_n = AtomicNumber(workers)
         cond = Condition()
@@ -39,6 +40,7 @@ def sync_threadpool(tpe: tp.Union[ExecutorWrapper, ThreadPoolExecutor],
         futures = [tpe.submit(decrease_atm) for _ in range(workers)]
 
         # wait for all currently scheduled jobs to be picked up
+        # noinspection PyProtectedMember
         while tpe._work_queue.qsize() > 0:
             if max_wait is not None:
                 if measurement() > max_wait:

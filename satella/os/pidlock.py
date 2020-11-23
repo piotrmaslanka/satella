@@ -11,12 +11,12 @@ class PIDFileLock:
 
     Usage:
 
-    >>> with PIDFileLock('myservice.pid'):
+    >>> with PIDFileLock('my_service.pid'):
     >>>     ... rest of code ..
 
     Any alternatively
 
-    >>> pid_lock = PIDFileLock('myservice.pid')
+    >>> pid_lock = PIDFileLock('my_service.pid')
     >>> pid_lock.acquire()
     >>> ...
     >>> pid_lock.release()

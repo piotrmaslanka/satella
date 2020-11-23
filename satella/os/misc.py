@@ -7,7 +7,7 @@ def is_running_as_root() -> bool:
     """
     Is this process running as root?
 
-    Checks whether EUID is 0
+    Checks whether effective UID is 0
 
     :return: bool
     :raises OSError: called on Windows!

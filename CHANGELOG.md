@@ -4,4 +4,4 @@
 * added `timeout` and `timeouted` property to `satella.time.measure`
     * thanks to this some code has been simplified
 * some methods from `measure` are pending deprecation
-
+* changes in `satella.coding.misc`

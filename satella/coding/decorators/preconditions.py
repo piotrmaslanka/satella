@@ -49,10 +49,8 @@ def precondition(*t_ops: Condition, **kw_opts: Condition):
     for t_op in t_ops:
         if t_op is None:
             precond_ = _TRUE
-        elif isinstance(t_op, str):
-            precond_ = source_to_function(t_op)
         else:
-            precond_ = t_op
+            precond_ = source_to_function(t_op)
 
         tn_ops.append(precond_)
 
@@ -100,10 +98,7 @@ def postcondition(condition: Condition):
     :param condition: callable that accepts a single argument, the return value of the function.
         Can be also a string, in which case it is an expression about the value x of return
     """
-    if isinstance(condition, str):
-        q = dict(globals())
-        exec('_precond = lambda x: ' + condition, q)
-        condition = q['_precond']
+    condition = source_to_function(condition)
 
     def outer(fun):
         @wraps(fun)

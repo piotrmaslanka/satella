@@ -100,18 +100,25 @@ def chain_callables(callable1: tp.Callable, callable2: tp.Callable) -> tp.Callab
     return inner
 
 
-def source_to_function(src: str) -> tp.Callable[[tp.Any], tp.Any]:
+def source_to_function(src: tp.Union[tp.Callable, str]) -> tp.Callable[[tp.Any], tp.Any]:
     """
+    If src is callable, return it as-is
     Transform a string containing a Python expression with a variable x to a lambda.
 
     It will be treated as if it was appended to 'lambda x: '
 
     WARNING: Do not run untrusted data. Familiarize yourself with the dangers of passing
     unvalidated data to exec() or eval()!
+
+    :param src: a callable or a Python string expression
+    :return: a callable
     """
-    q = dict(globals())
-    exec('_precond = lambda x: ' + src, q)
-    return q['_precond']
+    if callable(src):
+        return src
+    else:
+        q = dict(globals())
+        exec('_precond = lambda x: ' + src, q)
+        return q['_precond']
 
 
 def update_attr_if_none(obj: object, attr: str, value: tp.Any,
