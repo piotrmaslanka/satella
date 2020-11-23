@@ -3,11 +3,13 @@ import queue
 import unittest
 from socket import socket
 
+import time
 from satella.coding import wraps, chain_functions, postcondition, \
     log_exceptions, queue_get, precondition, short_none
 from satella.coding.decorators import auto_adapt_to_methods, attach_arguments, \
     execute_before, loop_while, memoize, copy_arguments, replace_argument_if, \
-    retry, return_as_list, default_return, transform_result, transform_arguments
+    retry, return_as_list, default_return, transform_result, transform_arguments, \
+    cache_memoize
 from satella.coding.predicates import x
 from satella.exceptions import PreconditionError
 
@@ -15,6 +17,23 @@ logger = logging.getLogger(__name__)
 
 
 class TestDecorators(unittest.TestCase):
+
+    def test_cached_memoizer(self):
+        a = {'calls': 0}
+
+        @cache_memoize(1)
+        def returns(b):
+            nonlocal a
+            a['calls'] += 1
+            return b
+
+        self.assertEqual(returns(6), 6)
+        self.assertEqual(a['calls'], 1)
+        self.assertEqual(returns(6), 6)
+        self.assertEqual(a['calls'], 1)
+        time.sleep(1.1)
+        self.assertEqual(returns(6), 6)
+        self.assertEqual(a['calls'], 2)
 
     def test_transform_arguments(self):
         @transform_arguments(a='a*a')

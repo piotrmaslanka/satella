@@ -1,1 +1,4 @@
 # v2.14.19
+
+* `memoize` will release the per-function lock while calling target function
+* added `cache_memoize`

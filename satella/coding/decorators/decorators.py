@@ -1,4 +1,5 @@
 import inspect
+import time
 import typing as tp
 import warnings
 
@@ -130,6 +131,44 @@ def return_as_list(ignore_nulls: bool = False):
     return outer
 
 
+def cache_memoize(cache_duration: float, time_getter: tp.Callable[[], float] = time.monotonic):
+    """
+    A thread-safe memoizer that memoizes the return value for at most cache_duration seconds.
+
+    :param cache_duration: cache validity, in seconds
+    :param time_getter: a callable without arguments that yields us a time marker
+    """
+    from satella.coding.concurrent import MonitorDict, Monitor
+
+    def outer(fun):
+        fun.memoize_timestamps = MonitorDict()
+        fun.memoize_values = {}
+
+        @wraps(fun)
+        def inner(*args, **kwargs):
+
+            now = time_getter()
+
+            with Monitor.acquire(fun.memoize_timestamps):
+                if args in fun.memoize_timestamps:
+                    ts = fun.memoize_timestamps[args]
+                    if now - ts > cache_duration:
+                        with Monitor.release(fun.memoize_timestamps):
+                            v = fun(*args, **kwargs)
+                        fun.memoize_timestamps[args] = now
+                        fun.memoize_values[args] = v
+                else:
+                    with Monitor.release(fun.memoize_timestamps):
+                        v = fun(*args, **kwargs)
+                    fun.memoize_timestamps[args] = now
+                    fun.memoize_values[args] = v
+
+                return fun.memoize_values[args]
+
+        return inner
+    return outer
+
+
 def memoize(fun):
     """
     A thread safe memoizer based on function's ONLY positional arguments.
@@ -147,7 +186,8 @@ def memoize(fun):
             if args in fun.memoizer:
                 return fun.memoizer[args]
             else:
-                v = fun(*args, **kwargs)
+                with Monitor.release(fun.memoizer):
+                    v = fun(*args, **kwargs)
                 fun.memoizer[args] = v
                 return v
 
