@@ -2,3 +2,4 @@
 
 * `memoize` will release the per-function lock while calling target function
 * added `cache_memoize`
+* added `words_to_int`

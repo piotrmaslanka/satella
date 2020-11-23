@@ -1,6 +1,8 @@
 Rudimentary data transforms and algorithms
 ==========================================
 
+.. autofunction:: satella.coding.transforms.words_to_int
+
 .. autofunction:: satella.coding.transforms.linear_interpolate
 
 .. autofunction:: satella.coding.transforms.intify

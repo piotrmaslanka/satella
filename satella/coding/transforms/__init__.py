@@ -9,6 +9,7 @@ from .merger import merge_series
 from .percentile import percentile
 from .base64 import b64encode
 from .interpol import linear_interpolate
+from .words import words_to_int
 
 __all__ = ['stringify', 'split_shuffle_and_join', 'one_tuple',
            'merge_series', 'pad_to_multiple_of_length', 'clip',
