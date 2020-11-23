@@ -53,11 +53,11 @@ class PeekableQueue(tp.Generic[T]):
                         finally:
                             self.lock.release()
             else:
-                with measure() as measurement:
-                    while measurement() < timeout:
+                with measure(timeout=timeout) as measurement:
+                    while not measurement.timeouted:
                         self.lock.release()
                         # raises WouldWaitMore
-                        self.inserted_condition.wait(timeout=timeout-measurement())
+                        self.inserted_condition.wait(timeout=measurement.time_remaining)
                         self.lock.acquire()
                         if len(self.queue):
                             try:

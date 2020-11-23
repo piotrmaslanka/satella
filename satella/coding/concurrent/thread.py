@@ -82,18 +82,18 @@ class Condition(PythonCondition):
             if timeout < 0:
                 timeout = 0
 
-        with measure() as measurement:
+        with measure(timeout=timeout) as measurement:
             if timeout is None:
                 self.acquire()
             else:
-                if not self.acquire(timeout=timeout):
+                if not self.acquire(timeout=measurement.time_remaining):
                     raise ResourceLocked('internal lock locked')
 
             try:
                 if timeout is None:
                     super().wait()
                 else:
-                    if not super().wait(timeout=timeout - measurement()):
+                    if not super().wait(timeout=measurement.time_remaining):
                         raise WouldWaitMore('wait was not notified')
             finally:
                 self.release()

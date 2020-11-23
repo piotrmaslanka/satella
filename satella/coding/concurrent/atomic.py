@@ -271,12 +271,11 @@ class AtomicNumber(Monitor):
                     break
                 self.wait()
         else:
-            with measure() as measurement:
-                while measurement() < timeout:
-                    time_remaining = timeout - measurement()
+            with measure(timeout=timeout) as measurement:
+                while not measurement.timeouted:
                     if self == v:
                         break
-                    self.wait(time_remaining, throw_exception=False)
+                    self.wait(measurement.time_remaining, throw_exception=False)
 
                 with Monitor.acquire(self):
                     if self.value != v:

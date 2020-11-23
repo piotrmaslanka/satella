@@ -1,5 +1,6 @@
 import copy
 import inspect
+import math
 import time
 import typing as tp
 import warnings
@@ -163,23 +164,32 @@ class measure:
             future_to_measure.add_done_callback(lambda fut: self.stop())
 
     @property
-    def timeouted(self) -> bool:
+    def time_remaining(self) -> float:
         """
-        :return: Has the time elapsed exceeded timeout?
-        :raise ValueError: timeout was not given
+        :return: the difference between provided timeout and elapsed time, or None if timeout was
+            not given
         """
         if self.timeout is None:
-            raise ValueError('Timeout was not given!')
-        return self.get_time_elapsed() < self.timeout
+            return None
+        return self.timeout - self.get_time_elapsed()
+
+    @property
+    def timeouted(self) -> bool:
+        """
+        :return: Has the time elapsed exceeded timeout? Always False if timeout was not given
+        """
+        if self.timeout is None:
+            return False
+        return self.get_time_elapsed() >= self.timeout
 
     def assert_not_timeouted(self) -> None:
         """
-        If the time elapsed exceeded timeout, throw WouldWaitMore
-        :raise ValueError: timeout was not given
-        :raise WouldWaitMore: time elapsed has exceeded timeout
+        If the time elapsed exceeded timeout, throw WouldWaitMore.
+
+        Always returns if the timeout was not givne
         """
         if self.timeout is None:
-            raise ValueError('Timeout was not given!')
+            return
         if self.timeouted:
             raise WouldWaitMore('timeout exceeded')
 

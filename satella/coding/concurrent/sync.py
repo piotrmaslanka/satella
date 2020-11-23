@@ -26,7 +26,7 @@ def sync_threadpool(tpe: tp.Union[ExecutorWrapper, ThreadPoolExecutor],
 
     assert isinstance(tpe, ThreadPoolExecutor), 'Must be a ThreadPoolExecutor!'
 
-    with measure() as measurement:
+    with measure(timeout=max_wait) as measurement:
         workers = tpe._max_workers
         atm_n = AtomicNumber(workers)
         cond = Condition()
