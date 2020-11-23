@@ -4,6 +4,7 @@ import typing as tp
 from satella.coding.typing import T, Predicate
 from satella.exceptions import PreconditionError
 from .decorators import wraps
+from .arguments import for_argument
 from ..misc import source_to_function
 
 Expression = tp.NewType('Expression', str)
@@ -89,6 +90,7 @@ def precondition(*t_ops: Condition, **kw_opts: Condition):
     return outer
 
 
+@for_argument(source_to_function)
 def postcondition(condition: Condition):
     """
     Return a decorator, asserting that result of this function, called with provided
@@ -98,8 +100,6 @@ def postcondition(condition: Condition):
     :param condition: callable that accepts a single argument, the return value of the function.
         Can be also a string, in which case it is an expression about the value x of return
     """
-    condition = source_to_function(condition)
-
     def outer(fun):
         @wraps(fun)
         def inner(*args, **kwargs):
