@@ -17,6 +17,59 @@ def _NOP(x):
     return x
 
 
+def transform_result(expr: str):
+    """
+    A decorator transforming the result value of a function by a Python expression.
+
+    The result is feeded as the local variable "x", while arguments are fed as if they were
+    expressed as arguments, eg:
+
+    >>> @transform_result('x*a')
+    >>> def square(a):
+    >>>     return a
+
+    :param expr: Python string expression
+    """
+    def outer(fun):
+        @wraps(fun)
+        def inner(*args, **kwargs):
+            a = fun(*args, **kwargs)
+            local = get_arguments(fun, *args, *kwargs)
+            local['x'] = a
+            return eval(expr, globals(), local)
+        return inner
+    return outer
+
+
+def transform_arguments(**expressions: str):
+    """
+    A decorator transforming the arguments of a function prior to it's execution.
+
+    The arguments are always bound as if they were available in the function.
+
+    The expressions always operate on "old" arguments
+
+    >>> @transform_arguments(a='a*a')
+    >>> def square(a):
+    >>>     return a
+
+    :param expressions: Python strings that are meant to be evaluated
+    """
+    def outer(fun):
+        @wraps(fun)
+        def inner(*args, **kwargs):
+            old_args = get_arguments(fun, *args, *kwargs)
+            new_args = {}
+            for arg, arg_value in expressions.items():
+                new_args[arg] = eval(arg_value, globals(), old_args)
+            for new_arg in old_args:
+                if new_arg not in new_args:
+                    new_args[new_arg] = old_args[new_arg]
+            return call_with_arguments(fun, new_args)
+        return inner
+    return outer
+
+
 def execute_before(callable_: tp.Callable) -> tp.Callable:
     """
     Wrapper to create wrappers which execute callable before function launch.
