@@ -5,3 +5,5 @@
     * thanks to this some code has been simplified
 * some methods from `measure` are pending deprecation
 * changes in `satella.coding.misc`
+* marked `satella.coding.call_hierarchy` as experimental!
+* added `satella.warnings`

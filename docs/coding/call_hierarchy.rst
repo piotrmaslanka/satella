@@ -2,6 +2,8 @@
 Call hierarchy
 ==============
 
+..note:: This package is purely experimental!
+
 Satella enables you to define function call and their trees programmatically, so you can
 for example express such a condition "call a function C with given args when either call of function A with given args or function B with given args returned True".
 

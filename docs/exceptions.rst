@@ -1,9 +1,14 @@
-==========
-Exceptions
-==========
+=======================
+Exceptions and warnings
+=======================
 
 For you to use
 ==============
+
+Warnings
+--------
+
+.. autoclass:: satella.warnings.ExperimentalWarning
 
 CustomException
 ---------------

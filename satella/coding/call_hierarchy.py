@@ -1,8 +1,10 @@
 import threading
 import typing as tp
+import warnings
 from concurrent.futures import Executor
 
 from satella.coding.decorators.decorators import wraps
+from satella.warnings import ExperimentalWarning
 
 local_ee = threading.local()
 
@@ -50,6 +52,7 @@ class Call:
     __slots__ = ('fn', 'args', 'kwargs')
 
     def __init__(self, fn, *args, **kwargs):
+        warnings.warn('This module is experimental, use at your own peril', ExperimentalWarning)
         self.fn = fn
         self.args = args
         self.kwargs = kwargs
@@ -81,6 +84,7 @@ class CallWithArgumentSet(Call):
     __slots__ = ('fn', 'arg_set_no')
 
     def __init__(self, fn, arg_set_no: int = 0):
+        warnings.warn('This module is experimental, use at your own peril', ExperimentalWarning)
         self.fn = fn
         self.arg_set_no = arg_set_no
 
@@ -105,6 +109,7 @@ class CallIf(Call):
     __slots__ = ('fn_to_call', 'fn_call_if')
 
     def __init__(self, fn_if_call: Call, fn_to_call: Call):
+        warnings.warn('This module is experimental, use at your own peril', ExperimentalWarning)
         self.fn_to_call = fn_to_call
         self.fn_call_if = fn_if_call
 
@@ -136,6 +141,7 @@ class Reduce(Call):
                  reducing_op: tp.Callable[[tp.Any, tp.Any], tp.Any] = lambda a, b: None,
                  starting_value: tp.Any = 0,
                  do_parallel: bool = True):
+        warnings.warn('This module is experimental, use at your own peril', ExperimentalWarning)
         self.reducing_op = reducing_op
         self.starting_value = starting_value
         self.do_parallel = do_parallel
@@ -233,6 +239,7 @@ def call_with_ee(callable_: tp.Callable, ee: ExecutionEnvironment,
     :param _copy_call_stack_from: used internally, don't use
     :return: a new callable
     """
+    warnings.warn('This module is experimental, use at your own peril', ExperimentalWarning)
 
     def inner(*args, **kwargs):
         if not hasattr(local_ee, 'ee'):
@@ -256,6 +263,7 @@ def package_for_execution(clbl: tp.Callable, ee: ExecutionEnvironment) -> tp.Cal
     :param ee: EE to use
     :return: a callable
     """
+    warnings.warn('This module is experimental, use at your own peril', ExperimentalWarning)
 
     def inner():
         return ee(clbl)
@@ -273,6 +281,7 @@ def call(fun):
 
 
 def current_ee() -> ExecutionEnvironment:
+    warnings.warn('This module is experimental, use at your own peril', ExperimentalWarning)
     return local_ee.ee
 
 
@@ -280,6 +289,7 @@ def current_call() -> Call:
     """
     Return currently processed Call, or None if not available
     """
+    warnings.warn('This module is experimental, use at your own peril', ExperimentalWarning)
     return local_ee.cs[-1][0]
 
 
@@ -287,6 +297,7 @@ def current_args() -> tp.Optional[tuple]:
     """
     Return currently used positional arguments, or None if not available
     """
+    warnings.warn('This module is experimental, use at your own peril', ExperimentalWarning)
     if not local_ee.cs:
         return None
     return local_ee.cs[-1][1]
@@ -296,6 +307,7 @@ def current_kwargs() -> tp.Optional[dict]:
     """
     Return currently used kwargs, or None if not available
     """
+    warnings.warn('This module is experimental, use at your own peril', ExperimentalWarning)
     if not local_ee.cs:
         return None
     return local_ee.cs[-1][2]
@@ -309,4 +321,5 @@ def current_history() -> tp.Tuple[tp.Tuple[Call, tuple, dict]]:
     one.
     :return: a tuple of tuples (Call instance, args tuple, kwargs dict)
     """
+    warnings.warn('This module is experimental, use at your own peril', ExperimentalWarning)
     return local_ee.cs
