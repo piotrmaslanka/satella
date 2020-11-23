@@ -10,6 +10,12 @@ from concurrent.futures import Future
 
 class TestTime(unittest.TestCase):
 
+    def test_measure(self):
+        with measure(timeout=0.5) as measurement:
+            self.assertFalse(measurement.timeouted)
+            time.sleep(1)
+            self.assertTrue(measurement.timeouted)
+
     @unittest.skipIf('win' in sys.platform, 'Needs POSIX to run')
     def test_sleep(self):
         sleep(-2)

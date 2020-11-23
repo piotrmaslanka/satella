@@ -2,10 +2,13 @@ import copy
 import inspect
 import time
 import typing as tp
+import warnings
 from concurrent.futures import Future
 from functools import wraps  # import from functools to prevent circular import exception
 
 __all__ = ['measure', 'time_as_int', 'time_ms', 'sleep', 'time_us']
+
+from satella.exceptions import WouldWaitMore
 
 TimeSignal = tp.Callable[[], float]
 
@@ -136,14 +139,17 @@ class measure:
     :param adjust: interval to add to current time upon initialization
     :param time_getter_callable: callable/0 -> float to get the time with
     :param create_stopped: if this is set to True, you will manually need to call .start()
+    :param timeout: a time limit, after exceeding which the property `timeouted` will be true
     """
     __slots__ = ('started_on', 'elapsed', 'stopped_on', 'stop_on_stop', 'time_getter_callable',
-                 'create_stopped')
+                 'create_stopped', 'timeout')
 
     def __init__(self, future_to_measure: tp.Optional[Future] = None, stop_on_stop: bool = True,
                  adjust: float = 0.0, time_getter_callable: TimeSignal = time.monotonic,
-                 create_stopped: bool = False):
+                 create_stopped: bool = False,
+                 timeout: tp.Optional[float] = None):
         self.time_getter_callable = time_getter_callable
+        self.timeout = timeout
         self.started_on = time_getter_callable() + adjust
         self.create_stopped = create_stopped
         if create_stopped:
@@ -156,6 +162,27 @@ class measure:
         if future_to_measure is not None:
             future_to_measure.add_done_callback(lambda fut: self.stop())
 
+    @property
+    def timeouted(self) -> bool:
+        """
+        :return: Has the time elapsed exceeded timeout?
+        :raise ValueError: timeout was not given
+        """
+        if self.timeout is None:
+            raise ValueError('Timeout was not given!')
+        return self.get_time_elapsed() < self.timeout
+
+    def assert_not_timeouted(self) -> None:
+        """
+        If the time elapsed exceeded timeout, throw WouldWaitMore
+        :raise ValueError: timeout was not given
+        :raise WouldWaitMore: time elapsed has exceeded timeout
+        """
+        if self.timeout is None:
+            raise ValueError('Timeout was not given!')
+        if self.timeouted:
+            raise WouldWaitMore('timeout exceeded')
+
     def reset_and_start(self):
         """
         Syntactic sugar for calling reset() and then start()
@@ -167,14 +194,18 @@ class measure:
         """
         Return whether the timer has exceeded provided value
         """
+        warnings.warn('Use timeout parameter and timeouted property instead.',
+                      PendingDeprecationWarning)
         return self() > value
 
-    def raise_if_exceeded(self, value: float, exc_class: tp.Type[Exception] = TimeoutError):
+    def raise_if_exceeded(self, value: float, exc_class: tp.Type[Exception] = WouldWaitMore):
         """
         Raise provided exception, with no arguments, if timer has clocked more than provided value.
 
-        If no exc_class is provided, TimeoutError will be raised by default.
+        If no exc_class is provided, WouldWaitMore will be raised by default.
         """
+        warnings.warn('Use timeout parameter and assert_not_timeouted property instead.',
+                      PendingDeprecationWarning)
         if self.has_exceeded(value):
             raise exc_class()
 
@@ -207,11 +238,17 @@ class measure:
         """Add given value to internal started_at counter"""
         self.started_on += interval
 
+    def get_time_elapsed(self):
+        """
+        :return: currently elapsed time
+        """
+        if self.stop_on_stop and self.elapsed is not None:
+            return self.elapsed
+        return self.time_getter_callable() - self.started_on
+
     def __call__(self, fun: tp.Optional[tp.Callable] = None) -> float:
         if fun is None:
-            if self.stop_on_stop and self.elapsed is not None:
-                return self.elapsed
-            return self.time_getter_callable() - self.started_on
+            return self.get_time_elapsed()
         else:
             from satella.coding.decorators import auto_adapt_to_methods
 
