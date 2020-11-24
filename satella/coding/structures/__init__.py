@@ -18,8 +18,10 @@ from .typednamedtuple import typednamedtuple
 from .lru import LRU
 from .syncable_droppable import DBStorage, SyncableDroppable
 from .tuples import Vector
+from .n_dimensional import NDimensionalStructure
 
 __all__ = [
+    'NDimensionalStructure',
     'Vector',
     'DBStorage', 'SyncableDroppable',
     'LRU',

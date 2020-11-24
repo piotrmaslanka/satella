@@ -2,7 +2,10 @@
 Structures
 ==========
 
-.. autoclass:: satella.coding.structures.Vector
+N-dimensional data structure
+----------------------------
+
+.. autoclass:: satella.coding.structures.NDimensionalStructure
     :members:
 
 
@@ -22,6 +25,14 @@ SparseMatrix
 .. autoclass:: satella.coding.structures.SparseMatrix
     :members:
 
+Vector
+------
+
+A particular subclass of a tuple, allowing point-wise addition and subtraction, and multiplication
+and division by a scalar.
+
+.. autoclass:: satella.coding.structures.Vector
+    :members:
 
 Heaps
 =====
