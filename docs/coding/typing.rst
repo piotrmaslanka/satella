@@ -8,6 +8,7 @@ They are as follows:
 * `ExceptionClassType` - base type of exception class
 * `Number` - an amalgam of int and float
 * `T`, `U`, `K`, `V` - type vars to use
+    * Note that `K` must be hashable
 * `Iteratable` - a generic iterator or an iterable of `T`
 * `NoArgCallable` - a callable with no arguments returning `T`
 * `Appendable` - an object which has the `append` method
