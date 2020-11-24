@@ -4,14 +4,14 @@ import base64
 
 from satella.coding.transforms import stringify, split_shuffle_and_join, one_tuple, \
     merge_series, pad_to_multiple_of_length, clip, b64encode, linear_interpolate, \
-    words_to_int
+    hashables_to_int
 
 
 class TestTransforms(unittest.TestCase):
 
     def test_words_to_int(self):
         words = ['a', 'word', 'a']
-        dct = words_to_int(words)
+        dct = hashables_to_int(words)
         self.assertEqual(len(dct), 2)
         self.assertEqual(len(list(dct.values())), 2)
 

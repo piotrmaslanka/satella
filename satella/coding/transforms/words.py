@@ -1,12 +1,14 @@
 import typing as tp
 
+from satella.coding.typing import K
 
-def words_to_int(words: tp.List[str]) -> tp.Dict[str, int]:
+
+def hashables_to_int(words: tp.List[K]) -> tp.Dict[K, int]:
     """
-    Assign each word an integer, starting from 0, and return the resulting mapping
+    Assign each hashable an integer, starting from 0, and return the resulting mapping
 
-    :param words: a list of words
-    :return: a dictionary keyed by words and values are the assigned integers
+    :param words: a list of hashables
+    :return: a dictionary keyed by hashable and values are the assigned integers
     """
     dictionary = {}
     i = 0
