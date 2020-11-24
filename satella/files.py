@@ -170,7 +170,9 @@ def read_in_file(path: str, encoding: tp.Optional[str] = None,
 def read_re_sub_and_write(path: str, pattern: tp.Union[re.compile, str],
                           repl: tp.Union[tp.Callable[[tp.Any], str]]) -> None:
     """
-    Read a text file, treat with re.sub and write the contents
+    Read a text file, treat with re.sub and write the contents.
+
+    Note that this is not thread or multiprocess safe.
 
     :param path: path of file to treat
     :param pattern: regexp compiled pattern or a string, a pattern to match the file contents
