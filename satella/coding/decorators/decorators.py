@@ -137,6 +137,17 @@ def cache_memoize(cache_duration: float, time_getter: tp.Callable[[], float] = t
 
     :param cache_duration: cache validity, in seconds
     :param time_getter: a callable without arguments that yields us a time marker
+
+    Usage example:
+
+    >>> @cache_memoize(10)
+    >>> def expensive_but_idempotent_operation(a):
+    >>>     ...
+
+    >>> a = expensive_but_idempotent_operation(2)
+    >>> b = expensive_but_idempotent_operation(2)   # is much faster than computing the value anew
+    >>> time.sleep(10)
+    >>> c = expensive_but_idempotent_operation(2)   # function body is computed anew
     """
     from satella.coding.concurrent import MonitorDict, Monitor
 
@@ -175,6 +186,15 @@ def memoize(fun):
 
     Note that this will make your function execute it at most one thread, the
     remaining ones will have to wait.
+
+    Usage example:
+
+    >>> @memoize
+    >>> def expensive_but_idempotent_operation(a):
+    >>>     ...
+
+    >>> a = expensive_but_idempotent_operation(2)
+    >>> b = expensive_but_idempotent_operation(2)   # is much faster than computing the value anew
     """
     from satella.coding.concurrent.monitor import MonitorDict, Monitor
 
