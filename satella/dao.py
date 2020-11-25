@@ -25,11 +25,11 @@ class Loadable(metaclass=ABCMeta):
     @abstractmethod
     def refresh(self, load_from=None) -> None:
         """
-        Optionally provide a class to load this class from.
+        Ask the database about this object, or load it from provided serialized representation.
 
         Override me, calling me in a super method.
 
-        :param load_from: serialized object. If not given, the DB will be hit
+        :param load_from: serialized object. If not given, the DB will be asked for it
         """
         self._loaded = True
 
