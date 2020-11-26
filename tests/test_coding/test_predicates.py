@@ -1,10 +1,14 @@
 import unittest
 
-
+from satella.coding import source_to_function
 from satella.coding.predicates import x, build_structure
 
 
 class TestPredicates(unittest.TestCase):
+
+    def test_source_to_function(self):
+        y = source_to_function(x)
+        self.assertEqual(y(5), 5)
 
     def test_build_structure(self):
         a = {x: x*2}

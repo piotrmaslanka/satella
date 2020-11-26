@@ -113,12 +113,12 @@ def source_to_function(src: tp.Union[tp.Callable, str]) -> tp.Callable[[tp.Any],
     :param src: a callable or a Python string expression
     :return: a callable
     """
-    if callable(src):
-        return src
-    else:
+    if isinstance(src, str):
         q = dict(globals())
         exec('_precond = lambda x: ' + src, q)
         return q['_precond']
+    else:
+        return src
 
 
 def update_attr_if_none(obj: object, attr: str, value: tp.Any,
