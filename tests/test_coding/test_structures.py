@@ -14,10 +14,15 @@ from satella.coding.structures import TimeBasedHeap, Heap, typednamedtuple, \
     DirtyDict, KeyAwareDefaultDict, Proxy, ReprableMixin, TimeBasedSetHeap, ExpiringEntryDict, SelfCleaningDefaultDict, \
     CacheDict, StrEqHashableMixin, ComparableIntEnum, HashableIntEnum, ComparableAndHashableBy, \
     ComparableAndHashableByInt, SparseMatrix, ExclusiveWritebackCache, Subqueue, \
-    CountingDict, ComparableEnum, LRU, LRUCacheDict, Vector
+    CountingDict, ComparableEnum, LRU, LRUCacheDict, Vector, DefaultDict
 
 
 class TestMisc(unittest.TestCase):
+
+    def test_default_dict(self):
+        a = DefaultDict(lambda: '')
+        a[2]
+        self.assertNotIn(2, a)
 
     def test_vector(self):
         a = Vector((2, 3))

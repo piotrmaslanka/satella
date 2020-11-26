@@ -1,6 +1,6 @@
 from .dictionaries import DictObject, apply_dict_object, DictionaryView, TwoWayDictionary, \
     DirtyDict, KeyAwareDefaultDict, ExpiringEntryDict, SelfCleaningDefaultDict, \
-    CacheDict, ExclusiveWritebackCache, CountingDict, LRUCacheDict
+    CacheDict, ExclusiveWritebackCache, CountingDict, LRUCacheDict, DefaultDict
 from .hashable_objects import HashableWrapper
 from .heaps import Heap, SetHeap, TimeBasedHeap, TimeBasedSetHeap
 from .immutable import Immutable, frozendict
@@ -28,6 +28,7 @@ __all__ = [
     'CountingDict',
     'Subqueue',
     'ExclusiveWritebackCache',
+    'DefaultDict',
     'ComparableEnum',
     'CacheDict',
     'KeyAwareDefaultDict',

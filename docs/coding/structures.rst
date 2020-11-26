@@ -191,6 +191,12 @@ There are also two functions to help you with managing your `SingletonWithRegard
 Dictionaries
 ============
 
+DefaultDict
+-----------
+
+.. autoclass:: satella.coding.structures.DefaultDict
+    :members:
+
 CountingDict
 ------------
 
