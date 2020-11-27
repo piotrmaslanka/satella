@@ -27,7 +27,8 @@ class MemoryPressureManager(TerminableThread):
 
     Eg.
 
-    >>> mt = MemoryPressureManager(maximum_available=4*GB, severity_levels=[80, 90])
+    >>> mt = MemoryPressureManager(maximum_available=4*GB, severity_levels=[GlobalRelativeValue(20),
+    >>>                            GlobalRelativeValue(10)])
     >>> @mt.register_on_severity(1)
     >>> def trigger_a():
     >>>     print('80% consumption of memory exceeded')
