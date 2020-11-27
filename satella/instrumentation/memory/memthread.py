@@ -46,7 +46,7 @@ class MemoryPressureManager(TerminableThread):
                  severity_levels: tp.List[BaseCondition] = None,
                  check_interval: int = 10,
                  log_transitions: bool = True):
-        super().__init__(daemon=True)
+        super().__init__(name='memory pressure manager', daemon=True)
         self.log_transitions = log_transitions  # type: bool
         self.process = psutil.Process(os.getpid())  # type: psutil.Process
         self.maximum_available = maximum_available  # type: int

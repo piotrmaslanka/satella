@@ -92,7 +92,7 @@ class GlobalAbsoluteValue(MemoryCondition):
 
 class GlobalRelativeValue(MemoryCondition):
     """
-    If percentage of global free memory falls below this many bytes, given severity level starts
+    If percentage of global free memory falls below this much percents, given severity level starts
     """
     __slots__ = ()
 
