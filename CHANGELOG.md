@@ -2,3 +2,4 @@
 
 * fixed docs for `GlobalRelativeValue`
 * `MemoryPressureManager` will name it's thread
+* enabled _read_in_file to return None as default value
