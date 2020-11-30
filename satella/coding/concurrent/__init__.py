@@ -1,5 +1,5 @@
 from .atomic import AtomicNumber
-from .callablegroup import CallableGroup, CallNoOftenThan
+from .callablegroup import CallableGroup, CallNoOftenThan, CancellableCallback
 from .functions import parallel_execute, run_as_future
 from .futures import Future, WrappingFuture, InvalidStateError
 from .id_allocator import IDAllocator, SequentialIssuer
@@ -18,4 +18,5 @@ __all__ = ['LockedDataset', 'Monitor', 'RMonitor', 'CallableGroup', 'TerminableT
            'BogusTerminableThread', 'Timer', 'parallel_execute', 'run_as_future',
            'sync_threadpool', 'IntervalTerminableThread', 'Future',
            'WrappingFuture', 'InvalidStateError', 'PeekableQueue',
+           'CancellableCallback',
            'SequentialIssuer']

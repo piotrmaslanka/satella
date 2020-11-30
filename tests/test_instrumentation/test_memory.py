@@ -24,11 +24,18 @@ class TestMemory(unittest.TestCase):
              'improved': False,
              'times_entered_1': 0,
              'level_2_engaged': False,
-             'level_2_confirmed': False}
+             'level_2_confirmed': False,
+             'cancelled': 0}
 
         cc = CustomCondition(lambda: a['level_2_engaged'])
 
         MemoryPressureManager(None, [odc, All(cc, Any(cc, cc))], 2)
+
+        def cancel():
+            nonlocal a
+            a['cancelled'] += 1
+
+        cc = MemoryPressureManager.register_on_entered_severity(1)(cancel)
 
         @MemoryPressureManager.register_on_entered_severity(2)
         def call_on_level_2():
@@ -52,6 +59,8 @@ class TestMemory(unittest.TestCase):
         time.sleep(3)
         odc.value = True
         time.sleep(5)
+        self.assertEqual(a['cancelled'], 1)
+        cc.cancel()
         self.assertTrue(a['memory'])
         self.assertFalse(a['improved'])
         self.assertGreater(a['calls'], 0)
@@ -63,5 +72,6 @@ class TestMemory(unittest.TestCase):
         self.assertTrue(a['memory'])
         a['level_2_engaged'] = True
         time.sleep(3)
+        self.assertEqual(a['cancelled'], 1)
         self.assertEqual(a['times_entered_1'], 3)
         self.assertTrue(a['level_2_confirmed'])

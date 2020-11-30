@@ -5,7 +5,7 @@ import typing as tp
 
 import psutil
 
-from satella.coding.concurrent import CallableGroup, CallNoOftenThan
+from satella.coding.concurrent import CallableGroup, CallNoOftenThan, CancellableCallback
 from satella.coding.concurrent import TerminableThread
 from satella.coding.structures import Singleton
 from satella.time import measure
@@ -98,6 +98,15 @@ class MemoryPressureManager(TerminableThread):
         if self.stopped:
             return time.sleep(self.check_interval)
 
+        for cg in self.callbacks_on_entered:
+            cg.remove_cancelled()
+
+        for cg in self.callbacks_on_left:
+            cg.remove_cancelled()
+
+        for cg in self.callbacks_on_remains:
+            cg.remove_cancelled()
+
         with measure() as measurement:
             severity_level = self.calculate_severity_level()
             if self.current_severity_level != severity_level:
@@ -135,8 +144,9 @@ class MemoryPressureManager(TerminableThread):
         """
 
         def outer(fun):
-            MemoryPressureManager().callbacks_on_entered[severity].add(fun)
-            return fun
+            cc = CancellableCallback(fun)
+            MemoryPressureManager().callbacks_on_entered[severity].add(cc)
+            return cc
 
         return outer
 
@@ -155,8 +165,9 @@ class MemoryPressureManager(TerminableThread):
         """
 
         def outer(fun):
-            MemoryPressureManager().callbacks_on_left[severity].add(fun)
-            return fun
+            cc = CancellableCallback(fun)
+            MemoryPressureManager().callbacks_on_left[severity].add(cc)
+            return cc
 
         return outer
 
@@ -174,8 +185,9 @@ class MemoryPressureManager(TerminableThread):
         """
 
         def outer(fun):
-            MemoryPressureManager().callbacks_on_remains[severity].add(
-                CallNoOftenThan(call_no_more_often_than, fun))
-            return fun
+            cno = CallNoOftenThan(call_no_more_often_than, fun)
+            cc = CancellableCallback(cno)
+            MemoryPressureManager().callbacks_on_remains[severity].add(cc)
+            return cc
 
         return outer

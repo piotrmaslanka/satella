@@ -10,13 +10,27 @@ from concurrent.futures import ThreadPoolExecutor, Future as PythonFuture
 from satella.coding.concurrent import TerminableThread, CallableGroup, Condition, MonitorList, \
     LockedStructure, AtomicNumber, Monitor, IDAllocator, call_in_separate_thread, Timer, \
     parallel_execute, run_as_future, sync_threadpool, IntervalTerminableThread, Future, \
-    WrappingFuture, PeekableQueue, SequentialIssuer
+    WrappingFuture, PeekableQueue, SequentialIssuer, CancellableCallback
 from satella.coding.concurrent.futures import call_in_future, ExecutorWrapper
 from satella.coding.sequences import unique
 from satella.exceptions import WouldWaitMore, AlreadyAllocated, Empty
 
 
 class TestConcurrent(unittest.TestCase):
+
+    def test_cancellable_callback(self):
+        a = {'test': True}
+
+        def y():
+            nonlocal a
+            a['test'] = False
+
+        cg = CallableGroup()
+        cc = CancellableCallback(y)
+        cg.add(cc)
+        cc.cancel()
+        cg()
+        self.assertTrue(a['test'])
 
     def test_sequential_issuer(self):
         si = SequentialIssuer()

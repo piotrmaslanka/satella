@@ -14,6 +14,12 @@ CallNoOftenThan
 .. autoclass:: satella.coding.concurrent.CallNoOftenThan
     :members:
 
+CancellableCallback
+-------------------
+
+.. autoclass:: satella.coding.concurrent.CancellableCallback
+    :members:
+
 LockedDataset
 =============
 

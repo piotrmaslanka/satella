@@ -1,9 +1,52 @@
 import collections
 import copy
+import weakref
 import time
 import typing as tp
 
+from satella.coding.deleters import DictDeleter
 from satella.coding.typing import T, NoArgCallable
+
+
+class CancellableCallback:
+    """
+    A callback that you can cancel.
+
+    Useful for event-driven software that looks through lists of callbacks and determines whether
+    to delete them or further invalidate in some other way.
+
+    If called, the function itself won't be called as well if this was cancelled. In this case
+    a None will be returned instead of the result of callback_fun()
+
+    This short circuits __bool__ to return not .cancelled.
+
+    Hashable and __eq__-able by identity.
+
+    :param callback_fun: function to call
+
+    :ivar cancelled: whether this callback was cancelled (bool)
+    """
+    __slots__ = ('cancelled', 'callback_fun')
+
+    def __bool__(self) -> bool:
+        return not self.cancelled
+
+    def __hash__(self) -> int:
+        return hash(id(self))
+
+    def __init__(self, callback_fun: tp.Callable):
+        self.callback_fun = callback_fun
+        self.cancelled = False
+
+    def __call__(self, *args, **kwargs):
+        if not self.cancelled:
+            return self.callback_fun(*args, **kwargs)
+
+    def cancel(self) -> None:
+        """
+        Cancel this callback.
+        """
+        self.cancelled = True
 
 
 class CallableGroup(tp.Generic[T]):
@@ -22,7 +65,8 @@ class CallableGroup(tp.Generic[T]):
     will be propagated.
 
     """
-    __slots__ = ('callables', 'gather', 'swallow_exceptions')
+    __slots__ = ('callables', 'gather', 'swallow_exceptions',
+                 '_has_cancellable_callbacks')
 
     def __init__(self, gather: bool = True, swallow_exceptions: bool = False):
         """
@@ -35,12 +79,48 @@ class CallableGroup(tp.Generic[T]):
         self.callables = collections.OrderedDict()  # type: tp.Dict[tp.Callable, bool]
         self.gather = gather  # type: bool
         self.swallow_exceptions = swallow_exceptions  # type: bool
+        self._has_cancellable_callbacks = False
 
-    def add(self, callable_: NoArgCallable[T], one_shot: bool = False):
+    @property
+    def has_cancelled_callbacks(self) -> bool:
         """
+        Check whether this has any
+        :class:`~satella.coding.concurrent.CancellableCallback` instances and whether any
+        of them was cancelled
+        """
+        if not self._has_cancellable_callbacks:
+            return False
+        for clb in self.callables:
+            if isinstance(clb, CancellableCallback) and not clb:
+                return True
+        return False
+
+    def remove_cancelled(self) -> None:
+        """
+        Remove it's entries that are CancelledCallbacks and that were cancelled
+        """
+        if not self.has_cancelled_callbacks:
+            return
+
+        with DictDeleter(self.callables) as dd:
+            for callable_ in dd:
+                if isinstance(callable_, CancellableCallback) and not callable_:
+                    dd.delete()
+
+    def add(self, callable_: tp.Union[CancellableCallback, NoArgCallable[T]],
+            one_shot: bool = False):
+        """
+        Add a callable.
+
+        Can be a :class:`~satella.coding.concurrent.CancellableCallback`, in that case
+        method :meth:`~satella.coding.concurrent.CallableGroup.remove_cancelled` might
+        be useful.
+
         :param callable_: callable
         :param one_shot: if True, callable will be unregistered after single call
         """
+        if isinstance(callable_, CancellableCallback):
+            self._has_cancellable_callbacks = True
         from ..structures.hashable_objects import HashableWrapper
         callable_ = HashableWrapper(callable_)
         if callable_ in self.callables:
@@ -56,6 +136,9 @@ class CallableGroup(tp.Generic[T]):
 
         :return: list of results if gather was set, else None
         """
+        if self.has_cancelled_callbacks:
+            self.remove_cancelled()
+
         callables = copy.copy(self.callables)
 
         results = []
