@@ -36,11 +36,16 @@ class MemoryPressureManager(TerminableThread):
     >>> def trigger_b():
     >>>     print('90% consumption of memory exceeded')
 
+    As well, this object is a singleton.
+
     :param maximum_available: maximum amount of memory that this program can use
     :param severity_levels: this defines the levels of severity. A level is reached when program's
         consumption is other this many percent of it's maximum_available amount of memory.
     :param check_interval: amount of seconds of pause between consecutive checks
     :param log_transitions: whether to log to logger when a transition takes place
+
+    :ivar severity_level: current severity level (int)
+        0 means memory is OK, 1 and more means memory is progressively more limited
     """
 
     def __init__(self, maximum_available: tp.Optional[int] = None,
@@ -63,28 +68,28 @@ class MemoryPressureManager(TerminableThread):
         self.callbacks_on_left = [CallableGroup(gather=False) for _ in
                                   range(len(
                                       self.severity_levels))]  # type: tp.List[CallableGroup]
-        self.current_severity_level = 0  # type: int
+        self.severity_level = 0  # type: int
         self.stopped = False  # type: bool
         self.check_interval = check_interval  # type: int
         self.start()
 
     def advance_to_severity_level(self, target_level: int):
-        while self.current_severity_level != target_level:
-            delta = target_level - self.current_severity_level
+        while self.severity_level != target_level:
+            delta = target_level - self.severity_level
             delta = int(delta / abs(delta))
 
             if delta > 0:
                 # Means we are ENTERING a severity level
-                self.current_severity_level += delta
-                self.callbacks_on_entered[self.current_severity_level]()
+                self.severity_level += delta
+                self.callbacks_on_entered[self.severity_level]()
                 if self.log_transitions:
-                    logger.warning('Entered severity level %s' % (self.current_severity_level,))
+                    logger.warning('Entered severity level %s' % (self.severity_level,))
             elif delta < 0:
                 # Means we are LEAVING a severity level
-                self.callbacks_on_left[self.current_severity_level]()
+                self.callbacks_on_left[self.severity_level]()
                 if self.log_transitions:
-                    logger.warning('Left severity level %s' % (self.current_severity_level,))
-                self.current_severity_level += delta
+                    logger.warning('Left severity level %s' % (self.severity_level,))
+                self.severity_level += delta
 
     def stop(self):
         """Stop this thread from operating"""
@@ -109,7 +114,7 @@ class MemoryPressureManager(TerminableThread):
 
         with measure() as measurement:
             severity_level = self.calculate_severity_level()
-            if self.current_severity_level != severity_level:
+            if self.severity_level != severity_level:
                 self.advance_to_severity_level(severity_level)
             else:
                 self.callbacks_on_remains[severity_level]()
