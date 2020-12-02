@@ -1,5 +1,6 @@
 import itertools
 import typing as tp
+import warnings
 from collections import namedtuple
 
 
@@ -25,10 +26,16 @@ def parallel_for(cursor, query: tp.Union[tp.List[str], str, 'Statement', tp.List
     Note that if None is encountered in the argument iterable, session.execute() will
     be called with a single argument. You better have it as a BoundStatement then!
 
+    .. deprecated:: 2.14.22
+        Use Cassandra_ feature for that
+
+    .. _Cassandra: https://docs.datastax.com/en/developer/python-driver/3.24/api/cassandra/concurrent/
+
     :param cursor: the Cassandra cursor to use (obtained using connection.session())
     :param query: base query or a list of queries, if a different one is to be used
     :param arguments: iterable yielding arguments to use in execute_async
     """
+    warnings.warn('This is deprecated and will be removed in Satella 3.0', DeprecationWarning)
     try:
         from cassandra.query import Statement
         query_classes = (str, Statement)
