@@ -3,7 +3,7 @@ Decorators
 
 .. autofunction:: satella.coding.decorators.transform_result
 
-.. autofunction:: satella.coding.decorators.transforms_arguments
+.. autofunction:: satella.coding.decorators.transform_arguments
 
 .. autofunction:: satella.coding.decorators.retry
 
