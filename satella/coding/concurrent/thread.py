@@ -66,6 +66,8 @@ class Condition(PythonCondition):
     def notifyAll(self) -> None:
         """
         Deprecated alias for notify_all
+
+        .. deprecated:: 2.14.22
         """
         warnings.warn('Use notify_all instead', DeprecationWarning)
         self.notify_all()

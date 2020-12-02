@@ -71,6 +71,8 @@ def queue_iterator(queue: Queue) -> tp.Iterator:
 def update_if_not_none(dictionary: tp.Dict, key: tp.Hashable, value) -> tp.Dict:
     """
     Deprecated alias for :func:`update_key_if_none`
+
+    .. deprecated:: 2.14.22
     """
     warnings.warn('This is deprecated and will be removed in Satella 3.0,'
                   'use update_key_if_not_none instead', DeprecationWarning)
@@ -312,6 +314,8 @@ def call_with_arguments(function: tp.Callable, arguments: tp.Dict[str, tp.Any]) 
 def update_key_if_none(dictionary: tp.Dict, key: tp.Hashable, value) -> tp.Dict:
     """
     This is deprecated. Please use update_key_if_not_none instead!
+
+    .. deprecated:: 2.14.22
     """
     warnings.warn('This is deprecated and will be removed in Satella 3.0, use '
                   'update_key_if_not_none instead', DeprecationWarning)

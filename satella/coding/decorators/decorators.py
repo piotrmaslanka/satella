@@ -268,6 +268,8 @@ def has_keys(keys: tp.List[str]):
 
     This is meant to be used in conjunction with @precondition
 
+    .. deprecated:: 2.14.22
+
     :param keys: list of keys to expect
     """
     warnings.warn('This is deprecated and will be removed in Satella 3.0. '

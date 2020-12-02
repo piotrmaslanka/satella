@@ -220,6 +220,9 @@ def count(sq: Iteratable, start: tp.Optional[int] = None, step: int = 1,
 
     >>> (i for i, x in enumerate(sq, start=start_at))
 
+    .. deprecated:: 2.14.22
+        Use `start` instead
+
     :param sq: sequence to enumerate
     :param start: alias for start_at. Prefer it in regards to start_at. Default is 0
     :param step: number to add to internal counter after each element
@@ -251,6 +254,9 @@ def iter_dict_of_list(dct: tp.Dict[T, tp.List[U]]) -> tp.Generator[tp.Tuple[T, U
 def infinite_counter(start_at: int = 0, step: int = 1) -> tp.Iterator[int]:
     """
     Infinite counter, starting at start_at
+
+    .. deprecated:: 2.14.22
+        Use `itertools.count` instead.
 
     :param start_at: value at which to start counting. It will be yielded as first
     :param step: step by which to progress the counter
@@ -346,6 +352,10 @@ def zip_shifted(*args: tp.Union[Iteratable, tp.Tuple[Iteratable, int]]) -> \
     Same memory considerations as :func:`shift` apply.
 
     The resulting iterator will be as long as the shortest sequence.
+
+    .. deprecated:: 2.14.22
+        Use `zip(shift(...))` instead
+
     :param args: a tuple with the iterator/iterable and amount of shift. If a non-tuple is given,
         it is assumed that the shift is zero.
     """
@@ -369,6 +379,9 @@ def skip_first(iterator: Iteratable, n: int) -> tp.Iterator[T]:
     Skip first n elements from given iterator.
 
     Returned iterator may be empty, if source iterator is shorter or equal to n.
+
+    .. deprecated:: 2.14.22
+        Use `itertools.islice` instead
     """
     warnings.warn('This is deprecated and will be removed in Satella 3.0. '
                   'Please use itertools.islice instead', DeprecationWarning)
@@ -479,6 +492,9 @@ def stop_after(iterator: Iteratable, n: int) -> tp.Iterator[T]:
     Stop this iterator after returning n elements, even if it's longer than that.
 
     The resulting iterator may be shorter than n, if the source element is so.
+
+    .. deprecated:: 2.14.22
+        Use `itertools.islice` instead
 
     :param iterator: iterator or iterable to examine
     :param n: elements to return

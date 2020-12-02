@@ -15,6 +15,9 @@ class ClicksPerTimeUnitMetric(EmbeddedSubmetrics):
     (in seconds). You may specify multiple time periods as consequent entries in the list.
 
     By default (if you do not specify otherwise) this will track calls made during the last second.
+
+    .. deprecated:: 2.14.22
+        Use :class:`~satella.instrumentation.metrics.metric_types.CounterMetric` instead
     """
     __slots__ = ('last_clicks', 'aggregate_children', 'cutoff_period', 'time_unit_vectors')
 

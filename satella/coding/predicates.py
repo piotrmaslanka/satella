@@ -110,6 +110,8 @@ class PredicateClass:
         An old name for has().
 
         It's deprecated. Use has() instead
+
+        .. deprecated:: 2.14.22
         """
         warnings.warn('This is deprecated and will be removed in Satella 3.x.'
                       'Please use has() instead', DeprecationWarning)

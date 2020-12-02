@@ -202,7 +202,9 @@ class measure:
 
     def has_exceeded(self, value: float) -> bool:
         """
-        Return whether the timer has exceeded provided value
+        Return whether the timer has exceeded provided value.
+
+        .. deprecated:: 2.14.22
         """
         warnings.warn('Use timeout parameter and timeouted property instead.',
                       PendingDeprecationWarning)
@@ -213,6 +215,8 @@ class measure:
         Raise provided exception, with no arguments, if timer has clocked more than provided value.
 
         If no exc_class is provided, WouldWaitMore will be raised by default.
+
+        .. deprecated:: 2.14.22
         """
         warnings.warn('Use timeout parameter and assert_not_timeouted property instead.',
                       PendingDeprecationWarning)
