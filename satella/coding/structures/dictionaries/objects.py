@@ -1,6 +1,7 @@
 import copy
 import typing as tp
 
+import warnings
 from satella.coding.typing import K, V
 
 
@@ -212,6 +213,11 @@ class DictionaryView(tp.MutableMapping[K, V]):
     >>> del dv[1]
     >>> assertRaises(KeyError, lambda: dv.__delitem__(1))
 
+    .. deprecated:: 2.14.22
+       Use ChainMap_ instead.
+
+    .. _ChainMap: https://docs.python.org/3/library/collections.html#collections.ChainMap
+
     :param master_dict: First dictionary to look up. Entries made via __setitem__ will be put here.
     :param rest_of_dicts: Remaining dictionaries
     :param propagate_deletes: Whether to delete given key from the first dictionary that it is
@@ -232,6 +238,8 @@ class DictionaryView(tp.MutableMapping[K, V]):
     def __init__(self, master_dict: tp.Dict[K, V], *rest_of_dicts: tp.Dict[K, V],
                  propagate_deletes: bool = True,
                  assign_to_same_dict: bool = True):
+        warnings.warn('This is deprecated and will be removed in Satella 3.0.'
+                      'Use collections.ChainMap instead', DeprecationWarning)
         self.assign_to_same_dict = assign_to_same_dict
         self.master_dict = master_dict
         self.dictionaries = [master_dict, *rest_of_dicts]
