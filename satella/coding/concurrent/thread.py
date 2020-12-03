@@ -239,10 +239,14 @@ class TerminableThread(threading.Thread):
         """
         Calls self.loop() indefinitely, until terminating condition is met
         """
-        self.prepare()
-        while not self._terminating:
-            self.loop()
-        self.cleanup()
+        try:
+            self.prepare()
+            while not self._terminating:
+                self.loop()
+        except SystemExit:
+            pass
+        finally:
+            self.cleanup()
 
     def cleanup(self):
         """
@@ -260,7 +264,7 @@ class TerminableThread(threading.Thread):
         self.terminate().join()
         return False
 
-    def safe_sleep(self, interval: float, wake_up_each: float = 2) -> bool:
+    def safe_sleep(self, interval: float, wake_up_each: float = 2) -> None:
         """
         Sleep for interval, waking up each wake_up_each seconds to check if terminating,
         finish earlier if is terminating.
@@ -269,14 +273,15 @@ class TerminableThread(threading.Thread):
 
         :param interval: Time to sleep in total
         :param wake_up_each: Amount of seconds to wake up each
-        :return: status of _terminating flag at the exit
+        :raises SystemExit: thread is terminating
         """
         t = 0
         while t < interval and not self._terminating:
             remaining_to_sleep = min(interval - t, wake_up_each)
             time.sleep(remaining_to_sleep)
             t += remaining_to_sleep
-        return self._terminating
+        if self._terminating:
+            raise SystemExit()
 
     def terminate(self, force: bool = False) -> 'TerminableThread':
         """
