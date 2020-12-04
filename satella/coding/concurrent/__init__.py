@@ -8,7 +8,7 @@ from .locked_structure import LockedStructure
 from .monitor import MonitorList, Monitor, MonitorDict, RMonitor
 from .sync import sync_threadpool
 from .thread import TerminableThread, Condition, SingleStartThread, call_in_separate_thread, \
-    BogusTerminableThread, IntervalTerminableThread, Terminating
+    BogusTerminableThread, IntervalTerminableThread
 from .timer import Timer
 from .queue import PeekableQueue
 
@@ -19,5 +19,4 @@ __all__ = ['LockedDataset', 'Monitor', 'RMonitor', 'CallableGroup', 'TerminableT
            'sync_threadpool', 'IntervalTerminableThread', 'Future',
            'WrappingFuture', 'InvalidStateError', 'PeekableQueue',
            'CancellableCallback',
-           'SequentialIssuer',
-           'Terminating']
+           'SequentialIssuer']
