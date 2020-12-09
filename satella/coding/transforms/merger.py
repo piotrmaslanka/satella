@@ -13,6 +13,8 @@ class merge_series:
     A merger for multiple sequences that return (timestamp, value).
 
     This will behave as a single-use iterator and return (timestamp, value1, value2, ...)
+
+    :raises ValueError: one of the given series was empty
     """
     __slots__ = ('series', 'next_preloaded_values', 'empty', 'timestamps',
                  'super_next_preloaded_values')
@@ -45,8 +47,12 @@ class merge_series:
         return self
 
     def advance(self, i: int) -> None:
+        """
+        :param i: timestamp to advance to
+        :raises ValueError: given series was empty
+        """
         if self.super_next_preloaded_values[i] is None:
-            raise RuntimeError('Cannot advance on series %s which is empty' % (i,))
+            raise ValueError('Cannot advance on series %s which is empty' % (i,))
         else:
             self.next_preloaded_values[i] = self.super_next_preloaded_values[i]
             try:

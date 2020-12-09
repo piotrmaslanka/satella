@@ -194,7 +194,7 @@ class measure:
         if self.timeouted:
             raise WouldWaitMore('timeout exceeded')
 
-    def reset_and_start(self):
+    def reset_and_start(self) -> None:
         """
         Syntactic sugar for calling reset() and then start()
         """
@@ -224,7 +224,7 @@ class measure:
         if self.has_exceeded(value):
             raise exc_class()
 
-    def reset(self):
+    def reset(self) -> None:
         """
         Reset the counter, enabling it to start counting after a .stop() call.
         This will put the counter in a STOPPED mode if it's running already.
@@ -253,7 +253,7 @@ class measure:
         """Add given value to internal started_at counter"""
         self.started_on += interval
 
-    def get_time_elapsed(self):
+    def get_time_elapsed(self) -> float:
         """
         :return: currently elapsed time
         """
@@ -315,7 +315,7 @@ class measure:
         self.stopped_on = self.time_getter_callable()
         self.elapsed = self.stopped_on - self.started_on
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
+    def __exit__(self, exc_type, exc_val, exc_tb) -> bool:
         if self.stop_on_stop:
             self.stop()
         return False
