@@ -167,11 +167,12 @@ class measure:
     def time_remaining(self) -> float:
         """
         :return: the difference between provided timeout and elapsed time, or None if timeout was
-            not given
+            not given. This will never be negative.
         """
         if self.timeout is None:
             return None
-        return self.timeout - self.get_time_elapsed()
+        v = self.timeout - self.get_time_elapsed()
+        return 0 if v < 0 else v
 
     @property
     def timeouted(self) -> bool:
