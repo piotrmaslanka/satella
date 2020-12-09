@@ -38,6 +38,7 @@ Visit the project's page at GitHub_!
            processes
            cassandra
            opentracing
+           distutils
 
 
 Indices and tables
