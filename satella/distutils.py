@@ -5,6 +5,7 @@ __all__ = ['monkey_patch_parallel_compilation']
 
 # shamelessly ripped from
 # https://stackoverflow.com/questions/11013851/speeding-up-build-process-with-distutils
+# with some changes introduced by me
 
 
 def monkey_patch_parallel_compilation(cores: tp.Optional[int] = None) -> None:
@@ -29,17 +30,18 @@ def monkey_patch_parallel_compilation(cores: tp.Optional[int] = None) -> None:
                                                                               extra_postargs)
         cc_args = self._get_cc_args(pp_opts, debug, extra_preargs)
         # parallel code
-        N = 2  # number of parallel compilations
         import multiprocessing.pool
-        def _single_compile(obj):
+
+        def single_compile(obj):
             try:
                 src, ext = build[obj]
             except KeyError:
                 return
             self._compile(obj, src, ext, cc_args, extra_postargs, pp_opts)
 
-        # convert to list, imap is evaluated on-demand
-        list(multiprocessing.pool.ThreadPool(cores).imap(_single_compile, objects))
+        # evaluate everything
+        for _ in multiprocessing.pool.ThreadPool(cores).imap(single_compile, objects):
+            pass
         return objects
 
     import distutils.ccompiler
