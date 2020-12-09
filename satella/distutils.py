@@ -3,8 +3,11 @@ import multiprocessing
 
 __all__ = ['monkey_patch_parallel_compilation']
 
+# shamelessly ripped from
+# https://stackoverflow.com/questions/11013851/speeding-up-build-process-with-distutils
 
-def monkey_patch_parallel_compilation(cores: tp.Optional[int] = None):
+
+def monkey_patch_parallel_compilation(cores: tp.Optional[int] = None) -> None:
     """
     This monkey-patches distutils to provide parallel compilation, even if you have
     a single extension built from multiple .c files.
