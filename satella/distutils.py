@@ -1,5 +1,6 @@
 import typing as tp
 import multiprocessing
+import warnings
 
 __all__ = ['monkey_patch_parallel_compilation']
 
@@ -46,3 +47,5 @@ def monkey_patch_parallel_compilation(cores: tp.Optional[int] = None) -> None:
 
     import distutils.ccompiler
     distutils.ccompiler.CCompiler.compile = parallelCCompile
+    warnings.warn('This function remains experimental and is likely to be moved into snakehouse',
+                  UserWarning)

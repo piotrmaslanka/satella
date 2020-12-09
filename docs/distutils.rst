@@ -7,3 +7,7 @@ Below was shamelessly ripped from StackOverflow_, with some changes by me.
 
 .. autofunction:: satella.distutils.monkey_patch_parallel_compilation
 
+.. warning:: This function remains experimental and is quite likely to be
+    dropped from satella and moved into snakehouse_.
+
+.. _snakehouse: https://pypi.org/project/snakehouse/
