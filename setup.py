@@ -14,7 +14,7 @@ setup(keywords=['ha', 'high availability', 'scalable', 'scalability', 'server', 
             'HTTPJSONSource': ['requests'],
             'YAMLSource': ['pyyaml'],
             'TOMLSource': ['toml'],
-            'FasterJSONSource': ['ujson'],
+            'FasterJSON': ['ujson'],
             'cassandra': ['cassandra-driver'],
             'opentracing': ['opentracing']
       }

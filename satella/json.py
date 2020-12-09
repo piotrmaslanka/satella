@@ -1,8 +1,13 @@
 import json
 import typing as tp
 from abc import ABCMeta, abstractmethod
+try:
+    import ujson
+except ImportError:
+    pass
 
-__all__ = ['JSONEncoder', 'JSONAble', 'json_encode']
+__all__ = ['JSONEncoder', 'JSONAble', 'json_encode', 'read_json_from_file',
+           'write_json_to_file', 'write_json_to_file_if_different']
 
 Jsonable = tp.TypeVar('Jsonable', list, dict, str, int, float, None)
 
@@ -39,3 +44,61 @@ def json_encode(x: tp.Any) -> str:
     :param x: object to convert
     """
     return JSONEncoder().encode(x)
+
+
+def write_json_to_file(path: str, value: JSONAble) -> None:
+    """
+    Write out a JSON to a file as UTF-8 encoded plain text.
+
+    :param path: path to the file
+    :param value: JSON-able content
+    """
+    if isinstance(value, JSONAble):
+        value = value.to_json()
+    with open(path, 'w') as f_out:
+        try:
+            ujson.dump(value, f_out)
+        except NameError:
+            json.dump(value, f_out)
+
+
+def write_json_to_file_if_different(path: str, value: JSONAble) -> bool:
+    """
+    Read JSON from a file. Write out a JSON to a file if it's value is different,
+    as UTF-8 encoded plain text.
+
+    :param path: path to the file
+    :param value: JSON-able content
+    :return: whether the write actually happened
+    """
+    if isinstance(value, JSONAble):
+        value = value.to_json()
+    try:
+        val = read_json_from_file(path)
+        if val != value:
+            write_json_to_file(path, value)
+            return True
+        return False
+    except (OSError, ValueError):
+        write_json_to_file(path, value)
+        return True
+
+
+def read_json_from_file(path: str) -> JSONAble:
+    """
+    Load a JSON from a provided file, as UTF-8 encoded plain text.
+
+    :param path: path to the file
+    :return: JSON content
+    :raises ValueError: the file contained an invalid JSON
+    :raises OSError: the file was not readable or did not exist
+    """
+    try:
+        with open(path, 'r') as f_in:
+            return ujson.load(f_in)
+    except NameError:
+        with open(path, 'r') as f_in:
+            try:
+                return json.load(f_in)
+            except json.decoder.JSONDecodeError as e:
+                raise ValueError(str(e))

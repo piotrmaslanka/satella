@@ -21,3 +21,11 @@ This will serialize unknown objects in the following way.
 First, **__dict__** will be extracted out of this object. The dictionary
 will be constructed in such a way, that for each key in this **__dict__**,
 it's value's **repr** will be assigned.
+
+.. autofunction:: satella.json.read_json_from_file
+
+.. autofunction:: satella.json.write_json_to_file
+
+.. autofunction:: satella.json.write_json_to_file_if_different
+
+

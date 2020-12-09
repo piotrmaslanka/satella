@@ -2,10 +2,24 @@ import json
 import typing as tp
 import unittest
 
-from satella.json import JSONAble, json_encode
+from satella.json import JSONAble, json_encode, read_json_from_file, write_json_to_file, \
+write_json_to_file_if_different
 
 
 class TestJson(unittest.TestCase):
+
+    def test_write_json_to_file_if_different(self):
+        d = {'test': 4}
+        self.assertTrue(write_json_to_file_if_different('test2.json', d))
+        self.assertFalse(write_json_to_file_if_different('test2.json', d))
+        d = {'test': 5}
+        self.assertTrue(write_json_to_file_if_different('test2.json', d))
+        self.assertFalse(write_json_to_file_if_different('test2.json', d))
+
+    def test_load_json_from_file(self):
+        d = {'test': 2}
+        write_json_to_file('test.json', d)
+        self.assertEqual(read_json_from_file('test.json'), d)
 
     def test_jsonable_objects(self):
         class MyClass(JSONAble):
