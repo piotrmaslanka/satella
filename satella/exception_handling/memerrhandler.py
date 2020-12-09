@@ -2,7 +2,6 @@ import sys
 import time
 import typing as tp
 
-from satella.coding.recast_exceptions import silence_excs
 from .exception_handlers import BaseExceptionHandler, ALWAYS_FIRST, ExceptionHandlerCallable
 from ..os.misc import suicide
 
@@ -40,17 +39,21 @@ class MemoryErrorExceptionHandler(BaseExceptionHandler):
         if not issubclass(type_, MemoryError):
             return
 
-        with silence_excs(KeyError):
+        try:
             del self._free_on_memory_error['a']
+        except KeyError:
+            pass
 
         # noinspection PyBroadException
-        with silence_excs(Exception):
+        try:
             val = self.custom_hook(type_, value, traceback)
             if isinstance(val, tp.Sequence):
                 val = any(val)
 
             if val:
                 return True
+        except Exception:
+            pass
 
         try:
             sys.stderr.write(
