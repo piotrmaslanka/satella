@@ -68,6 +68,7 @@ class MemoryPressureManager(TerminableThread):
         self.callbacks_on_left = [CallableGroup(gather=False) for _ in
                                   range(len(
                                       self.severity_levels))]  # type: tp.List[CallableGroup]
+        self.callbacks_on_memory_normal = CallableGroup(gather=False)
         self.severity_level = 0  # type: int
         self.stopped = False  # type: bool
         self.check_interval = check_interval  # type: int
@@ -90,6 +91,8 @@ class MemoryPressureManager(TerminableThread):
                 if self.log_transitions:
                     logger.warning('Left severity level %s' % (self.severity_level,))
                 self.severity_level += delta
+                if self.severity_level == 0:
+                    self.callbacks_on_memory_normal()
 
     def stop(self):
         """Stop this thread from operating"""
@@ -102,6 +105,8 @@ class MemoryPressureManager(TerminableThread):
     def loop(self) -> None:
         if self.stopped:
             return time.sleep(self.check_interval)
+
+        self.callbacks_on_memory_normal.remove_cancelled()
 
         for cg in self.callbacks_on_entered:
             cg.remove_cancelled()
@@ -131,6 +136,20 @@ class MemoryPressureManager(TerminableThread):
         for level, condition in reversed(list(enumerate(self.severity_levels))):
             if condition.can_fire(memory_info, self.maximum_available):
                 return level
+
+    @staticmethod
+    def register_on_memory_normal(fun: tp.Callable) -> CancellableCallback:
+        """
+        Register this handler to fire when memory state falls back to 0.
+
+        This will be fired once, once memory state falls back to normal.
+
+        :param fun: callable to register
+        :return: a CancellableCallback under this callback is registered
+        """
+        cc = CancellableCallback(fun)
+        MemoryPressureManager().callbacks_on_memory_normal.add(cc)
+        return cc
 
     @staticmethod
     def register_on_entered_severity(severity: int):

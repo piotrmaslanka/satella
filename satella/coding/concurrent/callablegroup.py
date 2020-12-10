@@ -134,12 +134,16 @@ class CallableGroup(tp.Generic[T]):
 
         If callables raise, it will be passed through.
 
+        As a side-effect, removes cancelled
+        :class:`~satella.coding.concurrent.CancellableCallback` instances registered.
+
         :return: list of results if gather was set, else None
         """
         if self.has_cancelled_callbacks:
             self.remove_cancelled()
 
         callables = copy.copy(self.callables)
+        self.callables.clear()
 
         results = []
 
