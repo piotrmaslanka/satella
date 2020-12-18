@@ -1,17 +1,19 @@
 from __future__ import print_function, absolute_import, division
 
 import enum
+import logging
 import os
 import typing as tp
 import uuid
+from logging import Logger
 
 from satella.coding import silence_excs
 from satella.files import DevNullFilelikeObject
 from satella.instrumentation import Traceback
 from .exception_handlers import BaseExceptionHandler
 
-AsStreamTypeAccept = tp.Union[str, tp.IO, None]
-AsStreamTypeAcceptHR = tp.Union[str, tp.TextIO]
+AsStreamTypeAccept = tp.Union[str, tp.IO, None, Logger, tp.Tuple[Logger, int]]
+AsStreamTypeAcceptHR = tp.Union[str, tp.TextIO, Logger, tp.Tuple[Logger, int]]
 AsStreamTypeAcceptIN = tp.Union[str, tp.BinaryIO]
 
 
@@ -19,10 +21,11 @@ class StreamType(enum.IntEnum):
     MODE_FILE = 0  # write to file
     MODE_STREAM = 1  # a file-like object was provided
     MODE_DEVNULL = 2  # just redirect to /dev/null
+    MODE_LOGGER = 3   # just a logger
 
 
 class AsStream:
-    __slots__ = ('o', 'human_readable', 'mode', 'file')
+    __slots__ = ('o', 'human_readable', 'mode', 'file', 'level', 'logger')
 
     def __init__(self, o: AsStreamTypeAccept, human_readable: bool):
         """
@@ -40,7 +43,14 @@ class AsStream:
                 self.o = os.path.join(o, uuid.uuid4().hex)
 
             self.mode = StreamType.MODE_FILE
-
+        elif isinstance(o, tuple) and isinstance(o[0], Logger):
+            self.mode = StreamType.MODE_LOGGER
+            self.level = o[1]
+            self.logger = o[0]
+        elif isinstance(o, Logger):
+            self.mode = StreamType.MODE_LOGGER
+            self.logger = o
+            self.level = logging.ERROR
         elif hasattr(o, 'write'):
             self.mode = StreamType.MODE_STREAM
 
@@ -78,7 +88,8 @@ class DumpToFileHandler(BaseExceptionHandler):
     .flush()
 
     :param human_readables: iterable of either a file-like objects, or paths where
-        human-readable files will be output
+        human-readable files will be output. Also a logger can be put here, or a tuple
+        of logger, logging level. Default logging level will be ERROR.
     :param trace_pickles: iterable of either a file-like objects, or paths where pickles with
         stack status will be output
     :raises TypeError: invalid stream
@@ -102,9 +113,12 @@ class DumpToFileHandler(BaseExceptionHandler):
             # continue with it
 
         for q in self.hr:
-            with q as f:
-                f.write('Unhandled exception caught: \n')
-                tb.pretty_print(output=f)
+            if q.mode == StreamType.MODE_LOGGER:
+                q.logger.log(q.level, str(value), exc_info=value, stack_info=tb.pretty_format())
+            else:
+                with q as f:
+                    f.write('Unhandled exception caught: \n')
+                    tb.pretty_print(output=f)
 
         for q in self.tb:
             with q as f:

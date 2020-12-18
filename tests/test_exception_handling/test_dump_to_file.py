@@ -2,12 +2,16 @@ import io
 import os
 import pickle
 import tempfile
+import logging
 import threading
 
 from satella.coding import silence_excs
 from satella.exception_handling import DumpToFileHandler, exception_handler
 from satella.instrumentation import Traceback
 from . import ExceptionHandlingTestCase
+
+
+logger = logging.getLogger(__name__)
 
 
 class TestDumpToFile(ExceptionHandlingTestCase):
@@ -40,7 +44,7 @@ class TestDumpToFile(ExceptionHandlingTestCase):
         self.sq, self.sa, self.tf = io.StringIO(), io.StringIO(), tempfile.mktemp()
         self.op = io.BytesIO()
         self.exception_handler = DumpToFileHandler(
-            human_readables=[self.sq, self.sa, self.tf, None],
+            human_readables=[self.sq, self.sa, self.tf, None, logger, (logger, logging.WARNING)],
             trace_pickles=[self.op])
         self.exception_handler.install()
 
