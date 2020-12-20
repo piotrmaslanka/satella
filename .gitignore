@@ -1,6 +1,7 @@
 #################
 ## Eclipse
 #################
+test*.json
 .eggs
 satella.sublime*
 hs_err_pid*.log
