@@ -72,11 +72,13 @@ class Condition(PythonCondition):
         warnings.warn('Use notify_all instead', DeprecationWarning)
         self.notify_all()
 
-    def wait(self, timeout: tp.Optional[float] = None) -> None:
+    def wait(self, timeout: tp.Optional[float] = None,
+             dont_raise: bool = False) -> None:
         """
         Wait for condition to become true.
 
         :param timeout: timeout to wait. None is default and means infinity
+        :param dont_raise: if True, then WouldWaitMore won't be raised
         :raises ResourceLocked: unable to acquire the underlying lock within specified timeout.
         :raises WouldWaitMore: wait's timeout has expired
         """
@@ -96,7 +98,8 @@ class Condition(PythonCondition):
                     super().wait()
                 else:
                     if not super().wait(timeout=measurement.time_remaining):
-                        raise WouldWaitMore('wait was not notified')
+                        if not dont_raise:
+                            raise WouldWaitMore('wait was not notified')
             finally:
                 self.release()
 
