@@ -91,6 +91,12 @@ it's magic
 .. autoclass:: satella.exceptions.CodedCustomExceptionMetaclass
     :members:
 
+ImpossibleError
+---------------
+
+.. autoclass:: satella.exceptions.ImpossibleError
+    :members:
+
 Satella-specific exceptions
 ===========================
 

@@ -6,7 +6,7 @@ __all__ = ['BaseSatellaError', 'ResourceLockingError', 'ResourceNotLocked', 'Res
            'ConfigurationValidationError', 'ConfigurationError', 'ConfigurationSchemaError',
            'PreconditionError', 'MetricAlreadyExists', 'BaseSatellaException', 'CustomException',
            'CodedCustomException', 'CodedCustomExceptionMetaclass', 'WouldWaitMore',
-           'ProcessFailed', 'AlreadyAllocated', 'Empty']
+           'ProcessFailed', 'AlreadyAllocated', 'Empty', 'ImpossibleError']
 
 
 class CustomException(Exception):
@@ -217,3 +217,12 @@ class ProcessFailed(BaseSatellaError, OSError):
 
     def __str__(self):
         return 'ProcessFailed(%s)' % (self.rc,)
+
+
+class ImpossibleError(BaseSatellaError, RuntimeError):
+    """
+    For these cases where your execution flow goes some place, that should be impossible
+    for it to reach.
+
+    Also inherits from `RuntimeError`
+    """
