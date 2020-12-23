@@ -50,6 +50,9 @@ class TestPredicates(unittest.TestCase):
     def test_bool_str(self):
         p = x.int().str()
         self.assertEqual(p(True), '1')
+        p = x.false()
+        self.assertTrue(p(False))
+        self.assertFalse(p(True))
 
     def test_upper(self):
         p = x.upper()

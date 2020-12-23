@@ -86,6 +86,8 @@ class PredicateClass:
     str = make_operation_single_arg(str, 'Call str() on predicate')
     int = make_operation_single_arg(int, 'Call int() on predicate')
     float = make_operation_single_arg(float, 'Call float() on predicate')
+    false = make_operation_single_arg(lambda y: not y, 'Return a predicate checking whether '
+                                                       'value is False')
 
     def __call__(self, *args) -> bool:
         if len(args) == 0:

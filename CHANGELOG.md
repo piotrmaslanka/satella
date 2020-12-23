@@ -2,3 +2,4 @@
 
 * added `dont_raise` to `Condition`
 * added `ImpossibleError`
+* added `Predicate.false`
