@@ -1,3 +1,1 @@
-# v2.14.27
-
-* **bugfix**: another bug in default
+# v2.14.28
