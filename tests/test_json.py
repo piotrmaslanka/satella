@@ -35,3 +35,12 @@ class TestJson(unittest.TestCase):
 
         data = json.loads(json_encode(MyClass(5)))
         self.assertEqual(data['a'], '5')
+
+        class MyClass2:
+            __slots__ = ('a', )
+
+            def __init__(self, a):
+                self.a = a
+
+        data = json.loads(json_encode(MyClass2(5)))
+        self.assertEqual(data['a'], 5)
