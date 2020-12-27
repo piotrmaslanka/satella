@@ -1,6 +1,11 @@
 import json
 import typing as tp
 from abc import ABCMeta, abstractmethod
+
+import typing
+
+from satella.coding.typing import NoneType
+
 try:
     import ujson
 except ImportError:
@@ -28,6 +33,13 @@ class JSONEncoder(json.JSONEncoder):
     def default(self, o: tp.Any) -> Jsonable:
         if hasattr(o, 'to_json'):
             return o.to_json()
+        elif isinstance(o, (int, float, str, NoneType)):
+            return o
+        elif isinstance(o, (list, tuple)):
+            return [self.default(v) for v in o]
+        elif isinstance(o, dict):
+            return {self.default(k): self.default(v) for k, v in o.items()}
+
         try:
             return super().default(o)
         except TypeError:

@@ -1,7 +1,7 @@
 import typing as tp
 from abc import ABCMeta, abstractmethod
 
-
+NoneType = None.__class__
 T = tp.TypeVar('T')
 Iteratable = tp.Union[tp.Iterator[T], tp.Iterable[T]]
 U = tp.TypeVar('U')
