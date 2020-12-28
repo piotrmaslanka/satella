@@ -1,9 +1,24 @@
+import enum
 import typing as tp
 import warnings
 from inspect import Parameter, signature
 from queue import Queue
 
 from satella.coding.recast_exceptions import rethrow_as
+
+
+def enum_value(value):
+    """
+    If value is an enum, extract and return it's value.
+
+    Otherwise, return it as-is.
+
+    :param value: value to extract enum from
+    :return: value
+    """
+    if isinstance(value, enum.Enum):
+        return value.value
+    return value
 
 
 def contains(needle, haystack) -> bool:

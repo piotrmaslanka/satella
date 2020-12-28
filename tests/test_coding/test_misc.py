@@ -4,7 +4,7 @@ import unittest
 
 from satella.coding import update_key_if_not_none, overload, class_or_instancemethod, \
     update_key_if_true, get_arguments, call_with_arguments, chain_callables, Closeable, \
-    contains
+    contains, enum_value
 from satella.coding.structures import HashableMixin, ComparableEnum
 from satella.coding.transforms import jsonify, intify
 
@@ -19,6 +19,9 @@ class TestCase(unittest.TestCase):
         a = [CEnum.A, CEnum.B]
         self.assertTrue(contains(2, a))
         self.assertFalse(contains(3, a))
+
+        self.assertEqual(enum_value(CEnum.A), 1)
+        self.assertEqual(enum_value(1), 1)
 
     def test_closeable(self):
         a = {'test': False}
