@@ -6,6 +6,31 @@ from queue import Queue
 from satella.coding.recast_exceptions import rethrow_as
 
 
+def contains(needle, haystack) -> bool:
+    """
+    A syntactic sugar for the following:
+
+    >>> for item in haystack:
+    >>>     if needle == item:
+    >>>         return True
+    >>> return False
+
+    Note that this is very like Python's in operator, however it's not quite same, since
+    in doesn't involve the __eq__ operator at every step!
+
+    This function for example allows you to circumvent Python's limitations concerning
+    :class:`~satella.coding.structures.ComparableEnum`
+
+    :param needle: needle to check for
+    :param haystack: haystack to check against
+    :return: whether haystack contains the element
+    """
+    for item in haystack:
+        if needle == item:
+            return True
+    return False
+
+
 class Closeable:
     """
     A class that needs to clean up it's own resources.

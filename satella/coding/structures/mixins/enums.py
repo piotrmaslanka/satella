@@ -29,12 +29,15 @@ class ComparableEnum(enum.Enum):
     >>> assert A.A == B.A
     """
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         if isinstance(other, enum.Enum) and not isinstance(other, self.__class__):
             other = other.value
 
         if not isinstance(other, self.__class__):
-            return self.__class__(other) == self
+            try:
+                return self.__class__(other) == self
+            except ValueError:      # other is not a correct member of this class!
+                return False
         else:
             return super().__eq__(other)
 

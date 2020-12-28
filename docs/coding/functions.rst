@@ -2,6 +2,8 @@
 Functions and decorators
 ========================
 
+.. autofunction:: satella.coding.contains
+
 .. autoclass:: satella.coding.class_or_instancemethod
 
 .. autofunction:: satella.coding.chain_callables
