@@ -4,6 +4,10 @@ Exception handling
 
 Satella provides a rich functionality to register exception hooks.
 
+.. note:: Satella does not install a custom faulthandler_. Do it yourself.
+
+.. _faulthandler: https://docs.python.org/3/library/faulthandler.html
+
 Writing your own exception handlers
 ===================================
 
