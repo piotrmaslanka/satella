@@ -208,6 +208,15 @@ class TestMisc(unittest.TestCase):
 
         self.assertEqual({A.A: 't', A.B: 'c'}[A.A], 't')
 
+    def test_comparable_enum(self):
+        class A(ComparableEnum):
+            A = 1
+
+        class B(ComparableEnum):
+            A = 1
+
+        self.assertEqual(A.A, B.A)
+
     def test_comparable_int_enum(self):
 
         class Enum(ComparableIntEnum):

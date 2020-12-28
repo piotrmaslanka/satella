@@ -10,9 +10,25 @@ class ComparableEnum(enum.Enum):
     >>> class Enum(ComparableEnum):
     >>>     A = 'test'
     >>> assert Enum.A == a
+
+    Comparison order doesn't matter, so either are True:
+
+    >>> Enum.A == 'test'
+    >>> 'test' == Enum.A
+
+    You can even compare enums across classes
+
+    >>> class A(ComparableEnum):
+    >>>     A = 1
+    >>> class B(ComparableEnum):
+    >>>     A = 1
+    >>> assert A.A == B.A
     """
 
     def __eq__(self, other):
+        if isinstance(other, enum.Enum) and not isinstance(other, self.__class__):
+            other = other.value
+
         if not isinstance(other, self.__class__):
             return self.__class__(other) == self
         else:
