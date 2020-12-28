@@ -16,6 +16,10 @@ class ComparableEnum(enum.Enum):
     >>> Enum.A == 'test'
     >>> 'test' == Enum.A
 
+    Note, however, that following won't work:
+
+    >>> 'test' in (Enum.A, )
+
     You can even compare enums across classes
 
     >>> class A(ComparableEnum):
