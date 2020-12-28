@@ -36,7 +36,6 @@ def sleep(x: float, abort_on_interrupt: bool = False) -> bool:
             except KeyboardInterrupt:
                 if abort_on_interrupt:
                     return False
-                pass
     return True
 
 
@@ -128,6 +127,9 @@ class measure:
 
     Note that in order to reuse a single counter you must .reset() it first. Just calling .start()
     after .stop() will result in the timer being resumed instead!
+
+    Note that if you're measuring generators, this will count the time passed from the measure()
+    was called till the generator finishes.
 
     Note that if you're using the decorator form, this object will be first copied and then
     passed to the function/future. This is to prevent undefined behaviour during multithreading.
