@@ -11,13 +11,18 @@ def __sighandler(a, b):
     end = True
 
 
-def hang_until_sig(extra_signals: tp.Optional[tp.Sequence[int]] = None) -> None:
+def hang_until_sig(extra_signals: tp.Optional[tp.Sequence[int]] = None,
+                   sleep_interval: float = 2) -> None:
     """
     Will hang until this process receives SIGTERM or SIGINT.
     If you pass extra signal IDs (signal.SIG*) with extra_signals,
     then also on those signals this call will release.
 
+    Periodic sleeping with polling was chosen as the approach of choice, as pause() seemed
+    to work a bit shakily multi-platform.
+
     :param extra_signals: a list of extra signals to listen to
+    :param sleep_interval: amount of time to sleep between checking for termination condition.
     """
     global end
     extra_signals = extra_signals or ()
@@ -34,7 +39,7 @@ def hang_until_sig(extra_signals: tp.Optional[tp.Sequence[int]] = None) -> None:
         signal.signal(s, __sighandler)
 
     while not end:
-        sleep(0.5, True)
+        sleep(sleep_interval, True)
 
     # Unset the signal handler
     signal.signal(signal.SIGTERM, old_term)
