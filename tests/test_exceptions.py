@@ -1,10 +1,21 @@
 import unittest
 
 
-from satella.exceptions import BaseSatellaError, CustomException, CodedCustomException
+from satella.exceptions import BaseSatellaError, CustomException, CodedCustomException, \
+    ImpossibleError
 
 
 class TestExceptions(unittest.TestCase):
+
+    def test_impossible_error(self):
+        try:
+            raise ImpossibleError()
+        except Exception:
+            self.fail('failed')
+        except BaseException:
+            pass
+        else:
+            self.fail('failed')
 
     def test_exception_kwargs(self):
         e = BaseSatellaError('hello world', label='value')

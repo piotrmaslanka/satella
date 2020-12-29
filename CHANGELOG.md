@@ -2,3 +2,4 @@
 
 * added `sleep_interval` to `hang_until_sig`
 * added `read_lines`
+* changed `ImpossibleError` to be a `BaseException`

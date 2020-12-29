@@ -97,6 +97,9 @@ ImpossibleError
 .. autoclass:: satella.exceptions.ImpossibleError
     :members:
 
+Note that `ImpossibleError` inherits from `BaseException` instead of the standard Satella hierarchy.
+The thought is, since this is an anomalous exception, it should get to the top of the stack ASAP.
+
 Satella-specific exceptions
 ===========================
 

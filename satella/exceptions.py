@@ -219,10 +219,10 @@ class ProcessFailed(BaseSatellaError, OSError):
         return 'ProcessFailed(%s)' % (self.rc,)
 
 
-class ImpossibleError(BaseSatellaError, RuntimeError):
+class ImpossibleError(BaseException):
     """
     For these cases where your execution flow goes some place, that should be impossible
     for it to reach.
 
-    Also inherits from `RuntimeError`
+    This is a BaseException, since it should be propagated upwards as soon as possible!
     """
