@@ -2,10 +2,12 @@ import unittest
 
 
 from satella.exceptions import BaseSatellaError, CustomException, CodedCustomException, \
-    ImpossibleError
+    ImpossibleError, CodedCustomException
 
 
 class TestExceptions(unittest.TestCase):
+    def test_coded_custom_exception_no_args(self):
+        CodedCustomException()
 
     def test_impossible_error(self):
         try:

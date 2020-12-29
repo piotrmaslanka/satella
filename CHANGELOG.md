@@ -3,3 +3,5 @@
 * added `sleep_interval` to `hang_until_sig`
 * added `read_lines`
 * changed `ImpossibleError` to be a `BaseException`
+* it is possible to create `CodedCustomException` without an argument
+
