@@ -9,6 +9,10 @@ A file-like object that will dispose of your content.
 .. autoclass:: satella.files.DevNullFilelikeObject
     :members:
 
+read_lines
+----------
+
+.. autofunction:: satella.files.read_lines
 
 read_re_sub_and_write
 ---------------------

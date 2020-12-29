@@ -7,7 +7,7 @@ import typing as tp
 
 __all__ = ['read_re_sub_and_write', 'find_files', 'split', 'read_in_file', 'write_to_file',
            'write_out_file_if_different', 'make_noncolliding_name', 'try_unlink',
-           'DevNullFilelikeObject']
+           'DevNullFilelikeObject', 'read_lines']
 
 from satella.coding import silence_excs
 from satella.coding.typing import Predicate
@@ -72,6 +72,23 @@ def _has_separator(path: str) -> bool:
         if path.endswith(':/') or path.endswith(':\\'):
             return False
     return any(map(lambda x: x in path, SEPARATORS))
+
+
+def read_lines(path: str, delete_empty_lines: bool = True) -> tp.List[str]:
+    """
+    Read lines from a particular file, removing end-of-line characters and optionally
+    empty lines. Additionally whitespaces (and end-of-line characters) will be removed
+    from both ends of each line.
+
+    :param path: path of file to read
+    :param delete_empty_lines: set to False if empty lines are not to be removed
+    :return: each line as a separate entry
+    """
+    with open(path, 'r') as f_in:
+        lines = [line.strip() for line in f_in.readline()]
+    if delete_empty_lines:
+        lines = [line for line in lines if line]
+    return lines
 
 
 def make_noncolliding_name(path: str,

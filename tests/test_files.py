@@ -5,7 +5,8 @@ import tempfile
 import unittest
 import shutil
 from satella.files import read_re_sub_and_write, find_files, split, read_in_file, write_to_file, \
-    write_out_file_if_different, make_noncolliding_name, try_unlink, DevNullFilelikeObject
+    write_out_file_if_different, make_noncolliding_name, try_unlink, DevNullFilelikeObject, \
+    read_lines
 
 
 def putfile(path: str) -> None:
@@ -14,6 +15,10 @@ def putfile(path: str) -> None:
 
 
 class TestFiles(unittest.TestCase):
+
+    def test_read_lines(self):
+        lines = read_lines('LICENSE')
+        self.assertTrue(all(lines))
 
     def test_devnullfilelikeobject(self):
         null = DevNullFilelikeObject()
