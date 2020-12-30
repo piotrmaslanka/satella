@@ -85,7 +85,7 @@ def read_lines(path: str, delete_empty_lines: bool = True) -> tp.List[str]:
     :return: each line as a separate entry
     """
     with open(path, 'r') as f_in:
-        lines = [line.strip() for line in f_in.readline()]
+        lines = [line.strip() for line in f_in.readlines()]
     if delete_empty_lines:
         lines = [line for line in lines if line]
     return lines
