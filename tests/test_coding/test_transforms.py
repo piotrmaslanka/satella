@@ -4,10 +4,14 @@ import base64
 
 from satella.coding.transforms import stringify, split_shuffle_and_join, one_tuple, \
     merge_series, pad_to_multiple_of_length, clip, b64encode, linear_interpolate, \
-    hashables_to_int
+    hashables_to_int, none_if_false
 
 
 class TestTransforms(unittest.TestCase):
+
+    def test_none_if_false(self):
+        self.assertEqual(none_if_false(1), 1)
+        self.assertEqual(none_if_false(''), None)
 
     def test_words_to_int(self):
         words = ['a', 'word', 'a']
