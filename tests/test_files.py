@@ -20,6 +20,15 @@ class TestFiles(unittest.TestCase):
         lines = read_lines('LICENSE')
         self.assertTrue(all(lines))
 
+        with open('test.tmp', 'w') as f_out:
+            f_out.write('''line1
+            line2
+            line3
+            
+            ''')
+
+        self.assertEqual(read_lines('test.tmp'), ['line1', 'line2', 'line3'])
+
     def test_devnullfilelikeobject(self):
         null = DevNullFilelikeObject()
         self.assertEqual(null.write('ala'), 3)

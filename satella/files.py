@@ -74,7 +74,8 @@ def _has_separator(path: str) -> bool:
     return any(map(lambda x: x in path, SEPARATORS))
 
 
-def read_lines(path: str, delete_empty_lines: bool = True) -> tp.List[str]:
+def read_lines(path: str, delete_empty_lines: bool = True,
+               encoding: str = 'utf-8') -> tp.List[str]:
     """
     Read lines from a particular file, removing end-of-line characters and optionally
     empty lines. Additionally whitespaces (and end-of-line characters) will be removed
@@ -82,9 +83,10 @@ def read_lines(path: str, delete_empty_lines: bool = True) -> tp.List[str]:
 
     :param path: path of file to read
     :param delete_empty_lines: set to False if empty lines are not to be removed
+    :param encoding: encoding to read the file with
     :return: each line as a separate entry
     """
-    with open(path, 'r') as f_in:
+    with codecs.open(path, 'r', encoding) as f_in:
         lines = [line.strip() for line in f_in.readlines()]
     if delete_empty_lines:
         lines = [line for line in lines if line]
