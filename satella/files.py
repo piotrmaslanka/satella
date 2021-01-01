@@ -168,6 +168,7 @@ def read_in_file(path: str, encoding: tp.Optional[str] = None,
     :param default: value to return when the file does not exist. Default (None) will raise a
         FileNotFoundError
     :return: file content, either decoded as a str, or not as bytes
+    :raises FileNotFoundError: file did not exist and default was not set
     """
     if os.path.isdir(path):
         if default is not _NOTSET:
@@ -178,9 +179,9 @@ def read_in_file(path: str, encoding: tp.Optional[str] = None,
         if encoding is None:
             file = open(path, 'rb')
         else:
-            file = codecs.open(path, 'rb', encoding)
+            file = codecs.open(path, 'r', encoding)
     except FileNotFoundError:
-        if default:
+        if default is not _NOTSET:
             return default
         raise
 

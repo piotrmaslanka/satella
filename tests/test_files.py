@@ -16,6 +16,9 @@ def putfile(path: str) -> None:
 
 class TestFiles(unittest.TestCase):
 
+    def test_read_nonexistent_file(self):
+        self.assertRaises(FileNotFoundError, lambda: read_in_file('moot'))
+
     def test_read_lines(self):
         lines = read_lines('LICENSE')
         self.assertTrue(all(lines))
