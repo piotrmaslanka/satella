@@ -251,6 +251,10 @@ def wraps(cls_to_wrap: tp.Type) -> tp.Callable[[tp.Type], tp.Type]:
             cls.__signature__ = sig
         except (TypeError, ValueError, RecursionError, AttributeError):
             pass
+        try:
+            cls.__wrapped__ = cls_to_wrap
+        except AttributeError:
+            pass
         return cls
 
     return outer
