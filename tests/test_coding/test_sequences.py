@@ -6,11 +6,16 @@ from satella.coding.sequences import choose, choose_one, infinite_counter, take_
     iter_dict_of_list, shift, other_sequence_no_longer_than, count, even, odd, Multirun, n_th, \
     unique, length, map_list, smart_zip, is_empty, make_list, RollingArithmeticAverage, \
     enumerate2, infinite_iterator, to_iterator, filter_out_false, filter_out_nones, \
-    index_of, index_of_max, try_close, f_range
+    index_of, index_of_max, try_close, f_range, iterate_callable
 from satella.coding.predicates import x
 
 
 class TestSequences(unittest.TestCase):
+
+    def test_iterate_callable(self):
+        a = [1, 2, 3]
+        b = lambda i: a[i]
+        self.assertEqual(list(iterate_callable(b)), [1, 2, 3])
 
     def test_f_range(self):
         self.assertRaises(TypeError, f_range)

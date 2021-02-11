@@ -5,7 +5,26 @@ import warnings
 
 from ..decorators import for_argument, wraps
 from ..recast_exceptions import rethrow_as, silence_excs
-from ..typing import Iteratable, T, U, Predicate
+from ..typing import Iteratable, T, U, Predicate, V
+
+
+def iterate_callable(clbl: tp.Callable[[int], V], start_from: int = 0,
+                     exc_classes=(IndexError, ValueError)) -> tp.Iterator[V]:
+    """
+    Given a callable that accepts an integer and returns the n-th entry, iterate over
+    it until it starts to throw some exception.
+
+    :param clbl: callable to call
+    :param start_from: number to start from
+    :param exc_classes: exceptions that being thrown show that the list was exhausted
+
+    :return: an iterator
+    """
+    for i in itertools.count(start_from):
+        try:
+            yield clbl(i)
+        except exc_classes:
+            return
 
 
 def try_close(iterator: tp.Iterator) -> None:

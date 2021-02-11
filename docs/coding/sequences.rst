@@ -32,6 +32,11 @@ unique
 
 .. autofunction:: satella.coding.sequences.unique
 
+iterate_callable
+----------------
+
+.. autofunction:: satella.coding.sequences.iterate_callable
+
 choose
 ------
 
