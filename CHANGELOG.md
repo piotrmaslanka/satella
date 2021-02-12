@@ -1,5 +1,2 @@
-# v2.14.34
+# v2.14.35
 
-* added iterate_callable
-* added random_binary
-* added Optional
