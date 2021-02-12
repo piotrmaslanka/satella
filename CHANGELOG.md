@@ -2,4 +2,4 @@
 
 * added iterate_callable
 * added random_binary
-
+* added Optional
