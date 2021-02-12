@@ -62,16 +62,26 @@ class ComparableIntEnum(HashableIntEnum):
         return hash(self.value)
 
     def __lt__(self, other: 'ComparableIntEnum') -> bool:
+        if isinstance(other, (int, float)):
+            return self.value < other
         return self.value < other.value
 
     def __le__(self, other: 'ComparableIntEnum') -> bool:
+        if isinstance(other, (int, float)):
+            return self.value <= other
         return self.value <= other.value
 
     def __gt__(self, other: 'ComparableIntEnum') -> bool:
+        if isinstance(other, (int, float)):
+            return self.value > other
         return self.value > other.value
 
     def __ge__(self, other: 'ComparableIntEnum') -> bool:
+        if isinstance(other, (int, float)):
+            return self.value >= other
         return self.value >= other.value
 
     def __eq__(self, other: 'ComparableIntEnum') -> bool:
+        if isinstance(other, (int, float)):
+            return self.value == other
         return self.value == other.value
