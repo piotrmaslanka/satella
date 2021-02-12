@@ -54,6 +54,13 @@ elements matching the callable. If there are, raises ValueError.
 .. autofunction:: satella.coding.sequences.choose_one
 
 
+AlreadySeen
+-----------
+
+.. autoclass:: satella.coding.sequences.AlreadySeen
+    :members:
+
+
 filter_out_nones
 ----------------
 

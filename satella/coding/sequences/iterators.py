@@ -5,7 +5,7 @@ import warnings
 
 from ..decorators import for_argument, wraps
 from ..recast_exceptions import rethrow_as, silence_excs
-from ..typing import Iteratable, T, U, Predicate, V
+from ..typing import Iteratable, T, U, Predicate, V, K
 
 
 def iterate_callable(clbl: tp.Callable[[int], V], start_from: int = 0,
@@ -181,6 +181,30 @@ class ConstruableIterator:
 
     def __length_hint__(self) -> int:
         return len(self.entries)
+
+
+class AlreadySeen(tp.Generic[K]):
+    """
+    Class to filter out unique objects
+    """
+    __slots__ = ('set',)
+
+    def __init__(self):
+        self.set = set()
+
+    def is_unique(self, key: K) -> bool:
+        """
+        Has the element been spotted first time?
+
+        Add it to the set.
+
+        :param key: element to check
+        :return: whether the element was seen for the first time
+        """
+        try:
+            return key not in self.set
+        finally:
+            self.set.add(key)
 
 
 def unique(lst: Iteratable) -> tp.Iterator[T]:
