@@ -1,7 +1,23 @@
+import os
 import random
 import typing as tp
 
-__all__ = ['shuffle_together']
+__all__ = ['shuffle_together', 'random_binary']
+
+
+def random_binary(length: int) -> bytes:
+    """
+    Return a random bytes string of given length.
+
+    An attempt will be made to utilize /dev/random, if exists
+
+    :param length: length of string to generate
+    """
+    if os.path.exists('/dev/random'):
+        with open('/dev/random', 'rb') as f_in:
+            return f_in.read(length)
+    else:
+        return bytes([random.randint(0, 255) for _ in range(length)])
 
 
 def shuffle_together(*args: tp.Sequence) -> tp.List[tp.List]:
