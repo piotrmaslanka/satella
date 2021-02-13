@@ -55,7 +55,9 @@ class HashableIntEnum(enum.IntEnum):
 class ComparableIntEnum(HashableIntEnum):
     """
     An enum.IntEnum that implements comparision, stemming from it's values, as well
-    as hashability
+    as hashability.
+
+    It it has an int() method, it's fair game as comparison argument for this class.
     """
 
     def __hash__(self) -> int:
@@ -64,24 +66,24 @@ class ComparableIntEnum(HashableIntEnum):
     def __lt__(self, other: 'ComparableIntEnum') -> bool:
         if isinstance(other, (int, float)):
             return self.value < other
-        return self.value < other.value
+        return self.value < int(other)
 
     def __le__(self, other: 'ComparableIntEnum') -> bool:
         if isinstance(other, (int, float)):
             return self.value <= other
-        return self.value <= other.value
+        return self.value <= int(other)
 
     def __gt__(self, other: 'ComparableIntEnum') -> bool:
         if isinstance(other, (int, float)):
             return self.value > other
-        return self.value > other.value
+        return self.value > int(other)
 
     def __ge__(self, other: 'ComparableIntEnum') -> bool:
         if isinstance(other, (int, float)):
             return self.value >= other
-        return self.value >= other.value
+        return self.value >= int(other)
 
     def __eq__(self, other: 'ComparableIntEnum') -> bool:
         if isinstance(other, (int, float)):
             return self.value == other
-        return self.value == other.value
+        return self.value == int(other)
