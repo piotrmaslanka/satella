@@ -267,9 +267,12 @@ def _get_arguments(function: tp.Callable, special_behaviour: bool, *args, **kwar
                 v = args.pop()
                 arguments_left.remove(arg_name)
             except IndexError:
-                if arg.default == Parameter.empty:
-                    break
-                else:
+                try:
+                    if arg.default != Parameter.empty:
+                        raise AttributeError()
+                    else:
+                        break
+                except (AttributeError, TypeError):
                     v = arg.default
             local_vars[arg_name] = v
 
@@ -286,13 +289,16 @@ def _get_arguments(function: tp.Callable, special_behaviour: bool, *args, **kwar
             try:
                 v = kwargs.pop(keyword_name)
             except KeyError:
-                if keyword.default == Parameter.empty:
-                    if special_behaviour:
-                        v = None
+                try:
+                    if Parameter.empty == keyword.default:
+                        if special_behaviour:
+                            v = None
+                        else:
+                            raise TypeError('Not enough keyword arguments')
                     else:
-                        raise TypeError('Not enough keyword arguments')
-                else:
-                    v = keyword.default
+                        v = keyword.default
+                except (AttributeError, TypeError):
+                    continue    # comparison was impossible
 
             local_vars[keyword_name] = v
 

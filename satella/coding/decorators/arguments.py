@@ -326,8 +326,18 @@ def for_argument(*t_ops: ForArgumentArg, **t_kwops: ForArgumentArg):
             t_kwops[key] = source_to_function(value)
 
     def outer(fun):
-        if any(param.default != Parameter.empty for param in
-               inspect.signature(fun).parameters.values()):
+        comparison = False
+        # Check whether this function has any default arguments
+        for param in inspect.signature(fun).parameters.values():
+            try:
+                if Parameter.empty != param.default:
+                    comparison = True
+                    break
+            except (AttributeError, TypeError):
+                comparison = True
+                break
+
+        if comparison:
             @wraps(fun)
             def inner(*args, **kwargs):
                 dict_operations = _get_arguments(fun, True, *t_ops, **t_kwops)

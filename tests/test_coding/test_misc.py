@@ -1,15 +1,32 @@
+import logging
 import enum
 import gc
 import unittest
 
 from satella.coding import update_key_if_not_none, overload, class_or_instancemethod, \
     update_key_if_true, get_arguments, call_with_arguments, chain_callables, Closeable, \
-    contains, enum_value
+    contains, enum_value, for_argument
 from satella.coding.structures import HashableMixin, ComparableEnum
 from satella.coding.transforms import jsonify, intify
 
+logger = logging.getLogger(__name__)
 
 class TestCase(unittest.TestCase):
+
+    def test_cant_compare_me(self):
+        class Uncomparable:
+            def __eq__(self, other):
+                raise TypeError()
+
+            def __str__(self):
+                return 'test'
+
+        @for_argument(y=str)
+        def test(y = Uncomparable()):
+            return y
+
+        b = test()
+        self.assertEqual(b, 'test')
 
     def test_contains(self):
         class CEnum(ComparableEnum):
