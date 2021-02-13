@@ -185,12 +185,21 @@ class ConstruableIterator:
 
 class AlreadySeen(tp.Generic[K]):
     """
-    Class to filter out unique objects
+    Class to filter out unique objects. Objects must be hashable, barring that
+    they must be eq-able, however passing it an non-hashable object will result in
+    O(n^2) complexity, as the class uses a list to keep track of the objects.
+
+    Usage:
+
+    >>> als = AlreadySeen()
+    >>> for elem in sequence:
+    >>>     if als.is_unique(elem):
+    >>>         ... process the element ...
     """
     __slots__ = ('set',)
 
     def __init__(self):
-        self.set = set()
+        self.set = None     # type: tp.Union[list, set]
 
     def is_unique(self, key: K) -> bool:
         """
@@ -202,9 +211,22 @@ class AlreadySeen(tp.Generic[K]):
         :return: whether the element was seen for the first time
         """
         try:
-            return key not in self.set
-        finally:
+            hash(key)
+            if self.set is None:
+                self.set = set()
+            if key in self.set:
+                return False
             self.set.add(key)
+            return True
+        except TypeError:
+            warnings.warn('Passed argument is not hashable, you pay with '
+                          'O(n^2) complexity!', RuntimeWarning)
+            if self.set is None:
+                self.set = []
+            if key in self.set:
+                return False
+            self.set.append(key)
+            return True
 
 
 def unique(lst: Iteratable) -> tp.Iterator[T]:
