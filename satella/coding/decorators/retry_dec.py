@@ -10,7 +10,8 @@ def retry(times: tp.Optional[int] = None,
           on_failure: tp.Callable[[Exception], None] = lambda e: None,
           swallow_exception: bool = True,
           call_on_failure: tp.Optional[tp.Callable[[Exception], None]] = None,
-          call_on_success: tp.Optional[tp.Callable[[int], None]] = None):
+          call_on_success: tp.Optional[tp.Callable[[int], None]] = None,
+          call_between_retries: tp.Optional[tp.Callable[[Exception], None]] = None):
     """
     A decorator retrying given operation, failing it when an exception shows up.
 
@@ -40,6 +41,8 @@ def retry(times: tp.Optional[int] = None,
         exception as it's sole argument. It's result will be discarded.
     :param call_on_success: a callable that will be called with a single argument: the number
         of retries that it took to finish the job. It's result will be discarded.
+    :param call_between_retries: called between retries with a single argument, the Exception
+        instance that forced the retry.
     :return: function result
     """
     def outer(fun):
@@ -57,6 +60,8 @@ def retry(times: tp.Optional[int] = None,
                     return y
                 except exc_classes as e:
                     f = e
+                    if call_between_retries is not None:
+                        call_between_retries(e)
                     continue
             else:
                 on_failure(f)

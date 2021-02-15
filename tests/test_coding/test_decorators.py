@@ -77,7 +77,8 @@ class TestDecorators(unittest.TestCase):
         self.assertEqual(test(), [2, 3, None, 4])
 
     def test_retry(self):
-        a = {'test': 0, 'limit': 2, 'true': False, 'false': False}
+        a = {'test': 3, 'limit': 2, 'true': False, 'false': False,
+             'retried': False}
 
         def on_failure(e):
             nonlocal a
@@ -87,8 +88,13 @@ class TestDecorators(unittest.TestCase):
             nonlocal a
             a['false'] = True
 
+        def on_retry(e):
+            nonlocal a
+            a['retried'] = True
+
         @retry(3, ValueError, swallow_exception=False, call_on_failure=on_failure,
-               call_on_success=on_success)
+               call_on_success=on_success,
+               call_between_retries=on_retry)
         def do_op():
             a['test'] += 1
             if a['test'] < a['limit']:
@@ -96,11 +102,21 @@ class TestDecorators(unittest.TestCase):
 
         do_op()
         self.assertTrue(a['false'])
+        self.assertFalse(a['retried'])
+        a = {'test': 0, 'limit': 2, 'true': False, 'false': False,
+             'retried': False}
+
+        do_op()
+        self.assertTrue(a['retried'])
+        self.assertTrue(a['false'])
         a['limit'] = 10
         a['false'] = False
+        a['retried'] = False
         self.assertRaises(ValueError, do_op)
         self.assertTrue(a['true'])
         self.assertFalse(a['false'])
+        self.assertTrue(a['retried'])
+        self.assertTrue(a['retried'])
 
     def test_replace_argument_if(self):
         @replace_argument_if('y', x.int(), str)
