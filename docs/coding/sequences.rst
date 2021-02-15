@@ -100,6 +100,11 @@ n_th
 .. autofunction:: satella.coding.sequences.n_th
 
 
+append_sequence
+---------------
+
+.. autofunction:: satella.coding.sequences.append_sequence
+
 take_n
 ------
 
