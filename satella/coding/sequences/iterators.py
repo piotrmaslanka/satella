@@ -90,6 +90,27 @@ def f_range(*args: float) -> tp.Iterator[float]:
     return iterate(start, stop, step)
 
 
+def append_sequence(seq: tp.Iterator[tuple], *elems_to_append) -> tp.Iterator[tuple]:
+    """
+    Return an iterator which append elem_to_append to every tuple in seq.
+
+    Example:
+
+    >>> a = [(1, ), (2, ), (3, )]
+    >>> assert list(append_sequence(a, 1, 2)) == [(1, 1, 2), (2, 1, 2), (3, 1, 2)]
+
+    If every element of seq is not a tuple, it will be cast to one.
+
+    :param seq: sequence to append
+    :param elems_to_append: element(s) to append
+    :return: an iterator
+    """
+    for tpl in seq:
+        if not isinstance(tpl, tuple):
+            tpl = tuple(tpl)
+        yield tpl + elems_to_append
+
+
 def walk(obj: T, child_getter: tp.Callable[[T], tp.Optional[tp.List[T]]] = list,
          deep_first: bool = True,
          leaves_only: bool = False) -> tp.Iterator[T]:
