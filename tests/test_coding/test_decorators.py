@@ -77,17 +77,30 @@ class TestDecorators(unittest.TestCase):
         self.assertEqual(test(), [2, 3, None, 4])
 
     def test_retry(self):
-        a = {'test': 0, 'limit': 2}
+        a = {'test': 0, 'limit': 2, 'true': False, 'false': False}
 
-        @retry(3, ValueError, swallow_exception=False)
+        def on_failure(e):
+            nonlocal a
+            a['true'] = True
+
+        def on_success(retries):
+            nonlocal a
+            a['false'] = True
+
+        @retry(3, ValueError, swallow_exception=False, call_on_failure=on_failure,
+               call_on_success=on_success)
         def do_op():
             a['test'] += 1
             if a['test'] < a['limit']:
                 raise ValueError()
 
         do_op()
+        self.assertTrue(a['false'])
         a['limit'] = 10
+        a['false'] = False
         self.assertRaises(ValueError, do_op)
+        self.assertTrue(a['true'])
+        self.assertFalse(a['false'])
 
     def test_replace_argument_if(self):
         @replace_argument_if('y', x.int(), str)
