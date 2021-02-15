@@ -1,6 +1,8 @@
 Rudimentary data transforms and algorithms
 ==========================================
 
+.. autoclass:: satella.coding.transforms.merge_list
+
 .. autofunction:: satella.coding.transforms.hashables_to_int
 
 .. autofunction:: satella.coding.transforms.linear_interpolate
