@@ -1,13 +1,32 @@
 import enum
+import operator
 import unittest
 import base64
 
 from satella.coding.transforms import stringify, split_shuffle_and_join, one_tuple, \
     merge_series, pad_to_multiple_of_length, clip, b64encode, linear_interpolate, \
-    hashables_to_int, none_if_false
+    hashables_to_int, none_if_false, merge_list
 
 
 class TestTransforms(unittest.TestCase):
+
+    def test_merge_list(self):
+        a = [(1, 1), (2, 2), (3, 3)]
+        b = [(1, 2), (3, 2), (4, 4)]
+
+        c = merge_list(a, b, merge_function=operator.add)
+        self.assertEqual(list(c), [(1, 3), (2, 2),  (3, 5), (4, 4)])
+
+        a = [(1, 1), (1, 3), (2, 2), (3, 3)]
+        b = [(1, 2), (3, 2), (4, 4)]
+
+        c = merge_list(a, b, merge_function=operator.add)
+        self.assertEqual(list(c), [(1, 6), (2, 2),  (3, 5), (4, 4)])
+
+        a = []
+        b = []
+        c = merge_list(a, b, merge_function=operator.add)
+        self.assertEqual(list(c), [])
 
     def test_none_if_false(self):
         self.assertEqual(none_if_false(1), 1)
