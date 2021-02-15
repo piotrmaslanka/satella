@@ -1,3 +1,1 @@
-# v2.14.39
-
-* added `merge_list`
+# v2.14.40
