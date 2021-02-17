@@ -1,6 +1,11 @@
 import typing as tp
 from abc import ABCMeta, abstractmethod
 
+__all__ = ['Iteratable', 'T', 'U', 'V', 'K', 'Number', 'ExceptionClassType',
+           'NoArgCallable', 'Appendable', 'Predicate', 'KVTuple',
+           'Comparable', 'ExceptionList']
+
+
 NoneType = None.__class__
 T = tp.TypeVar('T')
 Iteratable = tp.Union[tp.Iterator[T], tp.Iterable[T]]
@@ -13,6 +18,7 @@ NoArgCallable = tp.Callable[[], T]
 Predicate = tp.Callable[[T], bool]
 
 ExceptionClassType = tp.Type[Exception]
+ExceptionList = tp.Union[ExceptionClassType, tp.Tuple[ExceptionClassType]]
 
 
 class ClassComparable(metaclass=ABCMeta):
@@ -42,6 +48,3 @@ class Appendable(Protocol[T]):
         ...
 
 
-__all__ = ['Iteratable', 'T', 'U', 'V', 'K', 'Number', 'ExceptionClassType',
-           'NoArgCallable', 'Appendable', 'Predicate', 'KVTuple',
-           'Comparable']

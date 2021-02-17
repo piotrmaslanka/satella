@@ -16,6 +16,8 @@ They are as follows:
 * `Predicate` - a callable that accepts a `T` and returns a bool
 * `KVTuple` - a tuple of (K, V)
 * `Comparable` - a class that allows comparison between it's instances
+* `ExceptionList` - either a single exception type or a tuple of exception types.
+    As used by `except` statement and some satella functions.
 
 You may use these generics in your classes, eg.
 
