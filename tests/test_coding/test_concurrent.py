@@ -451,6 +451,7 @@ class TestConcurrent(unittest.TestCase):
         self.assertTrue(t.is_alive())
         dct['a'] = True
         time.sleep(1)
+        self.assertTrue(t.terminating)
         self.assertFalse(t.is_alive())
 
     def test_cg_proforma(self):

@@ -185,7 +185,7 @@ class TerminableThread(threading.Thread):
     >>> a = MeGrimlock().start()
     >>> a.terminate().join()
 
-    Flag whether to terminate is stored in **self.terminating**.
+    Property to check whether to terminate is stored in **self.terminating**.
 
     If you decide to override run(), you got to check periodically for **self._terminating**
     to become true. If it's true, then a termination request was received, and the thread should
@@ -305,6 +305,13 @@ class TerminableThread(threading.Thread):
             t += remaining_to_sleep
         if self._terminating:
             raise SystemExit()
+
+    @property
+    def terminating(self) -> bool:
+        """
+        :return: Is this thread either alive and trying to terminate or dead and after termination?
+        """
+        return self._terminating
 
     def terminate(self, force: bool = False) -> 'TerminableThread':
         """
