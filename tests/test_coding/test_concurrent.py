@@ -433,6 +433,26 @@ class TestConcurrent(unittest.TestCase):
         time.sleep(0.1)
         self.assertTrue(dct['a'])
 
+    def test_terminate_on(self):
+        dct = {'a': False}
+
+        class MyThread(TerminableThread):
+            def __init__(self):
+                super().__init__(terminate_on=ValueError)
+
+            def loop(self) -> None:
+                nonlocal dct
+                if dct['a']:
+                    raise ValueError()
+
+        t = MyThread().start()
+        self.assertTrue(t.is_alive())
+        time.sleep(1)
+        self.assertTrue(t.is_alive())
+        dct['a'] = True
+        time.sleep(1)
+        self.assertFalse(t.is_alive())
+
     def test_cg_proforma(self):
         cg = CallableGroup()
         a = {}

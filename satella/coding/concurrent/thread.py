@@ -10,6 +10,7 @@ from threading import Condition as PythonCondition
 
 from satella.coding.decorators import wraps
 from satella.time import measure
+from ..typing import ExceptionList
 from ...exceptions import ResourceLocked, WouldWaitMore
 
 
@@ -201,13 +202,21 @@ class TerminableThread(threading.Thread):
     >>> self.assertFalse(a.is_alive())
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, terminate_on: tp.Optional[ExceptionList] = None,
+                 **kwargs):
         """
         Note that this is called in the constructor's thread. Use .prepare() to
         run statements that should be ran in new thread.
+
+        :param terminate_on: if provided, and
+            :meth:`~satella.coding.concurrent.TerminableThread.loop` throws one of it,
+            swallow it and terminate the thread by calling
+            :meth:`~satella.coding.concurrent.TerminableThread.terminate`. Note that the
+            subclass check will be done via `isinstance` so you can use the metaclass magic :)
         """
         super().__init__(*args, **kwargs)
         self._terminating = False  # type: bool
+        self._terminate_on = terminate_on
 
     @property
     def terminating(self) -> bool:
@@ -228,6 +237,10 @@ class TerminableThread(threading.Thread):
 
         This should block for as long as a single check will take, as termination checks take place
         between calls.
+
+        Note that if it throws one of the exceptions given in `terminate_on` this thread will
+        terminate cleanly, whereas if it throws something else, the thread will be terminated with
+        a traceback.
         """
 
     def start(self) -> 'TerminableThread':
@@ -245,7 +258,14 @@ class TerminableThread(threading.Thread):
         try:
             self.prepare()
             while not self._terminating:
-                self.loop()
+                try:
+                    self.loop()
+                except Exception as e:
+                    if self._terminate_on is not None:
+                        if isinstance(e, self._terminate_on):
+                            self.terminate()
+                    else:
+                        raise
         except SystemExit:
             pass
         finally:
