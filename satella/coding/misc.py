@@ -66,6 +66,13 @@ class Closeable:
     def __init__(self):
         self.__finalized = False
 
+    @property
+    def closed(self) -> bool:
+        """
+        :return: whether this object is closed
+        """
+        return self.__finalized
+
     def close(self) -> bool:
         """
         Check if the resource needs cleanup, and clean up this resource.

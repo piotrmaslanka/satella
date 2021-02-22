@@ -49,6 +49,7 @@ class TestCase(unittest.TestCase):
                     a['test'] = True
 
         b = MyClose()
+        self.assertFalse(b.closed)
         del b
         gc.collect()
         self.assertTrue(a['test'])
