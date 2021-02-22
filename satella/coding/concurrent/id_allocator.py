@@ -14,7 +14,7 @@ class SequentialIssuer(Monitor):
 
     def __init__(self, start: int = 0):
         super().__init__()
-        self.start = 0
+        self.start = start
 
     @Monitor.synchronized
     def issue(self) -> int:
