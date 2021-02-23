@@ -10,6 +10,7 @@ from .sync import sync_threadpool
 from .thread import TerminableThread, Condition, SingleStartThread, call_in_separate_thread, \
     BogusTerminableThread, IntervalTerminableThread
 from .timer import Timer
+from .thread_collection import ThreadCollection
 from .queue import PeekableQueue
 
 __all__ = ['LockedDataset', 'Monitor', 'RMonitor', 'CallableGroup', 'TerminableThread',
@@ -18,5 +19,5 @@ __all__ = ['LockedDataset', 'Monitor', 'RMonitor', 'CallableGroup', 'TerminableT
            'BogusTerminableThread', 'Timer', 'parallel_execute', 'run_as_future',
            'sync_threadpool', 'IntervalTerminableThread', 'Future',
            'WrappingFuture', 'InvalidStateError', 'PeekableQueue',
-           'CancellableCallback',
+           'CancellableCallback', 'ThreadCollection',
            'SequentialIssuer']

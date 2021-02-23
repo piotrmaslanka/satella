@@ -32,6 +32,12 @@ PeekableQueue
 .. autoclass:: satella.coding.concurrent.PeekableQueue
     :members:
 
+ThreadCollection
+================
+
+.. autoclass:: satella.coding.concurrent.ThreadCollection
+    :members:
+
 TerminableThread
 ================
 
