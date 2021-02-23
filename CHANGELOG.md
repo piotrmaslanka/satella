@@ -1,3 +1,1 @@
-# v2.14.44
-
-* added `ExponentialBackoff`
+# v2.14.45
