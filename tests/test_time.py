@@ -4,11 +4,20 @@ import time
 import multiprocessing
 import os
 import sys
-from satella.time import measure, time_as_int, time_ms, sleep
+from satella.time import measure, time_as_int, time_ms, sleep, ExponentialBackoff
 from concurrent.futures import Future
 
 
 class TestTime(unittest.TestCase):
+
+    def test_exponential_backoff(self):
+        with measure() as measurement:
+            eb = ExponentialBackoff()
+            eb.failed()
+            eb.sleep()
+            eb.failed()
+            eb.sleep()
+        self.assertGreaterEqual(measurement(), 2+4)
 
     def test_measure(self):
         with measure(timeout=0.5) as measurement:

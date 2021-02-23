@@ -35,3 +35,9 @@ sleep
 -----
 
 .. autofunction:: satella.time.sleep
+
+ExponentialBackoff
+------------------
+
+.. autoclass:: satella.time.ExponentialBackoff
+    :members:

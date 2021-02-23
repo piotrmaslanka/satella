@@ -7,7 +7,7 @@ import warnings
 from concurrent.futures import Future
 from functools import wraps  # import from functools to prevent circular import exception
 
-__all__ = ['measure', 'time_as_int', 'time_ms', 'sleep', 'time_us']
+__all__ = ['measure', 'time_as_int', 'time_ms', 'sleep', 'time_us', 'ExponentialBackoff']
 
 from satella.exceptions import WouldWaitMore
 
@@ -321,3 +321,46 @@ class measure:
         if self.stop_on_stop:
             self.stop()
         return False
+
+
+class ExponentialBackoff:
+    """
+    A class that will sleep increasingly longer on errors. Meant to be used in such a way:
+
+    >>> eb = ExponentialBackoff(start=2, limit=30)
+    >>> while not connect():
+    >>>     eb.failed()
+    >>>     eb.sleep()
+    >>> eb.success()
+
+    :param start: value at which to start
+    :param limit: maximum sleep timeout
+    :param sleep_fun: function used to sleep. Will accept a single argument - number of
+        seconds to wait
+    """
+    __slots__ = ('start', 'limit', 'counter', 'sleep_fun')
+
+    def __init__(self, start: float = 1, limit: float = 30,
+                 sleep_fun: tp.Callable[[float], None] = sleep):
+        self.start = start
+        self.limit = limit
+        self.counter = start
+        self.sleep_fun = sleep_fun
+
+    def sleep(self):
+        """
+        Called when sleep is expected.
+        """
+        self.sleep_fun(self.counter)
+
+    def failed(self):
+        """
+        Called when something fails.
+        """
+        self.counter = min(self.limit, self.counter * 2)
+
+    def success(self):
+        """
+        Called when something successes.
+        """
+        self.counter = self.start
