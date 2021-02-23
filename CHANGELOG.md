@@ -1,3 +1,1 @@
-# v2.14.45
-
-* add `ThreadCollection`
+# v2.14.46
