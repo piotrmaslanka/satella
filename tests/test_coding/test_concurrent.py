@@ -433,6 +433,29 @@ class TestConcurrent(unittest.TestCase):
         time.sleep(0.1)
         self.assertTrue(dct['a'])
 
+    def test_terminablethread_condition(self):
+        a = {'dct': False}
+        condition = Condition()
+        slf = self
+
+        class MyThread(TerminableThread):
+            def __init__(self):
+                super().__init__()
+
+            def run(self) -> None:
+                nonlocal a, slf, condition
+                self.safe_wait_condition(condition, 5)
+                a['dct'] = True
+                slf.assertRaises(WouldWaitMore, lambda: self.safe_wait_condition(condition, 3))
+
+        t = MyThread().start()
+        time.sleep(0.2)
+        self.assertTrue(t.is_alive())
+        self.assertFalse(a['dct'])
+        condition.notify()
+        time.sleep(0.1)
+        self.assertTrue(a['dct'])
+
     def test_terminate_on(self):
         dct = {'a': False}
 

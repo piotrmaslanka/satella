@@ -213,9 +213,16 @@ class TerminableThread(threading.Thread):
             swallow it and terminate the thread by calling
             :meth:`~satella.coding.concurrent.TerminableThread.terminate`. Note that the
             subclass check will be done via `isinstance` so you can use the metaclass magic :)
+            Note that SystemExit will be automatically added to list of terminable exceptions.
         """
         super().__init__(*args, **kwargs)
         self._terminating = False  # type: bool
+        if terminate_on is None:
+            terminate_on = (SystemExit, )
+        elif isinstance(terminate_on, tuple):
+            terminate_on = (SystemExit, *terminate_on)
+        else:
+            terminate_on = (SystemExit, terminate_on)
         self._terminate_on = terminate_on
 
     @property
@@ -287,12 +294,40 @@ class TerminableThread(threading.Thread):
         self.terminate().join()
         return False
 
+    def safe_wait_condition(self, condition: Condition, timeout: float,
+                            wake_up_each: float = 2) -> None:
+        """
+        Wait for a condition, checking periodically if the thread is being terminated.
+
+        To be invoked only by the thread that's represented by the object!
+
+        :param condition: condition to wait on
+        :param timeout: maximum time to wait
+        :param wake_up_each: amount of seconds to wake up each to check for termination
+        :raises WouldWaitMore: timeout has passed and Condition has not happened
+        :raises SystemExit: thread is terminating
+        """
+        t = 0
+        while t < timeout:
+            if self._terminating:
+                raise SystemExit()
+            ttw = min(timeout-t, wake_up_each)
+            t += ttw
+            try:
+                condition.wait(ttw)
+                return
+            except WouldWaitMore:
+                pass
+        raise WouldWaitMore()
+
     def safe_sleep(self, interval: float, wake_up_each: float = 2) -> None:
         """
         Sleep for interval, waking up each wake_up_each seconds to check if terminating,
         finish earlier if is terminating.
 
         This will do *the right thing* when passed a negative interval.
+
+        To be invoked only by the thread that's represented by the object!
 
         :param interval: Time to sleep in total
         :param wake_up_each: Amount of seconds to wake up each
