@@ -32,14 +32,14 @@ class ThreadCollection:
     def __init__(self, threads: tp.List[Thread]):
         self.threads = threads
 
-    def start(self):
+    def start(self) -> None:
         """
         Start all threads
         """
         for thread in self.threads:
             thread.start()
 
-    def terminate(self, *args, **kwargs):
+    def terminate(self, *args, **kwargs) -> None:
         """
         Call terminate() on all threads that have this method
         """
@@ -49,12 +49,12 @@ class ThreadCollection:
             except AttributeError:
                 pass
 
-    def join(self):
+    def join(self) -> None:
         """Join all threads"""
         for thread in self.threads:
             thread.join()
 
-    def is_alive(self):
+    def is_alive(self) -> bool:
         """
         Is at least one thread alive?
         """
