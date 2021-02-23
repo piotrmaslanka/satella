@@ -11,7 +11,7 @@ class ThreadCollection:
     >>> class MyThread(Thread):
     >>>     def __init__(self, a):
     >>>         ...
-    >>> tc = ThreadCollection.from_class(MyThread, [2, 4, 5])
+    >>> tc = ThreadCollection.from_class(MyThread, [2, 4, 5], daemon=True)
     >>> tc.start()
     >>> tc.terminate()
     >>> tc.join()
@@ -20,14 +20,28 @@ class ThreadCollection:
     __slots__ = ('threads', )
 
     @classmethod
-    def from_class(cls, cls_to_use, iteratable) -> 'ThreadCollection':
+    def from_class(cls, cls_to_use, iteratable, **kwargs) -> 'ThreadCollection':
         """
         Build a thread collection
 
         :param cls_to_use: class to instantiate with
         :param iteratable: an iterable with the sole argument to this class
         """
-        return ThreadCollection([cls_to_use(it) for it in iteratable])
+        return ThreadCollection([cls_to_use(it, **kwargs) for it in iteratable])
+
+    @property
+    def daemon(self) -> bool:
+        """
+        Is any of the threads a daemon?
+
+        Also, when used a setter sets daemon attribute.
+        """
+        return any(thread.daemon for thread in self.threads)
+
+    @daemon.setter
+    def daemon(self, v: bool) -> None:
+        for thread in self.threads:
+            thread.daemon = v
 
     def __init__(self, threads: tp.List[Thread]):
         self.threads = threads
