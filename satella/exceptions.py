@@ -26,8 +26,11 @@ class CustomException(Exception):
 
     def __str__(self) -> str:
         a = '%s(%s' % (self.__class__.__qualname__.split('.')[-1], ', '.join(map(repr, self.args)))
-        if self.kwargs:
-            a += ', ' + ', '.join(map(lambda k, v: '%s=%s' % (k, repr(v)), self.kwargs.items()))
+        try:
+            if self.kwargs:
+                a += ', ' + ', '.join(map(lambda k, v: '%s=%s' % (k, repr(v)), self.kwargs.items()))
+        except AttributeError:
+            pass
         a += ')'
         return a
 
@@ -36,9 +39,12 @@ class CustomException(Exception):
                          if self.__class__.__module__ != 'builtins' else '',
                          self.__class__.__qualname__,
                          ', '.join(map(repr, self.args)))
-        if self.kwargs:
-            a += ', ' + (', '.join(map(lambda kv: '%s=%s' % (kv[0], repr(kv[1])),
-                                       self.kwargs.items())))
+        try:
+            if self.kwargs:
+                a += ', ' + (', '.join(map(lambda kv: '%s=%s' % (kv[0], repr(kv[1])),
+                                           self.kwargs.items())))
+        except AttributeError:
+            pass
         a += ')'
         return a
 
