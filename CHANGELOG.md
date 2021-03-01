@@ -1,5 +1,2 @@
-# v2.14.46
+# v2.14.47
 
-* added kwargs to ThreadCollection.from_class
-* fixed a bug in CustomException
-* added `parse_time_string`
