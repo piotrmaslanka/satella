@@ -2,6 +2,14 @@
 Time
 ====
 
+parse_time_string
+-----------------
+
+Parse a time string into amount of seconds
+
+.. autofunction:: satella.time.parse_time_string
+
+
 measure
 -------
 Sometimes you just need to measure how long does a routine call take.

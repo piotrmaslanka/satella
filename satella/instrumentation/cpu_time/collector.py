@@ -5,8 +5,13 @@ import time
 
 import psutil
 
+from satella.coding import for_argument
 from satella.coding.structures import Singleton
 from satella.coding.transforms import percentile
+from satella.time import parse_time_string
+
+DEFAULT_REFRESH_EACH = '30m'
+DEFAULT_WINDOW_SECONDS = '5m'
 
 
 @Singleton
@@ -14,14 +19,18 @@ class CPUProfileBuilderThread(threading.Thread):
     """
     A CPU profile builder thread and a core singleton object to use.
 
-    :param window_seconds: the amount of seconds for which to collect data
-    :param refresh_each: time of seconds to sleep between rebuilding of profiles
+    :param window_seconds: the amount of seconds for which to collect data.
+        Generally, this should be the interval during which your system cycles through all of
+        it's load, eg. if it asks it's devices each 5 minutes, the interval should be 300 seconds.
+        Or a time string.
+    :param refresh_each: time of seconds to sleep between rebuilding of profiles, or a time string.
     """
-    def __init__(self, window_seconds: int = 300, refresh_each: int = 1800,
+    def __init__(self, window_seconds: tp.Union[str, int] = DEFAULT_WINDOW_SECONDS,
+                 refresh_each: tp.Union[str, int] = DEFAULT_REFRESH_EACH,
                  percentiles_requested: tp.Sequence[float] = (0.9, )):
         super().__init__(name='CPU profile builder', daemon=True)
-        self.window_size = window_seconds
-        self.refresh_each = refresh_each
+        self.window_size = parse_time_string(window_seconds)
+        self.refresh_each = parse_time_string(refresh_each)
         self.data = []
         self.percentiles_requested = list(percentiles_requested)
         self.percentile_values = []
@@ -72,8 +81,7 @@ class CPUTimeManager:
         :param percent: float between 0 and 1
         :return: the value of the percentile
         """
-        cp = CPUProfileBuilderThread()
-        return cp.percentile(percent)
+        return CPUProfileBuilderThread().percentile(percent)
 
     @staticmethod
     def set_window_size(window_size: float) -> None:
@@ -82,18 +90,18 @@ class CPUTimeManager:
 
         :param window_size: time, in seconds
         """
-        cp = CPUProfileBuilderThread()
-        cp.window_size = window_size
+        CPUProfileBuilderThread().window_size = window_size
 
 
-def sleep_cpu_aware(seconds: float, of_below: tp.Optional[float] = None,
+@for_argument(parse_time_string)
+def sleep_cpu_aware(seconds: tp.Union[str, float], of_below: tp.Optional[float] = None,
                     of_above: tp.Optional[float] = None,
                     check_each: float = 1) -> bool:
     """
     Sleep for specified number of seconds.
 
     Quit earlier if the occupancy factor goes below of_below or above of_above
-    :param seconds: time to sleep
+    :param seconds: time to sleep in seconds, or a time string
     :param of_below: occupancy factor below which the sleep will return
     :param of_above: occupancy factor above which the sleep will return
     :param check_each: amount of seconds to sleep at once
@@ -157,11 +165,13 @@ def _calculate_occupancy_factor() -> float:
 
 def calculate_occupancy_factor() -> float:
     """
-    IMPORTANT!
+    Get the average load between now and the time it was last called as a float,
+    where 0.0 is LA=0 and 1.0 is LA=max_cores.
 
     This will be the average between now and the time it was last called.
 
-    This in rare cases (being called the first or the second time) may block for up to 0.1 seconds
+    .. warning:: This in rare cases (being called the first or the second time) may block for
+                 up to 0.1 seconds
 
     :return: a float between 0 and 1 telling you how occupied CPU-wise is your system.
     """
