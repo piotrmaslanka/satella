@@ -1,3 +1,4 @@
+import typing as tp
 import logging
 import threading
 import time
@@ -6,6 +7,7 @@ from satella.coding.recast_exceptions import log_exceptions
 from .monitor import Monitor
 from ..structures.heaps.time import TimeBasedHeap
 from ..structures.singleton import Singleton
+from ...time import parse_time_string
 
 logger = logging.getLogger(__name__)
 
@@ -21,18 +23,20 @@ class Timer:
     If spawn_separate is False, exceptions will be logged
 
     :param interval: amount of seconds that should elapsed between calling start() and function
-        executing
+        executing. Can be also a time string.
     :param function: function to execute
     :param args: argument for function
     :param kwargs: kwargs for function
     :param spawn_separate: whether to call the function in a separate thread
     """
+    __slots__ = ('args', 'kwargs', 'spawn_separate', 'interval',
+                 'function', 'execute_at', 'cancelled')
 
-    def __init__(self, interval, function, args=None, kwargs=None, spawn_separate=False):
+    def __init__(self, interval: tp.Union[str, float], function, args=None, kwargs=None, spawn_separate=False):
         self.args = args or []
         self.kwargs = kwargs or {}
         self.spawn_separate = spawn_separate
-        self.interval = interval
+        self.interval = parse_time_string(interval)
         self.function = function
         self.execute_at = None
         self.cancelled = False

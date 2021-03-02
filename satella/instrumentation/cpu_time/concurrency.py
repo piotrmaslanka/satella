@@ -3,7 +3,7 @@ from abc import abstractmethod, ABCMeta
 
 from satella.coding.concurrent import IntervalTerminableThread
 from .collector import sleep_cpu_aware, CPUProfileBuilderThread
-from satella.time import measure
+from satella.time import measure, parse_time_string
 
 
 class CPUTimeAwareIntervalTerminableThread(IntervalTerminableThread, metaclass=ABCMeta):
@@ -14,16 +14,18 @@ class CPUTimeAwareIntervalTerminableThread(IntervalTerminableThread, metaclass=A
     :param seconds: time that a single looping through should take. This will
         include the time spent on calling .loop(), the rest of this time will
         be spent safe_sleep()ing.
+        Can be alternatively a time string
     :param max_sooner: amount of seconds that is ok to call this earlier.
         Default is 10% seconds.
     :param percentile: percentile that CPU usage has to fall below to call it earlier.
-    :param wakeup_interval: amount of seconds to wake up between to check for _terminating status
+    :param wakeup_interval: amount of seconds to wake up between to check for _terminating status.
+        Can be also a time string
     """
 
-    def __init__(self, seconds: float, max_sooner: tp.Optional[float] = None, percentile: float = 0.3,
-                 wakeup_interval: float = 3.0, *args, **kwargs):
-        self.seconds = seconds
-        self.wakeup_interval = wakeup_interval
+    def __init__(self, seconds: tp.Union[str, float], max_sooner: tp.Optional[float] = None, percentile: float = 0.3,
+                 wakeup_interval: tp.Union[str, float] = '3s', *args, **kwargs):
+        self.seconds = parse_time_string(seconds)
+        self.wakeup_interval = parse_time_string(wakeup_interval)
         self.max_sooner = max_sooner or seconds * 0.1
         cp_bt = CPUProfileBuilderThread()
         cp_bt.request_percentile(percentile)
@@ -61,7 +63,7 @@ class CPUTimeAwareIntervalTerminableThread(IntervalTerminableThread, metaclass=A
 
     def run(self):
         self.prepare()
-        while not self._terminating:
+        while not self.terminating:
             measured = self._execute_measured()
             seconds_to_wait = self.seconds - measured
             if seconds_to_wait > 0:

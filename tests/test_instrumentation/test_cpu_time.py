@@ -9,7 +9,7 @@ class TestCPUTime(unittest.TestCase):
     def test_cpu_time_aware_terminable_thread(self):
         class TestingThread(CPUTimeAwareIntervalTerminableThread):
             def __init__(self):
-                super().__init__(5, 3, 0.5)
+                super().__init__('5s', 3, 0.5)
                 self.a = 0
 
             def loop(self) -> None:

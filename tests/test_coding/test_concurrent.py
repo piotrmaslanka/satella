@@ -283,7 +283,7 @@ class TestConcurrent(unittest.TestCase):
         def set_a():
             a['test'] = True
 
-        tmr = Timer(1, set_a)
+        tmr = Timer('1s', set_a)
         tmr.start()
         time.sleep(2)
         self.assertTrue(a['test'])

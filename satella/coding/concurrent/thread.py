@@ -9,7 +9,7 @@ from concurrent.futures import Future
 from threading import Condition as PythonCondition
 
 from satella.coding.decorators import wraps
-from satella.time import measure
+from satella.time import measure, parse_time_string
 from ..typing import ExceptionList
 from ...exceptions import ResourceLocked, WouldWaitMore
 
@@ -73,17 +73,19 @@ class Condition(PythonCondition):
         warnings.warn('Use notify_all instead', DeprecationWarning)
         self.notify_all()
 
-    def wait(self, timeout: tp.Optional[float] = None,
+    def wait(self, timeout: tp.Optional[tp.Union[str, float]] = None,
              dont_raise: bool = False) -> None:
         """
         Wait for condition to become true.
 
-        :param timeout: timeout to wait. None is default and means infinity
+        :param timeout: timeout to wait. None is default and means infinity. Can be also a
+            time string.
         :param dont_raise: if True, then WouldWaitMore won't be raised
         :raises ResourceLocked: unable to acquire the underlying lock within specified timeout.
         :raises WouldWaitMore: wait's timeout has expired
         """
         if timeout is not None:
+            timeout = parse_time_string(timeout)
             if timeout < 0:
                 timeout = 0
 
@@ -148,6 +150,7 @@ class BogusTerminableThread:
     """
     A mock object that implements threading interface but does nothing
     """
+    __slots__ = ('running', 'terminated', 'daemon')
 
     def __init__(self):
         self.running = False
@@ -294,19 +297,22 @@ class TerminableThread(threading.Thread):
         self.terminate().join()
         return False
 
-    def safe_wait_condition(self, condition: Condition, timeout: float,
-                            wake_up_each: float = 2) -> None:
+    def safe_wait_condition(self, condition: Condition, timeout: tp.Union[str, float],
+                            wake_up_each: tp.Union[str, float] = 2) -> None:
         """
         Wait for a condition, checking periodically if the thread is being terminated.
 
         To be invoked only by the thread that's represented by the object!
 
         :param condition: condition to wait on
-        :param timeout: maximum time to wait
-        :param wake_up_each: amount of seconds to wake up each to check for termination
+        :param timeout: maximum time to wait in seconds. Can be also a time string
+        :param wake_up_each: amount of seconds to wake up each to check for termination.
+            Can be also a time string.
         :raises WouldWaitMore: timeout has passed and Condition has not happened
         :raises SystemExit: thread is terminating
         """
+        timeout = parse_time_string(timeout)
+        wake_up_each = parse_time_string(wake_up_each)
         t = 0
         while t < timeout:
             if self._terminating:
@@ -387,13 +393,13 @@ class IntervalTerminableThread(TerminableThread, metaclass=ABCMeta):
 
     If executing .loop() takes more than x seconds, on_overrun() will be called.
 
-    :param seconds: time that a single looping through should take. This will
-        include the time spent on calling .loop(), the rest of this time will
-        be spent safe_sleep()ing.
+    :param seconds: time that a single looping through should take in seconds.
+        Can be also a time string. This will include the time spent on calling .loop(), the rest
+        of this time will be spent safe_sleep()ing.
     """
 
-    def __init__(self, seconds: float, *args, **kwargs):
-        self.seconds = seconds
+    def __init__(self, seconds: tp.Union[str, float], *args, **kwargs):
+        self.seconds = parse_time_string(seconds)
         super().__init__(*args, **kwargs)
 
     @abstractmethod

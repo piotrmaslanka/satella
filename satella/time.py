@@ -14,25 +14,26 @@ from satella.exceptions import WouldWaitMore
 TimeSignal = tp.Callable[[], float]
 
 
-def sleep(x: float, abort_on_interrupt: bool = False) -> bool:
+def sleep(y: tp.Union[str, float], abort_on_interrupt: bool = False) -> bool:
     """
     Sleep for given interval.
 
     This won't be interrupted by KeyboardInterrupted, and always will sleep for given time interval.
     This will return at once if x is negative
 
-    :param x: the interval to wait
+    :param y: the interval to wait in seconds, can be also a time string
     :param abort_on_interrupt: whether to abort at once when KeyboardInterrupt is seen
     :returns: whether the function has completed its sleep naturally. False is seen on
         aborts thanks to KeyboardInterrupt only if abort_on_interrupt is True
     """
-    if x < 0:
+    y = parse_time_string(y)
+    if y < 0:
         return
 
     with measure() as measurement:
-        while measurement() < x:
+        while measurement() < y:
             try:
-                time.sleep(x - measurement())
+                time.sleep(y - measurement())
             except KeyboardInterrupt:
                 if abort_on_interrupt:
                     return False

@@ -7,6 +7,8 @@ from .exceptions import ProcessFailed
 
 __all__ = ['call_and_return_stdout', 'read_nowait']
 
+from .time import parse_time_string
+
 
 @call_in_separate_thread(daemon=True)
 @silence_excs((IOError, OSError))
@@ -32,7 +34,7 @@ def read_nowait(process: subprocess.Popen, output_list: tp.List[str]):
 
 
 def call_and_return_stdout(args: tp.Union[str, tp.List[str]],
-                           timeout: tp.Optional[int] = None,
+                           timeout: tp.Optional[tp.Union[str, int]] = None,
                            encoding: tp.Optional[str] = None,
                            expected_return_code: tp.Optional[int] = None,
                            **kwargs) -> tp.Union[bytes, str]:
@@ -46,7 +48,8 @@ def call_and_return_stdout(args: tp.Union[str, tp.List[str]],
 
     :param args: arguments to run the program with. Can be either a string or a list of strings.
     :param timeout: amount of seconds to wait for the process result. If process does not complete
-        within this time, it will be sent a SIGKILL
+        within this time, it will be sent a SIGKILL. Can be also a time string. If left at default,
+        ie. None, timeout won't be considered at all.
     :param encoding: encoding with which to decode stdout. If none is passed, it will be returned as
         a bytes object
     :param expected_return_code: an expected return code of this process. 0 is the default. If
@@ -61,6 +64,9 @@ def call_and_return_stdout(args: tp.Union[str, tp.List[str]],
 
     proc = subprocess.Popen(args, **kwargs)
     fut = read_nowait(proc, stdout_list)
+
+    if timeout is not None:
+        timeout = parse_time_string(timeout)
 
     try:
         proc.wait(timeout=timeout)
