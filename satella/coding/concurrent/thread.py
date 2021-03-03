@@ -14,7 +14,7 @@ from ..typing import ExceptionList
 from ...exceptions import ResourceLocked, WouldWaitMore
 
 
-def call_in_separate_thread(*t_args, **t_kwargs):
+def call_in_separate_thread(*t_args, delay: float = 0, **t_kwargs):
     """
     Decorator to mark given routine as callable in a separate thread.
 
@@ -22,6 +22,8 @@ def call_in_separate_thread(*t_args, **t_kwargs):
     (or the exception) of the function.
 
     The arguments given here will be passed to thread's constructor, so use like:
+
+    :param delay: seconds to wait before launching function
 
     >>> @call_in_separate_thread(daemon=True)
     >>> def handle_messages():
@@ -40,6 +42,8 @@ def call_in_separate_thread(*t_args, **t_kwargs):
                 def run(self):
                     if not self.future.set_running_or_notify_cancel():
                         return
+                    if delay:
+                        time.sleep(delay)
                     try:
                         res = fun(*args, **kwargs)
                         self.future.set_result(res)
