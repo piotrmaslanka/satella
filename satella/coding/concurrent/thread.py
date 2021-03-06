@@ -153,6 +153,10 @@ class SingleStartThread(threading.Thread):
 class BogusTerminableThread:
     """
     A mock object that implements threading interface but does nothing
+
+    :ivar running: bool, if it's running
+    :ivar terminated: bool, if terminated
+    :ivar daemon: bool, if daemon
     """
     __slots__ = ('running', 'terminated', 'daemon')
 
@@ -161,11 +165,15 @@ class BogusTerminableThread:
         self.terminated = False
         self.daemon = True
 
-    def is_alive(self):
+    def is_alive(self) -> bool:
+        """
+        :return: if this thread is alive
+        """
         return not self.terminated and self.running
 
-    def start(self):
+    def start(self) -> None:
         """
+        Set running to True
         :raises RuntimeError: thread already terminated or already running
         """
         if self.terminated:
@@ -174,10 +182,19 @@ class BogusTerminableThread:
             raise RuntimeError('Thread already running')
         self.running = True
 
-    def terminate(self):
+    def terminate(self) -> None:
+        """
+        Set terminated to True.
+
+        Note that to set running to False you need to invoke
+        :meth:`~satella.coding.concurrent.BogusTerminableThread.join` afterwards.
+        """
         self.terminated = True
 
-    def join(self, timeout=None):
+    def join(self, timeout=None) -> None:
+        """
+        Wait for the pseudo-thread. Sets running to False if thread was terminated.
+        """
         if self.terminated:
             self.running = False
 
