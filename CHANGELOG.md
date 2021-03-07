@@ -1,3 +1,2 @@
-# v2.15
+# v2.15.1
 
-* added `file` to the schema
