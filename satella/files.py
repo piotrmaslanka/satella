@@ -9,7 +9,7 @@ __all__ = ['read_re_sub_and_write', 'find_files', 'split', 'read_in_file', 'writ
            'write_out_file_if_different', 'make_noncolliding_name', 'try_unlink',
            'DevNullFilelikeObject', 'read_lines']
 
-from satella.coding import silence_excs
+from satella.coding.recast_exceptions import silence_excs
 from satella.coding.typing import Predicate
 
 SEPARATORS = {'\\', '/'}

@@ -5,6 +5,7 @@ import typing as tp
 from satella.exceptions import ConfigurationValidationError
 from .base import Descriptor, ConfigDictValue
 from .registry import register_custom_descriptor
+from ...files import read_in_file
 
 
 @staticmethod
@@ -53,17 +54,62 @@ class String(Descriptor):
     BASIC_MAKER = str
 
 
+class FileObject:
+    """
+    What you get for values in schema of :class:`~satella.configuration.schema.File`.
+
+    This object is comparable and hashable, and is equal to the string of it's path
+    """
+    __slots__ = 'path',
+
+    def __init__(self, path: str):
+        self.path = path
+
+    def __repr__(self):
+        return '<File object %s>' % (self.path, )
+
+    def __str__(self):
+        return self.path
+
+    def __eq__(self, other) -> bool:
+        return self.path == str(other)
+
+    def __hash__(self) -> int:
+        return hash(self.path)
+
+    def get_value(self) -> bytes:
+        """
+        Read in the entire file into memory
+
+        :return: file contents
+        """
+        return read_in_file(self.path)
+
+    def open(self, mode: str):
+        """
+        Open the file in specified mode
+
+        :param mode: mode to open the file in
+        :return: file handle
+        """
+        return open(self.path, mode)
+
 
 @staticmethod
 def _make_file(v: str) -> bool:
+
     if not os.path.isfile(v):
         raise ConfigurationValidationError('Expected to find a file under %s'
                                            % (v,))
+    return FileObject(v)
 
 
 @register_custom_descriptor('file')
 class File(Descriptor):
-    """This value must be a valid path to a file"""
+    """
+    This value must be a valid path to a file. The value in your schema will be
+    an instance of :class:`~satella.configuration.schema.basic.FileObject`
+    """
 
     BASIC_MAKER = _make_file
 

@@ -22,8 +22,9 @@ class TestSchema(unittest.TestCase):
             f_out.write(b'test')
 
         s = descriptor_from_dict(schema)
-
-        self.assertEqual(s({'key': "test"}), {'key': 'test'})
+        fo = s({'key': "test"})['key']
+        self.assertEqual(str(fo), 'test')
+        self.assertEqual(fo.get_value(), b'test')
 
     def test_caster(self):
         ps = Caster(Environment)
