@@ -1,3 +1,4 @@
+import threading
 import typing as tp
 from threading import Thread
 
@@ -15,9 +16,35 @@ class ThreadCollection:
     >>> tc.start()
     >>> tc.terminate()
     >>> tc.join()
+
+    This also implements iteration (it will return all the threads in the collection) and
+    length check.
     """
 
     __slots__ = ('threads', )
+
+    def __len__(self):
+        return len(self.threads)
+
+    def __iter__(self):
+        return iter(self.threads)
+
+    @classmethod
+    def get_currently_running(cls, include_main_thread: bool = True) -> 'ThreadCollection':
+        """
+        Get all currently running threads as thread collection
+
+        :param include_main_thread: whether to include the main thread
+
+        :return: a thread collection representing all currently running threads
+        """
+        result = []
+        for thread in threading.enumerate():
+            # noinspection PyProtectedMember
+            if not include_main_thread and isinstance(thread, threading._MainThread):
+                continue
+            result.append(thread)
+        return ThreadCollection(result)
 
     @classmethod
     def from_class(cls, cls_to_use, iteratable, **kwargs) -> 'ThreadCollection':
@@ -45,6 +72,14 @@ class ThreadCollection:
 
     def __init__(self, threads: tp.Sequence[Thread]):
         self.threads = list(threads)
+
+    def append(self, thread: Thread) -> None:
+        """
+        Alias for :meth:`~satella.coding.concurrent.ThreadCollection.add`
+
+        :param thread: thread to add
+        """
+        self.add(thread)
 
     def add(self, thread: Thread) -> None:
         """
