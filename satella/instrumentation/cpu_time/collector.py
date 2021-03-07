@@ -29,7 +29,7 @@ class CPUProfileBuilderThread(threading.Thread):
                  refresh_each: tp.Union[str, int] = DEFAULT_REFRESH_EACH,
                  percentiles_requested: tp.Sequence[float] = (0.9, )):
         super().__init__(name='CPU profile builder', daemon=True)
-        self.window_size = parse_time_string(window_seconds)
+        self.window_size = int(parse_time_string(window_seconds))
         self.refresh_each = parse_time_string(refresh_each)
         self.data = []
         self.percentiles_requested = list(percentiles_requested)
