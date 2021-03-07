@@ -1,3 +1,3 @@
-# v2.14.49
+# v2.15
 
-* **bugfix** fixed `CPUProfileBuilderThread`
+* _TBA_
