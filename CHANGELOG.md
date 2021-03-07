@@ -1,3 +1,3 @@
 # v2.15
 
-* _TBA_
+* added `file` to the schema

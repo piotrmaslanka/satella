@@ -1,3 +1,4 @@
+import os
 import re
 import typing as tp
 
@@ -50,6 +51,21 @@ class String(Descriptor):
     This value must be a string, or be converted to one
     """
     BASIC_MAKER = str
+
+
+
+@staticmethod
+def _make_file(v: str) -> bool:
+    if not os.path.isfile(v):
+        raise ConfigurationValidationError('Expected to find a file under %s'
+                                           % (v,))
+
+
+@register_custom_descriptor('file')
+class File(Descriptor):
+    """This value must be a valid path to a file"""
+
+    BASIC_MAKER = _make_file
 
 
 class Regexp(String):

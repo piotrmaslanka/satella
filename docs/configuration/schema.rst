@@ -15,6 +15,8 @@ you should instantiate a Descriptor. Descriptor reflects how your config is nest
 
 .. autoclass:: satella.configuration.schema.String
 
+.. autoclass:: satella.configuration.schema.File
+
 .. autoclass:: satella.configuration.schema.IPv4
 
 .. autoclass:: satella.configuration.schema.List
