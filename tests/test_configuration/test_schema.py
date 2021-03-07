@@ -14,6 +14,17 @@ class Environment(enum.IntEnum):
 
 class TestSchema(unittest.TestCase):
 
+    def test_file(self):
+        schema = {
+            "key": "file"
+        }
+        with open('test', 'wb') as f_out:
+            f_out.write(b'test')
+
+        s = descriptor_from_dict(schema)
+
+        self.assertEqual(s({'key': "test"}), {'key': 'test'})
+
     def test_caster(self):
         ps = Caster(Environment)
         self.assertEqual(ps(0), Environment.PRODUCTION)

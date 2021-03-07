@@ -9,7 +9,7 @@ from .structs import create_key, Dict
 
 def _get_descriptor_for_str(key: str, value: str) -> Descriptor:
     try:
-        if value in ('int', 'float', 'str', 'ipv4', 'any', 'bool'):
+        if value in ('int', 'float', 'str', 'ipv4', 'any', 'bool', 'file'):
             return create_key(BASE_LOOKUP_TABLE[value](),
                               key, False, None)
     except KeyError:
