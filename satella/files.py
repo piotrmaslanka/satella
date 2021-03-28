@@ -261,6 +261,9 @@ def find_files(path: str, wildcard: str = r'(.*)',
 
     Files will be additionally prefixed with path, but only if prefix_with_path is True
 
+    .. warning:: Note that this will try to match only the start of the path. For a complete match
+        remember to put a $ at the end of the string!
+
     :param path: path to look into.
     :param wildcard: a regular expression to match
     :param prefix_with: an optional path component to prefix before the filename with os.path.join
