@@ -73,43 +73,58 @@ class ThreadCollection:
     def __init__(self, threads: tp.Sequence[Thread]):
         self.threads = list(threads)
 
-    def append(self, thread: Thread) -> None:
+    def append(self, thread: Thread) -> 'ThreadCollection':
         """
         Alias for :meth:`~satella.coding.concurrent.ThreadCollection.add`
 
         :param thread: thread to add
+        :returns: this thread collection instance
         """
         self.add(thread)
+        return self
 
-    def add(self, thread: Thread) -> None:
+    def add(self, thread: Thread) -> 'ThreadCollection':
         """
         Add a thread to the collection
 
         :param thread: thread to add
+        :returns: this thread collection instance
         """
         self.threads.append(thread)
+        return self
 
-    def start(self) -> None:
+    def start(self) -> 'ThreadCollection':
         """
         Start all threads
+
+        :returns: this thread collection instance
         """
         for thread in self.threads:
             thread.start()
+        return self
 
-    def terminate(self, *args, **kwargs) -> None:
+    def terminate(self, *args, **kwargs) -> 'ThreadCollection':
         """
         Call terminate() on all threads that have this method
+
+        :returns: this thread collection instance
         """
         for thread in self.threads:
             try:
                 thread.terminate(*args, **kwargs)
             except AttributeError:
                 pass
+        return self
 
-    def join(self) -> None:
-        """Join all threads"""
+    def join(self) -> 'ThreadCollection':
+        """
+        Join all threads
+
+        :returns: this thread collection instance
+        """
         for thread in self.threads:
             thread.join()
+        return self
 
     def is_alive(self) -> bool:
         """

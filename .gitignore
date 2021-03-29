@@ -11,6 +11,7 @@ venv
 coverage.xml
 .coverage.*
 .metadata
+test
 lock
 bin/
 tmp/
