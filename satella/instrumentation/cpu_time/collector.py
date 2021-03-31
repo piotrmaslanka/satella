@@ -56,7 +56,7 @@ class CPUProfileBuilderThread(threading.Thread):
     def recalculate(self) -> None:
         data = []
         calculate_occupancy_factor()    # as first values tend to be a bit wonky
-        for _ in range(self.window_size):
+        for _ in range(int(self.window_size)):
             time.sleep(1)
             data.append(calculate_occupancy_factor())
         percentiles = []
