@@ -5,7 +5,6 @@ import typing as tp
 from satella.exceptions import ConfigurationValidationError
 from .base import Descriptor, ConfigDictValue
 from .registry import register_custom_descriptor
-from ...files import read_in_file
 
 
 @staticmethod
@@ -83,7 +82,8 @@ class FileObject:
 
         :return: file contents
         """
-        return read_in_file(self.path)
+        with open(self.path, 'rb') as f_in:
+            return f_in.read()
 
     def open(self, mode: str):
         """
