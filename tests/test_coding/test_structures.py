@@ -14,10 +14,28 @@ from satella.coding.structures import TimeBasedHeap, Heap, typednamedtuple, \
     DirtyDict, KeyAwareDefaultDict, Proxy, ReprableMixin, TimeBasedSetHeap, ExpiringEntryDict, SelfCleaningDefaultDict, \
     CacheDict, StrEqHashableMixin, ComparableIntEnum, HashableIntEnum, ComparableAndHashableBy, \
     ComparableAndHashableByInt, SparseMatrix, ExclusiveWritebackCache, Subqueue, \
-    CountingDict, ComparableEnum, LRU, LRUCacheDict, Vector, DefaultDict
+    CountingDict, ComparableEnum, LRU, LRUCacheDict, Vector, DefaultDict, PushIterable
 
 
 class TestMisc(unittest.TestCase):
+
+    def test_push_iterable(self):
+
+        a = PushIterable([1, 2, 3])
+        self.assertEqual(a.pop(), 1)
+        a.push(0)
+        self.assertEqual(a.pop(), 0)
+        self.assertEqual(a.pop(), 2)
+        a.push(0)
+        a.push(1)
+        self.assertEqual(a.pop(), 1)
+        self.assertEqual(a.pop(), 0)
+        a.push_left(0)
+        a.push_left(1)
+        self.assertEqual(a.pop(), 0)
+        self.assertEqual(a.pop(), 1)
+        self.assertEqual(a.pop(), 3)
+        self.assertRaises(StopIteration, a.pop)
 
     def test_default_dict(self):
         a = DefaultDict(lambda: '')

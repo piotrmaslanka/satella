@@ -6,6 +6,12 @@ Structures
     :members:
 
 
+PushIterable
+------------
+
+.. autoclass:: satella.coding.structures.PushIterable
+    :members:
+
 SyncableDroppable
 -----------------
 
