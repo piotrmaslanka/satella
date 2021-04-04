@@ -1,12 +1,29 @@
 import unittest
 
 from satella.coding import precondition, short_none, has_keys, update_if_not_none, postcondition, \
-    get_arguments
+    get_arguments, expect_exception
 from satella.coding.decorators import for_argument
 from satella.exceptions import PreconditionError
 
 
 class TestTypecheck(unittest.TestCase):
+
+    def test_except_exception(self):
+        def expect_exception_1():
+            with expect_exception(KeyError, ValueError, 'Hello world!'):
+                pass
+
+        self.assertRaises(ValueError, expect_exception_1)
+
+        a = {}
+        with expect_exception(KeyError, ValueError, 'Hello world!'):
+            a['test']
+
+        def expect_exception_2():
+            with expect_exception(KeyError, ValueError, 'Hello world!'):
+                raise TypeError()
+
+        self.assertRaises(TypeError, expect_exception_2)
 
     def test_for_argument_bug(self):
         class Device:

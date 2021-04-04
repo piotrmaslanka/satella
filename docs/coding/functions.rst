@@ -2,6 +2,8 @@
 Functions and decorators
 ========================
 
+.. autoclass:: satella.coding.expect_exception
+
 .. autofunction:: satella.coding.enum_value
 
 .. autofunction:: satella.coding.contains
