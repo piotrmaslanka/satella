@@ -1,3 +1,1 @@
-# v2.15.5
-
-* added `expect_exception`
+# v2.15.6
