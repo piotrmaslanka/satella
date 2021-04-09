@@ -1,1 +1,3 @@
 # v2.15.7
+
+* deprecated `IteratorListAdapter`

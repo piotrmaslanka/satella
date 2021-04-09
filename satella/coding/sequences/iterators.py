@@ -510,6 +510,8 @@ class ListWrapperIterator(tp.Generic[T]):
     It never computes more than it needs to.
 
     Essentially a class that lets you reuse one-shot iterators.
+
+    This is additionally a generic class.
     """
     __slots__ = ('iterator', 'exhausted', 'list')
 
@@ -617,11 +619,15 @@ class IteratorListAdapter:
     If a call to such a method is done, the generator will be unfolded in memory so this
     might take a ton of memory! You've been warned!
 
-    :param iterator:
+    .. deprecated:: 2.15.7
+        Use :class:`~satella.coding.sequences.ListWrapperIterator ` instead
+
+    :param iterator: iterator to unfold
     """
     __slots__ = ('unfolded', 'iterator', 'list', 'pointer')
 
     def __init__(self, iterator: tp.Iterator):
+        warnings.warn('Use ListWrapperIterator instead', DeprecationWarning)
         self.iterator = iter(iterator)
         self.list = None
         self.unfolded = False
