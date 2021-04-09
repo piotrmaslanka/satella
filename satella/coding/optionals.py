@@ -54,11 +54,31 @@ class Optional(Proxy):
     * getattr
     * getitem/setitem/delitem
     * testing for truth
+    * comparison (with nonexistent elements always comparing false)
+    * membership test (with nonexistent elements always returning false)
+
+    .. warning:: Returned objects via getattr and getitem are NOT wrapped in an
+        Optional. You need to do it by hand or just file an issue. I'll add that when I
+        need it.
+
+    :param obj: object to wrap
     """
     __slots__ = ()
 
     def __init__(self, obj):
         super().__init__(obj)
+
+    def __contains__(self, item) -> bool:
+        me = getattr(self, '_Proxy__obj')
+        if me is None:
+            return False
+        return item in me
+
+    def __eq__(self, other) -> bool:
+        me = getattr(self, '_Proxy__obj')
+        if me is None:
+            return False
+        return me == other
 
     def __getattr__(self, item):
         if getattr(self, '_Proxy__obj') is None:

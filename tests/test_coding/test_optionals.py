@@ -15,6 +15,17 @@ class TestOptionals(unittest.TestCase):
         self.assertFalse(c)
         self.assertTrue(b)
 
+    def test_optional_eq(self):
+        class Opt:
+            a = 5
+            b = [2]
+
+        a = Opt()
+        self.assertEqual(Optional(a).a, 5)
+        self.assertIn(2, Optional(a).b)
+        self.assertNotEqual(Optional(None).a, 5)
+        self.assertNotIn(2, Optional(None).b)
+
     def test_optional(self):
         self.assertIsNone(call_if_nnone(None))
         b = call_if_nnone(lambda y: y, 5)
