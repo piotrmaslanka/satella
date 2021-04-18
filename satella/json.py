@@ -76,8 +76,9 @@ def write_json_to_file(path: str, value: JSONAble) -> None:
         value = value.to_json()
     with open(path, 'w') as f_out:
         try:
+            import ujson
             ujson.dump(value, f_out)
-        except NameError:
+        except ImportError:
             json.dump(value, f_out)
 
 
@@ -113,9 +114,10 @@ def read_json_from_file(path: str) -> JSONAble:
     :raises OSError: the file was not readable or did not exist
     """
     try:
+        import ujson
         with open(path, 'r') as f_in:
             return ujson.load(f_in)
-    except NameError:
+    except ImportError:
         with open(path, 'r') as f_in:
             try:
                 return json.load(f_in)
