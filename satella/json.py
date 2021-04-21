@@ -65,30 +65,32 @@ def json_encode(x: tp.Any) -> str:
     return JSONEncoder().encode(x)
 
 
-def write_json_to_file(path: str, value: JSONAble) -> None:
+def write_json_to_file(path: str, value: JSONAble, **kwargs) -> None:
     """
     Write out a JSON to a file as UTF-8 encoded plain text.
 
     :param path: path to the file
     :param value: JSON-able content
+    :param kwargs: will be passed to ujson/json's dump
     """
     if isinstance(value, JSONAble):
         value = value.to_json()
     with open(path, 'w') as f_out:
         try:
             import ujson
-            ujson.dump(value, f_out)
+            ujson.dump(value, f_out, **kwargs)
         except ImportError:
-            json.dump(value, f_out)
+            json.dump(value, f_out, **kwargs)
 
 
-def write_json_to_file_if_different(path: str, value: JSONAble) -> bool:
+def write_json_to_file_if_different(path: str, value: JSONAble, **kwargs) -> bool:
     """
     Read JSON from a file. Write out a JSON to a file if it's value is different,
     as UTF-8 encoded plain text.
 
     :param path: path to the file
     :param value: JSON-able content
+    :param kwargs: will be passed to ujson/json dumps
     :return: whether the write actually happened
     """
     if isinstance(value, JSONAble):
@@ -96,11 +98,11 @@ def write_json_to_file_if_different(path: str, value: JSONAble) -> bool:
     try:
         val = read_json_from_file(path)
         if val != value:
-            write_json_to_file(path, value)
+            write_json_to_file(path, value, **kwargs)
             return True
         return False
     except (OSError, ValueError):
-        write_json_to_file(path, value)
+        write_json_to_file(path, value, **kwargs)
         return True
 
 
