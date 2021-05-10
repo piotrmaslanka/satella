@@ -71,7 +71,7 @@ class FileObject:
         return self.path
 
     def __eq__(self, other) -> bool:
-        return self.path == str(other)
+        return self.path == str(other) and isinstance(other, FileObject)
 
     def __hash__(self) -> int:
         return hash(self.path)
@@ -95,6 +95,37 @@ class FileObject:
         return open(self.path, mode)
 
 
+class DirectoryObject:
+    """
+    What you get for values in schema of :class:`~satella.configuration.schema.Directory`.
+
+    This object is comparable and hashable, and is equal to the string of it's path
+    """
+    __slots__ = 'path',
+
+    def __init__(self, path: str):
+        self.path = path
+
+    def __repr__(self):
+        return '<Directory object %s>' % (self.path, )
+
+    def __str__(self):
+        return self.path
+
+    def __eq__(self, other) -> bool:
+        return self.path == str(other) and isinstance(other, DirectoryObject)
+
+    def __hash__(self) -> int:
+        return hash(self.path)
+
+    def get_files(self) -> tp.Iterable[str]:
+        """
+        Return a list of files inside this directory
+        :return:
+        """
+        return os.listdir(self.path)
+
+
 @staticmethod
 def _make_file(v: str) -> bool:
 
@@ -112,6 +143,25 @@ class File(Descriptor):
     """
 
     BASIC_MAKER = _make_file
+
+
+@staticmethod
+def _make_directory(v: str) -> bool:
+
+    if not os.path.isdir(v):
+        raise ConfigurationValidationError('Expected to find a directory under %s'
+                                           % (v,))
+    return DirectoryObject(v)
+
+
+@register_custom_descriptor('dir')
+class Directory(Descriptor):
+    """
+    This value must be a valid path to a file. The value in your schema will be
+    an instance of :class:`~satella.configuration.schema.basic.FileObject`
+    """
+
+    BASIC_MAKER = _make_directory
 
 
 class Regexp(String):

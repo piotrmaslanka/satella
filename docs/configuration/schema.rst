@@ -17,6 +17,14 @@ you should instantiate a Descriptor. Descriptor reflects how your config is nest
 
 .. autoclass:: satella.configuration.schema.File
 
+.. autoclass:: satella.configuration.schema.FileObject
+    :members:
+
+.. autoclass:: satella.configuration.schema.Directory
+
+.. autoclass:: satella.configuration.schema.DirectoryObject
+    :members:
+
 .. autoclass:: satella.configuration.schema.basic.FileObject
 
 .. autoclass:: satella.configuration.schema.IPv4
@@ -71,15 +79,17 @@ Note that providing a short-hand, string type is impossible for descriptors that
 
 Available string types are:
 
-* **int** - Integer
-* **str** - String
-* **list** - List
-* **dict** - Dict
-* **ipv4** - IPv4
-* **any** - Descriptor
-* **bool** - Boolean
-* **union** - Union
-* **caster** - Caster
+* **int** - :class:`~satella.configuration.schema.Integer`
+* **str** - :class:`~satella.configuration.schema.String`
+* **list** - :class:`~satella.configuration.schema.List`
+* **dict** - :class:`~satella.configuration.schema.Dict`
+* **ipv4** - :class:`~satella.configuration.schema.IPv4`
+* **any** - :class:`~satella.configuration.schema.Descriptor`
+* **bool** - :class:`~satella.configuration.schema.Boolean`
+* **union** - :class:`~satella.configuration.schema.Union`
+* **caster** - :class:`~satella.configuration.schema.Caster`
+* **file** - :class:`~satella.configuration.schema.File`
+* **dir** - :class:`~satella.configuration.schema.Directory`
 
 Lists you define as following
 
