@@ -3,13 +3,13 @@ import typing as tp
 from satella.exceptions import ConfigurationSchemaError
 from satella.imports import import_class
 from .base import Descriptor
-from .registry import BASE_LOOKUP_TABLE
+from .registry import BASE_LOOKUP_TABLE, PLAIN_ENTRIES
 from .structs import create_key, Dict
 
 
 def _get_descriptor_for_str(key: str, value: str) -> Descriptor:
     try:
-        if value in ('int', 'float', 'str', 'ipv4', 'any', 'bool', 'file'):
+        if value in PLAIN_ENTRIES:
             return create_key(BASE_LOOKUP_TABLE[value](),
                               key, False, None)
     except KeyError:

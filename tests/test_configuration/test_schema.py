@@ -1,5 +1,6 @@
 import enum
 import os
+import shutil
 import tempfile
 import unittest
 
@@ -29,6 +30,19 @@ class TestSchema(unittest.TestCase):
     def test_caster(self):
         ps = Caster(Environment)
         self.assertEqual(ps(0), Environment.PRODUCTION)
+
+    def test_directory(self):
+        schema = {
+            "directory": "dir"
+        }
+
+        if os.path.exists('directory'):
+            shutil.rmtree('directory')
+
+        s = descriptor_from_dict(schema)
+        self.assertRaises(ConfigurationValidationError, lambda: s({'directory': 'directory'}))
+        os.mkdir('directory')
+        self.assertEqual(s({'directory': 'directory'})['directory'], DirectoryObject('directory'))
 
     def test_descriptor_from_schema_caster(self):
         schema = {

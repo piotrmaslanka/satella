@@ -7,7 +7,7 @@ from .base import Descriptor, must_be_type, ConfigDictValue
 from .registry import register_custom_descriptor
 
 
-@register_custom_descriptor('list')
+@register_custom_descriptor('list', is_plain=False)
 class List(Descriptor):
     """
     This must be a list, made of entries of a descriptor (this is optional)
@@ -42,7 +42,7 @@ def create_key(descriptor: Descriptor, name: str, optional: bool = False,
     return descriptor
 
 
-@register_custom_descriptor('caster')
+@register_custom_descriptor('caster', is_plain=False)
 class Caster(Descriptor):
     """
     A value must be ran through a function.
@@ -62,7 +62,7 @@ class Caster(Descriptor):
         return self.to_cast(value)
 
 
-@register_custom_descriptor('dict')
+@register_custom_descriptor('dict', is_plain=False)
 class Dict(Descriptor):
     """
     This entry must be a dict, having at least specified keys.
@@ -124,7 +124,7 @@ class Dict(Descriptor):
         return output
 
 
-@register_custom_descriptor('union')
+@register_custom_descriptor('union', is_plain=False)
 class Union(Descriptor):
     """
     The type of one of the child descriptors. If posed as such:
