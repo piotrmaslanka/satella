@@ -242,7 +242,8 @@ Useful data structures
 Sometimes you want to have some data structures with metrics about themselves.
 Here go they:
 
-.. autoclass:: satella.instrumentation.metrics.structures.MetrifiedThreadPool
+.. autoclass:: satella.instrumentation.metrics.structures.MetrifiedThreadPoolExecutor
+    :members:
 
 .. autoclass:: satella.instrumentation.metrics.structures.MetrifiedCacheDict
 
