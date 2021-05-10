@@ -1,7 +1,7 @@
 import typing as tp
 
 from satella.coding.structures import Proxy
-from satella.coding.typing import V
+from satella.coding.typing import V, T
 
 __all__ = ['call_if_nnone', 'iterate_if_nnone', 'Optional', 'extract_optional']
 
@@ -38,7 +38,7 @@ def call_if_nnone(clbl: tp.Optional[tp.Callable[..., V]], *args, **kwargs) -> tp
         return None
 
 
-class Optional(Proxy):
+class Optional(Proxy[T]):
     """
     A wrapper for your classes, that does nothing if the object passed in is None.
     It will return an empty Optional in that case.
@@ -118,7 +118,7 @@ class Optional(Proxy):
 EMPTY_OPTIONAL = Optional(None)
 
 
-def extract_optional(v):
+def extract_optional(v: tp.Union[T, Optional[T]]) -> T:
     """
     If v is an optional, extract the value that it wraps.
     If it is not, return v
