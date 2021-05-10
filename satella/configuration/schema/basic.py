@@ -76,14 +76,19 @@ class FileObject:
     def __hash__(self) -> int:
         return hash(self.path)
 
-    def get_value(self) -> bytes:
+    def get_value(self, encoding: tp.Optional[str] = None) -> tp.Union[str, bytes]:
         """
         Read in the entire file into memory
 
+        :param encoding: optional encoding to apply. If None given, bytes will be returned
         :return: file contents
         """
         with open(self.path, 'rb') as f_in:
-            return f_in.read()
+            data = f_in.read()
+        if encoding:
+            return data.decode(encoding)
+        else:
+            return data
 
     def open(self, mode: str):
         """

@@ -26,6 +26,7 @@ class TestSchema(unittest.TestCase):
         fo = s({'key': "test"})['key']
         self.assertEqual(str(fo), 'test')
         self.assertEqual(fo.get_value(), b'test')
+        self.assertEqual(fo.get_value('utf-8'), 'test')
 
     def test_caster(self):
         ps = Caster(Environment)
