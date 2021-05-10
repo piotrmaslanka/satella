@@ -4,6 +4,7 @@ import importlib
 from satella.coding.recast_exceptions import rethrow_as
 from satella.configuration import sources
 from satella.configuration.sources.base import BaseSource
+from satella.configuration.sources.object_from import BuildObjectFrom
 from satella.exceptions import ConfigurationError
 
 __all__ = [
@@ -51,6 +52,10 @@ def load_source_from_dict(dct: dict) -> BaseSource:
     def to_arg(arg):
         if isinstance(arg, dict) and 'type' in arg:
             a_type = arg['type']
+            if a_type == 'BuildObjectFrom':
+                key_name = arg['key']
+                child = load_source_from_dict(arg['child'])
+                return BuildObjectFrom(key_name, child)
             if a_type in EXTRA_TYPES:
                 return EXTRA_TYPES[a_type](arg)
             elif a_type in sources.__dict__:

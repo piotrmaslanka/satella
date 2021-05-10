@@ -28,6 +28,31 @@ class TestSchema(unittest.TestCase):
         self.assertEqual(fo.get_value(), b'test')
         self.assertEqual(fo.get_value('utf-8'), 'test')
 
+    def test_file_contents_1(self):
+        schema = {
+            "key": {
+                "type": "file_contents",
+                "encoding": "utf-8"
+            }
+        }
+        with open('test', 'wb') as f_out:
+            f_out.write(b'test')
+
+        s = descriptor_from_dict(schema)
+        fo = s({'key': "test"})['key']
+        self.assertEqual(fo, 'test')
+
+    def test_file_contents_2(self):
+        schema = {
+            "key": "file_contents"
+        }
+        with open('test', 'wb') as f_out:
+            f_out.write(b'test')
+
+        s = descriptor_from_dict(schema)
+        fo = s({'key': "test"})['key']
+        self.assertEqual(fo, b'test')
+
     def test_caster(self):
         ps = Caster(Environment)
         self.assertEqual(ps(0), Environment.PRODUCTION)

@@ -20,6 +20,8 @@ you should instantiate a Descriptor. Descriptor reflects how your config is nest
 .. autoclass:: satella.configuration.schema.FileObject
     :members:
 
+.. autoclass:: satella.configuration.schema.FileContents
+
 .. autoclass:: satella.configuration.schema.Directory
 
 .. autoclass:: satella.configuration.schema.DirectoryObject
@@ -54,7 +56,7 @@ If you want them loadable by the JSON-schema loader.
 
 You use the descriptors by calling them on respective values, eg.
 
-::
+.. code-block:: python
 
     >>> List(Integer())(['1', '2', 3.0])
     [1, 2, 3]
@@ -67,7 +69,7 @@ The JSON schema is pretty straightforward. Assuming the top-level is a dict, it 
 name of the corresponding key, and value can have two types. Either it is a string, which is a short-hand for a descriptor,
 or a dict containing following values:
 
-::
+.. code-block:: json
 
     {
         "type": "string_type",
@@ -89,11 +91,33 @@ Available string types are:
 * **union** - :class:`~satella.configuration.schema.Union`
 * **caster** - :class:`~satella.configuration.schema.Caster`
 * **file** - :class:`~satella.configuration.schema.File`
+* **file_contents** - :class:`~satella.configuration.schema.FileContents`
 * **dir** - :class:`~satella.configuration.schema.Directory`
+
+You can use file contents as follows:
+
+.. code-block:: json
+
+    {
+        "contents": {
+            "type": "file_contents",
+            "encoding": "utf-8
+        }
+    }
+
+Or just
+
+.. code-block:: json
+
+    {
+        "contents": "file_contents"
+    }
+
+But in this case, bytes will be read in.
 
 Lists you define as following
 
-::
+.. code-block:: json
 
     {
         "type": "list",
@@ -104,7 +128,7 @@ Lists you define as following
 
 Unions you define the following
 
-::
+.. code-block:: json
 
     {
         "type": "union",
@@ -123,7 +147,7 @@ You load it using the following function:
 
 Casters you define as
 
-::
+.. code-block:: json
 
     {
         "type": "caster"
@@ -136,7 +160,8 @@ which will be loaded using
 
 Additionally, an extra argument can be specified:
 
-::
+.. code-block:: json
+
     {
         "type": "caster",
         "cast_to": "name of a built-in or a FQ class ID",

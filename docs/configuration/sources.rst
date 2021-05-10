@@ -35,6 +35,10 @@ Then there are abstract sources of configuration.
 .. autoclass:: satella.configuration.sources.MergingSource
     :members:
 
+.. autoclass:: satella.configuration.sources.BuildObjectFrom
+    :members:
+
+
 In order to actually load the configuration, use the method ``provide()``.
 
 Note that `FileSource` will try parsing the file with any modules, available, so if you
@@ -47,7 +51,7 @@ JSON schema
 
 The JSON schema consists of defining particular sources, embedded in one another.
 
-::
+.. code-block:: json
 
     {
         "type": "ClassNameOfTheSource",
@@ -76,7 +80,7 @@ It accepts the following variables:
 
 Eg:
 
-::
+.. code-block:: python
 
     class MyEnum(enum.IntEnum):
         A = 0
@@ -108,3 +112,28 @@ To instantiate the schema, use the following functions:
 Please note that if your attacker has control over these files, he might
 provoke the application into executing arbitrary Python, so
 remember to **sanitize your inputs!**
+
+You use :class:`~satella.configuration.sources.BuildFromObject` in such a way:
+
+.. code-block:: json
+
+    {
+        "type": "BuildObjectFrom",
+        "key": "child",
+        "child": {
+            "type": "StaticSource",
+            "args": [
+                {"a": 5}
+            ]
+        }
+    }
+
+The result of this execution will be a dictionary:
+
+.. code-block:: python
+
+    {
+        "test": {
+            "a": 5
+        }
+    }

@@ -1,3 +1,4 @@
+import codecs
 import os
 import re
 import typing as tp
@@ -148,6 +149,26 @@ class File(Descriptor):
     """
 
     BASIC_MAKER = _make_file
+
+
+@register_custom_descriptor('file_contents')
+class FileContents(Descriptor):
+    """
+    This value must be a valid path to a file. The value in your schema will be
+    the contents of this file, applied with encoding (if given). By default, bytes will be read in
+    """
+
+    def __init__(self, encoding: tp.Optional[str] = None):
+        super().__init__()
+        self.encoding = encoding
+
+    def BASIC_MAKER(self, c: str):
+        if not self.encoding:
+            with open(c, 'rb') as f_in:
+                return f_in.read()
+        else:
+            with codecs.open(c, 'r', encoding=self.encoding) as f_in:
+                return f_in.read()
 
 
 @staticmethod

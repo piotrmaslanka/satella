@@ -6,6 +6,18 @@ from .test_sources.utils import SourceTestCase
 
 INNER_DATA = [
     {
+        'type': 'BuildObjectFrom',
+        'key': 'test',
+        'child': {
+            'type': 'StaticSource',
+            'args': [
+                {
+                    "a": 5
+                }
+            ]
+        }
+    },
+    {
         'type': 'JSONSource',
         'args': ['{"a": 5}']
     },
@@ -58,7 +70,7 @@ DICT_DATA = {
 
 class TestLoadSourceFromDict(SourceTestCase):
     def test_lsf(self):
-        output = {'a': 5, 'b': 5, 'c': 21}
+        output = {'a': 5, 'b': 5, 'c': 21, 'test': {'a': 5}}
         self.assertSourceHas(load_source_from_dict(DICT_DATA), output)
         self.assertSourceHas(load_source_from_list(INNER_DATA), output)
 
