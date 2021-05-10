@@ -3,3 +3,4 @@
 * added optional argument to `File.get_value`
 * added `file_contents` schema 
 * added nested configuration sources
+* added `extract_optional`

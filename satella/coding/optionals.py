@@ -3,7 +3,7 @@ import typing as tp
 from satella.coding.structures import Proxy
 from satella.coding.typing import V
 
-__all__ = ['call_if_nnone', 'iterate_if_nnone', 'Optional']
+__all__ = ['call_if_nnone', 'iterate_if_nnone', 'Optional', 'extract_optional']
 
 
 def iterate_if_nnone(iterable: tp.Optional[tp.Iterable]) -> tp.Iterable:
@@ -116,3 +116,17 @@ class Optional(Proxy):
 
 
 EMPTY_OPTIONAL = Optional(None)
+
+
+def extract_optional(v):
+    """
+    If v is an optional, extract the value that it wraps.
+    If it is not, return v
+
+    :param v: value to extract the value from
+    :return: resulting value
+    """
+    if isinstance(v, Optional):
+        return getattr(v, '_Proxy__obj')
+    else:
+        return v

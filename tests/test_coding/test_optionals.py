@@ -1,9 +1,13 @@
 import unittest
 
-from satella.coding.optionals import call_if_nnone, iterate_if_nnone, Optional
+from satella.coding.optionals import call_if_nnone, iterate_if_nnone, Optional, extract_optional
 
 
 class TestOptionals(unittest.TestCase):
+
+    def test_extract_optional(self):
+        b = Optional(None)
+        self.assertIs(extract_optional(b.test.value), None)
 
     def test_optional(self):
         b = Optional(None)
