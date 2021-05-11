@@ -19,6 +19,10 @@ INNER_DATA = [
     },
     {
         'type': 'JSONSource',
+        'arg': '{"d": 10}'
+    },
+    {
+        'type': 'JSONSource',
         'args': ['{"a": 5}']
     },
     {
@@ -70,7 +74,7 @@ DICT_DATA = {
 
 class TestLoadSourceFromDict(SourceTestCase):
     def test_lsf(self):
-        output = {'a': 5, 'b': 5, 'c': 21, 'test': {'a': 5}}
+        output = {'a': 5, 'b': 5, 'c': 21, 'test': {'a': 5}, 'd': 10}
         self.assertSourceHas(load_source_from_dict(DICT_DATA), output)
         self.assertSourceHas(load_source_from_list(INNER_DATA), output)
 

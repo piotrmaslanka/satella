@@ -6,7 +6,8 @@ __all__ = ['BaseSatellaError', 'ResourceLockingError', 'ResourceNotLocked', 'Res
            'ConfigurationValidationError', 'ConfigurationError', 'ConfigurationSchemaError',
            'PreconditionError', 'MetricAlreadyExists', 'BaseSatellaException', 'CustomException',
            'CodedCustomException', 'CodedCustomExceptionMetaclass', 'WouldWaitMore',
-           'ProcessFailed', 'AlreadyAllocated', 'Empty', 'ImpossibleError']
+           'ProcessFailed', 'AlreadyAllocated', 'Empty', 'ImpossibleError',
+           'ConfigurationMisconfiguredError']
 
 
 class CustomException(Exception):
@@ -179,6 +180,10 @@ class ConfigurationError(BaseSatellaError, ValueError):
 
 class ConfigurationSchemaError(ConfigurationError):
     """Schema mismatch to what was seen"""
+
+
+class ConfigurationMisconfiguredError(ConfigurationError):
+    """Configuration was improperly passed to Satella"""
 
 
 class ConfigurationValidationError(ConfigurationSchemaError):

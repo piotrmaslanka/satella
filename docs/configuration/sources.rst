@@ -137,3 +137,18 @@ The result of this execution will be a dictionary:
             "a": 5
         }
     }
+
+If you have only a single argument, you can also do:
+
+.. code-block:: json
+
+    {
+        "type": "DirectorySource",
+        "arg": "/app/config"
+    }
+
+You can put any objects you like as the arguments, note however that if you pass a dictionary, that
+has a key of "type" and it's value is one of recognized sources, an attempt will be made to parse
+it as a child.
+
+Note that in case you pass a dict with a type that is not recognized, a warning will be emitted.

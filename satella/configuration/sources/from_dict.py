@@ -1,11 +1,11 @@
 import copy
 import importlib
+import warnings
 
 from satella.coding.recast_exceptions import rethrow_as
 from satella.configuration import sources
 from satella.configuration.sources.base import BaseSource
-from satella.configuration.sources.object_from import BuildObjectFrom
-from satella.exceptions import ConfigurationError
+from satella.exceptions import ConfigurationError, ConfigurationMisconfiguredError
 
 __all__ = [
     'load_source_from_dict',
@@ -46,7 +46,11 @@ def load_source_from_dict(dct: dict) -> BaseSource:
     """
     dct = copy.copy(dct)
     type_ = dct.pop('type')  # type: str
-    args = dct.pop('args', [])  # type: tp.List
+    if 'arg' in dct:
+        args = dct.pop('arg'),
+    else:
+        args = dct.pop('args', [])  # type: tp.List
+
     optional = dct.pop('optional', False)  # type: bool
 
     def to_arg(arg):
@@ -57,15 +61,20 @@ def load_source_from_dict(dct: dict) -> BaseSource:
             elif a_type in sources.__dict__:
                 return load_source_from_dict(arg)
             else:
-                raise ValueError(
-                    'unrecognized argument type %s' % (arg['type'],))
+                warnings.warn(
+                    'Caught %s attempting to parse a dict with type, returning original value' % (
+                        e,), UserWarning)
+                return arg
         else:
             return arg
 
     args = map(to_arg, args)
     kwargs = {k: to_arg(v) for k, v in dct.items()}
 
-    s = sources.__dict__[type_](*args, **kwargs)
+    try:
+        s = sources.__dict__[type_](*args, **kwargs)
+    except KeyError as e:
+        raise ConfigurationMisconfiguredError('unknown type %s' % (type_, ))
 
     if optional:
         s = sources.OptionalSource(s)

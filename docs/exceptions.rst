@@ -92,7 +92,7 @@ it's magic
     :members:
 
 ImpossibleError
----------------
+~~~~~~~~~~~~~~~
 
 .. autoclass:: satella.exceptions.ImpossibleError
     :members:
@@ -101,92 +101,98 @@ Note that `ImpossibleError` inherits from `BaseException` instead of the standar
 The thought is, since this is an anomalous exception, it should get to the top of the stack ASAP.
 
 Satella-specific exceptions
-===========================
+---------------------------
 
 BaseSatellaError
-----------------
+~~~~~~~~~~~~~~~~
 
 .. autoclass:: satella.exceptions.BaseSatellaError
     :members:
 
 
 ResourceLockingError
---------------------
+~~~~~~~~~~~~~~~~~~~~
 
 .. autoclass:: satella.exceptions.ResourceLockingError
     :members:
 
 
 ResourceLocked
---------------
+~~~~~~~~~~~~~~
 
 .. autoclass:: satella.exceptions.ResourceLocked
     :members:
 
 
 ResourceNotLocked
------------------
+~~~~~~~~~~~~~~~~~
 
 .. autoclass:: satella.exceptions.ResourceNotLocked
     :members:
 
 
 WouldWaitMore
--------------
+~~~~~~~~~~~~~
 
 .. autoclass:: satella.exceptions.WouldWaitMore
     :members:
 
 
 PreconditionError
------------------
+~~~~~~~~~~~~~~~~~
 
 .. autoclass:: satella.exceptions.PreconditionError
     :members:
 
 
 ConfigurationError
-------------------
+~~~~~~~~~~~~~~~~~~
 
 .. autoclass:: satella.exceptions.ConfigurationError
     :members:
 
 
 ConfigurationSchemaError
-------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. autoclass:: satella.exceptions.ConfigurationSchemaError
     :members:
 
 
+ConfigurationMisconfiguredError
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: satella.exceptions.ConfigurationMisconfiguredError
+    :members:
+
 ConfigurationValidationError
-----------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. autoclass:: satella.exceptions.ConfigurationValidationError
     :members:
 
 Empty
------
+~~~~~
 
 .. autoclass:: satella.exceptions.empty
     :members:
 
 MetricAlreadyExists
--------------------
+~~~~~~~~~~~~~~~~~~~
 
 .. autoclass:: satella.exceptions.MetricAlreadyExists
     :members:
 
 
 AlreadyAllocated
-----------------
+~~~~~~~~~~~~~~~~
 
 .. autoclass:: satella.exceptions.AlreadyAllocated
     :members:
 
 
 ProcessFailed
--------------
+~~~~~~~~~~~~~
 
 .. autoclass:: satella.exceptions.ProcessFailed
     :members:
