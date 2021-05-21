@@ -93,7 +93,10 @@ class TestSchema(unittest.TestCase):
     def test_descriptor_from_schema(self):
         schema = {
             "key_s": "str",
-            "key_i": "int",
+            "key_i": {
+                "type": "int",
+                "description": "Value of key I"
+            },
             "key_f": "float",
             "ip_addr": "ipv4",
             "nested": {

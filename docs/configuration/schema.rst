@@ -173,3 +173,19 @@ In which case cast_to will be displayed as a
 which will be eval()ed, and this value will be
 output. The input value will be called **x**.
 
+You can also provide a commentary for your entries:
+
+.. code-block:: json
+
+
+    {
+        "contents": {
+            "type": "file_contents",
+            "encoding": "utf-8,
+            "description": "Encryption key (private key)
+        },
+        "max_workers": {
+            "type": "int",
+            "description": "Maximum parallel instances of service"
+        }
+    }
