@@ -6,7 +6,7 @@ from .heaps import Heap, SetHeap, TimeBasedHeap, TimeBasedSetHeap
 from .immutable import Immutable, frozendict
 from .mixins import OmniHashableMixin, ReprableMixin, StrEqHashableMixin, ComparableIntEnum, \
     HashableIntEnum, ComparableAndHashableBy, ComparableAndHashableByInt, ComparableEnum, \
-    HashableMixin
+    HashableMixin, ComparableAndHashableByStr
 from .proxy import Proxy
 from .queues import Subqueue
 from .ranking import Ranking
@@ -41,6 +41,7 @@ __all__ = [
     'ComparableIntEnum',
     'ComparableAndHashableBy',
     'HashableIntEnum',
+    'ComparableAndHashableByStr',
     'DirtyDict',
     'SortedList',
     'SelfCleaningDefaultDict',

@@ -14,7 +14,8 @@ from satella.coding.structures import TimeBasedHeap, Heap, typednamedtuple, \
     DirtyDict, KeyAwareDefaultDict, Proxy, ReprableMixin, TimeBasedSetHeap, ExpiringEntryDict, SelfCleaningDefaultDict, \
     CacheDict, StrEqHashableMixin, ComparableIntEnum, HashableIntEnum, ComparableAndHashableBy, \
     ComparableAndHashableByInt, SparseMatrix, ExclusiveWritebackCache, Subqueue, \
-    CountingDict, ComparableEnum, LRU, LRUCacheDict, Vector, DefaultDict, PushIterable
+    CountingDict, ComparableEnum, LRU, LRUCacheDict, Vector, DefaultDict, PushIterable, \
+    ComparableAndHashableByStr
 
 
 class TestMisc(unittest.TestCase):
@@ -218,6 +219,22 @@ class TestMisc(unittest.TestCase):
         self.assertFalse(Vector(1) >= Vector(2))
         self.assertFalse(Vector(1) == Vector(2))
         self.assertEqual(hash(Vector(1)), hash(1))
+
+    def test_comparable_and_hashable_by_str(self):
+        class Vector(ComparableAndHashableByStr):
+
+            def __str__(self) -> str:
+                return self.a
+
+            def __init__(self, a):
+                self.a = a
+
+        self.assertTrue(Vector('a') < Vector('ab'))
+        self.assertTrue(Vector('a') <= Vector('a'))
+        self.assertFalse(Vector('a') > Vector('b'))
+        self.assertFalse(Vector('a') >= Vector('b'))
+        self.assertFalse(Vector('a') == Vector('b'))
+        self.assertEqual(hash(Vector('a')), hash('a'))
 
     def test_hashable_int_enum(self):
         class A(HashableIntEnum):

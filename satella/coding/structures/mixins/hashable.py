@@ -97,6 +97,37 @@ class ComparableAndHashableByInt(metaclass=ABCMeta):
         return int(self) >= int(other)
 
 
+class ComparableAndHashableByStr(metaclass=ABCMeta):
+    """
+    A mix-in. Provides comparision (lt, gt, ge, le, eq) and hashing by __str__ of this class.
+    Also, will make this class equal to strings that return the same value.
+    """
+
+    __slots__ = ()
+
+    @abstractmethod
+    def __str__(self) -> str:
+        ...
+
+    def __hash__(self):
+        return hash(str(self))
+
+    def __eq__(self, other: 'ComparableAndHashableByInt') -> bool:
+        return str(self) == str(other)
+
+    def __lt__(self, other: 'ComparableAndHashableByInt') -> bool:
+        return str(self) < str(other)
+
+    def __le__(self, other: 'ComparableAndHashableByInt') -> bool:
+        return str(self) <= str(other)
+
+    def __gt__(self, other: 'ComparableAndHashableByInt') -> bool:
+        return str(self) > str(other)
+
+    def __ge__(self, other: 'ComparableAndHashableByInt') -> bool:
+        return str(self) >= str(other)
+
+
 class OmniHashableMixin(metaclass=ABCMeta):
     """
     A mix-in. Provides hashing and equal comparison for your own class using specified fields.
