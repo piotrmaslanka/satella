@@ -1,3 +1,1 @@
-# v2.16.3
-
-* added `ComparableAndHashableByStr`
+# v2.16.4
