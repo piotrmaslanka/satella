@@ -56,7 +56,6 @@ class Proxy(tp.Generic[T]):
     :param wrap_operations: whether results of operations returning something else should be
         also proxied.
     """
-    __slots__ = ('__obj', '__wrap_operations')
 
     def __init__(self, object_to_wrap: T, wrap_operations: bool = False):
         self.__obj = object_to_wrap  # type: T

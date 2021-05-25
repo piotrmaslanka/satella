@@ -63,8 +63,6 @@ class Optional(Proxy[T]):
 
     :param obj: object to wrap
     """
-    __slots__ = ()
-
     def __init__(self, obj):
         super().__init__(obj)
 
