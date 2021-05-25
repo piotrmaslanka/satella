@@ -182,10 +182,15 @@ You can also provide a commentary for your entries:
         "contents": {
             "type": "file_contents",
             "encoding": "utf-8,
-            "description": "Encryption key (private key)
+            "description": "Encryption key (private key)",
+            "strip_afterwards": True
         },
         "max_workers": {
             "type": "int",
             "description": "Maximum parallel instances of service"
         }
     }
+
+
+:code:`strip_afterwards` (default is False) strips the content of loaded file of trailing and
+leading whitespace.

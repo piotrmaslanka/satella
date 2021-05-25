@@ -44,10 +44,13 @@ class TestSchema(unittest.TestCase):
 
     def test_file_contents_2(self):
         schema = {
-            "key": "file_contents"
+            "key": {
+                "type": "file_contents",
+                "strip_afterwards": True
+            }
         }
         with open('test', 'wb') as f_out:
-            f_out.write(b'test')
+            f_out.write(b'test\n')
 
         s = descriptor_from_dict(schema)
         fo = s({'key': "test"})['key']

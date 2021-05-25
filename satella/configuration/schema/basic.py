@@ -158,17 +158,22 @@ class FileContents(Descriptor):
     the contents of this file, applied with encoding (if given). By default, bytes will be read in
     """
 
-    def __init__(self, encoding: tp.Optional[str] = None):
+    def __init__(self, encoding: tp.Optional[str] = None, strip_afterwards: bool = False):
         super().__init__()
         self.encoding = encoding
+        self.strip_afterwards = strip_afterwards
 
     def BASIC_MAKER(self, c: str):
         if not self.encoding:
             with open(c, 'rb') as f_in:
-                return f_in.read()
+                y = f_in.read()
         else:
             with codecs.open(c, 'r', encoding=self.encoding) as f_in:
-                return f_in.read()
+                y = f_in.read()
+
+        if self.strip_afterwards:
+            y = y.strip()
+        return y
 
 
 @staticmethod

@@ -47,7 +47,7 @@ def _get_descriptor_for_dict(key: str, value: dict) -> Descriptor:
             else:
                 args = y,
         elif type_ == 'file_contents':
-            args = value.get('encoding', None),
+            args = value.get('encoding', None), value.get('strip_afterwards', False)
         elif type_ == 'union':
             args = [_get_descriptor_for('', x) for x in value.get('of', [])]
         optional, default = False, None
