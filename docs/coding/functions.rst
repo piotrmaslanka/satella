@@ -39,6 +39,9 @@ Functions and decorators
 .. autoclass:: satella.coding.rethrow_as
     :members:
 
+.. autoclass:: satella.coding.reraise_as
+    :members:
+
 .. autofunction:: satella.coding.catch_exception
 
 .. autofunction:: satella.coding.raises_exception

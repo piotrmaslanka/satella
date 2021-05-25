@@ -4,7 +4,7 @@ import typing as tp
 
 class expect_exception:
     """
-    A decorator to use as following:
+    A context manager to use as following:
 
     >>> a = {'test': 2}
     >>> with expect_exception(KeyError, ValueError, 'KeyError not raised'):

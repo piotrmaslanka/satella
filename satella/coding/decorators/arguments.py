@@ -80,7 +80,8 @@ def execute_before(callable_: tp.Callable) -> tp.Callable:
     >>> def do_things():
     >>>     print('Things are done')
 
-    Then the following will print 'Things are done'
+    Then the following will print :code:`Things are done`:
+
     >>> @do_things
     >>> def nothing():
     >>>     ...

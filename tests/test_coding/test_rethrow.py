@@ -1,7 +1,8 @@
 import logging
 import unittest
 
-from satella.coding import rethrow_as, silence_excs, catch_exception, log_exceptions, raises_exception
+from satella.coding import rethrow_as, silence_excs, catch_exception, log_exceptions, \
+    raises_exception, reraise_as
 
 logger = logging.getLogger(__name__)
 
@@ -134,6 +135,23 @@ class TestStuff(unittest.TestCase):
             raise ValueError()
 
         self.assertRaises(NameError, lol)
+
+    def test_reraise(self):
+        try:
+            with reraise_as(ValueError, NameError):
+                raise ValueError()
+        except NameError:
+            return
+
+        self.fail()
+
+    def test_reraise_silencer(self):
+
+        @reraise_as(ValueError, None)
+        def lol():
+            raise ValueError()
+
+        lol()
 
     def test_issue_10(self):
 

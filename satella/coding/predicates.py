@@ -4,7 +4,7 @@ import typing as tp
 from satella.coding.typing import Predicate
 from satella.configuration.schema import Descriptor
 
-__all__ = ['x', 'build_structure']
+__all__ = ['x', 'build_structure', 'PredicateClass']
 
 import warnings
 

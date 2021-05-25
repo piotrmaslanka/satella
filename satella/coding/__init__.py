@@ -18,11 +18,11 @@ from .misc import update_if_not_none, update_key_if_none, update_attr_if_none, q
     enum_value
 from .overloading import overload, class_or_instancemethod
 from .recast_exceptions import rethrow_as, silence_excs, catch_exception, log_exceptions, \
-    raises_exception
+    raises_exception, reraise_as
 from .expect_exception import expect_exception
 
 __all__ = [
-    'Closeable', 'contains', 'enum_value',
+    'Closeable', 'contains', 'enum_value', 'reraise_as',
     'expect_exception',
     'overload', 'class_or_instancemethod',
     'update_if_not_none', 'DocsFromParent', 'update_key_if_none', 'queue_iterator',

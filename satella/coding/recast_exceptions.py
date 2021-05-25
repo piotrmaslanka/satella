@@ -4,7 +4,8 @@ import threading
 import typing as tp
 
 from .decorators.decorators import wraps
-from .typing import ExceptionClassType, T, NoArgCallable
+from .typing import ExceptionClassType, T, NoArgCallable, ExceptionList
+
 
 
 def silence_excs(*exc_types: ExceptionClassType, returns=None,
@@ -130,6 +131,73 @@ class log_exceptions:
 
 
 # noinspection PyPep8Naming
+class reraise_as:
+    """
+    Transform some exceptions into others.
+
+    Either a decorator or a context manager
+
+    New exception will be created by calling exception to transform to with
+    repr of current one.
+
+    You can also provide just two exceptions, eg.
+
+    >>> reraise_as(NameError, ValueError, 'a value error!')
+
+    You can also provide a catch-all:
+
+    >>> reraise_as((NameError, ValueError), OSError, 'an OS error!')
+
+    New exception will be raised from the one caught!
+
+    .. note:: This checks if exception matches directly via :code:`isinstance`, so defining
+        your own subclassing hierarchy by :code:`__isinstance__` or :code:`__issubclass__`
+        will work here.
+
+    This is meant as an improvement of :class:`~satella.coding.rethrow_as`
+
+    :param source_exc: source exception or a tuple of exceptions to catch
+    :param target_exc: target exception to throw. If given a None, the exception will
+        be silently swallowed.
+    :param args: arguments to constructor of target exception
+    :param kwargs: keyword arguments to constructor of target exception
+    """
+    __slots__ = 'source', 'target_exc', 'args', 'kwargs'
+
+    def __init__(self, source_exc: ExceptionList,
+                 target_exc: tp.Optional[ExceptionClassType], *args, **kwargs):
+        self.source = source_exc
+        self.target_exc = target_exc
+        self.args = args
+        self.kwargs = kwargs
+
+    def __call__(self, fun: tp.Callable) -> tp.Callable:
+        @wraps(fun)
+        def inner(*args, **kwargs):
+            try:
+                return fun(*args, **kwargs)
+            except Exception as e:
+                if isinstance(e, self.source):
+                    if self.target_exc is not None:
+                        raise self.target_exc(*self.args, **self.kwargs) from e
+                else:
+                    raise
+
+        return inner
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if exc_val is not None:
+            if isinstance(exc_val, self.source):
+                if self.target_exc is None:
+                    return True
+                raise self.target_exc(*self.args, **self.kwargs) from exc_val
+        return False
+
+
+# noinspection PyPep8Naming
 class rethrow_as:
     """
     Transform some exceptions into others.
@@ -138,6 +206,10 @@ class rethrow_as:
 
     New exception will be created by calling exception to transform to with
     repr of current one.
+
+    .. note:: This checks if exception matches directly via :code:`isinstance`, so defining
+        your own subclassing hierarchy by :code:`__isinstance__` or :code:`__issubclass__`
+        will work here.
 
     You can also provide just two exceptions, eg.
 
@@ -152,6 +224,10 @@ class rethrow_as:
 
     Pass tuples of (exception to catch - exception to transform to).
 
+    .. warning:: Try to use :class:`~satella.coding.reraise_as` instead.
+        However, during to richer set of switches and capability to return a value
+        this is not deprecated.
+
     :param exception_preprocessor: other callable/1 to use instead of repr.
         Should return a str, a text description of the exception
     :param returns: what value should the function return if this is used as a decorator
@@ -159,10 +235,10 @@ class rethrow_as:
         is used as as decorator
     :raises ValueError: you specify both returns and returns_factory
     """
-    __slots__ = ('mapping', 'exception_preprocessor', 'returns', '__exception_remapped',
-                 'returns_factory')
+    __slots__ = 'mapping', 'exception_preprocessor', 'returns', '__exception_remapped', \
+                'returns_factory'
 
-    def __init__(self, *pairs: tp.Union[ExceptionClassType, tp.Tuple[ExceptionClassType, ...]],
+    def __init__(self, *pairs: ExceptionList,
                  exception_preprocessor: tp.Optional[tp.Callable[[Exception], str]] = repr,
                  returns=None,
                  returns_factory: tp.Optional[NoArgCallable[tp.Any]] = None):
