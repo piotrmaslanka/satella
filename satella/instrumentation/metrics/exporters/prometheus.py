@@ -18,7 +18,7 @@ class PrometheusHandler(http.server.BaseHTTPRequestHandler):
             self.send_error(404, 'Unknown path. Only /metrics is supported.')
             return
 
-        metric_data = getMetric().to_metric_data()
+        metric_data = self.server.get_metric_data()
         metric_data.add_labels(self.server.extra_labels)
         metric_data = metric_data_collection_to_prometheus(metric_data)
         self.send_response(200)
@@ -61,6 +61,14 @@ class PrometheusHTTPExporterThread(TerminableThread):
         self.httpd.server_activate()
         self.httpd.serve_forever()
         self.httpd.server_close()
+
+    def get_metric_data(self) -> MetricDataCollection:
+        """
+        Obtain metric data.
+
+        Overload to provide custom source of metric data.
+        """
+        return getMetric().to_metric_data()
 
     def terminate(self, force: bool = False) -> 'PrometheusHTTPExporterThread':
         """
