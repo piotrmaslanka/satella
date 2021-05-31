@@ -49,8 +49,18 @@ class PrometheusHTTPExporterThread(TerminableThread):
         super().__init__(daemon=True)
         self.interface = interface  # type: str
         self.port = port  # type: int
-        self.httpd = http.server.HTTPServer((self.interface, self.port), PrometheusHandler,
-                                            bind_and_activate=False)
+
+        self_2 = self
+
+        class HTTPServer(http.server.HTTPServer):
+            def __init__(self):
+                super().__init__((self.interface, self.port), PrometheusHandler,
+                                 bind_and_activate=False)
+
+            def get_metric_data(self):
+                return self_2.get_metric_data()
+
+        self.httpd = HTTPServer()
         self.httpd.extra_labels = extra_labels or {}
         self.httpd.metric = getMetric('prometheus.exports_per_time',
                                       'cps' if enable_metric else 'empty',
