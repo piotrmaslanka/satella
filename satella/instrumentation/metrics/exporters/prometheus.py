@@ -54,7 +54,7 @@ class PrometheusHTTPExporterThread(TerminableThread):
 
         class HTTPServer(http.server.HTTPServer):
             def __init__(self):
-                super().__init__((self.interface, self.port), PrometheusHandler,
+                super().__init__((self_2.interface, self_2.port), PrometheusHandler,
                                  bind_and_activate=False)
 
             def get_metric_data(self):
