@@ -69,6 +69,9 @@ class MetricData(JSONAble):
 
 
 class MetricDataCollection(JSONAble):
+    """
+    A bunch of metric datas
+    """
     __slots__ = ('values',)
 
     def add_labels(self, labels: dict) -> None:
@@ -187,3 +190,10 @@ class MetricDataCollection(JSONAble):
         for child in self.values:
             child.value = value
         return self
+
+    def remove_internals(self):
+        """
+        Remove entries marked as internal
+        """
+        self.values = {value for value in self.values if not value.internal}
+
