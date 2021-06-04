@@ -38,9 +38,14 @@ class TestConcurrent(unittest.TestCase):
 
     def test_bogus(self):
         bt = BogusTerminableThread()
+        self.assertFalse(bt.is_alive())
+        self.assertRaises(RuntimeError, bt.join)
         bt.start()
+        self.assertRaises(RuntimeError, bt.start)
         self.assertRaises(WouldWaitMore, lambda: bt.join(1))
+        self.assertTrue(bt.is_alive())
         bt.terminate()
+        self.assertRaises(RuntimeError, bt.start)
         bt.join(2)
 
     def test_thread_collection(self):
@@ -461,6 +466,21 @@ class TestConcurrent(unittest.TestCase):
         ml = MonitorList([1, 2, 3])
         ml2 = copy.copy(ml)
         self.assertEqual(ml2, ml)
+
+    def test_terminate_on_exception(self):
+        class MyThread(TerminableThread):
+            def __init__(self):
+                super().__init__(terminate_on=(ValueError, KeyError))
+                self.a = 0
+
+            def loop(self) -> None:
+                self.a += 1
+                if self.a == 4:
+                    raise ValueError()
+
+        mt = MyThread()
+        mt.start().join()
+        mt.terminate()
 
     @unittest.skipUnless(sys.implementation.name == 'cpython', 'Does not work on PyPy :(')
     def test_condition(self):
