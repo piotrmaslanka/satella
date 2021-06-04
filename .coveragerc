@@ -8,8 +8,7 @@ omit=
   .eggs/*
   setup.py
   satella/__init__.py
-  satella/posix/signals.py
-  satella/distutils.py
+  satella/os/signals.py
 
 [report]
 include=

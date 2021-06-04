@@ -1,15 +1,9 @@
-import json
 import typing as tp
 from abc import ABCMeta, abstractmethod
-
-import typing
+import json
 
 from satella.coding.typing import NoneType
 
-try:
-    import ujson
-except ImportError:
-    pass
 
 __all__ = ['JSONEncoder', 'JSONAble', 'json_encode', 'read_json_from_file',
            'write_json_to_file', 'write_json_to_file_if_different']

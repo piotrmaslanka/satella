@@ -3,7 +3,7 @@ from abc import ABCMeta, abstractmethod
 
 __all__ = ['Iteratable', 'T', 'U', 'V', 'K', 'Number', 'ExceptionClassType',
            'NoArgCallable', 'Appendable', 'Predicate', 'KVTuple',
-           'Comparable', 'ExceptionList']
+           'Comparable', 'ExceptionList', 'NoneType']
 
 
 NoneType = None.__class__

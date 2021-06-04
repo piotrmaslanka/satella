@@ -7,7 +7,6 @@ from .decorators.decorators import wraps
 from .typing import ExceptionClassType, T, NoArgCallable, ExceptionList
 
 
-
 def silence_excs(*exc_types: ExceptionClassType, returns=None,
                  returns_factory: tp.Optional[NoArgCallable[tp.Any]] = None):
     """

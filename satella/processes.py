@@ -11,7 +11,7 @@ from .time import parse_time_string
 
 
 @call_in_separate_thread(daemon=True)
-@silence_excs((IOError, OSError))
+@silence_excs(IOError, OSError)
 def read_nowait(process: subprocess.Popen, output_list: tp.List[str]):
     """
     This spawns a thread to read given process' stdout and append it to a list, in
