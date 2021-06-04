@@ -36,11 +36,8 @@ class TestConcurrent(unittest.TestCase):
         self.assertEqual(len(tc), 3)
         for t in tc:
             self.assertIsInstance(t, Threading)
-        tc.append(Threading(5))
-        tc.add(Threading(6))
-        tc.start()
-        tc.terminate()
-        tc.join()
+        tc.append(Threading(5)).add(Threading(6))
+        tc.start().terminate().join()
         self.assertEqual(dct, {2: True, 3: True, 4: True, 5: True, 6: True})
 
     def test_cancellable_callback(self):
