@@ -207,9 +207,17 @@ class BogusTerminableThread:
     def join(self, timeout=None) -> None:
         """
         Wait for the pseudo-thread. Sets running to False if thread was terminated.
+
+        :param timeout: maximum number of seconds to wait for termination
+        :raises WouldWaitMore: thread did not terminate within that many seconds
         """
-        if self.terminated:
-            self.running = False
+        if not self.terminated:
+            started_elapsing = time.monotonic()
+            while time.monotonic() - started_elapsing < timeout and not self.terminated:
+                time.sleep(1)
+            if not self.terminated:
+                raise WouldWaitMore('thread failed to terminate')
+        self.running = False
 
 
 class TerminableThread(threading.Thread):

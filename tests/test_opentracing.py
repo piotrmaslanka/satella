@@ -7,15 +7,28 @@ from unittest import mock
 
 class TestOpentracing(unittest.TestCase):
     def test_trace_function(self):
+        class MockTracer:
+            def __init__(self):
+                self.start_active_span_called = True
 
-        tracer = mock.Mock()
+            def start_active_span(self, *args, **kwargs):
+                class MockScope(mock.Mock):
+                    def __enter__(self):
+                        return self
+
+                    def __exit__(self, exc_type, exc_val, exc_tb):
+                        return False
+                self.start_active_span_called = True
+                return MockScope()
+
+        tracer = MockTracer()
 
         @trace_function(tracer, 'trace_me')
         def trace_me():
             pass
 
         trace_me()
-        self.assertTrue(tracer.start_active_span.called)
+        self.assertTrue(tracer.start_active_span_called)
 
     def test_trace_future_success(self):
         @call_in_separate_thread()

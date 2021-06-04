@@ -10,13 +10,38 @@ from concurrent.futures import ThreadPoolExecutor, Future as PythonFuture
 from satella.coding.concurrent import TerminableThread, CallableGroup, Condition, MonitorList, \
     LockedStructure, AtomicNumber, Monitor, IDAllocator, call_in_separate_thread, Timer, \
     parallel_execute, run_as_future, sync_threadpool, IntervalTerminableThread, Future, \
-    WrappingFuture, PeekableQueue, SequentialIssuer, CancellableCallback, ThreadCollection
+    WrappingFuture, PeekableQueue, SequentialIssuer, CancellableCallback, ThreadCollection, \
+    BogusTerminableThread, SingleStartThread
 from satella.coding.concurrent.futures import call_in_future, ExecutorWrapper
 from satella.coding.sequences import unique
 from satella.exceptions import WouldWaitMore, AlreadyAllocated, Empty
 
 
 class TestConcurrent(unittest.TestCase):
+
+    def test_single_start_thread(self):
+        dct = {'a': 0}
+
+        class SST(SingleStartThread):
+            def run(self):
+                nonlocal dct
+                dct['a'] += 1
+
+        sst = SST()
+        self.assertEqual(dct['a'], 0)
+        sst.start()
+        time.sleep(0.2)
+        self.assertEqual(dct['a'], 1)
+        sst.start()
+        time.sleep(0.2)
+        self.assertEqual(dct['a'], 1)
+
+    def test_bogus(self):
+        bt = BogusTerminableThread()
+        bt.start()
+        self.assertRaises(WouldWaitMore, lambda: bt.join(1))
+        bt.terminate()
+        bt.join(2)
 
     def test_thread_collection(self):
         dct = {}
