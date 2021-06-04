@@ -34,6 +34,7 @@ class TestConcurrent(unittest.TestCase):
         tc.daemon = False
         self.assertFalse(tc.is_alive())
         self.assertEqual(len(tc), 3)
+        self.assertEqual(len(tc.get_currently_running()), 0)
         for t in tc:
             self.assertIsInstance(t, Threading)
         tc.append(Threading(5)).add(Threading(6))
