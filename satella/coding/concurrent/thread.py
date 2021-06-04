@@ -21,6 +21,9 @@ def call_in_separate_thread(*t_args, delay: float = 0, **t_kwargs):
     The decorated routine will return a Future that is waitable to get the result
     (or the exception) of the function.
 
+    The returned Future will have an extra argument, "thread" that links to the thread
+    instance spawned.
+
     The arguments given here will be passed to thread's constructor, so use like:
 
     :param delay: seconds to wait before launching function
@@ -38,6 +41,7 @@ def call_in_separate_thread(*t_args, delay: float = 0, **t_kwargs):
                 def __init__(self):
                     self.future = Future()
                     super().__init__(*t_args, **t_kwargs)
+                    self.future.thread = self
 
                 def run(self):
                     if not self.future.set_running_or_notify_cancel():

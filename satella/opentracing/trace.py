@@ -12,7 +12,9 @@ try:
     from opentracing import Span
 except ImportError:
     class Span:
-        pass
+        @classmethod
+        def _on_error(cls, span, exc_type, value, traceback):
+            pass
 
 
 def trace_function(tracer, name: str, tags: tp.Optional[dict] = None,
