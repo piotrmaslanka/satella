@@ -4,6 +4,8 @@ import os
 import sys
 import warnings
 
+from satella.coding import silence_excs
+
 
 def whereis(name: str) -> tp.Iterator[str]:
     """
@@ -25,17 +27,18 @@ def whereis(name: str) -> tp.Iterator[str]:
         available_extensions = '',
 
     for directory in paths_to_look_in:
-        for file in os.listdir(directory):
-            path = os.path.join(directory, file)
-            if 'x' not in stat.filemode(os.stat(path).st_mode):
-                continue
+        with silence_excs(FileNotFoundError):
+            for file in os.listdir(directory):
+                path = os.path.join(directory, file)
+                if 'x' not in stat.filemode(os.stat(path).st_mode):
+                    continue
 
-            if sys.platform.startswith('win'):  # a POSIX-specific check
-                file = file.upper()     # paths are not case-sensitive on Windows
+                if sys.platform.startswith('win'):  # a POSIX-specific check
+                    file = file.upper()     # paths are not case-sensitive on Windows
 
-            for extension in available_extensions:
-                if file == '%s%s' % (name, extension):
-                    yield path
+                for extension in available_extensions:
+                    if file == '%s%s' % (name, extension):
+                        yield path
 
 
 def is_running_as_root() -> bool:
