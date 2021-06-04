@@ -7,11 +7,15 @@ from unittest import mock
 
 class TestOpentracing(unittest.TestCase):
     def test_trace_function(self):
+        slf = self
+
         class MockTracer:
             def __init__(self):
                 self.start_active_span_called = True
 
-            def start_active_span(self, *args, **kwargs):
+            def start_active_span(self, *args, tags=None, **kwargs):
+                slf.assertEqual(tags, {'a': 'b', 'c': 'd'})
+
                 class MockScope(mock.Mock):
                     def __enter__(self):
                         return self
@@ -23,7 +27,8 @@ class TestOpentracing(unittest.TestCase):
 
         tracer = MockTracer()
 
-        @trace_function(tracer, 'trace_me')
+        @trace_function(tracer, 'trace_me',
+                        tags_factory= {('a', lambda: 'b'), ('c', lambda: 'd')})
         def trace_me():
             pass
 

@@ -24,7 +24,8 @@ def call_in_separate_thread(*t_args, no_thread_attribute: bool = False,
     (or the exception) of the function.
 
     The returned Future will have an extra attribute, "thread" that is
-    thread that was spawned for it.
+    thread that was spawned for it. The returned thread will in turn
+    have an attribute "future" that links to this future.
 
     .. warning:: calling this will cause reference loops, so don't use it
         if you've disabled Python GC, or in that case enable
@@ -33,7 +34,7 @@ def call_in_separate_thread(*t_args, no_thread_attribute: bool = False,
     The arguments given here will be passed to thread's constructor, so use like:
 
     :param no_thread_attribute: if set to True, future won't have a link returned to
-        it's thread
+        it's thread. The thread will have attribute of "future" anyways.
     :param delay: seconds to wait before launching function
 
     >>> @call_in_separate_thread(daemon=True)

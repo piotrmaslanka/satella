@@ -35,9 +35,9 @@ def trace_function(tracer, name: str, tags: tp.Optional[dict] = None,
     :param tracer: tracer to use
     :param name: Name of the trace
     :param tags: optional tags to use
-    :param tags_factory: a list of tuple (tag name, callable that is called with *args passed to
-        this function as a sole argument). Extra tags will be generated from this.
-        Can be also a dict.
+    :param tags_factory: a list of tuple (tag name, callable that is called with *args
+        and **kwargs passed to this function as a sole argument). Extra tags will be generated
+        from this. Can be also a dict.
     """
     if isinstance(tags_factory, dict):
         tags_factory = list(tags_factory.items())
@@ -52,7 +52,7 @@ def trace_function(tracer, name: str, tags: tp.Optional[dict] = None,
                     tags = {}
                 my_tags = copy.copy(tags)
                 for key, value in tags_factory:
-                    my_tags[key] = value(args)
+                    my_tags[key] = value(*args, **kwargs)
             with tracer.start_active_span(name, tags=my_tags):
                 return fun(*args, **kwargs)
 
