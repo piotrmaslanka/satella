@@ -11,7 +11,7 @@ before_script:
   - pwd
   - ./cc-test-reporter before-build
   - pip install -r requirements.txt
-  - pip install -U pytest-xdist pytest-cov pytest pytest-forked pluggy py mock
+  - pip install -U pytest-xdist pytest-cov pytest pytest-forked pluggy py
   - python setup.py install
 jobs:
   include:

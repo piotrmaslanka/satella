@@ -5,7 +5,7 @@ import math
 import time
 import unittest
 
-import mock
+from unittest import mock
 
 from satella.coding.concurrent import call_in_separate_thread
 from satella.coding.structures import TimeBasedHeap, Heap, typednamedtuple, \
