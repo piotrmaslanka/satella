@@ -29,17 +29,21 @@ class TestConcurrent(unittest.TestCase):
             def run(self):
                 nonlocal dct
                 dct[self.a] = True
+                if self.a == 6:
+                    time.sleep(5)
 
+        self.assertGreaterEqual(len(ThreadCollection.get_currently_running()), 1)
         tc = ThreadCollection.from_class(Threading, [2, 3, 4])
         tc.daemon = False
         self.assertFalse(tc.is_alive())
         self.assertEqual(len(tc), 3)
         self.assertFalse(tc.daemon)
-        self.assertEqual(len(tc.get_currently_running()), 0)
         for t in tc:
             self.assertIsInstance(t, Threading)
         tc.append(Threading(5)).add(Threading(6))
-        tc.start().terminate().join()
+        tc.start()
+        self.assertRaises(WouldWaitMore, lambda: tc.join(2))
+        tc.terminate().join()
         self.assertEqual(dct, {2: True, 3: True, 4: True, 5: True, 6: True})
 
     def test_cancellable_callback(self):

@@ -2,6 +2,8 @@ import threading
 import typing as tp
 from threading import Thread
 
+from satella.exceptions import WouldWaitMore
+
 
 class ThreadCollection:
     """
@@ -116,14 +118,21 @@ class ThreadCollection:
                 pass
         return self
 
-    def join(self) -> 'ThreadCollection':
+    def join(self, timeout: tp.Optional[float] = None) -> 'ThreadCollection':
         """
         Join all threads
 
+        :param timeout: maximum time in seconds to wait for the threads to terminate.
+            Note that the timeout will be applied to each thread in sequence, so this
+            can block for up to thread_count*timeout seconds. Default value of
+            None means wait as long as it's necessary.
         :returns: this thread collection instance
+        :raises WouldWaitMore: one of the threads failed to terminate
         """
         for thread in self.threads:
-            thread.join()
+            thread.join(timeout=timeout)
+            if thread.is_alive():
+                raise WouldWaitMore('Thread failed to terminate')
         return self
 
     def is_alive(self) -> bool:
