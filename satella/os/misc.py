@@ -26,7 +26,8 @@ def whereis(name: str) -> tp.Iterator[str]:
 
     for directory in paths_to_look_in:
         for file in os.listdir(directory):
-            if 'x' not in stat.filemode(os.stat(os.path.join(directory, file)).st_mode):
+            path = os.path.join(directory, file)
+            if 'x' not in stat.filemode(os.stat(path).st_mode):
                 continue
 
             if sys.platform.startswith('win'):  # a POSIX-specific check
@@ -34,7 +35,7 @@ def whereis(name: str) -> tp.Iterator[str]:
 
             for extension in available_extensions:
                 if file == '%s%s' % (name, extension):
-                    yield os.path.join(directory, file)
+                    yield path
 
 
 def is_running_as_root() -> bool:
