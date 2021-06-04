@@ -31,6 +31,9 @@ class TestConcurrent(unittest.TestCase):
                 dct[self.a] = True
 
         tc = ThreadCollection.from_class(Threading, [2, 3, 4])
+        self.assertEqual(len(tc), 3)
+        for t in tc:
+            self.assertIsInstance(t, Threading)
         tc.start()
         tc.terminate()
         tc.join()
