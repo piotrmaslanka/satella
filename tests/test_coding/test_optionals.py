@@ -8,6 +8,7 @@ class TestOptionals(unittest.TestCase):
     def test_extract_optional(self):
         b = Optional(None)
         self.assertIs(extract_optional(b.test.value), None)
+        self.assertEqual(extract_optional(5), 5)
 
     def test_optional(self):
         b = Optional(None)
