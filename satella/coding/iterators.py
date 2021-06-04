@@ -47,7 +47,7 @@ class SelfClosingGenerator:
     You can also use it as a context manager, to decouple finalizing the generator from the GC
     collection
     """
-    __slots__ = ('generator', 'stopped')
+    __slots__ = 'generator', 'stopped'
 
     def __init__(self, generator: tp.Union[tp.Generator, tp.Callable[[tp.Any], tp.Generator]]):
         self.generator = generator
@@ -103,7 +103,7 @@ class hint_with_length:
     You must provide either length or length_factory. Giving them both is wrong, and
     will result in ValueError
     """
-    __slots__ = ('generator', 'length', 'length_factory')
+    __slots__ = 'generator', 'length', 'length_factory'
 
     def __init__(self, generator: tp.Generator, length: tp.Optional[int],
                  length_factory: tp.Optional[NoArgCallable[int]] = None):

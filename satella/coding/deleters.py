@@ -113,7 +113,7 @@ class ListDeleter(tp.Generic[T]):
 
     You can pass any type of object here, as long as it supports pop(position) and __getitem__
     """
-    __slots__ = ('list_to_process', 'current_index', 'indices_to_delete', 'direction')
+    __slots__ = 'list_to_process', 'current_index', 'indices_to_delete', 'direction'
 
     def __init__(self, list_to_process: tp.MutableSequence[T]):
         self.list_to_process = list_to_process

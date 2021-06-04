@@ -19,7 +19,7 @@ class expect_exception:
     :param args: args to provide to constructor
     :param kwargs: kwargs to provide to constructor
     """
-    __slots__ = ('exc_to_except', 'else_raise', 'else_raise_args', 'else_raise_kwargs')
+    __slots__ = 'exc_to_except', 'else_raise', 'else_raise_args', 'else_raise_kwargs'
 
     def __init__(self, exc_to_except: ExceptionList, else_raise: tp.Type[Exception],
                  *args, **kwargs):

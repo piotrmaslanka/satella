@@ -15,7 +15,7 @@ class Loadable(metaclass=ABCMeta):
     If False, you will need to load it on-demand via :func:`must_be_loaded` decorator.
     """
 
-    __slots__ = ('_loaded',)
+    __slots__ = '_loaded',
 
     def __init__(self, load_lazy: bool = False):
         self._loaded = False

@@ -339,7 +339,7 @@ class ExponentialBackoff:
     :param sleep_fun: function used to sleep. Will accept a single argument - number of
         seconds to wait
     """
-    __slots__ = ('start', 'limit', 'counter', 'sleep_fun')
+    __slots__ = 'start', 'limit', 'counter', 'sleep_fun'
 
     def __init__(self, start: float = 1, limit: float = 30,
                  sleep_fun: tp.Callable[[float], None] = sleep):

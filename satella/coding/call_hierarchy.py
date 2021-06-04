@@ -49,7 +49,7 @@ class Call:
     """
     A call to given function with a given set of arguments
     """
-    __slots__ = ('fn', 'args', 'kwargs')
+    __slots__ = 'fn', 'args', 'kwargs'
 
     def __init__(self, fn, *args, **kwargs):
         warnings.warn('This module is experimental, use at your own peril', ExperimentalWarning)
@@ -81,7 +81,7 @@ class CallWithArgumentSet(Call):
     """
     Call a function with a set of arguments provided by the environment
     """
-    __slots__ = ('fn', 'arg_set_no')
+    __slots__ = 'fn', 'arg_set_no'
 
     def __init__(self, fn, arg_set_no: int = 0):
         warnings.warn('This module is experimental, use at your own peril', ExperimentalWarning)
@@ -106,7 +106,7 @@ class CallIf(Call):
     """
     Call a function only if fn_if_call returned True
     """
-    __slots__ = ('fn_to_call', 'fn_call_if')
+    __slots__ = 'fn_to_call', 'fn_call_if'
 
     def __init__(self, fn_if_call: Call, fn_to_call: Call):
         warnings.warn('This module is experimental, use at your own peril', ExperimentalWarning)
@@ -135,7 +135,7 @@ class Reduce(Call):
     :param do_parallel: whether try to execute these calls in parallel, if possible.
         Parallel execution will be done only if an executor is given in the execution environment.
     """
-    __slots__ = ('reducing_op', 'starting_value', 'do_parallel', 'callables')
+    __slots__ = 'reducing_op', 'starting_value', 'do_parallel', 'callables'
 
     def __init__(self, *callables: Call,
                  reducing_op: tp.Callable[[tp.Any, tp.Any], tp.Any] = lambda a, b: None,

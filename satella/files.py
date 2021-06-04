@@ -20,7 +20,7 @@ class DevNullFilelikeObject:
     """
     A /dev/null filelike object. For multiple uses.
     """
-    __slots__ = ('is_closed',)
+    __slots__ = 'is_closed',
 
     def __init__(self):
         self.is_closed = False

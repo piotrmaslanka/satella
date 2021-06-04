@@ -23,7 +23,7 @@ class ThreadCollection:
     length check.
     """
 
-    __slots__ = ('threads', )
+    __slots__ = 'threads',
 
     def __len__(self):
         return len(self.threads)
