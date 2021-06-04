@@ -52,7 +52,14 @@ def trace_function(tracer, name: str, tags: tp.Optional[dict] = None,
                     tags = {}
                 my_tags = copy.copy(tags)
                 for key, value in tags_factory:
-                    my_tags[key] = value(*args, **kwargs)
+                    try:
+                        v = value(*args, **kwargs)
+                    except TypeError:
+                        warnings.warn('You are using the deprecated single-parameter version '
+                                      'of tags_factory. Please upgrade to the newer one.',
+                                      DeprecationWarning)
+                        v = value(args)
+                    my_tags[key] = v
             with tracer.start_active_span(name, tags=my_tags):
                 return fun(*args, **kwargs)
 

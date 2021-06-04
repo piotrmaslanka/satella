@@ -14,7 +14,7 @@ class TestOpentracing(unittest.TestCase):
                 self.start_active_span_called = True
 
             def start_active_span(self, *args, tags=None, **kwargs):
-                slf.assertEqual(tags, {'a': 'b', 'c': 'd'})
+                slf.assertEqual(tags, {'a': 'b', 'c': 'd', 'e': 'f'})
 
                 class MockScope(mock.Mock):
                     def __enter__(self):
@@ -28,7 +28,9 @@ class TestOpentracing(unittest.TestCase):
         tracer = MockTracer()
 
         @trace_function(tracer, 'trace_me',
-                        tags_factory= {('a', lambda: 'b'), ('c', lambda: 'd')})
+                        tags_factory= {'a': lambda: 'b',
+                                       'c': lambda: 'd',
+                                       'e': (lambda args: 'f')})
         def trace_me():
             pass
 
