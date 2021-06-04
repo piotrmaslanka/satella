@@ -31,13 +31,17 @@ class TestConcurrent(unittest.TestCase):
                 dct[self.a] = True
 
         tc = ThreadCollection.from_class(Threading, [2, 3, 4])
+        tc.daemon = False
+        self.assertFalse(tc.is_alive())
         self.assertEqual(len(tc), 3)
         for t in tc:
             self.assertIsInstance(t, Threading)
+        tc.append(Threading(5))
+        tc.add(Threading(6))
         tc.start()
         tc.terminate()
         tc.join()
-        self.assertEqual(dct, {2: True, 3: True, 4: True})
+        self.assertEqual(dct, {2: True, 3: True, 4: True, 5: True, 6: True})
 
     def test_cancellable_callback(self):
         a = {'test': True}
