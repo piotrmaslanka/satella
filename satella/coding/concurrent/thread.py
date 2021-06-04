@@ -435,6 +435,8 @@ class IntervalTerminableThread(TerminableThread, metaclass=ABCMeta):
 
         Called each cycle.
 
+        You are meant to override this, as by default this does nothing.
+
         :param time_taken: how long did calling .loop() take
         """
 
@@ -443,6 +445,8 @@ class IntervalTerminableThread(TerminableThread, metaclass=ABCMeta):
         while not self._terminating:
             with measure() as measurement:
                 self.loop()
+            if self._terminating:
+                break
             time_taken = measurement()
             time_to_sleep = self.seconds - time_taken
             if time_to_sleep < 0:

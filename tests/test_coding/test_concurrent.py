@@ -547,10 +547,9 @@ class TestConcurrent(unittest.TestCase):
         mtt.start()
         a = mtt.a
         time.sleep(0.3)
-        self.assertEqual(mtt.a, a)
+        self.assertIn(mtt.a, (1, 2))
         self.assertFalse(mtt.overrun)
         time.sleep(1.2)
-        self.assertEqual(mtt.a, a+1)
         self.assertFalse(mtt.overrun)
         time.sleep(4)
         self.assertTrue(mtt.overrun)

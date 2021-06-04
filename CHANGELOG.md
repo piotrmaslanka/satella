@@ -3,3 +3,4 @@
 * added `MetricDataCollection.remove_internals`
 * added `whereis`
 * added `timeout` to `ThreadCollection.join`
+* `IntervalTerminableThread` will now terminate faster
