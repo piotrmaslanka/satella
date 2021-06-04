@@ -167,14 +167,14 @@ class BogusTerminableThread:
     """
     A mock object that implements threading interface but does nothing
 
-    :ivar running: bool, if it's running
+    :ivar started: bool, if it's running
     :ivar terminated: bool, if terminated
     :ivar daemon: bool, if daemon
     """
-    __slots__ = ('running', 'terminated', 'daemon')
+    __slots__ = ('started', 'terminated', 'daemon')
 
     def __init__(self):
-        self.running = False
+        self.started = False
         self.terminated = False
         self.daemon = True
 
@@ -182,7 +182,7 @@ class BogusTerminableThread:
         """
         :return: if this thread is alive
         """
-        return not self.terminated and self.running
+        return not self.terminated and self.started
 
     def start(self) -> None:
         """
@@ -191,9 +191,9 @@ class BogusTerminableThread:
         """
         if self.terminated:
             raise RuntimeError('Thread already terminated')
-        if self.running:
+        if self.started:
             raise RuntimeError('Thread already running')
-        self.running = True
+        self.started = True
 
     def terminate(self) -> None:
         """
@@ -210,14 +210,17 @@ class BogusTerminableThread:
 
         :param timeout: maximum number of seconds to wait for termination
         :raises WouldWaitMore: thread did not terminate within that many seconds
+        :raises RuntimeError: tried to join() before start()!
         """
+        if not self.terminated and not self.started:
+            raise RuntimeError('Cannot join on a thread that has not started!')
+
         if not self.terminated:
             started_elapsing = time.monotonic()
             while time.monotonic() - started_elapsing < timeout and not self.terminated:
                 time.sleep(1)
             if not self.terminated:
                 raise WouldWaitMore('thread failed to terminate')
-        self.running = False
 
 
 class TerminableThread(threading.Thread):
