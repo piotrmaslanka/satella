@@ -1,6 +1,40 @@
+import stat
+import typing as tp
 import os
 import sys
 import warnings
+
+
+def whereis(name: str) -> tp.Iterator[str]:
+    """
+    Looking in PATH return a sequence of executable files having provided name.
+
+    Additionally, on Windows, it will use PATHEXT.
+
+    .. note:: on Windows name is supposed to be without extension!
+
+    :param name: name of the executable to search for
+    :return: an iterator of absolute paths to given executable
+    """
+    if sys.platform.startswith('win'):
+        paths_to_look_in = os.environ.get('PATH', '').split(';')
+        name = name.upper()
+        available_extensions = os.environ.get('PATHEXT', '.com;.bat;.exe').upper().split(';')
+    else:
+        paths_to_look_in = os.environ.get('PATH', '').split(':')
+        available_extensions = '',
+
+    for directory in paths_to_look_in:
+        for file in os.listdir(directory):
+            if 'x' not in stat.filemode(os.stat(os.path.join(directory, file)).st_mode):
+                continue
+
+            if sys.platform.startswith('win'):  # a POSIX-specific check
+                file = file.upper()     # paths are not case-sensitive on Windows
+
+            for extension in available_extensions:
+                if file == f'{name}{extension}':
+                    yield os.path.join(directory, file)
 
 
 def is_running_as_root() -> bool:
