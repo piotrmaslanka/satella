@@ -37,11 +37,10 @@ class TestOpentracing(unittest.TestCase):
 
         fut = test_me()
         span = mock.MagicMock()
-        span.finish = mock.PropertyMock()
         trace_future(fut, span)
         fut.result()
         fut.thread.join()
-        span.finish.assert_called()
+        self.assertTrue(span.finish.called)
 
     def test_trace_future_exception(self):
         @call_in_separate_thread()
@@ -50,21 +49,19 @@ class TestOpentracing(unittest.TestCase):
 
         fut = fail_me()
         span = mock.Mock()
-        span.finish = mock.PropertyMock()
         trace_future(fut, span)
         self.assertRaises(ValueError, fut.result)
         fut.thread.join()
-        span.finish.assert_called()
+        self.assertTrue(span.finish.called)
 
     def test_trace_exception_none(self):
         trace_exception(None)
 
         span = mock.MagicMock()
-        span.finish = mock.PropertyMock()
         try:
             raise ValueError()
         except ValueError:
             trace_exception(span)
 
-        span.set_tag.assert_called_with('error', True)
-        span.log_kv.assert_called()
+        self.assertTrue(span.set_tag.called)
+        self.assertTrue(span.log_kv.called)
