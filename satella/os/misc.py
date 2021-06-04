@@ -33,7 +33,7 @@ def whereis(name: str) -> tp.Iterator[str]:
                 file = file.upper()     # paths are not case-sensitive on Windows
 
             for extension in available_extensions:
-                if file == f'{name}{extension}':
+                if file == '%s%s' % (name, extension):
                     yield os.path.join(directory, file)
 
 
