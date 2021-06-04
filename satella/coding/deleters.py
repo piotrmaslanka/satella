@@ -140,7 +140,7 @@ class ListDeleter(tp.Generic[T]):
         self.indices_to_delete = set()
         return self
 
-    def __next__(self):
+    def __next__(self) -> T:
         if self.direction == DIR_BACKWARD and self.current_index == 0:
             raise StopIteration('First element reached')
         if self.direction == DIR_FORWARD and self.current_index == len(self.list_to_process) - 1:
@@ -153,8 +153,7 @@ class ListDeleter(tp.Generic[T]):
         :return: the next element
         :raises StopIteration: no more entries
         """
-        next(self)
-        return self.list_to_process[self.current_index]
+        return next(self)
 
     def prev(self) -> T:
         """
