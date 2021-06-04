@@ -4,6 +4,7 @@ import threading
 import time
 import typing as tp
 import warnings
+import weakref
 from abc import ABCMeta, abstractmethod
 from concurrent.futures import Future
 from threading import Condition as PythonCondition
@@ -21,8 +22,8 @@ def call_in_separate_thread(*t_args, delay: float = 0, **t_kwargs):
     The decorated routine will return a Future that is waitable to get the result
     (or the exception) of the function.
 
-    The returned Future will have an extra argument, "thread" that links to the thread
-    instance spawned.
+    The returned Future will have an extra attribute, "thread" that is
+    a weak reference proxy to the thread instance spawned.
 
     The arguments given here will be passed to thread's constructor, so use like:
 
@@ -40,8 +41,8 @@ def call_in_separate_thread(*t_args, delay: float = 0, **t_kwargs):
             class MyThread(threading.Thread):
                 def __init__(self):
                     self.future = Future()
+                    self.future.thread = weakref.proxy(self)
                     super().__init__(*t_args, **t_kwargs)
-                    self.future.thread = self
 
                 def run(self):
                     if not self.future.set_running_or_notify_cancel():
