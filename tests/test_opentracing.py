@@ -37,6 +37,7 @@ class TestOpentracing(unittest.TestCase):
 
         fut = test_me()
         span = mock.MagicMock()
+        span.finish = mock.PropertyMock()
         trace_future(fut, span)
         fut.result()
         fut.thread.join()
@@ -48,7 +49,8 @@ class TestOpentracing(unittest.TestCase):
             raise ValueError()
 
         fut = fail_me()
-        span = mock.MagicMock()
+        span = mock.Mock()
+        span.finish = mock.PropertyMock()
         trace_future(fut, span)
         self.assertRaises(ValueError, fut.result)
         fut.thread.join()
@@ -58,6 +60,7 @@ class TestOpentracing(unittest.TestCase):
         trace_exception(None)
 
         span = mock.MagicMock()
+        span.finish = mock.PropertyMock()
         try:
             raise ValueError()
         except ValueError:
