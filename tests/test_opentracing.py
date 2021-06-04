@@ -12,7 +12,7 @@ class TestOpentracing(unittest.TestCase):
                 self.start_active_span_called = True
 
             def start_active_span(self, *args, **kwargs):
-                class MockScope(mock.Mock):
+                class MockScope(mock.MagicMock):
                     def __enter__(self):
                         return self
 
@@ -36,7 +36,7 @@ class TestOpentracing(unittest.TestCase):
             pass
 
         fut = test_me()
-        span = mock.Mock()
+        span = mock.MagicMock()
         trace_future(fut, span)
         fut.result()
         fut.thread.join()
@@ -48,7 +48,7 @@ class TestOpentracing(unittest.TestCase):
             raise ValueError()
 
         fut = fail_me()
-        span = mock.Mock()
+        span = mock.MagicMock()
         trace_future(fut, span)
         self.assertRaises(ValueError, fut.result)
         fut.thread.join()
@@ -57,7 +57,7 @@ class TestOpentracing(unittest.TestCase):
     def test_trace_exception_none(self):
         trace_exception(None)
 
-        span = mock.Mock()
+        span = mock.MagicMock()
         try:
             raise ValueError()
         except ValueError:

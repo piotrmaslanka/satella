@@ -15,7 +15,8 @@ from ..typing import ExceptionList
 from ...exceptions import ResourceLocked, WouldWaitMore
 
 
-def call_in_separate_thread(*t_args, delay: float = 0, **t_kwargs):
+def call_in_separate_thread(*t_args, no_thread_attribute: bool = False,
+                            delay: float = 0, **t_kwargs):
     """
     Decorator to mark given routine as callable in a separate thread.
 
@@ -23,10 +24,16 @@ def call_in_separate_thread(*t_args, delay: float = 0, **t_kwargs):
     (or the exception) of the function.
 
     The returned Future will have an extra attribute, "thread" that is
-    a weak reference proxy to the thread instance spawned.
+    thread that was spawned for it.
+
+    .. warning:: calling this will cause reference loops, so don't use it
+        if you've disabled Python GC, or in that case enable
+        the no_thread_attribute argument
 
     The arguments given here will be passed to thread's constructor, so use like:
 
+    :param no_thread_attribute: if set to True, future won't have a link returned to
+        it's thread
     :param delay: seconds to wait before launching function
 
     >>> @call_in_separate_thread(daemon=True)
@@ -41,7 +48,8 @@ def call_in_separate_thread(*t_args, delay: float = 0, **t_kwargs):
             class MyThread(threading.Thread):
                 def __init__(self):
                     self.future = Future()
-                    self.future.thread = weakref.proxy(self)
+                    if not no_thread_attribute:
+                        self.future.thread = self
                     super().__init__(*t_args, **t_kwargs)
 
                 def run(self):
