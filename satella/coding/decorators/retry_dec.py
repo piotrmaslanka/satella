@@ -45,6 +45,7 @@ def retry(times: tp.Optional[int] = None,
         instance that forced the retry.
     :return: function result
     """
+
     def outer(fun):
         @wraps(fun)
         def inner(*args, **kwargs):
@@ -69,5 +70,7 @@ def retry(times: tp.Optional[int] = None,
                     call_on_failure(f)
                 if not swallow_exception:
                     raise f
+
         return inner
+
     return outer

@@ -32,13 +32,13 @@ class Vector(tuple):
     def __mul__(self, other: Number) -> 'Vector':
         result = []
         for a in self:
-            result.append(a*other)
+            result.append(a * other)
         return Vector(result)
 
     def __truediv__(self, other: Number) -> 'Vector':
         result = []
         for a in self:
-            result.append(a/other)
+            result.append(a / other)
         return Vector(result)
 
     __imul__ = __mul__

@@ -35,11 +35,11 @@ def linear_interpolate(series: tp.Sequence[tp.Tuple[K, U]], t: K,
 
     i = bisect.bisect_left([y[0] for y in series], t) - 1
 
-    if i == len(series)-1:
+    if i == len(series) - 1:
         return series[-1][1]
 
     t1, v1 = series[i]
-    t2, v2 = series[i+1]
+    t2, v2 = series[i + 1]
 
     assert t1 <= t <= t2, 'Series not sorted!'
     return (v2 - v1) / (t2 - t1) * (t - t1) + v1

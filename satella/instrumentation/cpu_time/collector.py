@@ -25,9 +25,10 @@ class CPUProfileBuilderThread(threading.Thread):
         Or a time string.
     :param refresh_each: time of seconds to sleep between rebuilding of profiles, or a time string.
     """
+
     def __init__(self, window_seconds: tp.Union[str, int] = DEFAULT_WINDOW_SECONDS,
                  refresh_each: tp.Union[str, int] = DEFAULT_REFRESH_EACH,
-                 percentiles_requested: tp.Sequence[float] = (0.9, )):
+                 percentiles_requested: tp.Sequence[float] = (0.9,)):
         super().__init__(name='CPU profile builder', daemon=True)
         self.window_size = int(parse_time_string(window_seconds))
         self.refresh_each = parse_time_string(refresh_each)
@@ -55,7 +56,7 @@ class CPUProfileBuilderThread(threading.Thread):
 
     def recalculate(self) -> None:
         data = []
-        calculate_occupancy_factor()    # as first values tend to be a bit wonky
+        calculate_occupancy_factor()  # as first values tend to be a bit wonky
         for _ in range(int(self.window_size)):
             time.sleep(1)
             data.append(calculate_occupancy_factor())
@@ -110,7 +111,7 @@ def sleep_cpu_aware(seconds: tp.Union[str, float], of_below: tp.Optional[float] 
     if of_below is None and of_above is None:
         time.sleep(seconds)
         return False
-    calculate_occupancy_factor()        # prime the counter
+    calculate_occupancy_factor()  # prime the counter
     while seconds > 0:
         time_to_sleep = min(seconds, check_each)
         time.sleep(time_to_sleep)
@@ -128,8 +129,8 @@ def sleep_cpu_aware(seconds: tp.Union[str, float], of_below: tp.Optional[float] 
     return False
 
 
-previous_cf = None           # type: float
-previous_timestamp = None    # type: float
+previous_cf = None  # type: float
+previous_timestamp = None  # type: float
 
 
 def _calculate_occupancy_factor() -> float:
@@ -157,7 +158,7 @@ def _calculate_occupancy_factor() -> float:
     delta = cur_time - previous_timestamp
     if delta == 0:
         return
-    of = (occupation_factor - previous_cf)/delta
+    of = (occupation_factor - previous_cf) / delta
     previous_cf = occupation_factor
     previous_timestamp = cur_time
     return of
@@ -180,4 +181,3 @@ def calculate_occupancy_factor() -> float:
         time.sleep(0.1)
         c = _calculate_occupancy_factor()
     return c
-

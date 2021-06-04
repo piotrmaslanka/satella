@@ -30,6 +30,7 @@ def transform_result(expr: str):
 
     :param expr: Python string expression
     """
+
     def outer(fun):
         @wraps(fun)
         def inner(*args, **kwargs):
@@ -37,7 +38,9 @@ def transform_result(expr: str):
             local = get_arguments(fun, *args, *kwargs)
             local['x'] = a
             return eval(expr, globals(), local)
+
         return inner
+
     return outer
 
 
@@ -55,6 +58,7 @@ def transform_arguments(**expressions: str):
 
     :param expressions: Python strings that are meant to be evaluated
     """
+
     def outer(fun):
         @wraps(fun)
         def inner(*args, **kwargs):
@@ -66,7 +70,9 @@ def transform_arguments(**expressions: str):
                 if new_arg not in new_args:
                     new_args[new_arg] = old_args[new_arg]
             return call_with_arguments(fun, new_args)
+
         return inner
+
     return outer
 
 

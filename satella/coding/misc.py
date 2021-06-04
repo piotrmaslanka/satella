@@ -61,7 +61,7 @@ class Closeable:
 
     You should extend both __init__ and close()
     """
-    __slots__ = ('__finalized', )
+    __slots__ = ('__finalized',)
 
     def __init__(self):
         self.__finalized = False
@@ -135,6 +135,7 @@ def chain_callables(callable1: tp.Callable, callable2: tp.Callable) -> tp.Callab
     :param callable2: callable to call with callable1's result
     :return: result of callable2
     """
+
     def inner(*args, **kwargs):
         res = callable1(*args, **kwargs)
         try:
@@ -146,6 +147,7 @@ def chain_callables(callable1: tp.Callable, callable2: tp.Callable) -> tp.Callab
             else:
                 raise
         return res
+
     return inner
 
 
@@ -305,7 +307,7 @@ def _get_arguments(function: tp.Callable, special_behaviour: bool, *args, **kwar
                     else:
                         v = keyword.default
                 except (AttributeError, TypeError):
-                    continue    # comparison was impossible
+                    continue  # comparison was impossible
 
             local_vars[keyword_name] = v
 

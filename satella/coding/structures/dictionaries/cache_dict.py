@@ -43,6 +43,7 @@ class CacheDict(tp.Mapping[K, V]):
         that will be given to user instead of throwing KeyError. If not given (default),
         KeyError will be thrown
     """
+
     def __len__(self) -> int:
         return len(self.data)
 
@@ -226,7 +227,7 @@ class LRUCacheDict(CacheDict[K, V]):
         """
         Assure that there's place for at least one element
         """
-        while len(self) > self.max_size-1:
+        while len(self) > self.max_size - 1:
             self.evict()
 
     @silence_excs(KeyError)

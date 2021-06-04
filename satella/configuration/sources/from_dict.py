@@ -74,7 +74,7 @@ def load_source_from_dict(dct: dict) -> BaseSource:
     try:
         s = sources.__dict__[type_](*args, **kwargs)
     except KeyError as e:
-        raise ConfigurationMisconfiguredError('unknown type %s' % (type_, ))
+        raise ConfigurationMisconfiguredError('unknown type %s' % (type_,))
 
     if optional:
         s = sources.OptionalSource(s)

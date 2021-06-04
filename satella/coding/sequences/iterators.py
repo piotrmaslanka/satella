@@ -220,7 +220,7 @@ class AlreadySeen(tp.Generic[K]):
     __slots__ = ('set',)
 
     def __init__(self):
-        self.set = None     # type: tp.Union[list, set]
+        self.set = None  # type: tp.Union[list, set]
 
     def is_unique(self, key: K) -> bool:
         """

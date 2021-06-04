@@ -1,6 +1,5 @@
 from .base import BaseSource
 
-
 __all__ = ['BuildObjectFrom']
 
 

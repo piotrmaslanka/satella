@@ -10,7 +10,7 @@ class SequentialIssuer(Monitor):
 
     :ivar start: next value to be issued
     """
-    __slots__ = ('start', )
+    __slots__ = ('start',)
 
     def __init__(self, start: int = 0):
         super().__init__()

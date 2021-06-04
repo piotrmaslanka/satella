@@ -100,6 +100,7 @@ def postcondition(condition: Condition):
     :param condition: callable that accepts a single argument, the return value of the function.
         Can be also a string, in which case it is an expression about the value x of return
     """
+
     def outer(fun):
         @wraps(fun)
         def inner(*args, **kwargs):

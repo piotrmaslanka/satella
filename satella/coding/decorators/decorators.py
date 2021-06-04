@@ -85,6 +85,7 @@ def default_return(v: tp.Any):
 
     :param v: value to return if calling the function would return None
     """
+
     def outer(fun):
         @wraps(fun)
         def inner(*args, **kwargs):
@@ -93,7 +94,9 @@ def default_return(v: tp.Any):
                 return v
             else:
                 return v_a
+
         return inner
+
     return outer
 
 
@@ -118,6 +121,7 @@ def return_as_list(ignore_nulls: bool = False):
 
     :param ignore_nulls: if True, then if your function yields None, it won't be appended.
     """
+
     def outer(fun):
         @wraps(fun)
         def inner(*args, **kwargs):
@@ -127,7 +131,9 @@ def return_as_list(ignore_nulls: bool = False):
                     continue
                 output.append(item)
             return output
+
         return inner
+
     return outer
 
 
@@ -177,6 +183,7 @@ def cache_memoize(cache_duration: float, time_getter: tp.Callable[[], float] = t
                 return fun.memoize_values[args]
 
         return inner
+
     return outer
 
 

@@ -97,4 +97,3 @@ class PeekableQueue(tp.Generic[T]):
         :return: approximate size of the queue
         """
         return len(self.queue)
-

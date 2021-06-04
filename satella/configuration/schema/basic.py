@@ -66,7 +66,7 @@ class FileObject:
         self.path = path
 
     def __repr__(self):
-        return '<File object %s>' % (self.path, )
+        return '<File object %s>' % (self.path,)
 
     def __str__(self):
         return self.path
@@ -113,7 +113,7 @@ class DirectoryObject:
         self.path = path
 
     def __repr__(self):
-        return '<Directory object %s>' % (self.path, )
+        return '<Directory object %s>' % (self.path,)
 
     def __str__(self):
         return self.path
@@ -134,7 +134,6 @@ class DirectoryObject:
 
 @staticmethod
 def _make_file(v: str) -> bool:
-
     if not os.path.isfile(v):
         raise ConfigurationValidationError('Expected to find a file under %s'
                                            % (v,))
@@ -178,7 +177,6 @@ class FileContents(Descriptor):
 
 @staticmethod
 def _make_directory(v: str) -> bool:
-
     if not os.path.isdir(v):
         raise ConfigurationValidationError('Expected to find a directory under %s'
                                            % (v,))

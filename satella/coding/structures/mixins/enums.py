@@ -36,7 +36,7 @@ class ComparableEnum(enum.Enum):
         if not isinstance(other, self.__class__):
             try:
                 return self.__class__(other) == self
-            except ValueError:      # other is not a correct member of this class!
+            except ValueError:  # other is not a correct member of this class!
                 return False
         else:
             return super().__eq__(other)

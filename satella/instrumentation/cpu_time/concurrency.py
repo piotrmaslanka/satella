@@ -22,7 +22,8 @@ class CPUTimeAwareIntervalTerminableThread(IntervalTerminableThread, metaclass=A
         Can be also a time string
     """
 
-    def __init__(self, seconds: tp.Union[str, float], max_sooner: tp.Optional[float] = None, percentile: float = 0.3,
+    def __init__(self, seconds: tp.Union[str, float], max_sooner: tp.Optional[float] = None,
+                 percentile: float = 0.3,
                  wakeup_interval: tp.Union[str, float] = '3s', *args, **kwargs):
         self.seconds = parse_time_string(seconds)
         self.wakeup_interval = parse_time_string(wakeup_interval)

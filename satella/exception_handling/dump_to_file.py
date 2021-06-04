@@ -21,7 +21,7 @@ class StreamType(enum.IntEnum):
     MODE_FILE = 0  # write to file
     MODE_STREAM = 1  # a file-like object was provided
     MODE_DEVNULL = 2  # just redirect to /dev/null
-    MODE_LOGGER = 3   # just a logger
+    MODE_LOGGER = 3  # just a logger
 
 
 class AsStream:

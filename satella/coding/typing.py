@@ -5,7 +5,6 @@ __all__ = ['Iteratable', 'T', 'U', 'V', 'K', 'Number', 'ExceptionClassType',
            'NoArgCallable', 'Appendable', 'Predicate', 'KVTuple',
            'Comparable', 'ExceptionList', 'NoneType']
 
-
 NoneType = None.__class__
 T = tp.TypeVar('T')
 Iteratable = tp.Union[tp.Iterator[T], tp.Iterable[T]]
@@ -46,5 +45,3 @@ except ImportError:
 class Appendable(Protocol[T]):
     def append(self, item: T) -> None:
         ...
-
-

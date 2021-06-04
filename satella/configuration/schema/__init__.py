@@ -1,5 +1,6 @@
 from .base import CheckerCondition, Descriptor
-from .basic import IPv4, Integer, String, Float, Boolean, File, Directory, FileObject, DirectoryObject
+from .basic import IPv4, Integer, String, Float, Boolean, File, Directory, FileObject, \
+    DirectoryObject
 from .from_json import descriptor_from_dict
 from .registry import register_custom_descriptor
 from .structs import Union, List, Dict, Caster, create_key

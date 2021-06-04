@@ -32,7 +32,8 @@ class Timer:
     __slots__ = ('args', 'kwargs', 'spawn_separate', 'interval',
                  'function', 'execute_at', 'cancelled')
 
-    def __init__(self, interval: tp.Union[str, float], function, args=None, kwargs=None, spawn_separate=False):
+    def __init__(self, interval: tp.Union[str, float], function, args=None, kwargs=None,
+                 spawn_separate=False):
         self.args = args or []
         self.kwargs = kwargs or {}
         self.spawn_separate = spawn_separate

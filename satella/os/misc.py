@@ -34,7 +34,7 @@ def whereis(name: str) -> tp.Iterator[str]:
                     continue
 
                 if sys.platform.startswith('win'):  # a POSIX-specific check
-                    file = file.upper()     # paths are not case-sensitive on Windows
+                    file = file.upper()  # paths are not case-sensitive on Windows
 
                 for extension in available_extensions:
                     if file == '%s%s' % (name, extension):

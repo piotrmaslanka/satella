@@ -242,7 +242,7 @@ class TerminableThread(threading.Thread):
         super().__init__(*args, **kwargs)
         self._terminating = False  # type: bool
         if terminate_on is None:
-            terminate_on = (SystemExit, )
+            terminate_on = (SystemExit,)
         elif isinstance(terminate_on, tuple):
             terminate_on = (SystemExit, *terminate_on)
         else:
@@ -338,7 +338,7 @@ class TerminableThread(threading.Thread):
         while t < timeout:
             if self._terminating:
                 raise SystemExit()
-            ttw = min(timeout-t, wake_up_each)
+            ttw = min(timeout - t, wake_up_each)
             t += ttw
             try:
                 condition.wait(ttw)

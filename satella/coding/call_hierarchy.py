@@ -15,7 +15,7 @@ __all__ = ['Call', 'CallIf', 'CallWithArgumentSet', 'ExecutionEnvironment', 'cal
 
 def push_call_stack(cs: tp.Callable, args: tuple = (), kwargs: tp.Optional[dict] = None) -> None:
     kwargs = kwargs or {}
-    arg_tuple = ((cs, args, kwargs), )
+    arg_tuple = ((cs, args, kwargs),)
     if not hasattr(local_ee, 'cs'):
         local_ee.cs = arg_tuple
     else:

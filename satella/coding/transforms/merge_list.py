@@ -72,4 +72,3 @@ class merge_list(tp.Iterator[tp.Tuple[K, V]]):
             except StopIteration:
                 self.available_lists.remove(i)
         return k, v, i
-

@@ -196,4 +196,3 @@ class MetricDataCollection(JSONAble):
         Remove entries marked as internal
         """
         self.values = {value for value in self.values if not value.internal}
-

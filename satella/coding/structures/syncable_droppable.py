@@ -114,13 +114,13 @@ class SyncableDroppable(RMonitor, tp.Generic[K, V]):
         super().__init__()
         assert span_to_keep_in_memory and span_to_keep_in_db, 'One of spans was false!'
         assert span_to_keep_in_db > span_to_keep_in_memory, 'Invalid span'
-        self.db_storage = db_storage                              # type: DBStorage
-        self._start_entry = start_entry                            # type: K
-        self._stop_entry = stop_entry                              # type: K
-        self._synced_up_to = synced_up_to                          # type: K
-        self.data_in_memory = []                                  # type: tp.List[KVTuple]
-        self.span_to_keep_in_db = span_to_keep_in_db              # type: K
-        self.span_to_keep_in_memory = span_to_keep_in_memory      # type: K
+        self.db_storage = db_storage  # type: DBStorage
+        self._start_entry = start_entry  # type: K
+        self._stop_entry = stop_entry  # type: K
+        self._synced_up_to = synced_up_to  # type: K
+        self.data_in_memory = []  # type: tp.List[KVTuple]
+        self.span_to_keep_in_db = span_to_keep_in_db  # type: K
+        self.span_to_keep_in_memory = span_to_keep_in_memory  # type: K
 
     @property
     def start_entry(self) -> tp.Optional[K]:
@@ -349,7 +349,7 @@ class SyncableDroppable(RMonitor, tp.Generic[K, V]):
                     if maximum_entries == math.inf:
                         return self.data_in_memory[index:]
                     else:
-                        return self.data_in_memory[index:index+maximum_entries]
+                        return self.data_in_memory[index:index + maximum_entries]
             else:
                 # We have to start off the disk
                 data = []

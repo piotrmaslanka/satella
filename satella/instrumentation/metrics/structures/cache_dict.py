@@ -9,7 +9,6 @@ from ..metric_types.callable import CallableMetric
 from ..metric_types.counter import CounterMetric
 from ..metric_types.measurable_mixin import MeasurableMixin
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -132,7 +131,7 @@ class MetrifiedExclusiveWritebackCache(ExclusiveWritebackCache[K, V]):
                  cache_miss: tp.Optional[CounterMetric] = None,
                  entries_waiting: tp.Optional[CallableMetric] = None,
                  **kwargs):
-        super().__init__(*args,**kwargs)
+        super().__init__(*args, **kwargs)
         self.cache_miss = cache_miss
         self.cache_hits = cache_hits
         if entries_waiting is not None:
@@ -146,4 +145,3 @@ class MetrifiedExclusiveWritebackCache(ExclusiveWritebackCache[K, V]):
             if self.cache_miss:
                 self.cache_miss.runtime(+1)
         return super().__getitem__(item)
-

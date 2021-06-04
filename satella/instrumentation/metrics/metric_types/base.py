@@ -244,4 +244,5 @@ class EmbeddedSubmetrics(LeafMetric):
 
 
 from .registry import register_metric
+
 register_metric(Metric)

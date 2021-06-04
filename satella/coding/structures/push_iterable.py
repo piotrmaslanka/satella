@@ -29,6 +29,7 @@ class PushIterable(tp.Generic[T]):
         assert a.pop() == 3
         assertRaises(StopIteration, a.pop)
     """
+
     def __init__(self, iterable: tp.Iterable[T]):
         self.iterable = iter(iterable)
         self.collection = deque()

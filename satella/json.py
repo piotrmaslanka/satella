@@ -4,7 +4,6 @@ import json
 
 from satella.coding.typing import NoneType
 
-
 __all__ = ['JSONEncoder', 'JSONAble', 'json_encode', 'read_json_from_file',
            'write_json_to_file', 'write_json_to_file_if_different']
 
@@ -45,8 +44,8 @@ class JSONEncoder(json.JSONEncoder):
                 try:
                     for slot in o.__slots__:
                         dct[slot] = self.default(getattr(o, slot))
-                except AttributeError:      # it doesn't have __slots__ either?
-                    return '<an instance of %s>' % (o.__class__.__name__, )
+                except AttributeError:  # it doesn't have __slots__ either?
+                    return '<an instance of %s>' % (o.__class__.__name__,)
             return dct
 
 
