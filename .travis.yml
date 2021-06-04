@@ -44,6 +44,13 @@ jobs:
         - coverage xml
         - ./cc-test-reporter after-build -t coverage.py --exit-code $TRAVIS_TEST_RESULT
     - stage: test
+      python: "3.9"
+      script:
+        - pytest -n 8 --cov=satella
+      after_script:
+        - coverage xml
+        - ./cc-test-reporter after-build -t coverage.py --exit-code $TRAVIS_TEST_RESULT
+    - stage: test
       python: "pypy3.5"
       script:
         - pytest -n 8
