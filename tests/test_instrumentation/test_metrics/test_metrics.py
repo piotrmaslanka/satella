@@ -29,6 +29,12 @@ class TestMetric(unittest.TestCase):
         kid = choose('.kid', data)
         self.assertIsNone(kid)
 
+    def test_default_float(self):
+        met = getMetric('test.float', 'float')
+        data = met.to_metric_data()
+        v = choose('', data)
+        self.assertEqual(v.value, 0.0)
+
     def test_uptime_metric(self):
         up_metric = getMetric('uptime.metric', 'uptime')
         time.sleep(1)

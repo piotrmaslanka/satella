@@ -11,10 +11,11 @@ class SimpleMetric(EmbeddedSubmetrics):
 
     CLASS_NAME = 'string'
     CONSTRUCTOR = str
+    DEFAULT_VALUE = ''
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.data = None  # type: tp.Any
+        self.data = self.DEFAULT_VALUE  # type: tp.Any
 
     def _handle(self, value, **labels) -> None:
         if self.embedded_submetrics_enabled or labels:
@@ -33,9 +34,11 @@ class SimpleMetric(EmbeddedSubmetrics):
 class IntegerMetric(SimpleMetric):
     CLASS_NAME = 'int'
     CONSTRUCTOR = int
+    DEFAULT_VALUE = 0
 
 
 @register_metric
 class FloatMetric(SimpleMetric, MeasurableMixin):
     CLASS_NAME = 'float'
     CONSTRUCTOR = float
+    DEFAULT_VALUE = 0.0

@@ -485,15 +485,16 @@ class TestConcurrent(unittest.TestCase):
     @unittest.skipUnless(sys.implementation.name == 'cpython', 'Does not work on PyPy :(')
     def test_condition(self):
         dct = {'a': False}
+        slf = self
         cond = Condition()
         interlock_cond = Condition()
 
         class MyThread(TerminableThread):
-            def run(self2) -> None:
-                self2.safe_sleep(-2)
-                self2.safe_sleep(0.5)
+            def run(self) -> None:
+                self.safe_sleep(-2)
+                self.safe_sleep(0.5)
                 interlock_cond.notify()
-                self.assertRaises(WouldWaitMore, lambda: cond.wait(timeout=0.5))
+                slf.assertRaises(WouldWaitMore, lambda: cond.wait(timeout=0.5))
                 cond.wait(timeout=0.5, dont_raise=True)
                 cond.wait()
                 dct['a'] = True
@@ -590,7 +591,6 @@ class TestConcurrent(unittest.TestCase):
 
         mtt = MyTerminableThread()
         mtt.start()
-        a = mtt.a
         time.sleep(0.3)
         self.assertIn(mtt.a, (1, 2))
         self.assertFalse(mtt.overrun)
