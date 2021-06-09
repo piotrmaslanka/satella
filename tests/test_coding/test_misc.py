@@ -13,6 +13,21 @@ logger = logging.getLogger(__name__)
 
 class TestCase(unittest.TestCase):
 
+    def test_closeable_semi_initialized_classes(self):
+        slf = self
+
+        class Test(Closeable):
+            def __init__(self):
+                raise ValueError()
+                self.a = 5
+                super().__init__()
+
+            def close(self):
+                if super().close():
+                    slf.fail('Tried to close an uninitialized class!')
+
+        self.assertRaises(ValueError, Test)
+
     def test_cant_compare_me(self):
         class Uncomparable:
             def __eq__(self, other):

@@ -59,9 +59,10 @@ class Closeable:
 
     Can be also used as a context manager, with close() called upon __exit__.
 
-    You should extend both __init__ and close()
+    .. warning:: You should extend both __init__ and close(). Invoke __init__() at the end of
+        your class constructor, this will prevent the destructor from closing on half-initialized classes.
     """
-    __slots__ = ('__finalized',)
+    __slots__ = '__finalized',
 
     def __init__(self):
         self.__finalized = False
@@ -90,7 +91,7 @@ class Closeable:
         try:
             return not self.__finalized
         except AttributeError:
-            raise RuntimeError('__finalized not found, did you forget to call the constructor?')
+            return False        # the device does not need clean up
         finally:
             self.__finalized = True
 
