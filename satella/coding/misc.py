@@ -60,7 +60,11 @@ class Closeable:
     Can be also used as a context manager, with close() called upon __exit__.
 
     .. warning:: You should extend both __init__ and close(). Invoke __init__() at the end of
-        your class constructor, this will prevent the destructor from closing on half-initialized classes.
+        your class constructor, this will prevent the destructor from closing on half-initialized
+        classes.
+
+    Objects before initialization (calling of this constructor) are considered closed.
+    Checking if they are closed will emit a warning.
     """
     __slots__ = '__finalized',
 
@@ -72,7 +76,12 @@ class Closeable:
         """
         :return: whether this object is closed
         """
-        return self.__finalized
+        try:
+            return self.__finalized
+        except AttributeError:
+            warnings.warn('You are checking whether a non-initialized object was closed',
+                          UserWarning)
+            return True
 
     def close(self) -> bool:
         """
@@ -91,7 +100,7 @@ class Closeable:
         try:
             return not self.__finalized
         except AttributeError:
-            return False        # the device does not need clean up
+            warnings.warn('Attempted to clean up a non-initialized object', UserWarning)
         finally:
             self.__finalized = True
 
