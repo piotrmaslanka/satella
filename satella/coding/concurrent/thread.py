@@ -249,6 +249,9 @@ class TerminableThread(threading.Thread):
     >>> with a:
     >>>     ...
     >>> self.assertFalse(a.is_alive())
+
+    If prepare() throws one of the terminate_on exceptions,
+    :meth:`~satella.coding.concurrent.TerminableThread.loop` even won't be called.
     """
 
     def __init__(self, *args, terminate_on: tp.Optional[ExceptionList] = None,
@@ -312,7 +315,15 @@ class TerminableThread(threading.Thread):
         Calls self.loop() indefinitely, until terminating condition is met
         """
         try:
-            self.prepare()
+            try:
+                self.prepare()
+            except Exception as e:
+                if self._terminate_on is not None:
+                    if isinstance(e, self._terminate_on):
+                        self.terminate()
+                else:
+                    raise
+
             while not self._terminating:
                 try:
                     self.loop()

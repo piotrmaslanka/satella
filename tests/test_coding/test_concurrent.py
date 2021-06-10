@@ -474,6 +474,23 @@ class TestConcurrent(unittest.TestCase):
         ml2 = copy.copy(ml)
         self.assertEqual(ml2, ml)
 
+    def test_terminate_on_exception_in_prepare(self):
+        slf = self
+
+        class MyThread(TerminableThread):
+            def __init__(self):
+                super().__init__(terminate_on=(ValueError, KeyError))
+                self.a = 0
+
+            def prepare(self) -> None:
+                raise ValueError()
+
+            def loop(self) -> None:
+                slf.fail('Cannot invoke loop on a terminated thread!')
+
+        mt = MyThread()
+        mt.start().join()
+
     def test_terminate_on_exception(self):
         class MyThread(TerminableThread):
             def __init__(self):
