@@ -1,5 +1,7 @@
+import math
+import typing as tp
 from .monitor import Monitor
-from ...exceptions import AlreadyAllocated
+from ...exceptions import AlreadyAllocated, Empty
 
 
 class SequentialIssuer(Monitor):
@@ -57,20 +59,30 @@ class IDAllocator(Monitor):
     Thread-safe.
 
     :param start_at: the lowest integer that the allocator will return
+    :param top_limit: the maximum value that will not be allocated. If used,
+        subsequent calls to :meth:`~satella.coding.concurrent.IDAllocator.allocate_int` will
+        raise :class:`~satella.exceptions.Empty`
     """
-    __slots__ = ('start_at', 'ints_allocated', 'free_ints', 'bound')
+    __slots__ = 'start_at', 'ints_allocated', 'free_ints', 'bound', 'top_limit'
 
-    def __init__(self, start_at: int = 0):
+    def __init__(self, start_at: int = 0, top_limit: tp.Optional[int] = None):
         super().__init__()
         self.start_at = start_at
         self.ints_allocated = set()
         self.free_ints = set()
+        self.top_limit = top_limit or math.inf
         self.bound = 0
 
-    def _extend_the_bound_to(self, x: int):
+    def _extend_the_bound_to(self, x: int) -> int:
+        """Return how many integers added"""
+        if x > self.top_limit:
+            x = self.top_limit
+        how_many = 0
         for i in range(self.bound, x):
             self.free_ints.add(i)
+            how_many += 1
         self.bound = x
+        return how_many
 
     @Monitor.synchronized
     def mark_as_free(self, x: int):
@@ -94,9 +106,11 @@ class IDAllocator(Monitor):
         Return a previously unallocated int, and mark it as allocated
 
         :return: an allocated int
+        :raises Empty: could not allocate an int due to top limit
         """
         if not self.free_ints:
-            self._extend_the_bound_to(self.bound + 10)
+            if self._extend_the_bound_to(self.bound + 10) == 0:
+                raise Empty('No integers remaining!')
         x = self.free_ints.pop()
         self.ints_allocated.add(x)
         return x + self.start_at
@@ -112,6 +126,8 @@ class IDAllocator(Monitor):
         """
         if x < self.start_at:
             raise ValueError('%s is less than start_at' % (x,))
+        if x >= self.top_limit:
+            raise ValueError('Cannot allocate a value greater or equal than top limit!')
         x -= self.start_at
         if x >= self.bound:
             self._extend_the_bound_to(x + 1)

@@ -340,6 +340,13 @@ class TestConcurrent(unittest.TestCase):
         self.assertEqual(fut.result(), 5)
         self.assertEqual(a['test'], 2)
 
+    def test_id_allocator_top_limit(self):
+        id_alloc = IDAllocator(top_limit=10)
+        for i in range(10):
+            id_alloc.allocate_int()
+        self.assertRaises(Empty, id_alloc.allocate_int)
+        self.assertRaises(ValueError, lambda: id_alloc.mark_as_allocated(12))
+
     def test_id_allocator(self):
         id_alloc = IDAllocator()
         x = set([id_alloc.allocate_int(), id_alloc.allocate_int(), id_alloc.allocate_int()])
