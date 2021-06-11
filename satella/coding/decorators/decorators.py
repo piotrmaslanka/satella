@@ -350,7 +350,7 @@ def call_method_on_exception(exc_classes, method_name, *args, **kwargs):
                 return fun(self, *args, **kwargs)
             except Exception as e:
                 if isinstance(e, exc_classes):
-                    return getattr(self, method_name)(*args, **kwargs)
+                    return getattr(self, method_name)(self, *args, **kwargs)
                 else:
                     raise
         return inner
