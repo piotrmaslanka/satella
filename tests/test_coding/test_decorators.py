@@ -33,8 +33,8 @@ class TestDecorators(unittest.TestCase):
             def do(self):
                 raise ValueError()
 
-        a = Test()
-        a.do()
+        c = Test()
+        c.do()
         self.assertTrue(a['called'])
 
     def test_cached_memoizer(self):

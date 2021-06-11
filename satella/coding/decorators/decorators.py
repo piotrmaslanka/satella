@@ -338,6 +338,8 @@ def call_method_on_exception(exc_classes, method_name, *args, **kwargs):
     Exception class determination is done by isinstance, so you can go wild with metaclassing.
     Exception will be swallowed. The return value will be taken from the called function.
 
+    Note that the called method must be an instance method.
+
     :param exc_classes: a tuple or an instance class to which react
     :param method_name: name of the method. It must be gettable by getattr
     :param args: arguments to pass to given method
@@ -345,12 +347,12 @@ def call_method_on_exception(exc_classes, method_name, *args, **kwargs):
     """
     def outer(fun):
         @wraps(fun)
-        def inner(self, *args, **kwargs):
+        def inner(self, *f_args, **f_kwargs):
             try:
-                return fun(self, *args, **kwargs)
+                return fun(self, *f_args, **f_kwargs)
             except Exception as e:
                 if isinstance(e, exc_classes):
-                    return getattr(self, method_name)(self, *args, **kwargs)
+                    return getattr(self, method_name)(*args, **kwargs)
                 else:
                     raise
         return inner
