@@ -24,9 +24,9 @@ class TestDecorators(unittest.TestCase):
 
         class Test:
 
-            def close(self, a):
-                slf.assertEqual(a, 2)
+            def close(self, b):
                 nonlocal a
+                slf.assertEqual(b, 2)
                 a['called'] = True
 
             @call_method_on_exception(ValueError, 'close', 2)
