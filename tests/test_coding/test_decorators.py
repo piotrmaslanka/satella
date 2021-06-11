@@ -9,7 +9,7 @@ from satella.coding import wraps, chain_functions, postcondition, \
 from satella.coding.decorators import auto_adapt_to_methods, attach_arguments, \
     execute_before, loop_while, memoize, copy_arguments, replace_argument_if, \
     retry, return_as_list, default_return, transform_result, transform_arguments, \
-    cache_memoize
+    cache_memoize, call_method_on_exception
 from satella.coding.predicates import x
 from satella.exceptions import PreconditionError
 
@@ -17,6 +17,25 @@ logger = logging.getLogger(__name__)
 
 
 class TestDecorators(unittest.TestCase):
+
+    def test_call_method_on_exception(self):
+        a = {'called': False}
+        slf = self
+
+        class Test:
+
+            def close(self, a):
+                slf.assertEqual(a, 2)
+                nonlocal a
+                a['called'] = True
+
+            @call_method_on_exception(ValueError, 'close', 2)
+            def do(self):
+                raise ValueError()
+
+        a = Test()
+        a.do()
+        self.assertTrue(a['called'])
 
     def test_cached_memoizer(self):
         a = {'calls': 0}

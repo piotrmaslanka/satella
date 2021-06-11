@@ -319,3 +319,40 @@ def short_none(clb: tp.Union[Expression, tp.Callable[[T], U]]) -> tp.Callable[
             return clb(arg)
 
     return inner
+
+
+def call_method_on_exception(exc_classes, method_name, *args, **kwargs):
+    """
+    A decorator for instance methods to call provided method with given arguments
+    if given call fails.
+
+    Example use:
+
+    >>> class Test:
+    >>>     def close(self):
+    >>>         ...
+    >>>     @call_method_on_exception(ValueError, 'close')
+    >>>     def read(self, bytes):
+    >>>         raise ValueError()
+
+    Exception class determination is done by isinstance, so you can go wild with metaclassing.
+    Exception will be swallowed. The return value will be taken from the called function.
+
+    :param exc_classes: a tuple or an instance class to which react
+    :param method_name: name of the method. It must be gettable by getattr
+    :param args: arguments to pass to given method
+    :param kwargs: keyword arguments to pass to given method
+    """
+    def outer(fun):
+        @wraps(fun)
+        def inner(self, *args, **kwargs):
+            try:
+                return fun(self, *args, **kwargs)
+            except Exception as e:
+                if isinstance(e, exc_classes):
+                    return getattr(self, method_name)(*args, **kwargs)
+                else:
+                    raise
+        return inner
+    return outer
+
