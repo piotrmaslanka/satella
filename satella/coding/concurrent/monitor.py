@@ -53,6 +53,25 @@ class Monitor:
         self._monitor_lock = threading.Lock()  # type: threading.Lock
 
     @staticmethod
+    def synchronize_on_attribute(attr_name: str):
+        """
+        When a Monitor is an attribute of a class, and you have a method instance
+        that you would like secure by acquiring that monitor, use this.
+
+        The first argument taken by that method instance must be self.
+
+        :param attr_name: name of the attribute that is the monitor
+        """
+        def outer(fun):
+            @wraps(fun)
+            def method(self, *args, **kwargs):
+                # noinspection PyProtectedMember
+                with getattr(self, attr_name)._monitor_lock:
+                    return fun(self, *args, **kwargs)
+            return method
+        return outer
+
+    @staticmethod
     def synchronized(fun: tp.Callable) -> tp.Callable:
         """
         This is a decorator. Class method decorated with that will lock the
