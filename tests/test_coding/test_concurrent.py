@@ -29,7 +29,7 @@ class TestConcurrent(unittest.TestCase):
         fc.add(fut3)
         fc += fs
 
-        fc.set_running_or_notify_cancel()
+        self.assertFalse(fc.set_running_or_notify_cancel())
 
         @call_in_separate_thread()
         def set_future_collection():

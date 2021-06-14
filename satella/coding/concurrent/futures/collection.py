@@ -27,12 +27,22 @@ class FutureCollection:
             fc.append(other)
             return FutureCollection(fc)
 
-    def set_running_or_notify_cancel(self) -> None:
+    def set_running_or_notify_cancel(self, all_futures: bool = True) -> bool:
         """
         Call :code:`set_running_or_notify_cancel` on the futures
+
+        :param all_futures: if default, True then this function will return True if all futures
+            have been cancelled else will return if only one future has been cancelled
         """
-        for future in self.futures:
-            future.set_running_or_notify_cancel()
+        if all_futures:
+            starting = True
+            for future in self.futures:
+                starting = starting and future.set_running_or_notify_cancel()
+        else:
+            starting = False
+            for future in self.futures:
+                starting = starting or future.set_running_or_notify_cancel()
+        return starting
 
     def __iadd__(self, other: tp.Union['FutureCollection', Future, tp.Sequence[Future]]):
         if isinstance(other, FutureCollection):
