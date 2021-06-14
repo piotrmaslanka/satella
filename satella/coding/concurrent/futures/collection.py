@@ -12,7 +12,7 @@ class FutureCollection:
     """
     __slots__ = 'futures',
 
-    def __init__(self, futures: tp.Sequence[Future]):
+    def __init__(self, futures: tp.Sequence[Future] = ()):
         if not isinstance(futures, list):
             futures = list(futures)
         self.futures = futures
@@ -93,8 +93,14 @@ class FutureCollection:
         """
         return [fut.result() for fut in self.futures]
 
-    def cancel(self) -> None:
-        """Cancel all futures"""
+    def cancel(self) -> bool:
+        """
+        Cancel all futures
+
+        :return: True if all sections were cancelled
+        """
+        all_cancelled = True
         for future in self.futures:
-            future.cancel()
+            all_cancelled = all_cancelled and future.cancel()
+        return all_cancelled
 
