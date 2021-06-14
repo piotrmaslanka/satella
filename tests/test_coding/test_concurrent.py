@@ -19,6 +19,13 @@ from satella.exceptions import WouldWaitMore, AlreadyAllocated, Empty
 
 class TestConcurrent(unittest.TestCase):
 
+    def test_future_collection_exception(self):
+        fc = FutureCollection([PythonFuture(), PythonFuture()])
+        fc.set_running_or_notify_cancel()
+        fc[0].set_exception(IndexError())
+        fc[1].set_exception(ValueError())
+        self.assertIsInstance(fc.exception(), IndexError)
+
     def test_future_collection_callbacks_one(self):
         a = {'count': 0}
 

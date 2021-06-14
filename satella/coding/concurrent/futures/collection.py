@@ -1,3 +1,4 @@
+import concurrent
 import typing as tp
 from concurrent.futures import Future
 
@@ -109,9 +110,34 @@ class FutureCollection:
         :param timeout: a timeout in seconds for a single result. Default value None means
             wait as long as necessary
         :return: list containing results of all futures
-        :raises TimeoutError: timeout while waiting for result
+        :raises WouldWaitMore: timeout while waiting for result
         """
-        return [fut.result(timeout) for fut in self.futures]
+        try:
+            return [fut.result(timeout) for fut in self.futures]
+        except concurrent.futures.TimeoutError:
+            raise WouldWaitMore('timeout waiting for the result')
+
+    def exception(self, timeout: tp.Optional[float] = None) -> tp.Optional[Exception]:
+        """
+        Return first exception raised by any of the futures
+
+        This will block until the results are available.
+        This call proceeding does not mean that results for all are available, since
+        this will return the first exception encountered!
+
+        :param timeout: a timeout in seconds for a single result. Default value None means
+            wait as long as necessary
+        :return: the first exception, or None if there were no exceptions
+        :raises WouldWaitMore: timeout while waiting for result
+        """
+        try:
+            for fut in self.futures:
+                e = fut.exception(timeout)
+                if e is not None:
+                    return e
+            return None
+        except concurrent.futures.TimeoutError:
+            raise WouldWaitMore('timeout waiting for the result')
 
     def cancel(self) -> bool:
         """
