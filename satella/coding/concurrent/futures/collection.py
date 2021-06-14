@@ -106,15 +106,12 @@ class FutureCollection:
 
         This will block until the results are available.
 
-        :param timeout: a timeout for a single result. Default value None means
+        :param timeout: a timeout in seconds for a single result. Default value None means
             wait as long as necessary
         :return: list containing results of all futures
-        :raises WouldWaitMore: timeout while waiting for result
+        :raises TimeoutError: timeout while waiting for result
         """
-        try:
-            return [fut.result() for fut in self.futures]
-        except TimeoutError:
-            raise WouldWaitMore()
+        return [fut.result(timeout) for fut in self.futures]
 
     def cancel(self) -> bool:
         """
