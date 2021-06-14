@@ -1,6 +1,8 @@
 import typing as tp
 from concurrent.futures import Future
 
+from satella.exceptions import WouldWaitMore
+
 
 class FutureCollection:
     """
@@ -98,15 +100,21 @@ class FutureCollection:
         for future in self.futures:
             future.set_exception(exc)
 
-    def result(self) -> list:
+    def result(self, timeout: tp.Optional[float] = None) -> list:
         """
         Return the result of all futures, as a list.
 
         This will block until the results are available.
 
+        :param timeout: a timeout for a single result. Default value None means
+            wait as long as necessary
         :return: list containing results of all futures
+        :raises WouldWaitMore: timeout while waiting for result
         """
-        return [fut.result() for fut in self.futures]
+        try:
+            return [fut.result() for fut in self.futures]
+        except TimeoutError:
+            raise WouldWaitMore()
 
     def cancel(self) -> bool:
         """
