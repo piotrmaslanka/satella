@@ -19,6 +19,21 @@ from satella.exceptions import WouldWaitMore, AlreadyAllocated, Empty
 
 class TestConcurrent(unittest.TestCase):
 
+    def test_future_collection_cancel(self):
+        fc = FutureCollection([PythonFuture(), PythonFuture()])
+        self.assertTrue(fc.set_running_or_notify_cancel())
+
+        ##
+        fc = FutureCollection([PythonFuture(), PythonFuture()])
+        fc.cancel()
+        self.assertFalse(fc.set_running_or_notify_cancel())
+
+        ##
+
+        fc = FutureCollection([PythonFuture(), PythonFuture()])
+        fc[0].cancel()
+        self.assertTrue(fc.set_running_or_notify_cancel())
+
     def test_future_collection(self):
         fut1 = PythonFuture()
         fut2 = PythonFuture()
@@ -29,7 +44,9 @@ class TestConcurrent(unittest.TestCase):
         fc.add(fut3)
         fc += fs
 
-        self.assertFalse(fc.set_running_or_notify_cancel())
+        self.assertIs(fc[1], fut2)
+
+        self.assertTrue(fc.set_running_or_notify_cancel())
 
         @call_in_separate_thread()
         def set_future_collection():

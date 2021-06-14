@@ -9,6 +9,8 @@ class FutureCollection:
     This overloads the operator + for making an union of futures. It can be used
     with either instances of :class:`~satella.coding.concurrent.FutureCollection`
     or normal futures.
+
+    Also supports the indexing operator to get n-th future.
     """
     __slots__ = 'futures',
 
@@ -16,6 +18,9 @@ class FutureCollection:
         if not isinstance(futures, list):
             futures = list(futures)
         self.futures = futures
+
+    def __getitem__(self, n: int) -> Future:
+        return self.futures[n]
 
     def __add__(self, other: tp.Union['FutureCollection', Future, tp.Sequence[Future]]):
         if isinstance(other, FutureCollection):
@@ -27,21 +32,15 @@ class FutureCollection:
             fc.append(other)
             return FutureCollection(fc)
 
-    def set_running_or_notify_cancel(self, all_futures: bool = True) -> bool:
+    def set_running_or_notify_cancel(self) -> bool:
         """
         Call :code:`set_running_or_notify_cancel` on the futures
 
-        :param all_futures: if default, True then this function will return True if all futures
-            have been cancelled else will return if only one future has been cancelled
+        This will return True if at least one future was not cancelled
         """
-        if all_futures:
-            starting = True
-            for future in self.futures:
-                starting = starting and future.set_running_or_notify_cancel()
-        else:
-            starting = False
-            for future in self.futures:
-                starting = starting or future.set_running_or_notify_cancel()
+        starting = False
+        for future in self.futures:
+            starting = starting or future.set_running_or_notify_cancel()
         return starting
 
     def __iadd__(self, other: tp.Union['FutureCollection', Future, tp.Sequence[Future]]):
