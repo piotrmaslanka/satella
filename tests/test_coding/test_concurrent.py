@@ -19,6 +19,32 @@ from satella.exceptions import WouldWaitMore, AlreadyAllocated, Empty
 
 class TestConcurrent(unittest.TestCase):
 
+    def test_future_collection_callbacks_one(self):
+        a = {'count': 0}
+
+        def callback(fut):
+            nonlocal a
+            a['count'] += 1
+
+        fc = FutureCollection([PythonFuture(), PythonFuture()])
+        fc.add_done_callback(callback, True)
+        fc.set_running_or_notify_cancel()
+        fc.set_result(None)
+        self.assertEqual(a['count'], 1)
+
+    def test_future_collection_callbacks(self):
+        a = {'count': 0}
+
+        def callback(fut):
+            nonlocal a
+            a['count'] += 1
+
+        fc = FutureCollection([PythonFuture(), PythonFuture()])
+        fc.add_done_callback(callback)
+        fc.set_running_or_notify_cancel()
+        fc.set_result(None)
+        self.assertEqual(a['count'], 2)
+
     def test_future_collection_cancel(self):
         fc = FutureCollection([PythonFuture(), PythonFuture()])
         self.assertTrue(fc.set_running_or_notify_cancel())

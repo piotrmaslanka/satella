@@ -32,6 +32,22 @@ class FutureCollection:
             fc.append(other)
             return FutureCollection(fc)
 
+    def add_done_callback(self, callback, only_one: bool = False) -> None:
+        """
+        Add a callback to a Future to be called on it's completion.
+
+        By default, this will add the callback to all futures.
+
+        :param callback: callback that takes the completed Future as argument
+        :param only_one: callback will be added only to a single Future. False by default
+        :raises IndexError: only_one was given and no Futures in collection!
+        """
+        if only_one:
+            self.futures[0].add_done_callback(callback)
+        else:
+            for future in self.futures:
+                future.add_done_callback(callback)
+
     def set_running_or_notify_cancel(self) -> bool:
         """
         Call :code:`set_running_or_notify_cancel` on the futures
