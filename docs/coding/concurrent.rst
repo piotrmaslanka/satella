@@ -166,6 +166,12 @@ AtomicNumber
 .. autoclass:: satella.coding.concurrent.AtomicNumber
     :members:
 
+FutureCollection
+================
+
+.. autoclass:: satella.coding.concurrent.FutureCollection
+    :members:
+
 Condition
 =========
 
