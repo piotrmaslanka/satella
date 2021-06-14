@@ -32,6 +32,19 @@ class PeekableQueue(tp.Generic[T]):
             self.queue.append(item)
         self.inserted_condition.notify()
 
+    def put_many(self, items: tp.Sequence[T]) -> None:
+        """
+        Put multiple items
+
+        :param items: sequence of items to put
+        """
+        with self.lock:
+            items_count = 0
+            for item in items:
+                items_count += 1
+                self.queue.append(item)
+        self.inserted_condition.notify(items_count)
+
     @rethrow_as(WouldWaitMore, Empty)
     def __get(self, timeout, item_getter) -> T:
         self.lock.acquire()

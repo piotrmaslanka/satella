@@ -169,6 +169,14 @@ class TestConcurrent(unittest.TestCase):
         d = si.issue()
         self.assertGreater(d, c)
 
+    def test_peekable_queue_put_many(self):
+        pkb = PeekableQueue()
+
+        pkb.put_many([1, 2])
+
+        self.assertEqual(pkb.get(), 1)
+        self.assertEqual(pkb.get(), 2)
+
     def test_peekable_queue(self):
         pkb = PeekableQueue()
 
