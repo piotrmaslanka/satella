@@ -82,3 +82,9 @@ class FutureCollection:
         :return: list containing results of all futures
         """
         return [fut.result() for fut in self.futures]
+
+    def cancel(self) -> None:
+        """Cancel all futures"""
+        for future in self.futures:
+            future.cancel()
+
