@@ -115,13 +115,13 @@ class ExponentialBackoff:
         self.condition = Condition()
         self.unavailable_until = None
 
-    def sleep(self):
+    def sleep(self) -> None:
         """
         Called when sleep is expected.
         """
         self.sleep_fun(self.counter)
 
-    def failed(self):
+    def failed(self) -> None:
         """
         Called when something fails.
         """
@@ -178,7 +178,7 @@ class ExponentialBackoff:
         """Was the status of the last call :code:`success`?"""
         return self.counter == 0
 
-    def success(self):
+    def success(self) -> None:
         """
         Called when something successes.
         """
