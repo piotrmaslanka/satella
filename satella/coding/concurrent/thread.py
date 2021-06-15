@@ -481,6 +481,8 @@ class IntervalTerminableThread(TerminableThread, metaclass=ABCMeta):
         """
 
     def run(self):
+        from satella.time import measure
+
         self.prepare()
         while not self._terminating:
             with measure() as measurement:
