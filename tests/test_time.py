@@ -30,6 +30,7 @@ class TestTime(unittest.TestCase):
 
     def test_exponential_backoff_waiting_for_service_healthy(self):
         eb = ExponentialBackoff(start=2, limit=30)
+        self.assertTrue(eb.ready_for_next_check)
 
         eb.failed()
         self.assertFalse(eb.available)
