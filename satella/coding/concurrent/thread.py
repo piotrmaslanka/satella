@@ -11,7 +11,7 @@ from threading import Condition as PythonCondition
 from satella.coding.decorators import wraps
 from ..typing import ExceptionList
 from ...exceptions import ResourceLocked, WouldWaitMore
-from satella.time.measure import measure
+
 
 
 def call_in_separate_thread(*t_args, no_thread_attribute: bool = False,
@@ -107,6 +107,8 @@ class Condition(PythonCondition):
             timeout = parse_time_string(timeout)
             if timeout < 0:
                 timeout = 0
+
+        from satella.time.measure import measure
 
         with measure(timeout=timeout) as measurement:
             if timeout is None:
@@ -482,6 +484,8 @@ class IntervalTerminableThread(TerminableThread, metaclass=ABCMeta):
         """
 
     def run(self):
+        from satella.time.measure import measure
+
         self.prepare()
         while not self._terminating:
             with measure() as measurement:
