@@ -7,7 +7,7 @@ from satella.coding.recast_exceptions import log_exceptions
 from .monitor import Monitor
 from ..structures.heaps.time import TimeBasedHeap
 from ..structures.singleton import Singleton
-from ...time import parse_time_string
+from ...time.parse import parse_time_string
 
 logger = logging.getLogger(__name__)
 

@@ -11,6 +11,7 @@ from threading import Condition as PythonCondition
 from satella.coding.decorators import wraps
 from ..typing import ExceptionList
 from ...exceptions import ResourceLocked, WouldWaitMore
+from satella.time.measure import measure
 
 
 def call_in_separate_thread(*t_args, no_thread_attribute: bool = False,
@@ -100,7 +101,7 @@ class Condition(PythonCondition):
         :raises ResourceLocked: unable to acquire the underlying lock within specified timeout.
         :raises WouldWaitMore: wait's timeout has expired
         """
-        from satella.time import measure, parse_time_string
+        from satella.time.misc import parse_time_string
 
         if timeout is not None:
             timeout = parse_time_string(timeout)
@@ -481,8 +482,6 @@ class IntervalTerminableThread(TerminableThread, metaclass=ABCMeta):
         """
 
     def run(self):
-        from satella.time import measure
-
         self.prepare()
         while not self._terminating:
             with measure() as measurement:

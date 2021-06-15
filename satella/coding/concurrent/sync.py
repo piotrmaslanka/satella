@@ -6,7 +6,7 @@ from .atomic import AtomicNumber
 from .futures import ExecutorWrapper
 from .thread import Condition
 from ...exceptions import WouldWaitMore
-from ...time import measure
+from ...time.measure import measure
 
 
 def sync_threadpool(tpe: tp.Union[ExecutorWrapper, ThreadPoolExecutor],

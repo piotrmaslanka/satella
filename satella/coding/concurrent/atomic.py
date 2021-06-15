@@ -3,7 +3,7 @@ import typing as tp
 from .monitor import Monitor
 from .thread import Condition
 from ...exceptions import WouldWaitMore
-from ...time import measure
+from ...time.measure import measure
 
 Number = tp.Union[int, float]
 
