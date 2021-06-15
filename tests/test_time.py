@@ -5,12 +5,27 @@ import multiprocessing
 import os
 import sys
 
+from satella.coding.concurrent import call_in_separate_thread
 from satella.time import measure, time_as_int, time_ms, sleep, ExponentialBackoff, \
     parse_time_string
 from concurrent.futures import Future
 
 
 class TestTime(unittest.TestCase):
+
+    def test_exponential_backoff_earlier_wakeup(self):
+        eb = ExponentialBackoff(start=5, limit=30)
+
+        @call_in_separate_thread()
+        def do_test():
+            with measure() as m:
+                eb.wait_until_available(2.5)
+                self.assertTrue(eb.available)
+
+        eb.failed()
+        do_test()
+        time.sleep(1)
+        eb.success()
 
     def test_exponential_backoff_waiting_for_service_healthy(self):
         eb = ExponentialBackoff(start=2, limit=30)

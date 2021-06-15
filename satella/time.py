@@ -9,6 +9,7 @@ from functools import wraps  # import from functools to prevent circular import 
 __all__ = ['measure', 'time_as_int', 'time_ms', 'sleep', 'time_us', 'ExponentialBackoff',
            'parse_time_string']
 
+from satella.coding.concurrent.thread import Condition
 from satella.exceptions import WouldWaitMore
 
 TimeSignal = tp.Callable[[], float]
@@ -353,14 +354,16 @@ class ExponentialBackoff:
     >>> time.sleep(2)
     >>> self.assertTrue(eb.available)
 
-    Note that this structure is not thread safe.
+    Note that this structure is thread safe only when a single object is doing
+    the :code:`success` or :code:`failed` calls, and other utilize
+    :meth:`~satella.time.ExponentialBackoff.wait_until_available`.
 
     :param start: value at which to start
     :param limit: maximum sleep timeout
     :param sleep_fun: function used to sleep. Will accept a single argument - number of
         seconds to wait
     """
-    __slots__ = 'start', 'limit', 'counter', 'sleep_fun', 'unavailable_until'
+    __slots__ = 'start', 'limit', 'counter', 'sleep_fun', 'unavailable_until', 'condition'
 
     def __init__(self, start: float = 1, limit: float = 30,
                  sleep_fun: tp.Callable[[float], None] = sleep):
@@ -368,6 +371,7 @@ class ExponentialBackoff:
         self.limit = limit
         self.counter = start
         self.sleep_fun = sleep_fun
+        self.condition = Condition()
         self.unavailable_until = None
 
     def sleep(self):
@@ -386,8 +390,7 @@ class ExponentialBackoff:
             self.counter = min(self.limit, self.counter * 2)
         self.unavailable_until = time.monotonic() + self.counter
 
-    def wait_until_available(self, timeout: tp.Optional[float] = None,
-                             sleep_function: tp.Callable[[float], None] = time.sleep) -> None:
+    def wait_until_available(self, timeout: tp.Optional[float] = None) -> None:
         """
         Waits until the service is available
 
@@ -402,7 +405,7 @@ class ExponentialBackoff:
                 tn = self.time_until_next_check()
                 if tn is None:
                     return
-                sleep_function(tn)
+                self.condition.wait(timeout=tn, dont_raise=True)
             raise WouldWaitMore('timeouted while waiting for service to become healthy')
 
     def time_until_next_check(self) -> tp.Optional[float]:
@@ -432,6 +435,7 @@ class ExponentialBackoff:
         """
         self.counter = 0
         self.unavailable_until = None
+        self.condition.notify_all()
 
 
 TIME_MODIFIERS = [
