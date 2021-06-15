@@ -21,6 +21,7 @@ class TestTime(unittest.TestCase):
             with measure() as m:
                 eb.wait_until_available(2.5)
                 self.assertTrue(eb.available)
+            self.assertLessEqual(m(), 1.5)
 
         eb.failed()
         do_test()
@@ -32,10 +33,13 @@ class TestTime(unittest.TestCase):
 
         eb.failed()
         self.assertFalse(eb.available)
+        self.assertFalse(eb.ready_for_next_check)
         with measure() as m:
             eb.wait_until_available()
+        self.assertTrue(eb.ready_for_next_check)
         self.assertGreaterEqual(m(), 2)
         eb.success()
+        self.assertTrue(eb.ready_for_next_check)
         self.assertTrue(eb.available)
         eb.failed()
         self.assertFalse(eb.available)

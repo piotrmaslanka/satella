@@ -421,13 +421,23 @@ class ExponentialBackoff:
                 return self.unavailable_until - t
 
     @property
+    def ready_for_next_check(self) -> bool:
+        """
+        :return: Has  :meth:`~satella.time.ExponentialBackoff.failure` been called only
+            in the last waiting period?
+        """
+        if self.unavailable_until is None:
+            return True
+        elif time.monotonic() > self.unavailable_until:
+            self.unavailable_until = None
+            return True
+        else:
+            return False
+
+    @property
     def available(self) -> bool:
-        """
-        :return: Is the service healthy, ie. last time that instance was informed a
-            :meth:`~satella.time.ExponentialBackoff.success` was called rather
-            than :meth::meth:`~satella.time.ExponentialBackoff.failure`?
-        """
-        return self.unavailable_until is None
+        """Was the status of the last call :code:`success`?"""
+        return self.counter == 0
 
     def success(self):
         """
