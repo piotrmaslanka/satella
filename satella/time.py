@@ -137,6 +137,16 @@ class measure:
     Also, the timer that you pass to this function will be started/not started, depending on what
     you set earlier. .reset() will be called on a copy of this object.
 
+    This can also be used to write custom timeouts, eg.
+
+    >>> with measure(timeout=5) as m:
+    >>>     while not m.timeouted:
+    >>>         ... do something ...
+    >>>         if condition:
+    >>>             break
+    >>>     if m.timeouted:
+    >>>         raise WouldWaitMore('timeout hit')
+
     :param stop_on_stop: stop elapsing time upon calling .stop()/exiting the context manager.
         If this is set to False then .start() and .stop() won't work and calling them will raise a
         TypeError.
@@ -334,12 +344,23 @@ class ExponentialBackoff:
     >>>     eb.sleep()
     >>> eb.success()
 
+    Also a structure that will mark an object (eg. the Internet access) as inaccessible for some
+    duration. Usage is that case is like this:
+
+    >>> eb = ExponentialBackoff(start=2, limit=30)
+    >>> eb.failed()
+    >>> self.assertFalse(eb.available)
+    >>> time.sleep(2)
+    >>> self.assertTrue(eb.available)
+
+    Note that this structure is not thread safe.
+
     :param start: value at which to start
     :param limit: maximum sleep timeout
     :param sleep_fun: function used to sleep. Will accept a single argument - number of
         seconds to wait
     """
-    __slots__ = 'start', 'limit', 'counter', 'sleep_fun'
+    __slots__ = 'start', 'limit', 'counter', 'sleep_fun', 'unavailable_until'
 
     def __init__(self, start: float = 1, limit: float = 30,
                  sleep_fun: tp.Callable[[float], None] = sleep):
@@ -347,6 +368,7 @@ class ExponentialBackoff:
         self.limit = limit
         self.counter = start
         self.sleep_fun = sleep_fun
+        self.unavailable_until = None
 
     def sleep(self):
         """
@@ -358,13 +380,58 @@ class ExponentialBackoff:
         """
         Called when something fails.
         """
-        self.counter = min(self.limit, self.counter * 2)
+        if self.counter == 0:
+            self.counter = self.start
+        else:
+            self.counter = min(self.limit, self.counter * 2)
+        self.unavailable_until = time.monotonic() + self.counter
+
+    def wait_until_available(self, timeout: tp.Optional[float] = None,
+                             sleep_function: tp.Callable[[float], None] = time.sleep) -> None:
+        """
+        Waits until the service is available
+
+        :param timeout: maximum amount of seconds to wait. If waited more than that,
+            WouldWaitMore will be raised
+        :param sleep_function: a function which will be called with a single argument,
+            the number of seconds to sleep. This should sleep by that many seconds.
+        :raises WouldWaitMore: waited for timeout and service still was not healthy
+        """
+        with measure(timeout=timeout) as m:
+            while not m.timeouted:
+                tn = self.time_until_next_check()
+                if tn is None:
+                    return
+                sleep_function(tn)
+            raise WouldWaitMore('timeouted while waiting for service to become healthy')
+
+    def time_until_next_check(self) -> tp.Optional[float]:
+        """Return the time until next health check, or None if the service is healthy"""
+        if self.unavailable_until is None:
+            return None
+        else:
+            t = time.monotonic()
+            if t > self.unavailable_until:
+                self.unavailable_until = None
+                return None
+            else:
+                return self.unavailable_until - t
+
+    @property
+    def available(self) -> bool:
+        """
+        :return: Is the service healthy, ie. last time that instance was informed a
+            :meth:`~satella.time.ExponentialBackoff.success` was called rather
+            than :meth::meth:`~satella.time.ExponentialBackoff.failure`?
+        """
+        return self.unavailable_until is None
 
     def success(self):
         """
         Called when something successes.
         """
-        self.counter = self.start
+        self.counter = 0
+        self.unavailable_until = None
 
 
 TIME_MODIFIERS = [

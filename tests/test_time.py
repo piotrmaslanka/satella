@@ -4,12 +4,29 @@ import time
 import multiprocessing
 import os
 import sys
+
 from satella.time import measure, time_as_int, time_ms, sleep, ExponentialBackoff, \
     parse_time_string
 from concurrent.futures import Future
 
 
 class TestTime(unittest.TestCase):
+
+    def test_exponential_backoff_waiting_for_service_healthy(self):
+        eb = ExponentialBackoff(start=2, limit=30)
+
+        eb.failed()
+        self.assertFalse(eb.available)
+        with measure() as m:
+            eb.wait_until_available()
+        self.assertGreaterEqual(m(), 2)
+        eb.success()
+        self.assertTrue(eb.available)
+        eb.failed()
+        self.assertFalse(eb.available)
+        with measure() as m:
+            eb.sleep()
+        self.assertGreaterEqual(m(), 2)
 
     def test_parse_time_string(self):
         self.assertEqual(parse_time_string('30m'), 30 * 60)
