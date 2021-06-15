@@ -1,16 +1,12 @@
-import copy
-import inspect
 import time
 import typing as tp
-import warnings
-from concurrent.futures import Future
-from functools import wraps  # import from functools to prevent circular import exception
 
-__all__ = ['measure', 'time_as_int', 'time_ms', 'sleep', 'time_us', 'ExponentialBackoff',
-           'parse_time_string']
+__all__ = ['time_as_int', 'time_ms', 'sleep', 'time_us', 'ExponentialBackoff']
 
 from satella.coding.concurrent.thread import Condition
 from satella.exceptions import WouldWaitMore
+from .parse import parse_time_string
+from .measure import measure
 
 
 def sleep(y: tp.Union[str, float], abort_on_interrupt: bool = False) -> bool:
@@ -141,8 +137,6 @@ class ExponentialBackoff:
 
         :param timeout: maximum amount of seconds to wait. If waited more than that,
             WouldWaitMore will be raised
-        :param sleep_function: a function which will be called with a single argument,
-            the number of seconds to sleep. This should sleep by that many seconds.
         :raises WouldWaitMore: waited for timeout and service still was not healthy
         """
         with measure(timeout=timeout) as m:

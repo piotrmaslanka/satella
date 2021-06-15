@@ -1,7 +1,11 @@
 from ..exceptions import WouldWaitMore
-from concurrent.futures._base import Future
 import typing as tp
 import time
+import copy
+import inspect
+import warnings
+from concurrent.futures import Future
+from functools import wraps  # import from functools to prevent circular import exception
 
 
 TimeSignal = tp.Callable[[], float]
