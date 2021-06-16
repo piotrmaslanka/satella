@@ -255,6 +255,11 @@ class TerminableThread(threading.Thread):
 
     If prepare() throws one of the terminate_on exceptions,
     :meth:`~satella.coding.concurrent.TerminableThread.loop` even won't be called.
+    However, :meth:`~satella.coding.concurrent.TerminableThread.terminate` will be automatically
+    called then.
+
+    Same applies for :class:`~satella.coding.concurrent.IntervalTerminableThread` and
+    :class:`~satella.instrumentation.cpu_time.CPUTimeAwareIntervalTerminableThread`.
     """
 
     def __init__(self, *args, terminate_on: tp.Optional[ExceptionList] = None,
@@ -272,12 +277,6 @@ class TerminableThread(threading.Thread):
         """
         super().__init__(*args, **kwargs)
         self._terminating = False  # type: bool
-        if terminate_on is None:
-            terminate_on = (SystemExit,)
-        elif isinstance(terminate_on, tuple):
-            terminate_on = (SystemExit, *terminate_on)
-        else:
-            terminate_on = (SystemExit, terminate_on)
         self._terminate_on = terminate_on
 
     @property
@@ -324,8 +323,8 @@ class TerminableThread(threading.Thread):
                 if self._terminate_on is not None:
                     if isinstance(e, self._terminate_on):
                         self.terminate()
-                else:
-                    raise
+                        return
+                raise
 
             while not self._terminating:
                 try:
@@ -334,8 +333,8 @@ class TerminableThread(threading.Thread):
                     if self._terminate_on is not None:
                         if isinstance(e, self._terminate_on):
                             self.terminate()
-                    else:
-                        raise
+                            return
+                    raise
         except SystemExit:
             pass
         finally:
@@ -486,16 +485,34 @@ class IntervalTerminableThread(TerminableThread, metaclass=ABCMeta):
     def run(self):
         from satella.time.measure import measure
 
-        self.prepare()
-        while not self._terminating:
-            with measure() as measurement:
-                self.loop()
-            if self._terminating:
-                break
-            time_taken = measurement()
-            time_to_sleep = self.seconds - time_taken
-            if time_to_sleep < 0:
-                self.on_overrun(time_taken)
-            else:
-                self.safe_sleep(time_to_sleep)
-        self.cleanup()
+        try:
+            try:
+                self.prepare()
+            except Exception as e:
+                if self._terminate_on is not None:
+                    if isinstance(e, self._terminate_on):
+                        self.terminate()
+                        return
+                raise
+            while not self._terminating:
+                with measure() as measurement:
+                    try:
+                        self.loop()
+                    except Exception as e:
+                        if self._terminate_on is not None:
+                            if isinstance(e, self._terminate_on):
+                                self.terminate()
+                                return
+                        raise
+                if self._terminating:
+                    break
+                time_taken = measurement()
+                time_to_sleep = self.seconds - time_taken
+                if time_to_sleep < 0:
+                    self.on_overrun(time_taken)
+                else:
+                    self.safe_sleep(time_to_sleep)
+        except SystemExit:
+            pass
+        finally:
+            self.cleanup()

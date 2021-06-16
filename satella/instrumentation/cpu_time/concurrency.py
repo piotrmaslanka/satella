@@ -20,6 +20,9 @@ class CPUTimeAwareIntervalTerminableThread(IntervalTerminableThread, metaclass=A
     :param percentile: percentile that CPU usage has to fall below to call it earlier.
     :param wakeup_interval: amount of seconds to wake up between to check for _terminating status.
         Can be also a time string
+
+    Same concerns for :code:`terminate_on` as in
+    :class:`~satella.coding.concurrent.TerminableThread` apply.
     """
 
     def __init__(self, seconds: tp.Union[str, float], max_sooner: tp.Optional[float] = None,
@@ -63,13 +66,30 @@ class CPUTimeAwareIntervalTerminableThread(IntervalTerminableThread, metaclass=A
         self.__sleep_waiting_for_cpu(how_long)
 
     def run(self):
-        self.prepare()
-        while not self.terminating:
-            measured = self._execute_measured()
-            seconds_to_wait = self.seconds - measured
-            if seconds_to_wait > 0:
-                self.__sleep(seconds_to_wait)
-            elif seconds_to_wait < 0:
-                self.on_overrun(measured)
-
-        self.cleanup()
+        try:
+            try:
+                self.prepare()
+            except Exception as e:
+                if self._terminate_on is not None:
+                    if isinstance(e, self._terminate_on):
+                        self.terminate()
+                        return
+                raise
+            while not self.terminating:
+                try:
+                    measured = self._execute_measured()
+                except Exception as e:
+                    if self._terminate_on is not None:
+                        if isinstance(e, self._terminate_on):
+                            self.terminate()
+                            return
+                    raise
+                seconds_to_wait = self.seconds - measured
+                if seconds_to_wait > 0:
+                    self.__sleep(seconds_to_wait)
+                elif seconds_to_wait < 0:
+                    self.on_overrun(measured)
+        except SystemExit:
+            pass
+        finally:
+            self.cleanup()

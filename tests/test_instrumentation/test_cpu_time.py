@@ -6,6 +6,17 @@ from satella.instrumentation.cpu_time import calculate_occupancy_factor, sleep_c
 
 
 class TestCPUTime(unittest.TestCase):
+    def test_cpu_time_aware_terminable_thread_terminates(self):
+        class TestingThread(CPUTimeAwareIntervalTerminableThread):
+            def __init__(self):
+                super().__init__('5s', 3, 0.5, terminate_on=ValueError)
+                self.a = 0
+
+            def loop(self) -> None:
+                raise ValueError()
+
+        TestingThread().start().terminate().join()
+
     def test_cpu_time_aware_terminable_thread(self):
         class TestingThread(CPUTimeAwareIntervalTerminableThread):
             def __init__(self):

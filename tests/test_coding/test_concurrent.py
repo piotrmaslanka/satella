@@ -701,6 +701,28 @@ class TestConcurrent(unittest.TestCase):
         self.assertTrue(mtt.overrun)
         mtt.terminate().join()
 
+    def test_interval_terminable_thread_terminates(self):
+        class MyTerminableThread(IntervalTerminableThread):
+            def __init__(self, a):
+                super().__init__(1, terminate_on=ValueError)
+                self.a = a
+                self.overrun = False
+
+            def prepare(self) -> None:
+                if self.a:
+                    raise ValueError()
+
+            def loop(self) -> None:
+                if not self.a:
+                    raise ValueError()
+
+        mtt_a = MyTerminableThread(True)
+        mtt_b = MyTerminableThread(False)
+        mtt_a.start()
+        mtt_b.start()
+        mtt_a.terminate().join()
+        mtt_b.terminate().join()
+
     @unittest.skipIf(platform.python_implementation() != 'PyPy', 'this requires PyPy')
     def test_terminable_thread_force_notimplementederror(self):
         class MyTerminableThread(TerminableThread):
