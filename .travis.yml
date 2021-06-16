@@ -9,6 +9,7 @@ before_script:
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
   - chmod +x ./cc-test-reporter
   - ./cc-test-reporter before-build
+  - pip install --upgrade setuptools pip
   - pip install -r requirements.txt
   - pip install -U pytest-xdist pytest-cov pytest pytest-forked pluggy py
   - python setup.py install
