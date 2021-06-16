@@ -13,6 +13,16 @@ from concurrent.futures import Future
 
 class TestTime(unittest.TestCase):
 
+    def test_exponential_backoff_grace(self):
+        eb = ExponentialBackoff(grace_amount=2)
+        self.assertTrue(eb.available)
+        eb.failed()
+        self.assertTrue(eb.available)
+        eb.failed()
+        self.assertTrue(eb.available)
+        eb.failed()
+        self.assertFalse(eb.available)
+
     def test_exponential_backoff_earlier_wakeup(self):
         eb = ExponentialBackoff(start=5, limit=30)
 
@@ -62,7 +72,7 @@ class TestTime(unittest.TestCase):
             eb.sleep()
             eb.failed()
             eb.sleep()
-        self.assertGreaterEqual(measurement(), 2+4)
+        self.assertGreaterEqual(measurement(), 3)
 
     def test_measure(self):
         with measure(timeout=0.5) as measurement:

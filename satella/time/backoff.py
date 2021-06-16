@@ -33,14 +33,19 @@ class ExponentialBackoff:
     :param limit: maximum sleep timeout
     :param sleep_fun: function used to sleep. Will accept a single argument - number of
         seconds to wait
+    :param grace_amount: amount of fails() that this will survive before everything fails
     """
-    __slots__ = 'start', 'limit', 'counter', 'sleep_fun', 'unavailable_until', 'condition'
+    __slots__ = 'start', 'limit', 'counter', 'sleep_fun', 'unavailable_until', 'condition', \
+        'grace_amount', 'grace_counter'
 
     def __init__(self, start: float = 1, limit: float = 30,
-                 sleep_fun: tp.Callable[[float], None] = time.sleep):
+                 sleep_fun: tp.Callable[[float], None] = time.sleep,
+                 grace_amount: int = 0):
         self.start = start
+        self.grace_amount = grace_amount
+        self.grace_counter = 0
         self.limit = limit
-        self.counter = start
+        self.counter = 0
         self.sleep_fun = sleep_fun
         self.condition = Condition()
         self.unavailable_until = None
@@ -55,11 +60,14 @@ class ExponentialBackoff:
         """
         Called when something fails.
         """
-        if self.counter == 0:
-            self.counter = self.start
+        if self.grace_amount == self.grace_counter:
+            if self.counter == 0:
+                self.counter = self.start
+            else:
+                self.counter = min(self.limit, self.counter * 2)
+            self.unavailable_until = time.monotonic() + self.counter
         else:
-            self.counter = min(self.limit, self.counter * 2)
-        self.unavailable_until = time.monotonic() + self.counter
+            self.grace_counter += 1
 
     def wait_until_available(self, timeout: tp.Optional[float] = None) -> None:
         """
@@ -113,5 +121,6 @@ class ExponentialBackoff:
         Called when something successes.
         """
         self.counter = 0
+        self.grace_counter = 0
         self.unavailable_until = None
         self.condition.notify_all()
