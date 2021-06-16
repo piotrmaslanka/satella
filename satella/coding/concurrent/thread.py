@@ -101,7 +101,7 @@ class Condition(PythonCondition):
         :raises ResourceLocked: unable to acquire the underlying lock within specified timeout.
         :raises WouldWaitMore: wait's timeout has expired
         """
-        from satella.time.misc import parse_time_string
+        from satella.time.parse import parse_time_string
 
         if timeout is not None:
             timeout = parse_time_string(timeout)
@@ -370,7 +370,7 @@ class TerminableThread(threading.Thread):
         :raises WouldWaitMore: timeout has passed and Condition has not happened
         :raises SystemExit: thread is terminating
         """
-        from satella.time import parse_time_string
+        from satella.time.parse import parse_time_string
 
         timeout = parse_time_string(timeout)
         wake_up_each = parse_time_string(wake_up_each)
@@ -460,7 +460,7 @@ class IntervalTerminableThread(TerminableThread, metaclass=ABCMeta):
     """
 
     def __init__(self, seconds: tp.Union[str, float], *args, **kwargs):
-        from satella.time import parse_time_string
+        from satella.time.parse import parse_time_string
 
         self.seconds = parse_time_string(seconds)
         super().__init__(*args, **kwargs)
