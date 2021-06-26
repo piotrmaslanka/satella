@@ -357,7 +357,8 @@ class TerminableThread(threading.Thread):
         return False
 
     def safe_wait_condition(self, condition: Condition, timeout: tp.Union[str, float],
-                            wake_up_each: tp.Union[str, float] = 2) -> None:
+                            wake_up_each: tp.Union[str, float] = 2,
+                            dont_raise: bool = False) -> None:
         """
         Wait for a condition, checking periodically if the thread is being terminated.
 
@@ -367,6 +368,8 @@ class TerminableThread(threading.Thread):
         :param timeout: maximum time to wait in seconds. Can be also a time string
         :param wake_up_each: amount of seconds to wake up each to check for termination.
             Can be also a time string.
+        :param dont_raise: if set to True, :class:`~satella.exceptions.WouldWaitMore` will not be
+            raised
         :raises WouldWaitMore: timeout has passed and Condition has not happened
         :raises SystemExit: thread is terminating
         """
@@ -385,7 +388,8 @@ class TerminableThread(threading.Thread):
                 return
             except WouldWaitMore:
                 pass
-        raise WouldWaitMore()
+        if not dont_raise:
+            raise WouldWaitMore()
 
     def safe_sleep(self, interval: float, wake_up_each: float = 2) -> None:
         """
