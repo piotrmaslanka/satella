@@ -7,3 +7,4 @@
 * added `grace_amount` to `ExponentialBackoff`
 * **bugfix**: `ExponentialBackoff` will start
     available
+* fixed a bug in `evictions`

@@ -110,7 +110,8 @@ class MetrifiedLRUCacheDict(LRUCacheDict[K, V]):
         self.how_long_refresh_takes = how_long_refresh_takes
 
     def evict(self):
-        self.evictions.runtime(+1)
+        if self.evictions is not None:
+            self.evictions.runtime(+1)
         super().evict()
 
     def __getitem__(self, item):
