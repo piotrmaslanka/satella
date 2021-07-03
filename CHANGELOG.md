@@ -1,3 +1,2 @@
-# v2.17.12
+# v2.17.13
 
-* added deep comparison
