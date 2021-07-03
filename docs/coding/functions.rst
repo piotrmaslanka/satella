@@ -110,3 +110,16 @@ Without running into `TypeError: metaclass conflict: the metaclass of a derived 
 Following function will help with that:
 
 .. autofunction:: satella.coding.metaclass_maker
+
+Deep comparison
+---------------
+
+To analyze why two objects don't compare the same, you can use the following functions:
+
+.. autofunction:: satella.coding.assert_equal
+
+.. autoclass:: satella.coding.Inequal
+    :members:
+
+.. autoclass:: satella.coding.InequalityReason
+    :members:
