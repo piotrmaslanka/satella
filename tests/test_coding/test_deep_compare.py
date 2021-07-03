@@ -9,6 +9,10 @@ class TestDeepCompare(unittest.TestCase):
 
     def test_compare(self):
         assert_equal(2, 2)
+        assert_equal(2.0, 2.0)
+        assert_equal(None, None)
+        assert_equal('test', 'test')
+        assert_equal(b'test', b'test')
         self.assertInequal(3, 2)
         self.assertInequal([], [6])
         self.assertInequal({1: 2}, {3: 4})
