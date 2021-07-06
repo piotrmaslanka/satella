@@ -1,6 +1,6 @@
 import logging
-import typing as tp
-from satella.instrumentation.memory import MemoryPressureManager, CustomCondition, All, Any
+from satella.instrumentation.memory import MemoryPressureManager, CustomCondition, All, Any, \
+    dump_memory_on
 import time
 import unittest
 logger = logging.getLogger(__name__)
@@ -16,6 +16,10 @@ class OnDemandCondition(CustomCondition):
 
 
 class TestMemory(unittest.TestCase):
+
+    def test_dump_memory(self):
+        dump_memory_on()
+
     def test_memory(self):
         odc = OnDemandCondition()
 

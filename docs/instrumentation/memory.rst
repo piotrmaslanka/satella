@@ -56,3 +56,10 @@ If you want, you can install a GC handler that will
 force a complete GC collection upon entering given severity level.
 
 .. autofunction:: satella.instrumentation.memory.install_force_gc_collect
+
+Dumping memory information
+--------------------------
+
+.. autofunction:: satella.instrumentation.memory.dump_memory_on
+
+.. autofunction:: satella.instrumentation.memory.install_dump_memory_on

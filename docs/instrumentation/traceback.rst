@@ -60,3 +60,10 @@ Alternatively, you can pass a `<frame>` object to Traceback, in order to seriali
 There's a helper function as well
 
 .. autofunction:: satella.instrumentation.frame_from_traceback
+
+Dumping all stack frames
+------------------------
+
+.. autofunction:: satella.instrumentation.dump_frames_on
+
+.. autofunction:: satella.instrumentation.install_dump_frames_on

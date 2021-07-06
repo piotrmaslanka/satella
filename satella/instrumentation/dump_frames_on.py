@@ -11,7 +11,17 @@ except AttributeError:
 
 
 # noinspection PyUnusedLocal
-def dump_frames_on(sig_no: SIG_TYPE, stack_frame: types.FrameType, output: tp.TextIO):
+def dump_frames_on(sig_no: tp.Optional[SIG_TYPE] = None,
+                   stack_frame: tp.Optional[types.FrameType] = None,
+                   output: tp.TextIO = sys.stderr):
+    """
+    Dump all stack frames of all threads including the values of all the local variables.
+
+    :param sig_no: signal received. Default is None.
+    :param stack_frame: Stack frame. Default is None.
+    :param output: output to print to. Default is stderr
+    :return:
+    """
     from satella.instrumentation import Traceback
 
     output.write("Stack frame dump requested in response to signal %s\n" % (sig_no,))
