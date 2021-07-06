@@ -13,13 +13,18 @@ def dump_memory_on(output: tp.TextIO = sys.stderr):
     Make sure you have enough memory to generate a breakdown. You can preallocate something at the
     start for example.
 
+    .. warning:: This will return size of 0 on PyPy
+
     :param output: output, default is stderr
     """
     top_scores = {}
     instances = {}
     for obj in gc.get_objects():
         typ = type(obj)
-        size = sys.getsizeof(obj)
+        try:
+            size = sys.getsizeof(obj)
+        except TypeError:
+            size = 0
         if typ in top_scores:
             top_scores[typ] += size
             instances[typ] += 1
