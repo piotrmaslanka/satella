@@ -6,6 +6,17 @@ from satella.exceptions import BaseSatellaError, CustomException, CodedCustomExc
 
 
 class TestExceptions(unittest.TestCase):
+    def test_advanced_class_hierarchy(self):
+        class A(CodedCustomException):
+            code = None  # type: int
+            message = ''  # type: str
+
+        class B(A):
+            code = 2
+            message = 'not readed error'
+
+        b = B()
+
     def test_coded_custom_exception_no_args(self):
         CodedCustomException()
 
