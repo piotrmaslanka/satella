@@ -25,7 +25,7 @@ class TestMemory(unittest.TestCase):
     @unittest.skipIf(sys.platform == 'win32', 'testable only on unices')
     def test_install_dump_on(self):
         install_dump_frames_on(signal.SIGUSR1)
-        os.kill(0, 10)
+        os.kill(os.getpid(), signal.SIGUSR1)
 
     def test_dump_memory(self):
         dump_memory_on()
