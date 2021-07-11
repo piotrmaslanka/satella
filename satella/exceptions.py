@@ -22,7 +22,7 @@ class CustomException(Exception):
     """
 
     def __init__(self, *args, **kwargs):
-        super().__init__(*args)
+        self.args = args
         self.kwargs = kwargs
 
     def __str__(self) -> str:
