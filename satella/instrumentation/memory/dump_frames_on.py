@@ -51,4 +51,4 @@ def install_dump_memory_on(signal_number, output: tp.TextIO = sys.stderr):
     :param output: output
     """
     signal.signal(signal_number,
-                  lambda sig_no, stack_frame: dump_memory_on(sig_no, stack_frame, output))
+                  lambda sig_no, stack_frame: dump_memory_on(output))

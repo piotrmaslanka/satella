@@ -1,4 +1,9 @@
 import logging
+import os
+import signal
+import sys
+
+from satella.instrumentation import install_dump_frames_on
 from satella.instrumentation.memory import MemoryPressureManager, CustomCondition, All, Any, \
     dump_memory_on
 import time
@@ -16,6 +21,11 @@ class OnDemandCondition(CustomCondition):
 
 
 class TestMemory(unittest.TestCase):
+
+    @unittest.skipIf(sys.platform == 'win32', 'testable only on unices')
+    def test_install_dump_on(self):
+        install_dump_frames_on(signal.SIGUSR1)
+        os.kill(0, 10)
 
     def test_dump_memory(self):
         dump_memory_on()
