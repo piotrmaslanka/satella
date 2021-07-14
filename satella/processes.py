@@ -1,5 +1,6 @@
 import subprocess
 import typing as tp
+import warnings
 
 from satella.coding.recast_exceptions import silence_excs
 from .coding.concurrent import call_in_separate_thread
@@ -46,6 +47,8 @@ def call_and_return_stdout(args: tp.Union[str, tp.List[str]],
     A bytes object will be returned if encoding is not defined, else stdout will be decoded
     according to specified encoding.
 
+    .. deprecated:: Use :code:`subprocess.check_output` instead.
+
     :param args: arguments to run the program with. Can be either a string or a list of strings.
     :param timeout: amount of seconds to wait for the process result. If process does not complete
         within this time, it will be sent a SIGKILL. Can be also a time string. If left at default,
@@ -58,6 +61,7 @@ def call_and_return_stdout(args: tp.Union[str, tp.List[str]],
     :raises ProcessFailed: process' result code was different from the requested
     :raises TimeoutError: timeout was specified and the process didn't complete
     """
+    warnings.warn('This is deprecated, use subprocess.check_output instead', DeprecationWarning)
     kwargs['stdout'] = subprocess.PIPE
 
     stdout_list = []
