@@ -30,6 +30,9 @@ def retry(times: tp.Optional[int] = None,
     >>>     except RuntimeError:
     >>>         pass
 
+    .. warning:: Retry by default will swallow the resulting exception. To avoid
+        this behaviour set the :code:`swallow_exception` parameter to False.
+
     :param times: maximum times to retry this operation. By default (None) retry until the world ends.
     :param exc_classes: exception classes that should be considered failure. By default.
         catches everything (Exception).
