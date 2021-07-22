@@ -1,5 +1,6 @@
 import itertools
 import typing as tp
+import warnings
 
 from satella.coding.decorators.decorators import wraps
 from satella.coding.typing import ExceptionClassType
@@ -41,13 +42,17 @@ def retry(times: tp.Optional[int] = None,
         be swallowed, unless swallow_exception is set to False
     :param swallow_exception: the last exception will be swallowed, unless this is set to False
     :param call_on_failure: a callable that will be called upon failing to do this, with an
-        exception as it's sole argument. It's result will be discarded.
+        exception as it's sole argument. It's result will be discarded. Deprecated, use on_failure
+        instead.
     :param call_on_success: a callable that will be called with a single argument: the number
         of retries that it took to finish the job. It's result will be discarded.
     :param call_between_retries: called between retries with a single argument, the Exception
         instance that forced the retry.
     :return: function result
     """
+
+    if call_on_failure is not None:
+        warnings.warn('call_on_failure is deprecated, use on_failure instead', DeprecationWarning)
 
     def outer(fun):
         @wraps(fun)
