@@ -72,8 +72,11 @@ class ThreadCollection:
         for thread in self.threads:
             thread.daemon = v
 
-    def __init__(self, threads: tp.Sequence[Thread]):
-        self.threads = list(threads)
+    def __init__(self, threads: tp.Optional[tp.Sequence[Thread]] = None):
+        if threads is None:
+            self.threads = []
+        else:
+            self.threads = list(threads) or []
 
     def append(self, thread: Thread) -> 'ThreadCollection':
         """
