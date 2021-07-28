@@ -136,14 +136,29 @@ class TestConcurrent(unittest.TestCase):
         tc.daemon = False
         self.assertFalse(tc.is_alive())
         self.assertEqual(len(tc), 3)
+        a = Threading(5)
+        tc += a
+        b = [Threading(8), Threading(9)]
+        tc += b
+        tc += ThreadCollection([Threading(10), Threading(11)])
         self.assertFalse(tc.daemon)
         for t in tc:
             self.assertIsInstance(t, Threading)
-        tc.append(Threading(5)).add(Threading(6))
+        tc.append(Threading(6)).add(Threading(7))
         tc.start()
         self.assertRaises(WouldWaitMore, lambda: tc.join(2))
         tc.terminate().join()
-        self.assertEqual(dct, {2: True, 3: True, 4: True, 5: True, 6: True})
+        self.assertEqual(len(tc), 10)
+        td = ThreadCollection([Threading(12), Threading(13)])
+        te = tc + td
+        self.assertEqual(len(te), 12)
+        tf = te + []
+        self.assertEqual(len(tf), 12)
+        tg = tf + Threading(15)
+        self.assertEqual(len(tg), 13)
+        self.assertEqual(dct, {2: True, 3: True, 4: True, 5: True, 6: True, 7: True, 8: True,
+                               9: True,
+                               10: True, 11: True})
 
     def test_cancellable_callback(self):
         a = {'test': True}

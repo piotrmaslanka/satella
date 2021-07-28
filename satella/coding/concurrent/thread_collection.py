@@ -20,7 +20,8 @@ class ThreadCollection:
     >>> tc.join()
 
     This also implements iteration (it will return all the threads in the collection) and
-    length check.
+    length check. This also supports + and += operations for all thread collections,
+    threads and iterables of threads.
     """
 
     __slots__ = 'threads',
@@ -143,3 +144,32 @@ class ThreadCollection:
         Is at least one thread alive?
         """
         return any(thread.is_alive() for thread in self.threads)
+
+    def __iadd__(self, other: tp.Union['ThreadCollection', Thread, tp.Iterable[Thread]]):
+        """
+        Add a thread collection or a thread to this collection.
+
+        :param other: a ThreadCollection or a Thread to add
+        """
+        if isinstance(other, Thread):
+            other = [other]
+        elif isinstance(other, ThreadCollection):
+            other = other.threads
+        else:
+            other = list(other)
+        self.threads.extend(other)
+        return self
+
+    def __add__(self, other: tp.Union['ThreadCollection', Thread, tp.Iterable[Thread]]):
+        """
+        Add a thread collection or a thread to this collection and return a new collection
+
+        :param other: a ThreadCollection or a Thread to add
+        """
+        if isinstance(other, Thread):
+            other = [other]
+        elif isinstance(other, ThreadCollection):
+            other = other.threads
+        else:
+            other = list(other)
+        return ThreadCollection(self.threads + other)
