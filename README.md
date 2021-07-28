@@ -8,6 +8,7 @@ satella
 [![PyPI version](https://badge.fury.io/py/satella.svg)](https://badge.fury.io/py/satella)
 [![PyPI](https://img.shields.io/pypi/implementation/satella.svg)](https://pypi.python.org/pypi/satella)
 [![Documentation Status](https://readthedocs.org/projects/satella/badge/?version=latest)](http://satella.readthedocs.io/en/latest/?badge=latest)
+[![License](https://img.shields.io/pypi/l/satella)](https://github.com/Dronehub/satella)
 
 Satella is an almost-zero-requirements Python 3.5+ library for writing
 server applications, especially those dealing with mundane but
