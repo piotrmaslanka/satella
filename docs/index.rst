@@ -16,7 +16,6 @@ Visit the project's page at GitHub_!
            coding/futures
            coding/structures
            coding/decorators
-           coding/call_hierarchy
            coding/predicates
            coding/concurrent
            coding/sequences
