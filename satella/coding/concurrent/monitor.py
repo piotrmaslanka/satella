@@ -248,7 +248,7 @@ class MonitorSet(set, Monitor):
         :param item: item to insert
         :return: whether the item was successfully inserted
         """
-        with Monitor.synchronize_on(self):
+        with self:
             if item in self:
                 return False
             self.add(item)
