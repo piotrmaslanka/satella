@@ -48,7 +48,7 @@ class TestTime(unittest.TestCase):
         with measure() as m:
             eb.wait_until_available()
         self.assertTrue(eb.ready_for_next_check)
-        self.assertGreaterEqual(m(), 2)
+        self.assertGreaterEqual(m(), 1.8)
         eb.success()
         self.assertTrue(eb.ready_for_next_check)
         self.assertTrue(eb.available)
