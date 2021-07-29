@@ -239,7 +239,7 @@ class MonitorSet(set, Monitor):
     """
     def __init__(self, *args):
         super().__init__(*args)
-        Monitor.__init__()
+        Monitor.__init__(self)
 
     def insert_and_check(self, item) -> bool:
         """
