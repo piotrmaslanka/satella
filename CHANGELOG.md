@@ -5,3 +5,5 @@
 * added default parameter to `ThreadCollection`
 * axed entire CallHierarchy
 * added __add__ and __iadd__ to `ThreadCollection`
+* remove slots from Monitor
+* added MonitorSet

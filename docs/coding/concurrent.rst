@@ -143,6 +143,8 @@ Additionally, following types are predefined for your convenience:
 
 .. autoclass:: satella.coding.concurrent.MonitorDict
 
+.. autoclass:: satella.coding.concurrent.MonitorSet
+
 LockedStructure
 ===============
 

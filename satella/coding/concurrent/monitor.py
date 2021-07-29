@@ -37,8 +37,6 @@ class Monitor:
     >>>         with self:
     >>>             .. do your threadsafe jobs ..
     """
-    __slots__ = ('_monitor_lock',)
-
     def __enter__(self) -> 'Monitor':
         self._monitor_lock.acquire()
         return self
@@ -174,7 +172,6 @@ class RMonitor(Monitor):
     """
     Monitor, but using an reentrant lock instead of a normal one
     """
-    __slots__ = ()
 
     def __init__(self):
         self._monitor_lock = threading.RLock()  # type: threading.RLock
@@ -234,3 +231,25 @@ class MonitorDict(tp.Generic[K, V], collections.UserDict, Monitor):
 
     def __deepcopy__(self, memo) -> 'MonitorDict':
         return MonitorDict(copy.deepcopy(self.data, memo=memo))
+
+
+class MonitorSet(set, Monitor):
+    """
+    A set that allows atomic insert-if-not-already-there operation
+    """
+    def __init__(self, *args):
+        super().__init__(*args)
+        Monitor.__init__()
+
+    def insert_and_check(self, item) -> bool:
+        """
+        Perform an atomic insert if not already in set
+
+        :param item: item to insert
+        :return: whether the item was successfully inserted
+        """
+        with Monitor.synchronize_on(self):
+            if item in self:
+                return False
+            self.add(item)
+            return True
