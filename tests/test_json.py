@@ -15,7 +15,9 @@ class TestJson(unittest.TestCase):
         class Enum(enum.Enum):
             A = 'test'
         b = enc.encode(Enum.A)
-        self.assertEqual(b, '"test')
+        self.assertEqual(b, '"test"')
+
+        write_json_to_file('test3.json', Enum.A)
 
     def test_write_json_to_file_if_different(self):
         d = {'test': 4}

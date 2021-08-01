@@ -3,6 +3,8 @@ import typing as tp
 from abc import ABCMeta, abstractmethod
 import json
 
+from satella.files import write_out_file_if_different
+
 from satella.coding.typing import NoneType
 
 __all__ = ['JSONEncoder', 'JSONAble', 'json_encode', 'read_json_from_file',
@@ -67,41 +69,32 @@ def write_json_to_file(path: str, value: JSONAble, **kwargs) -> None:
     """
     Write out a JSON to a file as UTF-8 encoded plain text.
 
+    This will use Satella's :class:`~satella.json.JSONEncoder` internally.
+
     :param path: path to the file
     :param value: JSON-able content
     :param kwargs: will be passed to ujson/json's dump
     """
-    if isinstance(value, JSONAble):
-        value = value.to_json()
     with open(path, 'w') as f_out:
-        try:
-            import ujson
-            ujson.dump(value, f_out, **kwargs)
-        except ImportError:
-            json.dump(value, f_out, **kwargs)
+        f_out.write(JSONEncoder().encode(value))
 
 
-def write_json_to_file_if_different(path: str, value: JSONAble, **kwargs) -> bool:
+def write_json_to_file_if_different(path: str, value: JSONAble,
+                                    encoding: str = 'utf-8', **kwargs) -> bool:
     """
     Read JSON from a file. Write out a JSON to a file if it's value is different,
     as UTF-8 encoded plain text.
 
+    This will use Satella's :class:`~satella.json.JSONEncoder` internally.
+
     :param path: path to the file
     :param value: JSON-able content
+    :param encoding: encoding to use while parsing the contents of the file
     :param kwargs: will be passed to ujson/json dumps
     :return: whether the write actually happened
     """
-    if isinstance(value, JSONAble):
-        value = value.to_json()
-    try:
-        val = read_json_from_file(path)
-        if val != value:
-            write_json_to_file(path, value, **kwargs)
-            return True
-        return False
-    except (OSError, ValueError):
-        write_json_to_file(path, value, **kwargs)
-        return True
+    value = JSONEncoder().encode(value)
+    return write_out_file_if_different(path, value, encoding)
 
 
 def read_json_from_file(path: str) -> JSONAble:
