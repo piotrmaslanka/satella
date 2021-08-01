@@ -1,12 +1,21 @@
+import enum
 import json
 import typing as tp
 import unittest
 
 from satella.json import JSONAble, json_encode, read_json_from_file, write_json_to_file, \
-write_json_to_file_if_different
+    write_json_to_file_if_different, JSONEncoder
 
 
 class TestJson(unittest.TestCase):
+
+    def test_json_encoder_enums(self):
+        enc = JSONEncoder()
+
+        class Enum(enum.Enum):
+            A = 'test'
+        b = enc.encode(Enum.A)
+        self.assertEqual(b, '"test')
 
     def test_write_json_to_file_if_different(self):
         d = {'test': 4}

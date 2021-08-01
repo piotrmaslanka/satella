@@ -1,3 +1,4 @@
+import enum
 import typing as tp
 from abc import ABCMeta, abstractmethod
 import json
@@ -21,6 +22,8 @@ class JSONAble(metaclass=ABCMeta):
 class JSONEncoder(json.JSONEncoder):
     """
     This encoder will encode everything!
+
+    enums will be dumped to their value.
     """
 
     def default(self, o: tp.Any) -> Jsonable:
@@ -28,6 +31,8 @@ class JSONEncoder(json.JSONEncoder):
             return o.to_json()
         elif isinstance(o, (int, float, str, NoneType)):
             return o
+        elif isinstance(o, enum.Enum):
+            return o.value
         elif isinstance(o, (list, tuple)):
             return [self.default(v) for v in o]
         elif isinstance(o, dict):
