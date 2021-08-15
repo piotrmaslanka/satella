@@ -38,6 +38,22 @@ class TestTime(unittest.TestCase):
         time.sleep(1)
         eb.success()
 
+    def test_exponential_backoff_launch(self):
+        eb = ExponentialBackoff(start=2, limit=30)
+        i = 1
+        @eb.launch(ValueError)
+        def do_action():
+            nonlocal i
+            if i == 3:
+                return
+            else:
+                i += 1
+                raise ValueError()
+
+        with measure() as m:
+            do_action()
+        self.assertGreaterEqual(m(), 2)
+
     def test_exponential_backoff_waiting_for_service_healthy(self):
         eb = ExponentialBackoff(start=2, limit=30)
         self.assertTrue(eb.ready_for_next_check)

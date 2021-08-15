@@ -1,6 +1,10 @@
 import time
 import typing as tp
 
+from satella.coding.decorators.decorators import wraps
+
+from satella.coding.typing import ExceptionList
+
 from satella.coding.concurrent.thread import Condition
 from .measure import measure
 from ..exceptions import WouldWaitMore
@@ -124,3 +128,40 @@ class ExponentialBackoff:
         self.grace_counter = 0
         self.unavailable_until = None
         self.condition.notify_all()
+
+    def launch(self, exceptions_on_failed: ExceptionList = Exception):
+        """
+        A decorator to simplify writing doing-something loops. Basically, this:
+
+        >>> eb = ExponentialBackoff(start=2.5, limit=30)
+        >>> @eb.launch(TypeError)
+        >>> def do_action(*args, **kwargs):
+        >>>     x_do_action(*args, **kwargs)
+        >>> do_action(5, test=True)
+
+        is equivalent to this:
+
+        >>> eb = ExponentialBackoff(start=2.5, limit=30)
+        >>> while True:
+        >>>     try:
+        >>>         x_do_action(5, test=True)
+        >>>     except TypeError:
+        >>>         eb.failed()
+        >>>         eb.sleep()
+
+        :param exceptions_on_failed: a list of a single exception of exceptions
+            whose raising will signal that fun has failed
+        :return: a function, that called, will pass the exactly same parameters
+        """
+        def outer(fun):
+            @wraps(fun)
+            def inner(*args, **kwargs):
+                try:
+                    r = fun(*args, **kwargs)
+                    self.success()
+                    return r
+                except exceptions_on_failed:
+                    self.failed()
+                    self.sleep()
+            return inner
+        return outer
