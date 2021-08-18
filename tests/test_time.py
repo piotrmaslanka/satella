@@ -38,13 +38,32 @@ class TestTime(unittest.TestCase):
         time.sleep(1)
         eb.success()
 
+    def test_exponential_backoff_launch_immediate(self):
+        eb = ExponentialBackoff(start=2, limit=30)
+        i = 1
+        a = 0
+        with measure() as m:
+            @eb.launch(ValueError, immediate=True)
+            def do_action():
+                nonlocal i, a
+                a += 1
+                if i == 4:
+                    return
+                else:
+                    i += 1
+                    raise ValueError()
+        self.assertGreaterEqual(m(), 2)
+        self.assertGreaterEqual(a, 2)
+
     def test_exponential_backoff_launch(self):
         eb = ExponentialBackoff(start=2, limit=30)
         i = 1
+        a = 0
         @eb.launch(ValueError)
         def do_action():
-            nonlocal i
-            if i == 3:
+            nonlocal i, a
+            a += 1
+            if i == 4:
                 return
             else:
                 i += 1
@@ -53,6 +72,7 @@ class TestTime(unittest.TestCase):
         with measure() as m:
             do_action()
         self.assertGreaterEqual(m(), 2)
+        self.assertGreaterEqual(a, 2)
 
     def test_exponential_backoff_waiting_for_service_healthy(self):
         eb = ExponentialBackoff(start=2, limit=30)

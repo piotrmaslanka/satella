@@ -129,7 +129,8 @@ class ExponentialBackoff:
         self.unavailable_until = None
         self.condition.notify_all()
 
-    def launch(self, exceptions_on_failed: ExceptionList = Exception):
+    def launch(self, exceptions_on_failed: ExceptionList = Exception,
+               immediate: bool = False):
         """
         A decorator to simplify writing doing-something loops. Basically, this:
 
@@ -149,19 +150,29 @@ class ExponentialBackoff:
         >>>         eb.failed()
         >>>         eb.sleep()
 
+        The first example with :code:`immediate=True` could skip the last call to do_action,
+        as it will be executed automatically with zero parameters if immediate=True is set.
+
         :param exceptions_on_failed: a list of a single exception of exceptions
             whose raising will signal that fun has failed
+        :param immediate: immediately execute the function, but return the wrapped function
+            as a result of this decorator. The function will be called with zero arguments.
         :return: a function, that called, will pass the exactly same parameters
         """
         def outer(fun):
             @wraps(fun)
             def inner(*args, **kwargs):
-                try:
-                    r = fun(*args, **kwargs)
-                    self.success()
-                    return r
-                except exceptions_on_failed:
-                    self.failed()
-                    self.sleep()
+                while True:
+                    try:
+                        r = fun(*args, **kwargs)
+                        self.success()
+                        return r
+                    except exceptions_on_failed:
+                        self.failed()
+                        self.sleep()
+            if immediate:
+                inner()
+
             return inner
+
         return outer
