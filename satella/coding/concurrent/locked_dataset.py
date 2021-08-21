@@ -13,7 +13,8 @@ class LockedDataset:
     >>> class MyDataset(LockedDataset):
     >>>     def __init__(self):
     >>>         super(MyDataset, self).__init__()
-    >>>         self.mydata: str = "lol wut"
+    >>>         with self:
+    >>>             self.mydata: str = "lol wut"
     >>>    @LockedDataset.locked
     >>>    def protected(self):
     >>>         self.mydata = "updated atomically"
