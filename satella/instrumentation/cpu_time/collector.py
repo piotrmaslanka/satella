@@ -108,25 +108,28 @@ def sleep_cpu_aware(seconds: tp.Union[str, float], of_below: tp.Optional[float] 
     :param check_each: amount of seconds to sleep at once
     :return: whether was awoken due to CPU time condition
     """
+    v = False
     if of_below is None and of_above is None:
         time.sleep(seconds)
-        return False
-    calculate_occupancy_factor()  # prime the counter
-    while seconds > 0:
-        time_to_sleep = min(seconds, check_each)
-        time.sleep(time_to_sleep)
-        of = calculate_occupancy_factor()
+    else:
+        calculate_occupancy_factor()  # prime the counter
+        while seconds > 0:
+            time_to_sleep = min(seconds, check_each)
+            time.sleep(time_to_sleep)
+            of = calculate_occupancy_factor()
 
-        if of_above is not None:
-            if of > of_above:
-                return True
-        if of_below is not None:
-            if of < of_below:
-                return True
-        seconds -= time_to_sleep
-        if seconds <= 0:
-            return False
-    return False
+            if of_above is not None:
+                if of > of_above:
+                    v = True
+                    break
+            if of_below is not None:
+                if of < of_below:
+                    v = True
+                    break
+            seconds -= time_to_sleep
+            if seconds <= 0:
+                break
+    return v
 
 
 previous_cf = None  # type: float
