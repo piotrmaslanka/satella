@@ -194,6 +194,7 @@ class SyncableDroppable(RMonitor, tp.Generic[K, V]):
                     # We no longer have ANY data
                     self.start_entry = self.stop_entry = None
                 return True
+
         finally:
             try_close(iterator)
         return False

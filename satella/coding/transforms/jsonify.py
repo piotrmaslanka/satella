@@ -19,22 +19,23 @@ def jsonify(data: tp.Any) -> tp.Optional[tp.Union[str, int, float, list, dict]]:
     :return: JSON-able data
     """
     if data is None:
-        return None
+        v = None
     elif isinstance(data, (int, float, str)):
-        return data
+        v = data
     elif isinstance(data, enum.Enum):
-        return data.value
+        v = data.value
     elif isinstance(data, JSONAble):
-        return jsonify(data.to_json())
+        v = jsonify(data.to_json())
     elif isinstance(data, tp.Mapping):
         new_mapping = {}
         for key in data:
             new_mapping[jsonify(key)] = jsonify(data[key])
-        return new_mapping
+        v = new_mapping
     elif isinstance(data, (tp.Iterable, tp.Iterator)):
-        return [jsonify(elem) for elem in data]
+        v = [jsonify(elem) for elem in data]
     else:
         try:
-            return str(data)
+            v = str(data)
         except TypeError:
-            return repr(data)
+            v = repr(data)
+    return v

@@ -254,29 +254,31 @@ def build_structure(struct: tp.Union[tuple, list, dict],
     """
     if not nested_call:
         v = build_structure(struct, argument, None, True)
-        return final_operator(v)
-
-    from satella.coding.structures import HashableWrapper
-    if isinstance(struct, tp.MutableMapping):
-        new_dict = {}
-        for key, value in struct.items():
-            key = build_structure(key, argument, None, True)
-            value = build_structure(value, argument, None, True)
-            new_dict[key] = value
-            return new_dict
-    elif isinstance(struct, tp.Sequence):
-        new_seq = []
-        for elem in struct:
-            if isinstance(elem, PredicateClass):
-                elem = elem(argument)
-            else:
-                elem = build_structure(elem, argument, None, True)
-            new_seq.append(elem)
-        return struct.__class__(new_seq)
-    elif isinstance(struct, HashableWrapper):
-        obj = getattr(struct, '_Proxy__obj')
-        return build_structure(obj, argument, None, True)
-    elif isinstance(struct, PredicateClass):
-        return struct(argument)
+        f = final_operator(v)
     else:
-        return struct
+        from satella.coding.structures import HashableWrapper
+        if isinstance(struct, tp.MutableMapping):
+            new_dict = {}
+            for key, value in struct.items():
+                key = build_structure(key, argument, None, True)
+                value = build_structure(value, argument, None, True)
+                new_dict[key] = value
+                f = new_dict
+                break
+        elif isinstance(struct, tp.Sequence):
+            new_seq = []
+            for elem in struct:
+                if isinstance(elem, PredicateClass):
+                    elem = elem(argument)
+                else:
+                    elem = build_structure(elem, argument, None, True)
+                new_seq.append(elem)
+            f = struct.__class__(new_seq)
+        elif isinstance(struct, HashableWrapper):
+            obj = getattr(struct, '_Proxy__obj')
+            f = build_structure(obj, argument, None, True)
+        elif isinstance(struct, PredicateClass):
+            f = struct(argument)
+        else:
+            f = struct
+    return f

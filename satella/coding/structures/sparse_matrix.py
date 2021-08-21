@@ -188,14 +188,15 @@ class SparseMatrix(tp.Generic[T]):
         :param row_no: row number, numbered from 0
         """
         if row_no not in self.rows_dict:  # check so as to avoid adding new entries
-            return [None] * self.no_cols
-        cols = self.rows_dict[row_no]
-        output = []
-        for i in range(self.no_cols):
-            if i in cols:
-                output.append(cols[i])
-            else:
-                output.append(None)
+            output = [None] * self.no_cols
+        else:
+            cols = self.rows_dict[row_no]
+            output = []
+            for i in range(self.no_cols):
+                if i in cols:
+                    output.append(cols[i])
+                else:
+                    output.append(None)
         return output
 
     def shoot(self) -> 'SparseMatrix':
@@ -283,21 +284,24 @@ class SparseMatrix(tp.Generic[T]):
         col, row = self._sanitize_key(item)
 
         if col is Ellipsis and row is Ellipsis:
-            return list(self)
+            v = list(self)
         elif col is Ellipsis:
-            return [self[col_no, row] for col_no in range(self.no_cols)]
+            v = [self[col_no, row] for col_no in range(self.no_cols)]
         elif row is Ellipsis:
-            return [self[col, row_no] for row_no in range(self.no_rows)]
+            v = [self[col, row_no] for row_no in range(self.no_rows)]
         else:
             if row >= self.no_rows:
                 raise IndexError()
             elif col >= self.no_cols:
                 raise IndexError()
+
             if row not in self.rows_dict:  # check so as to avoid adding new entries
-                return None
-            if col not in self.rows_dict[row]:
-                return None
-            return self.rows_dict[row][col]
+                v = None
+            elif col not in self.rows_dict[row]:
+                v = None
+            else:
+                v = self.rows_dict[row][col]
+        return v
 
     @silence_excs(TypeError, returns=0)
     def _calculate_column_count(self) -> int:
@@ -321,10 +325,7 @@ class SparseMatrix(tp.Generic[T]):
                 del self[col, row_no]
         else:
             # Check if the element is there
-            if row not in self.rows_dict:
-                return
-
-            if col not in self.rows_dict[row]:
+            if (row not in self.rows_dict) or (col not in self.rows_dict[row]):
                 return
 
             del self.rows_dict[row][col]

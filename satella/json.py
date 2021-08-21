@@ -30,30 +30,31 @@ class JSONEncoder(json.JSONEncoder):
 
     def default(self, o: tp.Any) -> Jsonable:
         if hasattr(o, 'to_json'):
-            return o.to_json()
+            v = o.to_json()
         elif isinstance(o, (int, float, str, NoneType)):
-            return o
+            v = o
         elif isinstance(o, enum.Enum):
-            return o.value
+            v = o.value
         elif isinstance(o, (list, tuple)):
-            return [self.default(v) for v in o]
+            v = [self.default(v) for v in o]
         elif isinstance(o, dict):
-            return {self.default(k): self.default(v) for k, v in o.items()}
-
-        try:
-            return super().default(o)
-        except TypeError:
-            dct = {}
+            v = {self.default(k): self.default(v) for k, v in o.items()}
+        else:
             try:
-                for k, v in o.__dict__.items():
-                    dct[k] = self.default(v)
-            except AttributeError:  # o has no attribute '__dict__', try with slots
+                v = super().default(o)
+            except TypeError:
+                dct = {}
                 try:
-                    for slot in o.__slots__:
-                        dct[slot] = self.default(getattr(o, slot))
-                except AttributeError:  # it doesn't have __slots__ either?
-                    return '<an instance of %s>' % (o.__class__.__name__,)
-            return dct
+                    for k, v in o.__dict__.items():
+                        dct[k] = self.default(v)
+                except AttributeError:  # o has no attribute '__dict__', try with slots
+                    try:
+                        for slot in o.__slots__:
+                            dct[slot] = self.default(getattr(o, slot))
+                    except AttributeError:  # it doesn't have __slots__ either?
+                        v = '<an instance of %s>' % (o.__class__.__name__,)
+                v = dct
+        return v
 
 
 def json_encode(x: tp.Any) -> str:
@@ -109,10 +110,11 @@ def read_json_from_file(path: str) -> JSONAble:
     try:
         import ujson
         with open(path, 'r') as f_in:
-            return ujson.load(f_in)
+            v = ujson.load(f_in)
     except ImportError:
         with open(path, 'r') as f_in:
             try:
-                return json.load(f_in)
+                v = json.load(f_in)
             except json.decoder.JSONDecodeError as e:
                 raise ValueError(str(e))
+    return v
