@@ -44,7 +44,7 @@ class measure:
 
     >>> class Test:
     >>>     @measure()
-    >>>     def measuring(self, measurement_object: measure):
+    >>>     def measuring(self, measurement_object: measure, arg1):
     >>>         ...
 
     You can also measure how long does executing a future take, eg.

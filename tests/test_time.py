@@ -13,6 +13,25 @@ from concurrent.futures import Future
 
 class TestTime(unittest.TestCase):
 
+    def test_measure_as_method(self):
+        self2 = self
+
+        class MyClass:
+            def __init__(self):
+                self.a = 1
+
+            @measure()
+            def function(self, v, b):
+                time.sleep(1)
+                self.a += b
+                self2.assertGreaterEqual(v(), 1)
+
+        d = MyClass()
+        with measure() as m:
+            d.function(2)
+        self.assertGreaterEqual(m(), 1)
+        self.assertEqual(d.a, 3)
+
     def test_exponential_backoff_grace(self):
         eb = ExponentialBackoff(grace_amount=2)
         self.assertTrue(eb.available)
