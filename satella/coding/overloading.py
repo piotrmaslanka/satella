@@ -55,6 +55,8 @@ class overload:
     >>> @what_type.overload
     >>> def what_type(x: int):
     >>>     print('Int')
+
+    Note that this instance's __wrapped__ will refer to the first function.
     """
 
     def __init__(self, fun: tp.Callable):
@@ -63,6 +65,7 @@ class overload:
         }  # type: tp.Dict[tp.Tuple[type, ...], tp.Callable]
         if hasattr(fun, '__doc__'):
             self.__doc__ = fun.__doc__
+        self.__wrapped__ = fun
 
     def overload(self, fun):
         """
