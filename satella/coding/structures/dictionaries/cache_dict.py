@@ -65,16 +65,18 @@ class CacheDict(tp.Mapping[K, V]):
             try:
                 # an additional check, since this is a concurrent data structure and
                 # we aren't locking
-                return self.time_getter() - self.timestamp_data[key] <= self.expiration_interval
+                v = self.time_getter() - self.timestamp_data[key] <= self.expiration_interval
             except KeyError:
-                return False
+                v = False
+            return v
 
         if self.cache_failures:
             if key in self.cache_missed:
                 try:
-                    return self.time_getter() - self.timestamp_data[key] <= self.expiration_interval
+                    v = self.time_getter() - self.timestamp_data[key] <= self.expiration_interval
                 except KeyError:
-                    return False
+                    v = False
+                return v
 
         return False
 

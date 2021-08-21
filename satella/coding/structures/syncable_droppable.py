@@ -336,21 +336,21 @@ class SyncableDroppable(RMonitor, tp.Generic[K, V]):
                         data = itertools.chain(data, self.data_in_memory)
                     else:
                         data = itertools.chain(data, self.data_in_memory[:entries_left])
-                return data
+                v = data
             finally:
                 try_close(iterator)
         else:
             if self.first_key_in_memory <= self.synced_up_to:
                 # Means we have to sync from memory
                 if self.synced_up_to is None:
-                    return self.data_in_memory
+                    v = self.data_in_memory
                 else:
                     index = bisect.bisect_right([y[0] for y in self.data_in_memory],
                                                 self.synced_up_to)
                     if maximum_entries == math.inf:
-                        return self.data_in_memory[index:]
+                        v = self.data_in_memory[index:]
                     else:
-                        return self.data_in_memory[index:index + maximum_entries]
+                        v = self.data_in_memory[index:index + maximum_entries]
             else:
                 # We have to start off the disk
                 data = []
@@ -366,11 +366,13 @@ class SyncableDroppable(RMonitor, tp.Generic[K, V]):
                                 if self.synced_up_to is not None:
                                     if tpl[0] > self.synced_up_to:
                                         break
-                            return itertools.chain(data, self.data_in_memory[:index])
+                            v = itertools.chain(data, self.data_in_memory[:index])
+                            break
                     else:
-                        return data
+                        v = data
                 finally:
                     try_close(iterator)
+        return v
 
     def on_synced_up_to(self, key: K) -> None:
         """
