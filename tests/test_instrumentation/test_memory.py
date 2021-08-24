@@ -1,5 +1,6 @@
 import logging
 import os
+import platform
 import signal
 import sys
 
@@ -27,9 +28,15 @@ class TestMemory(unittest.TestCase):
         install_dump_frames_on(signal.SIGUSR1)
         os.kill(os.getpid(), signal.SIGUSR1)
 
+    @unittest.skipIf(platform.python_implementation() == 'PyPy', 'does not work on PyPy')
     def test_get_size(self):
         a = 'a' * 1024
         self.assertGreaterEqual(get_size(a), 1024)
+
+    @unittest.skipIf(platform.python_implementation() != 'PyPy', 'requires PyPy')
+    def test_get_size_runtime_error(self):
+        a = 'a' * 1024
+        self.assertRaises(RuntimeError, lambda: get_size(a))
 
     def test_dump_memory(self):
         dump_memory_on()

@@ -9,8 +9,12 @@ def get_size(obj, seen=None) -> int:
 
     :param obj: object to measure
     :return: size in bytes of the object and all of it's subcomponents
+    :raises RuntimeError: when ran on PyPy
     """
-    size = sys.getsizeof(obj)
+    try:
+        size = sys.getsizeof(obj)
+    except TypeError:
+        raise RuntimeError('Running on PyPy?')
     if seen is None:
         seen = set()
     obj_id = id(obj)
