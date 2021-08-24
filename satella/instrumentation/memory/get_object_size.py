@@ -5,7 +5,7 @@ import sys
 # https://goshippo.com/blog/measure-real-size-any-python-object/
 def get_size(obj, seen=None) -> int:
     """
-    Recursively finds size of objects
+    Recursively finds the total size of an object (object + it's components).
 
     :param obj: object to measure
     :return: size in bytes of the object and all of it's subcomponents
