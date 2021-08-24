@@ -3,8 +3,9 @@ from .conditions import Any, All, GlobalRelativeValue, GlobalAbsoluteValue, Loca
 from .default import install_force_gc_collect
 from .memthread import MemoryPressureManager
 from .dump_frames_on import dump_memory_on, install_dump_memory_on
+from .get_object_size import get_size
 
 __all__ = ['Any', 'All', 'MemoryPressureManager', 'GlobalAbsoluteValue',
            'GB', 'GlobalRelativeValue', 'LocalRelativeValue', 'LocalAbsoluteValue', 'MB', 'KB',
            'CustomCondition', 'Not', 'install_force_gc_collect',
-           'dump_memory_on', 'install_dump_memory_on']
+           'dump_memory_on', 'install_dump_memory_on', 'get_size']

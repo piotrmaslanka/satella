@@ -5,7 +5,7 @@ import sys
 
 from satella.instrumentation import install_dump_frames_on
 from satella.instrumentation.memory import MemoryPressureManager, CustomCondition, All, Any, \
-    dump_memory_on
+    dump_memory_on, get_size
 import time
 import unittest
 logger = logging.getLogger(__name__)
@@ -26,6 +26,10 @@ class TestMemory(unittest.TestCase):
     def test_install_dump_on(self):
         install_dump_frames_on(signal.SIGUSR1)
         os.kill(os.getpid(), signal.SIGUSR1)
+
+    def test_get_size(self):
+        a = 'a' * 1024
+        self.assertGreaterEqual(get_size(a), 1024)
 
     def test_dump_memory(self):
         dump_memory_on()

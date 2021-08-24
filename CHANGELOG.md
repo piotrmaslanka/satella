@@ -2,3 +2,4 @@
 
 * fixed #49
 * fixed #48
+* added get_size

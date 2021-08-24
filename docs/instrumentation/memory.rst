@@ -8,6 +8,8 @@ be recomputed later.
 Problem is, that they need a trigger to do it. Memory pressure management
 from Satella solves that problem.
 
+.. autofunction:: satella.instrumentation.memory.get_size
+
 Defining severity levels
 ------------------------
 
