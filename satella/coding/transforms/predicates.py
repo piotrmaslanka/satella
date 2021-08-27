@@ -10,7 +10,7 @@ def is_subset(subset: tp.Dict, superset: tp.Dict) -> bool:
         have to be equal
     :return: does the condition hold?
     """
-    for k, v in subset:
+    for k, v in subset.items():
         if k not in superset:
             return False
         if v != superset[k]:
