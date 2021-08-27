@@ -11,11 +11,12 @@ from .percentile import percentile
 from .base64 import b64encode
 from .interpol import linear_interpolate
 from .words import hashables_to_int
+from .predicates import is_subset
 
 __all__ = ['stringify', 'split_shuffle_and_join', 'one_tuple', 'none_if_false',
            'merge_series', 'pad_to_multiple_of_length', 'clip', 'hashables_to_int',
            'jsonify', 'intify', 'percentile', 'b64encode', 'linear_interpolate',
-           'merge_list']
+           'merge_list', 'is_subset']
 
 from satella.coding.typing import T, NoArgCallable, Appendable, Number, Predicate
 
