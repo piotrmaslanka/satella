@@ -1,8 +1,15 @@
 import unittest
-from satella.random import shuffle_together, random_binary
+from satella.random import shuffle_together, random_binary, random_word
+import string
 
 
 class TestRandom(unittest.TestCase):
+
+    def test_random_word(self):
+        rand_word = random_word(5)
+        self.assertEqual(len(rand_word), 5)
+        self.assertTrue(all(y in string.ascii_lowercase for y in rand_word))
+
     def test_random_binary(self):
         self.assertFalse(random_binary(0))
         self.assertEqual(len(random_binary(10)), 10)

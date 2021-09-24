@@ -11,3 +11,8 @@ random_binary
 -------------
 
 .. autofunction:: satella.random.random_binary
+
+random_word
+-----------
+
+.. autofunction:: satella.random.random_word
