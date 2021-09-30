@@ -2,6 +2,7 @@
 Just useful objects to make your coding nicer every day
 """
 
+from .ctxt_managers import EmptyContextManager
 from .algos import merge_dicts
 from .concurrent import Monitor, RMonitor
 from .decorators import precondition, short_none, has_keys, \
@@ -23,6 +24,7 @@ from .expect_exception import expect_exception
 from .deep_compare import assert_equal, InequalityReason, Inequal
 
 __all__ = [
+    'EmptyContextManager',
     'assert_equal', 'InequalityReason', 'Inequal',
     'Closeable', 'contains', 'enum_value', 'reraise_as',
     'expect_exception',

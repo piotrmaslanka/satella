@@ -1,12 +1,16 @@
 import unittest
 
 from satella.coding import precondition, short_none, has_keys, update_if_not_none, postcondition, \
-    get_arguments, expect_exception
+    get_arguments, expect_exception, EmptyContextManager
 from satella.coding.decorators import for_argument
 from satella.exceptions import PreconditionError
 
 
 class TestTypecheck(unittest.TestCase):
+
+    def test_empty_ctxt_manager(self):
+        with EmptyContextManager() as p:
+            pass
 
     def test_except_exception(self):
         def expect_exception_1():

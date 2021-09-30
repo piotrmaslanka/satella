@@ -12,6 +12,7 @@ Visit the project's page at GitHub_!
 
            configuration/schema
            configuration/sources
+           coding/ctxt_managers
            coding/functions
            coding/futures
            coding/structures
