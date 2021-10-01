@@ -1,3 +1,3 @@
-# v2.17.22
+# v2.17.23
 
-* added empty context manager
+* un-deprecated the `cps` metric

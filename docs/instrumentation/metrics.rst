@@ -85,6 +85,9 @@ are available:
     .. autoclass:: satella.instrumentation.metrics.metric_types.ClicksPerTimeUnitMetric
         :members:
 
+.. note:: Normally you should use a counter and calculate a rate() from it, but since some
+          platforms suck at rate a decision was made to keep this.
+
 * linkfail - for tracking whether given link is online or offline
 
     .. autoclass:: satella.instrumentation.metrics.metric_types.LinkfailMetric

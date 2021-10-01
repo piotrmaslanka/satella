@@ -1,7 +1,6 @@
 import collections
 import time
 import typing as tp
-import warnings
 
 from .base import EmbeddedSubmetrics
 from .registry import register_metric
@@ -16,18 +15,15 @@ class ClicksPerTimeUnitMetric(EmbeddedSubmetrics):
 
     By default (if you do not specify otherwise) this will track calls made during the last second.
 
-    .. deprecated:: 2.14.22
-        Use :class:`~satella.instrumentation.metrics.metric_types.CounterMetric` instead
+    This was once deprecated but out of platforms which suck at calculating derivatives of their
+    series (AWS, I'm looking at you!) this was decided to be undeprecated.
     """
-    __slots__ = ('last_clicks', 'aggregate_children', 'cutoff_period', 'time_unit_vectors')
+    __slots__ = 'last_clicks', 'aggregate_children', 'cutoff_period', 'time_unit_vectors'
 
     CLASS_NAME = 'cps'
 
     def __init__(self, *args, time_unit_vectors: tp.Optional[tp.List[float]] = None,
                  aggregate_children: bool = True, internal: bool = False, **kwargs):
-        warnings.warn('cps is deprecated and will be removed in Satella 3.0, '
-                      'use a counter and calculate a rate() from it instead',
-                      DeprecationWarning)
         super().__init__(*args, internal=internal, time_unit_vectors=time_unit_vectors, **kwargs)
         time_unit_vectors = time_unit_vectors or [1]
         self.last_clicks = collections.deque()  # type: tp.List[float]
