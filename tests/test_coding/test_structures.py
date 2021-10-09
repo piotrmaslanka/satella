@@ -664,6 +664,33 @@ class TestMisc(unittest.TestCase):
         self.assertEqual(a[e1], '1')
         self.assertEqual(hash(e1), hash(2))
 
+    def test_omni_not_filled_in_fields(self):
+        class Omni1(OmniHashableMixin):
+            _HASH_FIELDS_TO_USE = 'a'
+
+            def __init__(self, a=None):
+                if a is not None:
+                    self.a = a
+
+        self.assertNotEqual(Omni1(3), Omni1())
+        self.assertFalse(Omni1() == Omni1(3))
+
+    def test_omni_different_hierarchies(self):
+        class Omni1(OmniHashableMixin):
+            _HASH_FIELDS_TO_USE = 'a'
+
+            def __init__(self, a):
+                self.a = a
+
+        class Omni2(OmniHashableMixin):
+            _HASH_FIELDS_TO_USE = 'a'
+
+            def __init__(self, a):
+                self.a = a
+
+        self.assertNotEqual(Omni1(1), Omni2(1))
+        self.assertFalse(Omni1(1) == Omni2(1))
+
     def test_omni_single_field(self):
         class Omni(OmniHashableMixin):
             _HASH_FIELDS_TO_USE = 'a'

@@ -143,6 +143,8 @@ class OmniHashableMixin(metaclass=ABCMeta):
     Do everything in your power to make specified fields immutable, as mutating them will result
     in a different hash.
 
+    This will also check if the other value is an instance of this instance's class.
+
     _HASH_FIELDS_TO_USE can be also a single string, in this case a single field called by this
     name will be taken.
 
@@ -178,29 +180,40 @@ class OmniHashableMixin(metaclass=ABCMeta):
         """
         Note that this will only compare _HASH_FIELDS_TO_USE
         """
+        if not isinstance(other, type(self)):
+            return False
+
         if isinstance(other, OmniHashableMixin):
             cmpr_by = self._HASH_FIELDS_TO_USE
+            try:
+                if isinstance(cmpr_by, str):
+                    return getattr(self, cmpr_by) == getattr(other, cmpr_by)
 
-            if isinstance(cmpr_by, str):
-                return getattr(self, cmpr_by) == getattr(other, cmpr_by)
-
-            for field_name in self._HASH_FIELDS_TO_USE:
-                if getattr(self, field_name) != getattr(other, field_name):
-                    return False
-            return True
+                for field_name in self._HASH_FIELDS_TO_USE:
+                    if getattr(self, field_name) != getattr(other, field_name):
+                        return False
+                return True
+            except AttributeError:
+                return False
         else:
             return super().__eq__(other)
 
     def __ne__(self, other) -> bool:
+        if not isinstance(other, type(self)):
+            return True
+
         if isinstance(other, OmniHashableMixin):
             cmpr_by = self._HASH_FIELDS_TO_USE
 
-            if isinstance(cmpr_by, str):
-                return getattr(self, cmpr_by) != getattr(other, cmpr_by)
+            try:
+                if isinstance(cmpr_by, str):
+                    return getattr(self, cmpr_by) != getattr(other, cmpr_by)
 
-            for field_name in cmpr_by:
-                if getattr(self, field_name) != getattr(other, field_name):
-                    return True
-            return False
+                for field_name in cmpr_by:
+                    if getattr(self, field_name) != getattr(other, field_name):
+                        return True
+                return False
+            except AttributeError:
+                return True
         else:
             return super().__ne__(other)
