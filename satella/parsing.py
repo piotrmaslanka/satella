@@ -6,7 +6,9 @@ from satella.exceptions import NotEnoughBytes
 
 class BinaryParser:
     """
-    A class that allows parsing binary streams easily
+    A class that allows parsing binary streams easily.
+
+    This supports __len__ to return the amount of bytes remaining.
 
     :param b_stream: an object that allows indiced access, and allows subscripts to
         span ranges, which will return items parseable by struct
@@ -15,6 +17,15 @@ class BinaryParser:
 
     :ivar offset: offset from which bytes will be readed
     """
+    def __len__(self) -> int:
+        return self.get_remaining_bytes_count()
+
+    def get_remaining_bytes_count(self) -> int:
+        """
+        Return the amount of bytes remaining. This will not advance the pointer
+        """
+        return self.stream_length - self.pointer
+
     def __init__(self, b_stream: tp.Union[bytes, bytearray], offset: int = 0):
         self.b_stream = b_stream
         self.struct_cache = {}
@@ -57,6 +68,8 @@ class BinaryParser:
 
         This must be a single-character struct!
 
+        This will advance the pointer by size of st.
+
         :param st: a single-character struct.Struct or a single character struct specification
         :return: a value returned from it
         :raises NotEnoughBytes: not enough bytes remain in the stream!
@@ -85,6 +98,8 @@ class BinaryParser:
         """
         Try to obtain as many bytes as this struct requires and return them parsed.
 
+        This will advance the pointer by size of st.
+
         :param st: a struct.Struct or a multi character struct specification
         :return: a tuple of un-parsed values
         :raises NotEnoughBytes: not enough bytes remain in the stream!
@@ -97,3 +112,11 @@ class BinaryParser:
             return st.unpack(self.b_stream[self.pointer:self.pointer+st_len])
         finally:
             self.pointer += st_len
+
+    def get_remaining_bytes(self) -> tp.Union[bytes, bytearray]:
+        """
+        Return the remaining bytes.
+
+        This will not advance the pointer
+        """
+        return self.b_stream[self.pointer:]

@@ -14,3 +14,5 @@ class TestParsing(unittest.TestCase):
         self.assertRaises(NotEnoughBytes, lambda: bp.get_struct('>L'))
         self.assertRaises(NotEnoughBytes, lambda: bp.get_bytes(5))
         self.assertRaises(NotEnoughBytes, lambda: BinaryParser(b'', 1))
+        self.assertEqual(bp.get_remaining_bytes(), b'\x00')
+        self.assertEqual(len(bp), 1)
