@@ -21,7 +21,8 @@ __all__ = ['stringify', 'split_shuffle_and_join', 'one_tuple', 'none_if_false',
 from satella.coding.typing import T, NoArgCallable, Appendable, Number, Predicate, K, V
 
 
-def unpack_dict(dct: tp.Dict[K, V], *args: K) -> tp.Iterator[V]:
+def unpack_dict(dct: tp.Dict[K, V], *args: K,
+                map_through: tp.Callable[[V], V] = lambda y: y) -> tp.Iterator[V]:
     """
     Unpack a dictionary by accessing it's given keys in parallel.
 
@@ -32,11 +33,13 @@ def unpack_dict(dct: tp.Dict[K, V], *args: K) -> tp.Iterator[V]:
 
     :param dct: dictionary to unpack
     :param args: keys in this dictionary
+    :param map_through: a keyword argument, callable that will be called with
+        each value returned and the result of this callable will be returned
     :return: an iterator
     :raises KeyError: a key was not found
     """
     for key in args:
-        yield dct[key]
+        yield map_through(dct[key])
 
 
 def none_if_false(y: tp.Any) -> tp.Optional[tp.Any]:
