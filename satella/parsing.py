@@ -12,13 +12,17 @@ class BinaryParser:
     This supports __len__ to return the amount of bytes in the stream,
     and __bytes__ to return the bytes.
 
-    :param b_stream: an object that allows indiced access, and allows subscripts to
-        span ranges, which will return items parseable by struct
+    This is a zero-copy solution, and :meth:`get_parser` will be zero copy
+    as well.
+
+    :param b_stream: an object that allows subscripts to
+        span ranges, which will return items parsable by struct
     :param offset: initial offset into the stream
     :param length: optional maximum length of byte count
     :raises NotEnoughBytes: offset larger than stream length
 
-    :ivar offset: offset from which bytes will be readed
+    :ivar pointer: pointer to the next bytes. Can be read and modified at will to
+        preserve the earlier state of the BinaryParser.
     """
     def __len__(self) -> int:
         return self.length
@@ -53,7 +57,9 @@ class BinaryParser:
 
     def assert_has_bytes(self, n: int) -> None:
         """
-        Assert that we have at least n bytes to consume
+        Assert that we have at least n bytes to consume.
+
+        This does not advance the pointer.
 
         :param n: amount of bytes to consume
         :raises NotEnoughBytes: not enough bytes remain in the stream!
@@ -65,7 +71,7 @@ class BinaryParser:
         """
         Return a subclassed binary parser providing a window to another binary parser's data.
 
-        This will advance the pointer by length
+        This will advance the pointer by length bytes
 
         :param length: amount of bytes to view
         :return: a BinaryParser
@@ -117,7 +123,8 @@ class BinaryParser:
 
         This must be a single-character struct!
 
-        This will advance the pointer by size of st.
+        This will advance the pointer by size of st. Struct objects
+        will be served from internal instance-specific cache.
 
         :param st: a single-character struct.Struct or a single character struct specification
         :return: a value returned from it
@@ -145,7 +152,8 @@ class BinaryParser:
         """
         Try to obtain as many bytes as this struct requires and return them parsed.
 
-        This will advance the pointer by size of st.
+        This will advance the pointer by size of st. Struct objects
+        will be served from internal instance-specific cache.
 
         :param st: a struct.Struct or a multi character struct specification
         :return: a tuple of un-parsed values
@@ -165,4 +173,6 @@ class BinaryParser:
 
         This will not advance the pointer
         """
-        return self.b_stream[self.pointer:self.pointer+self.length]
+        advance = self.pointer - self.init_ofs
+        remaining = self.length - advance
+        return self.b_stream[self.pointer:self.pointer+remaining]

@@ -5,10 +5,14 @@ import base64
 
 from satella.coding.transforms import stringify, split_shuffle_and_join, one_tuple, \
     merge_series, pad_to_multiple_of_length, clip, b64encode, linear_interpolate, \
-    hashables_to_int, none_if_false, merge_list, is_subset
+    hashables_to_int, none_if_false, merge_list, is_subset, unpack_dict
 
 
 class TestTransforms(unittest.TestCase):
+
+    def test_unpack_dict(self):
+        a, b, c = unpack_dict({1: 2, 2: 3, 4: 5}, 1, 2, 4)
+        self.assertTrue(a == 2 and b == 3 and c == 5)
 
     def test_is_subset(self):
         self.assertTrue(is_subset({}, {}))

@@ -28,3 +28,5 @@ class TestParsing(unittest.TestCase):
         bp3 = bp.get_parser(4)
         self.assertEqual(bytes(bp3), b'\x00\x00\x00\xFF')
         self.assertRaises(NotEnoughBytes, lambda: bp2.get_parser(4))
+        bp3.skip(3)
+        self.assertEqual(bp3.get_remaining_bytes(), b'\xFF')

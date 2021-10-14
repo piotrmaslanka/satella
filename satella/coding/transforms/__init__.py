@@ -16,9 +16,27 @@ from .predicates import is_subset
 __all__ = ['stringify', 'split_shuffle_and_join', 'one_tuple', 'none_if_false',
            'merge_series', 'pad_to_multiple_of_length', 'clip', 'hashables_to_int',
            'jsonify', 'intify', 'percentile', 'b64encode', 'linear_interpolate',
-           'merge_list', 'is_subset']
+           'merge_list', 'is_subset', 'unpack_dict']
 
-from satella.coding.typing import T, NoArgCallable, Appendable, Number, Predicate
+from satella.coding.typing import T, NoArgCallable, Appendable, Number, Predicate, K, V
+
+
+def unpack_dict(dct: tp.Dict[K, V], *args: K) -> tp.Iterator[V]:
+    """
+    Unpack a dictionary by accessing it's given keys in parallel.
+
+    Example:
+
+    >>> a, b, c = unpack_dict({1:2, 2:3, 4:5}, 1, 2, 4)
+    >>> assert a == 2 and b == 3 and c == 5
+
+    :param dct: dictionary to unpack
+    :param args: keys in this dictionary
+    :return: an iterator
+    :raises KeyError: a key was not found
+    """
+    for key in args:
+        yield dct[key]
 
 
 def none_if_false(y: tp.Any) -> tp.Optional[tp.Any]:
