@@ -1,1 +1,3 @@
-# v2.17.24
+# v2.18
+
+* added `satella.parsing`

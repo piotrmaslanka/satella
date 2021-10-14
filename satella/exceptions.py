@@ -7,7 +7,7 @@ __all__ = ['BaseSatellaError', 'ResourceLockingError', 'ResourceNotLocked', 'Res
            'PreconditionError', 'MetricAlreadyExists', 'BaseSatellaException', 'CustomException',
            'CodedCustomException', 'CodedCustomExceptionMetaclass', 'WouldWaitMore',
            'ProcessFailed', 'AlreadyAllocated', 'Empty', 'ImpossibleError',
-           'ConfigurationMisconfiguredError']
+           'ConfigurationMisconfiguredError', 'NotEnoughBytes']
 
 
 class CustomException(Exception):
@@ -236,4 +236,10 @@ class ImpossibleError(BaseException):
     for it to reach.
 
     This is a BaseException, since it should be propagated upwards as soon as possible!
+    """
+
+
+class NotEnoughBytes(BaseSatellaError):
+    """
+    Not enough bytes in the parser remain to satisfy this request
     """

@@ -196,3 +196,10 @@ ProcessFailed
 
 .. autoclass:: satella.exceptions.ProcessFailed
     :members:
+
+
+NotEnoughBytes
+~~~~~~~~~~~~~~
+
+.. autoclass:: satella.exceptions.NotEnoughBytes
+    :members:
