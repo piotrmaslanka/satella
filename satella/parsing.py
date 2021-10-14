@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import struct
 import typing as tp
 
@@ -8,31 +9,60 @@ class BinaryParser:
     """
     A class that allows parsing binary streams easily.
 
-    This supports __len__ to return the amount of bytes remaining.
+    This supports __len__ to return the amount of bytes in the stream,
+    and __bytes__ to return the bytes.
 
     :param b_stream: an object that allows indiced access, and allows subscripts to
         span ranges, which will return items parseable by struct
     :param offset: initial offset into the stream
+    :param length: optional maximum length of byte count
     :raises NotEnoughBytes: offset larger than stream length
 
     :ivar offset: offset from which bytes will be readed
     """
     def __len__(self) -> int:
-        return self.get_remaining_bytes_count()
+        return self.length
 
     def get_remaining_bytes_count(self) -> int:
         """
         Return the amount of bytes remaining. This will not advance the pointer
         """
-        return self.stream_length - self.pointer
+        return self.length - self.pointer
 
-    def __init__(self, b_stream: tp.Union[bytes, bytearray], offset: int = 0):
+    def __init__(self, b_stream: tp.Union[bytes, bytearray], offset: int = 0,
+                 length: tp.Optional[int] = None):
         self.b_stream = b_stream
+        self.pointer = self.init_ofs = offset
         self.struct_cache = {}
-        self.stream_length = len(b_stream)
-        self.pointer = offset
+        self.length = length or len(b_stream)
         if offset > len(self.b_stream):
             raise NotEnoughBytes('Offset larger than the stream!')
+
+    def __bytes__(self) -> bytes:
+        return self.b_stream[self.init_ofs:self.init_ofs+self.length]
+
+    def get_parser(self, length: int) -> 'BinaryParser':
+        """
+        Return a subclassed binary parser providing a window to another binary parser's data.
+
+        This will advance the pointer by length
+
+        :param length: amount of bytes to view
+        :return: a BinaryParser
+        """
+        if self.length < self.pointer + length:
+            raise NotEnoughBytes('Not enough bytes')
+        try:
+            return BinaryParser(self.b_stream, self.pointer, length)
+        finally:
+            self.pointer += length
+
+    def reset(self) -> None:
+        """
+        Reset the internal pointer to starting value
+        :return:
+        """
+        self.pointer = self.init_ofs
 
     def _to_struct(self, st: tp.Union[str, struct.Struct]) -> struct.Struct:
         if isinstance(st, struct.Struct):
@@ -55,7 +85,7 @@ class BinaryParser:
         :return: bytes returned
         :raises NotEnoughBytes: not enough bytes remain in the stream!
         """
-        if self.stream_length < self.pointer + n:
+        if self.length < self.pointer + n:
             raise NotEnoughBytes('Not enough bytes')
         try:
             return self.b_stream[self.pointer:self.pointer+n]
@@ -85,7 +115,7 @@ class BinaryParser:
                                         'get_structs for multiples!'
 
         st_len = st.size
-        if self.stream_length < self.pointer + st_len:
+        if self.length < self.pointer + st_len:
             raise NotEnoughBytes('Not enough bytes')
 
         try:
@@ -106,7 +136,7 @@ class BinaryParser:
         """
         st = self._to_struct(st)
         st_len = st.size
-        if self.stream_length < self.pointer + st_len:
+        if self.length < self.pointer + st_len:
             raise NotEnoughBytes('Not enough bytes')
         try:
             return st.unpack(self.b_stream[self.pointer:self.pointer+st_len])
