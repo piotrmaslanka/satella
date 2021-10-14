@@ -27,7 +27,7 @@ class BinaryParser:
         """
         Return the amount of bytes remaining. This will not advance the pointer
         """
-        return self.length - self.pointer
+        return self.length - self.pointer + self.init_ofs
 
     def __init__(self, b_stream: tp.Union[bytes, bytearray], offset: int = 0,
                  length: tp.Optional[int] = None):
@@ -41,6 +41,26 @@ class BinaryParser:
     def __bytes__(self) -> bytes:
         return self.b_stream[self.init_ofs:self.init_ofs+self.length]
 
+    def skip(self, n: int) -> None:
+        """
+        Advance the pointer by n bytes
+
+        :param n: bytes to advance
+        :raises NotEnoughBytes: not enough bytes remain in the stream!
+        """
+        self.assert_has_bytes(n)
+        self.pointer += n
+
+    def assert_has_bytes(self, n: int) -> None:
+        """
+        Assert that we have at least n bytes to consume
+
+        :param n: amount of bytes to consume
+        :raises NotEnoughBytes: not enough bytes remain in the stream!
+        """
+        if self.length + self.init_ofs < self.pointer + n:
+            raise NotEnoughBytes('Not enough bytes')
+
     def get_parser(self, length: int) -> 'BinaryParser':
         """
         Return a subclassed binary parser providing a window to another binary parser's data.
@@ -49,9 +69,9 @@ class BinaryParser:
 
         :param length: amount of bytes to view
         :return: a BinaryParser
+        :raises NotEnoughBytes: not enough bytes remain in the stream!
         """
-        if self.length < self.pointer + length:
-            raise NotEnoughBytes('Not enough bytes')
+        self.assert_has_bytes(length)
         try:
             return BinaryParser(self.b_stream, self.pointer, length)
         finally:
@@ -85,8 +105,7 @@ class BinaryParser:
         :return: bytes returned
         :raises NotEnoughBytes: not enough bytes remain in the stream!
         """
-        if self.length < self.pointer + n:
-            raise NotEnoughBytes('Not enough bytes')
+        self.assert_has_bytes(n)
         try:
             return self.b_stream[self.pointer:self.pointer+n]
         finally:
@@ -115,9 +134,7 @@ class BinaryParser:
                                         'get_structs for multiples!'
 
         st_len = st.size
-        if self.length < self.pointer + st_len:
-            raise NotEnoughBytes('Not enough bytes')
-
+        self.assert_has_bytes(st_len)
         try:
             return st.unpack(self.b_stream[self.pointer:self.pointer+st_len])[0]
         finally:
@@ -136,8 +153,7 @@ class BinaryParser:
         """
         st = self._to_struct(st)
         st_len = st.size
-        if self.length < self.pointer + st_len:
-            raise NotEnoughBytes('Not enough bytes')
+        self.assert_has_bytes(st_len)
         try:
             return st.unpack(self.b_stream[self.pointer:self.pointer+st_len])
         finally:
@@ -149,4 +165,4 @@ class BinaryParser:
 
         This will not advance the pointer
         """
-        return self.b_stream[self.pointer:]
+        return self.b_stream[self.pointer:self.pointer+self.length]

@@ -23,3 +23,8 @@ class TestParsing(unittest.TestCase):
         self.assertEqual(bp2.get_struct('>L'), 258)
         self.assertRaises(NotEnoughBytes, lambda: bp2.get_struct('>L'))
         self.assertEqual(bp.pointer, 4)
+        bp.reset()
+        bp.skip(4)
+        bp3 = bp.get_parser(4)
+        self.assertEqual(bytes(bp3), b'\x00\x00\x00\xFF')
+        self.assertRaises(NotEnoughBytes, lambda: bp2.get_parser(4))
