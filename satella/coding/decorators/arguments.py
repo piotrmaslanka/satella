@@ -373,3 +373,40 @@ def for_argument(*t_ops: ForArgumentArg, **t_kwops: ForArgumentArg):
         return inner
 
     return outer
+
+
+def execute_if_attribute_none(attribute: str):
+    """
+    Decorator for instancemethods.
+
+    This will execute the function only if provided attribute is None.
+    Otherwise it will return a None
+
+    :param attribute: name of the attribute to check
+    """
+    def outer(fun):
+        @wraps(fun)
+        def inner(self, *args, **kwargs):
+            if getattr(self, attribute) is None:
+                return fun(self, *args, **kwargs)
+        return inner
+    return outer
+
+
+def execute_if_attribute_not_none(attribute: str):
+    """
+    Decorator for instancemethods.
+
+    This will execute the function only if provided attribute is not None.
+    Otherwise it will return a None
+
+    :param attribute: name of the attribute to check
+    """
+    def outer(fun):
+        @wraps(fun)
+        def inner(self, *args, **kwargs):
+            if getattr(self, attribute) is not None:
+                return fun(self, *args, **kwargs)
+        return inner
+    return outer
+

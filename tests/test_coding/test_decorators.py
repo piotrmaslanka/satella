@@ -9,7 +9,8 @@ from satella.coding import wraps, chain_functions, postcondition, \
 from satella.coding.decorators import auto_adapt_to_methods, attach_arguments, \
     execute_before, loop_while, memoize, copy_arguments, replace_argument_if, \
     retry, return_as_list, default_return, transform_result, transform_arguments, \
-    cache_memoize, call_method_on_exception
+    cache_memoize, call_method_on_exception, execute_if_attribute_none, \
+    execute_if_attribute_not_none
 from satella.coding.predicates import x
 from satella.exceptions import PreconditionError
 
@@ -17,6 +18,42 @@ logger = logging.getLogger(__name__)
 
 
 class TestDecorators(unittest.TestCase):
+
+    def test_execute_if_attribute_not_none(self):
+        class ExecIfAttrNone:
+            def __init__(self):
+                self.attr = None
+                self.called = 0
+
+            @execute_if_attribute_not_none('attr')
+            def run_me(self):
+                self.called += 1
+
+        e = ExecIfAttrNone()
+        self.assertEqual(e.called, 0)
+        e.run_me()
+        self.assertEqual(e.called, 0)
+        e.attr = 2
+        e.run_me()
+        self.assertEqual(e.called, 1)
+
+    def test_execute_if_attribute_none(self):
+        class ExecIfAttrNone:
+            def __init__(self):
+                self.attr = None
+                self.called = 0
+
+            @execute_if_attribute_none('attr')
+            def run_me(self):
+                self.called += 1
+
+        e = ExecIfAttrNone()
+        self.assertEqual(e.called, 0)
+        e.run_me()
+        self.assertEqual(e.called, 1)
+        e.attr = 2
+        e.run_me()
+        self.assertEqual(e.called, 1)
 
     def test_call_method_on_exception(self):
         a = {'called': False}

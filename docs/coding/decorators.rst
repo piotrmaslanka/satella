@@ -1,6 +1,10 @@
 Decorators
 ==========
 
+.. autofunction:: satella.coding.decorators.execute_if_attribute_none
+
+.. autofunction:: satella.coding.decorators.execute_if_attribute_not_none
+
 .. autofunction:: satella.coding.decorators.transform_result
 
 .. autofunction:: satella.coding.decorators.transform_arguments
