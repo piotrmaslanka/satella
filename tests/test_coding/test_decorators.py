@@ -10,7 +10,7 @@ from satella.coding.decorators import auto_adapt_to_methods, attach_arguments, \
     execute_before, loop_while, memoize, copy_arguments, replace_argument_if, \
     retry, return_as_list, default_return, transform_result, transform_arguments, \
     cache_memoize, call_method_on_exception, execute_if_attribute_none, \
-    execute_if_attribute_not_none
+    execute_if_attribute_not_none, cached_property
 from satella.coding.predicates import x
 from satella.exceptions import PreconditionError
 
@@ -18,6 +18,23 @@ logger = logging.getLogger(__name__)
 
 
 class TestDecorators(unittest.TestCase):
+
+    def test_cached_property(self):
+        class Example:
+            def __init__(self):
+                self._a = None
+                self.called = 0
+
+            @property
+            @cached_property('_a')
+            def a(self):
+                self.called += 1
+                return 'abc'
+        a = Example()
+        self.assertEqual(a.a, 'abc')
+        self.assertEqual(a.called, 1)
+        self.assertEqual(a.a, 'abc')
+        self.assertEqual(a.called, 1)
 
     def test_execute_if_attribute_not_none(self):
         class ExecIfAttrNone:

@@ -410,3 +410,42 @@ def execute_if_attribute_not_none(attribute: str):
         return inner
     return outer
 
+
+def cached_property(prop_name: str, assume_not_loaded = None):
+    """
+    A decorator to use to create cached properties.
+
+    You job is to only write the value returner. If the value is
+    currently assume_not_loaded (None by default) your property
+    method will be called. Otherwise it will be served from
+    cached attribute, whose value you provide as parameter.
+
+    Use as follows:
+
+    >>> class Example:
+    >>>     def __init__(self):
+    >>>         self._a = None
+    >>>     @property
+    >>>     @cached_property('_a')
+    >>>     def a(self) -> str:
+    >>>         return 'abc'
+    >>> a = Example()
+    >>> assert a.a == 'abc'
+    >>> assert a._a == 'abc'
+
+    :param prop_name: Name of property to store the value in
+    :param assume_not_loaded: Value if currently the attribute is
+        equal to this, it is assumed to not have been loaded
+    """
+    def outer(fun):
+        @wraps(fun)
+        def inner(self, *args, **kwargs):
+            attr_v = getattr(self, prop_name)
+            if attr_v == assume_not_loaded:
+                attr_v = fun(self, *args, **kwargs)
+                setattr(self, prop_name, attr_v)
+                return attr_v
+            else:
+                return attr_v
+        return inner
+    return outer
