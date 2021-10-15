@@ -1,3 +1,1 @@
-# v2.18.5
-
-* added `cached_property`
+# v2.18.6
