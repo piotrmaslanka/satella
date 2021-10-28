@@ -5,6 +5,7 @@ from inspect import Parameter, signature
 from queue import Queue
 
 from satella.coding.recast_exceptions import rethrow_as
+from queue import Empty
 
 
 def enum_value(value):
@@ -122,7 +123,10 @@ def queue_iterator(queue: Queue) -> tp.Iterator:
     >>>     yield queue.get()
     """
     while queue.qsize() > 0:
-        yield queue.get()
+        try:
+            yield queue.get(block=False)
+        except Empty:
+            return
 
 
 def update_if_not_none(dictionary: tp.Dict, key: tp.Hashable, value) -> tp.Dict:
