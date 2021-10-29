@@ -3,10 +3,10 @@ from .dictionaries import DictObject, apply_dict_object, DictionaryView, TwoWayD
     CacheDict, ExclusiveWritebackCache, CountingDict, LRUCacheDict, DefaultDict
 from .hashable_objects import HashableWrapper
 from .heaps import Heap, SetHeap, TimeBasedHeap, TimeBasedSetHeap
-from .immutable import Immutable, frozendict
+from .immutable import Immutable, frozendict, NotEqualToAnything, NOT_EQUAL_TO_ANYTHING
 from .mixins import OmniHashableMixin, ReprableMixin, StrEqHashableMixin, ComparableIntEnum, \
     HashableIntEnum, ComparableAndHashableBy, ComparableAndHashableByInt, ComparableEnum, \
-    HashableMixin, ComparableAndHashableByStr
+    HashableMixin, ComparableAndHashableByStr, DictionaryEQAble
 from .proxy import Proxy
 from .queues import Subqueue
 from .ranking import Ranking
@@ -26,8 +26,9 @@ __all__ = [
     'DBStorage', 'SyncableDroppable',
     'LRU',
     'LRUCacheDict',
+    'NotEqualToAnything', 'NOT_EQUAL_TO_ANYTHING',
     'HashableMixin',
-    'CountingDict',
+    'CountingDict', 'DictionaryEQAble',
     'Subqueue',
     'ExclusiveWritebackCache',
     'DefaultDict',

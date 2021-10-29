@@ -15,10 +15,39 @@ from satella.coding.structures import TimeBasedHeap, Heap, typednamedtuple, \
     CacheDict, StrEqHashableMixin, ComparableIntEnum, HashableIntEnum, ComparableAndHashableBy, \
     ComparableAndHashableByInt, SparseMatrix, ExclusiveWritebackCache, Subqueue, \
     CountingDict, ComparableEnum, LRU, LRUCacheDict, Vector, DefaultDict, PushIterable, \
-    ComparableAndHashableByStr
+    ComparableAndHashableByStr, NotEqualToAnything, NOT_EQUAL_TO_ANYTHING, DictionaryEQAble
 
 
-class TestMisc(unittest.TestCase):
+class TestStructures(unittest.TestCase):
+
+    def test_dictionary_eqable(self):
+        class Dupa(DictionaryEQAble):
+            def __init__(self, a):
+                self.a = a
+
+        class Dupa2(DictionaryEQAble):
+            def __init__(self, a):
+                self.a = a
+
+        a = Dupa(5)
+        b = Dupa(5)
+        c = Dupa(6)
+        d = Dupa2(5)
+        self.assertTrue(a == b)
+        self.assertFalse(a == c)
+        self.assertFalse(a == d)
+
+    def test_not_equal_to_anything(self):
+        self.assertTrue(NOT_EQUAL_TO_ANYTHING != NOT_EQUAL_TO_ANYTHING)
+        self.assertFalse(NOT_EQUAL_TO_ANYTHING == NOT_EQUAL_TO_ANYTHING)
+
+        class Dupa(NotEqualToAnything):
+            pass
+
+        a = Dupa()
+
+        self.assertTrue(a != a)
+        self.assertFalse(a == a)
 
     def test_push_iterable(self):
 

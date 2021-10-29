@@ -46,6 +46,24 @@ class Immutable(metaclass=ImmutableMetaType):
             super().__delattr__(attr)
 
 
+class NotEqualToAnything:
+    """
+    A class that defines __eq__ and __ne__ to be always False and True respectively
+
+    When exploiting this class please make sure that it gets to be the first
+    operand in the comparison, so that it's __eq__ and __ne__ gets called!
+    """
+
+    def __eq__(self, other) -> bool:
+        return False
+
+    def __next__(self, other) -> bool:
+        return True
+
+
+NOT_EQUAL_TO_ANYTHING = NotEqualToAnything()
+
+
 class frozendict(dict):
     """
     A hashable dict with express forbid to change it's values
