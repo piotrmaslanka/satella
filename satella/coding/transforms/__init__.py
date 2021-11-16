@@ -22,7 +22,8 @@ from satella.coding.typing import T, NoArgCallable, Appendable, Number, Predicat
 
 
 def unpack_dict(dct: tp.Dict[K, V], *args: K,
-                map_through: tp.Callable[[V], V] = lambda y: y) -> tp.Iterator[V]:
+                map_through: tp.Callable[[V], V] = lambda y: y,
+                raise_if_not_found: bool = True) -> tp.Iterator[V]:
     """
     Unpack a dictionary by accessing it's given keys in parallel.
 
@@ -35,11 +36,19 @@ def unpack_dict(dct: tp.Dict[K, V], *args: K,
     :param args: keys in this dictionary
     :param map_through: a keyword argument, callable that will be called with
         each value returned and the result of this callable will be returned
+    :param raise_if_not_found: a KeyError will be returned upon encountering a key
+        that does not exist. If set to False, a None will be returned.
     :return: an iterator
     :raises KeyError: a key was not found
     """
     for key in args:
-        yield map_through(dct[key])
+        try:
+            yield map_through(dct[key])
+        except KeyError:
+            if not raise_if_not_found:
+                yield None
+            else:
+                raise
 
 
 def none_if_false(y: tp.Any) -> tp.Optional[tp.Any]:
