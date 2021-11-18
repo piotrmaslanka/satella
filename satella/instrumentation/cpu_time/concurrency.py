@@ -89,7 +89,5 @@ class CPUTimeAwareIntervalTerminableThread(IntervalTerminableThread, metaclass=A
                     self.__sleep(seconds_to_wait)
                 elif seconds_to_wait < 0:
                     self.on_overrun(measured)
-        except SystemExit:
-            pass
         finally:
             self.cleanup()
