@@ -29,6 +29,7 @@ __all__ = [
     'NotEqualToAnything', 'NOT_EQUAL_TO_ANYTHING',
     'HashableMixin',
     'CountingDict', 'DictionaryEQAble',
+    'get_instances_for_singleton', 'delete_singleton_for',
     'Subqueue',
     'ExclusiveWritebackCache',
     'DefaultDict',
