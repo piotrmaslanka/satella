@@ -13,9 +13,9 @@ class HistogramMetric(EmbeddedSubmetrics, MeasurableMixin):
     """
     A histogram, by  `Prometheus' <https://github.com/prometheus/client_python#histogram/>`_
     interpretation.
-    
+
     :param buckets: buckets to add. First bucket will be from zero to first value, second from first
-        value to second, last bucket will be from last value to infinity. So there are 
+        value to second, last bucket will be from last value to infinity. So there are
         len(buckets)+1 buckets. Buckets are expected to be passed in sorted!
     :param aggregate_children: whether to accept child calls to be later presented as total
     """
@@ -76,8 +76,8 @@ class HistogramMetric(EmbeddedSubmetrics, MeasurableMixin):
         for amount, upper_bound in zip(self.buckets,
                                        self.bucket_limits + [math.inf]):
             labels = self.labels.copy()
-            labels.update(le=upper_bound,
-                          ge=lower_bound)
+            labels.update(ge=upper_bound,
+                          le=lower_bound)
             output.append(
                 MetricData(self.name, amount, labels, self.get_timestamp(), self.internal))
             lower_bound = upper_bound
