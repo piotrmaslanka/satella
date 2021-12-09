@@ -1,7 +1,8 @@
 import unittest
 
 from satella.coding.concurrent import call_in_separate_thread
-from satella.opentracing import trace_exception, trace_future, trace_function
+from satella.opentracing import trace_exception, trace_future, trace_function, \
+    set_maximum_traceback_length
 from unittest import mock
 
 
@@ -63,6 +64,7 @@ class TestOpentracing(unittest.TestCase):
 
     def test_trace_exception_none(self):
         trace_exception(None)
+        set_maximum_traceback_length(32768)
 
         span = mock.MagicMock()
         try:

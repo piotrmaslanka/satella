@@ -18,3 +18,7 @@ trace_exception
 
 .. autofunction:: satella.opentracing.trace_exception
 
+set_maximum_traceback_length
+----------------------------
+
+.. autofunction:: satella.opentracing.set_maximum_traceback_length
