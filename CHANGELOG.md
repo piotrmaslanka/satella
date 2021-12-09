@@ -1,3 +1,1 @@
-# v2.18.9
-
-* added `set_maximum_traceback_length`
+# v2.18.10
