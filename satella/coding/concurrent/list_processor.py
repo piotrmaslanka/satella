@@ -31,8 +31,10 @@ def parallel_construct(iterable: tp.Iterable[V],
             current_span = tracer.active_span
 
             def wrap_iterable(arg, *args,  **kwargs):
-                tracer.scope_manager.activate(current_span, finish_on_close=False)
-                return function(arg, *args, **kwargs)
+                scope = tracer.scope_manager.activate(current_span, finish_on_close=False)
+                v = function(arg, *args, **kwargs)
+                scope.close()
+                return v
 
     if wrap_iterable is None:
         wrap_iterable = function
