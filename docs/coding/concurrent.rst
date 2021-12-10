@@ -14,6 +14,11 @@ CallNoOftenThan
 .. autoclass:: satella.coding.concurrent.CallNoOftenThan
     :members:
 
+parallel_construct
+------------------
+
+.. autofunction:: satella.coding.concurrent.parallel_construct
+
 CancellableCallback
 -------------------
 

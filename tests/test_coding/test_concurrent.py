@@ -7,17 +7,32 @@ import time
 import unittest
 from concurrent.futures import ThreadPoolExecutor, Future as PythonFuture
 
+from opentracing.mocktracer import MockTracer
+from opentracing import set_global_tracer
+
 from satella.coding.concurrent import TerminableThread, CallableGroup, Condition, MonitorList, \
     LockedStructure, AtomicNumber, Monitor, IDAllocator, call_in_separate_thread, Timer, \
     parallel_execute, run_as_future, sync_threadpool, IntervalTerminableThread, Future, \
     WrappingFuture, PeekableQueue, SequentialIssuer, CancellableCallback, ThreadCollection, \
-    BogusTerminableThread, SingleStartThread, FutureCollection, MonitorSet
+    BogusTerminableThread, SingleStartThread, FutureCollection, MonitorSet, parallel_construct
 from satella.coding.concurrent.futures import call_in_future, ExecutorWrapper
 from satella.coding.sequences import unique
 from satella.exceptions import WouldWaitMore, AlreadyAllocated, Empty
 
 
 class TestConcurrent(unittest.TestCase):
+
+    def test_parallel_construct(self):
+        mock = MockTracer()
+        set_global_tracer(mock)
+
+        def mult2(x):
+            return x*2
+
+        tpe = ThreadPoolExecutor(max_workers=2)
+
+        ret = parallel_construct([1, 2, 3], mult2, tpe)
+        self.assertEqual(ret, [2, 4, 6])
 
     def test_monitor_set(self):
         ms = MonitorSet([1, 2, 3])

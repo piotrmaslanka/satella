@@ -12,12 +12,13 @@ from .thread import TerminableThread, Condition, SingleStartThread, call_in_sepa
 from .timer import Timer
 from .thread_collection import ThreadCollection
 from .queue import PeekableQueue
+from .list_processor import parallel_construct
 
 __all__ = ['LockedDataset', 'Monitor', 'RMonitor', 'CallableGroup', 'TerminableThread',
            'MonitorDict', 'MonitorList', 'Condition', 'LockedStructure', 'AtomicNumber',
            'CallNoOftenThan', 'SingleStartThread', 'IDAllocator', 'call_in_separate_thread',
            'BogusTerminableThread', 'Timer', 'parallel_execute', 'run_as_future',
            'sync_threadpool', 'IntervalTerminableThread', 'Future', 'MonitorSet',
-           'WrappingFuture', 'InvalidStateError', 'PeekableQueue',
+           'WrappingFuture', 'InvalidStateError', 'PeekableQueue', 'parallel_construct',
            'CancellableCallback', 'ThreadCollection', 'FutureCollection',
            'SequentialIssuer']

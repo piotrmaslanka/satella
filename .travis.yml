@@ -10,7 +10,7 @@ before_script:
   - chmod +x ./cc-test-reporter
   - ./cc-test-reporter before-build
   - pip install -r requirements.txt
-  - pip install -U pytest-xdist pytest-cov pytest pytest-forked pluggy py
+  - pip install -U pytest-xdist pytest-cov pytest pytest-forked pluggy py opentracing
   - python setup.py install
 jobs:
   include:
