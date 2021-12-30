@@ -4,6 +4,7 @@ import time
 import unittest
 
 from satella.coding.sequences import n_th
+from satella.coding.transforms import is_subset
 
 from satella.exceptions import MetricAlreadyExists
 from satella.instrumentation.metrics import getMetric, MetricLevel, MetricData, \
@@ -13,8 +14,13 @@ logger = logging.getLogger(__name__)
 
 
 def choose(postfix: str, mdc: MetricDataCollection, labels=None) -> MetricData:
+    labels = labels or {}
+    print('looking for', postfix, labels)
     for child in mdc.values:
-        if child.name.endswith(postfix) and child.labels == (labels or {}):
+        print('amongst', child.name, child.labels)
+        if postfix and child.name.endswith(postfix) and labels == child.labels:
+            return child
+        elif not postfix and labels == child.labels:
             return child
 
 
@@ -103,7 +109,7 @@ class TestMetric(unittest.TestCase):
         metric.runtime(1)
         metric.runtime(2.6)
         metric_data = metric.to_metric_data()
-        self.assertEqual(choose('', metric_data, {'le': 2.5, 'ge': 1.0}).value, 1)
+        self.assertEqual(choose('', metric_data, {'le': 1.0, 'ge': 2.5}).value, 1)
         self.assertEqual(choose('sum', metric_data).value, 3.6)
         self.assertEqual(choose('count', metric_data).value, 2)
 
@@ -112,10 +118,10 @@ class TestMetric(unittest.TestCase):
         metric.runtime(1, label='value')
         metric.runtime(2.6, label='value')
         metric_data = metric.to_metric_data()
-        self.assertEqual(choose('', metric_data, {'le': 2.5, 'ge': 1.0, 'label': 'value'}).value, 1)
+        self.assertEqual(choose('', metric_data, {'le': 1.0, 'ge': 2.5, 'label': 'value'}).value, 1)
         self.assertEqual(choose('sum', metric_data, {'label': 'value'}).value, 3.6)
         self.assertEqual(choose('count', metric_data, {'label': 'value'}).value, 2)
-        self.assertEqual(choose('total', metric_data, {'le': 2.5, 'ge': 1.0}).value, 1)
+        self.assertEqual(choose('total', metric_data, {'le': 1.0, 'ge': 2.5}).value, 1)
         self.assertEqual(choose('total.sum', metric_data).value, 3.6)
         self.assertEqual(choose('total.count', metric_data).value, 2)
 
