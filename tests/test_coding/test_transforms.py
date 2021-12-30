@@ -19,8 +19,8 @@ class TestTransforms(unittest.TestCase):
                               map_through=x*2)
         self.assertTrue(a == 4 and b == 6 and c == 10)
 
-        self.assertRaises(KeyError, lambda: unpack_dict({}, 2))
-        self.assertIsNone(unpack_dict({}, 2, raise_if_not_found=False))
+        self.assertRaises(KeyError, lambda: list(unpack_dict({}, 2)))
+        self.assertIsNone(list(unpack_dict({}, 2, raise_if_not_found=False))[0])
 
     def test_is_subset(self):
         self.assertTrue(is_subset({}, {}))
