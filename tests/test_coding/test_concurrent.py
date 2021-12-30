@@ -61,6 +61,8 @@ class TestConcurrent(unittest.TestCase):
         fc = FutureCollection((PythonFuture() for i in range(3)))
         self.assertRaises(WouldWaitMore, lambda: fc.result(0.5))
         self.assertRaises(WouldWaitMore, lambda: fc.exception(0.5))
+        fc.set_result(None)
+        self.assertIsNone(fc.exception())
 
     def test_future_collection_callbacks_one(self):
         a = {'count': 0}
