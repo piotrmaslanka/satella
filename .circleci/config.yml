@@ -30,7 +30,9 @@ jobs:
           name: Collect results
           command:
             coverage xml
-      - code-climate/format_coverage
+      - code-climate/format_coverage:
+          input_type: coverage.py
+          coverage_file: .coverage
       - code-climate/upload_coverage
 workflows:
   unit_test:
