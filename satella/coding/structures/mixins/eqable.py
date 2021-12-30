@@ -23,4 +23,4 @@ class DictionaryEQAble:
         for key in self.__dict__.keys():
             if getattr(other, key, NOT_EQUAL_TO_ANYTHING) != self.__dict__[key]:
                 return True
-        return True
+        return False
