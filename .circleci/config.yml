@@ -1,0 +1,31 @@
+version: '2.1'
+executors:
+  my-executor:
+    docker:
+      - image: smokserwis/build:python3
+orbs:
+  code-climate: travelaudience/code-climate@0.1.5
+jobs:
+  test:
+    executor: my-executor
+    steps:
+      - checkout
+      - codeclimate/install
+      - run:
+          name: Install dependencies
+          command: |
+            pip install -r requirements.txt
+            pip install -U pytest-xdist pytest-cov pytest pytest-forked pluggy py opentracing
+            python setup.py install
+      - run:
+          name: Unit tests
+          command: |
+             pytest -n 8 --cov=satella
+      - run:
+          name: Collect results
+            coverage xml
+      - codeclimate/upload_coverage
+workflows:
+  unit_test:
+    jobs:
+      - test
