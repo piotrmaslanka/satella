@@ -41,11 +41,15 @@ class TestConcurrent(unittest.TestCase):
         self.assertFalse(ms.insert_and_check(4))
 
     def test_future_collection_exception(self):
-        fc = FutureCollection([PythonFuture(), PythonFuture()])
+        fc = FutureCollection([PythonFuture()])
+        fc += PythonFuture()
         fc.set_running_or_notify_cancel()
         fc[0].set_exception(IndexError())
         fc[1].set_exception(ValueError())
         self.assertIsInstance(fc.exception(), IndexError)
+        fc += [PythonFuture(), PythonFuture()]
+        fc = fc + FutureCollection([PythonFuture()])
+        fc + [PythonFuture(), PythonFuture()]
 
     def test_future_collection_callbacks_one(self):
         a = {'count': 0}
