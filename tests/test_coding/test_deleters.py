@@ -33,8 +33,8 @@ class TestDeleters(unittest.TestCase):
 
     def test_list_deleter_reversed(self):
         a = [1, 2, 3, 4, 5, 6, 7, 8]
-        with ListDeleter(a) as ld:
-            for v in reversed(ld):
+        with reversed(ListDeleter(a)) as ld:
+            for v in ld:
                 self.assertEqual(v, ld())
                 self.assertEqual(v, ld.value)
                 if v % 2:
@@ -44,9 +44,8 @@ class TestDeleters(unittest.TestCase):
     def test_list_deleter_reversed_prev_next(self):
         a = [1, 2, 3, 4, 5, 6, 7, 8]
 
-        with ListDeleter(a) as ld:
+        with reversed(ListDeleter(a)) as ld:
             # Advance to the end of the list
-            ld = reversed(ld)
             self.assertRaises(StopIteration, ld.prev)
             while True:
                 # Advance to the start of the list

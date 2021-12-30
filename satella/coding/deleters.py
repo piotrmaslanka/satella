@@ -103,6 +103,17 @@ class ListDeleter(tp.Generic[T]):
     >>>         if entry.should_delete():
     >>>             ld.delete()
 
+    You can also use the alternative syntax of:
+    >>> ld = ListDeleter(my_list)
+    >>> while True:
+    >>>     try:
+    >>>         v = ld.next()
+    >>>     except StopIteration:
+    >>>         break
+    >>>     if condition(v):
+    >>>         ld.delete()
+    >>> ld.remove_items()
+
     Note that a single ListDeleter running from a single context must be iterated on by only a
     single Thread as it keeps the state of iterator in itself, to prevent allocating new objects
     and slowing things down too much.
@@ -116,14 +127,15 @@ class ListDeleter(tp.Generic[T]):
 
     You can pass any type of object here, as long as it supports pop(position) and __getitem__
     """
-    __slots__ = 'list_to_process', 'current_index', 'indices_to_delete', 'direction'
+    __slots__ = 'list_to_process', 'current_index', 'indices_to_delete', 'direction', 'removed'
 
-    def __init__(self, list_to_process: tp.MutableSequence[T]):
+    def __init__(self, list_to_process: tp.MutableSequence[T], direction: int = DIR_FORWARD):
         self.list_to_process = list_to_process
         # pointer to currently processed element
-        self.direction = DIR_FORWARD
-        self.current_index = -1
+        self.direction = direction
+        self.current_index = -1 if direction == DIR_FORWARD else len(self.list_to_process)
         self.indices_to_delete = set()  # type: tp.Set[int]
+        self.removed = False
 
     def __enter__(self) -> 'ListDeleter':
         return self
@@ -183,28 +195,39 @@ class ListDeleter(tp.Generic[T]):
 
     def __reversed__(self) -> 'ListDeleter':
         """
-        Take care, for this will modify the current object.
+        This will return a new ListDeleter. Take care that it will break context managers
+        such as this:
 
-        This is done not to break the context manager semantics, and enable this:
         >>> with ListDeleter(a):
         >>>     for v in reversed(a):
         >>>         ...
+
+        It is much preferred to do the following in that case:
+
+        >>> with reversed(ListDeleter(a)) as ld:
+        >>>     for v in a:
+        >>>         if condition(v):
+        >>>             ld.delete()
         """
         if self.direction == DIR_BACKWARD:
-            self.direction = DIR_FORWARD
-            self.current_index = -1
+            return ListDeleter(self.list_to_process)
         else:
-            self.direction = DIR_BACKWARD
-            self.current_index = len(self.list_to_process)
-        return self
+            return ListDeleter(self.list_to_process, DIR_BACKWARD)
+
+    def remove_items(self) -> None:
+        """
+        After all of the items have been marked for deletion, delete them
+        """
+        if not self.removed:
+            index_delta = 0
+            for index, element in enumerate(self.list_to_process[:]):
+                if index in self.indices_to_delete:
+                    self.list_to_process.pop(index - index_delta)
+                    index_delta += 1
+            self.removed = True
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        index_delta = 0
-        for index, element in enumerate(self.list_to_process[:]):
-            if index in self.indices_to_delete:
-                self.list_to_process.pop(index - index_delta)
-                index_delta += 1
-
+        self.remove_items()
         return False
 
     def __copy__(self) -> 'ListDeleter':
