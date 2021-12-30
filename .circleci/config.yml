@@ -1,4 +1,4 @@
-version: '2.1'
+version: 2.1
 executors:
   my-executor:
     docker:
@@ -10,7 +10,7 @@ jobs:
     executor: my-executor
     steps:
       - checkout
-      - codeclimate/install
+      - code-climate/install
       - run:
           name: Install dependencies
           command: |
@@ -23,8 +23,9 @@ jobs:
              pytest -n 8 --cov=satella
       - run:
           name: Collect results
+          command:
             coverage xml
-      - codeclimate/upload_coverage
+      - code-climate/upload_coverage
 workflows:
   unit_test:
     jobs:
