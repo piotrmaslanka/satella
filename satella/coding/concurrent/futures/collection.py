@@ -22,6 +22,9 @@ class FutureCollection:
             futures = list(futures)
         self.futures = futures
 
+    def __len__(self) -> int:
+        return len(self.futures)
+
     def __getitem__(self, n: int) -> Future:
         return self.futures[n]
 

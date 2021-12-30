@@ -50,6 +50,8 @@ class TestConcurrent(unittest.TestCase):
         fc += [PythonFuture(), PythonFuture()]
         fc = fc + FutureCollection([PythonFuture()])
         fc + [PythonFuture(), PythonFuture()]
+        fc += FutureCollection([])
+        self.assertGreaterEqual(len(fc), 3)
 
     def test_future_collection_callbacks_one(self):
         a = {'count': 0}
