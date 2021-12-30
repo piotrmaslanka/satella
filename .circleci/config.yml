@@ -5,26 +5,32 @@ executors:
       - image: smokserwis/build:python3
 orbs:
   code-climate: travelaudience/code-climate@0.1.5
+commands:
+  setup_python:
+    description: Set up requirements
+    steps:
+      - run:
+          command: |
+            pip install -r requirements.txt
+            pip install -U pytest-xdist pytest-cov pytest pytest-forked pluggy py opentracing
+            python setup.py install
+  unit_test:
+    description: Run the unit tests
+    steps:
+      - run: pytest -n 8 --cov=satella
 jobs:
   test:
     executor: my-executor
     steps:
       - checkout
       - code-climate/install
-      - run:
-          name: Install dependencies
-          command: |
-            pip install -r requirements.txt
-            pip install -U pytest-xdist pytest-cov pytest pytest-forked pluggy py opentracing
-            python setup.py install
-      - run:
-          name: Unit tests
-          command: |
-             pytest -n 8 --cov=satella
+      - setup_python
+      - unit_test
       - run:
           name: Collect results
           command:
             coverage xml
+      - code-climate/format_coverage
       - code-climate/upload_coverage
 workflows:
   unit_test:
