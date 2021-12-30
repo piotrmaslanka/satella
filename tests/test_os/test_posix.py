@@ -3,7 +3,7 @@ import os
 import sys
 import unittest
 
-from mock import patch, Mock
+from unittest.mock import patch, Mock
 
 from satella.exceptions import ResourceLocked
 from satella.os import PIDFileLock
