@@ -107,6 +107,9 @@ class ListDeleter(tp.Generic[T]):
     single Thread as it keeps the state of iterator in itself, to prevent allocating new objects
     and slowing things down too much.
 
+    Note that calling reversed() on this will reset the pointer to the end of the list
+    or the beginning of the list, respectively.
+
     This allocates only a single object per a call to delete().
 
     Calling the list deleter during iteration will yield the element.
@@ -117,9 +120,9 @@ class ListDeleter(tp.Generic[T]):
 
     def __init__(self, list_to_process: tp.MutableSequence[T]):
         self.list_to_process = list_to_process
-        self.direction = DIR_FORWARD
         # pointer to currently processed element
-        self.current_index = -1 if self.direction == DIR_FORWARD else len(self.list_to_process)
+        self.direction = DIR_FORWARD
+        self.current_index = -1
         self.indices_to_delete = set()  # type: tp.Set[int]
 
     def __enter__(self) -> 'ListDeleter':
@@ -141,12 +144,15 @@ class ListDeleter(tp.Generic[T]):
         return self
 
     def __next__(self) -> T:
-        if self.direction == DIR_BACKWARD and self.current_index == 0:
+        if self.direction == DIR_BACKWARD and self.current_index == -1:
             raise StopIteration('First element reached')
-        if self.direction == DIR_FORWARD and self.current_index == len(self.list_to_process) - 1:
+        if self.direction == DIR_FORWARD and self.current_index == len(self.list_to_process):
             raise StopIteration('Last element reached')
         self.current_index += +1 if self.direction == DIR_FORWARD else -1
-        return self.list_to_process[self.current_index]
+        try:
+            return self.list_to_process[self.current_index]
+        except IndexError:
+            raise StopIteration()
 
     def next(self) -> T:
         """
@@ -157,17 +163,20 @@ class ListDeleter(tp.Generic[T]):
 
     def prev(self) -> T:
         """
-        Move to previous element
+        Move to previous element, as per ordering.
 
         :return: the previous element
-        :raises ValueError: list is already at the first element!
+        :raises StopIteration: list is already at the first element!
         """
-        if self.direction == DIR_FORWARD and self.current_index == 0:
-            raise ValueError('Cannot go previous on a first element!')
-        if self.direction == DIR_BACKWARD and self.current_index == len(self.list_to_process) - 1:
-            raise ValueError('Cannot go previous on a last element!')
+        if self.direction == DIR_FORWARD and self.current_index == -1:
+            raise StopIteration('Cannot go previous on a first element!')
+        if self.direction == DIR_BACKWARD and self.current_index == len(self.list_to_process):
+            raise StopIteration('Cannot go previous on a last element!')
         self.current_index += -1 if self.direction == DIR_FORWARD else +1
-        return self.list_to_process[self.current_index]
+        try:
+            return self.list_to_process[self.current_index]
+        except IndexError:
+            raise StopIteration()
 
     def delete(self) -> None:
         self.indices_to_delete.add(self.current_index)

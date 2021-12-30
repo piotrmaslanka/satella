@@ -30,6 +30,8 @@ class TestConcurrent(unittest.TestCase):
             return x*2
 
         tpe = ThreadPoolExecutor(max_workers=2)
+        ret = parallel_construct([1, 2, 3], mult2, tpe)
+        self.assertEqual(ret, [2, 4, 6])
         with mock.start_active_span('Test span'):
             ret = parallel_construct([1, 2, 3], mult2, tpe)
         self.assertEqual(ret, [2, 4, 6])

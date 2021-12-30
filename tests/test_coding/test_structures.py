@@ -36,6 +36,9 @@ class TestStructures(unittest.TestCase):
         self.assertTrue(a == b)
         self.assertFalse(a == c)
         self.assertFalse(a == d)
+        self.assertFalse(a != b)
+        self.assertTrue(a != c)
+        self.assertTrue(a != d)
 
     def test_not_equal_to_anything(self):
         self.assertTrue(NOT_EQUAL_TO_ANYTHING != NOT_EQUAL_TO_ANYTHING)

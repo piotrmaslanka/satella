@@ -109,3 +109,29 @@ class TestIterators(unittest.TestCase):
                     break
 
         self.assertTrue(a['done'])
+
+    def test_self_closing_generator_function_classgen(self):
+        a = {'done': False}
+
+        class generator:
+            def __init__(self):
+                self.a = 0
+
+            def __iter__(self):
+                return self
+
+            def __next__(self):
+                nonlocal a
+                if self.a < 5:
+                    self.a += 1
+                    return self.a - 1
+                else:
+                    a['done'] = True
+                    raise StopIteration()
+
+        with SelfClosingGenerator(generator)() as gen:
+            for b in gen:
+                if b == 2:
+                    break
+
+        self.assertTrue(a['done'])

@@ -30,8 +30,7 @@ def parallel_construct(iterable: tp.Iterable[V],
         tracer = opentracing.global_tracer()
         span = tracer.active_span
         if span is not None:
-
-            def wrap_iterable(arg, *args,  **kwargs):
+            def wrap_iterable(arg, *args, **kwargs):
                 with tracer.start_active_span(span_title or 'New span', child_of=span):
                     return function(arg, *args, **kwargs)
 
