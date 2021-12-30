@@ -24,6 +24,7 @@ class BinaryParser:
     :ivar pointer: pointer to the next bytes. Can be read and modified at will to
         preserve the earlier state of the BinaryParser.
     """
+
     def __len__(self) -> int:
         return self.length
 
@@ -43,7 +44,7 @@ class BinaryParser:
             raise NotEnoughBytes('Offset larger than the stream!')
 
     def __bytes__(self) -> bytes:
-        return self.b_stream[self.init_ofs:self.init_ofs+self.length]
+        return self.b_stream[self.init_ofs:self.init_ofs + self.length]
 
     def skip(self, n: int) -> None:
         """
@@ -113,7 +114,7 @@ class BinaryParser:
         """
         self.assert_has_bytes(n)
         try:
-            return self.b_stream[self.pointer:self.pointer+n]
+            return self.b_stream[self.pointer:self.pointer + n]
         finally:
             self.pointer += n
 
@@ -143,7 +144,7 @@ class BinaryParser:
         st_len = st.size
         self.assert_has_bytes(st_len)
         try:
-            return st.unpack(self.b_stream[self.pointer:self.pointer+st_len])[0]
+            return st.unpack(self.b_stream[self.pointer:self.pointer + st_len])[0]
         finally:
             self.pointer += st_len
 
@@ -163,7 +164,7 @@ class BinaryParser:
         st_len = st.size
         self.assert_has_bytes(st_len)
         try:
-            return st.unpack(self.b_stream[self.pointer:self.pointer+st_len])
+            return st.unpack(self.b_stream[self.pointer:self.pointer + st_len])
         finally:
             self.pointer += st_len
 
@@ -175,4 +176,4 @@ class BinaryParser:
         """
         advance = self.pointer - self.init_ofs
         remaining = self.length - advance
-        return self.b_stream[self.pointer:self.pointer+remaining]
+        return self.b_stream[self.pointer:self.pointer + remaining]

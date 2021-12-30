@@ -5,7 +5,6 @@ import typing as tp
 
 from ..decorators.decorators import wraps
 
-
 from ..typing import K, V, T
 
 
@@ -34,6 +33,7 @@ class Monitor:
     >>>         with self:
     >>>             .. do your threadsafe jobs ..
     """
+
     def __enter__(self) -> 'Monitor':
         self._monitor_lock.acquire()
         return self
@@ -57,13 +57,16 @@ class Monitor:
 
         :param attr_name: name of the attribute that is the monitor
         """
+
         def outer(fun):
             @wraps(fun)
             def method(self, *args, **kwargs):
                 # noinspection PyProtectedMember
                 with getattr(self, attr_name)._monitor_lock:
                     return fun(self, *args, **kwargs)
+
             return method
+
         return outer
 
     @staticmethod
@@ -234,6 +237,7 @@ class MonitorSet(set, Monitor):
     """
     A set that allows atomic insert-if-not-already-there operation
     """
+
     def __init__(self, *args):
         super().__init__(*args)
         Monitor.__init__(self)

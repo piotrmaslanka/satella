@@ -73,5 +73,3 @@ def time_us() -> int:
         return time.time_ns() // 1000
     except AttributeError:
         return int(time.time() * 1000000)
-
-

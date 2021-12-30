@@ -384,12 +384,15 @@ def execute_if_attribute_none(attribute: str):
 
     :param attribute: name of the attribute to check
     """
+
     def outer(fun):
         @wraps(fun)
         def inner(self, *args, **kwargs):
             if getattr(self, attribute) is None:
                 return fun(self, *args, **kwargs)
+
         return inner
+
     return outer
 
 
@@ -402,16 +405,19 @@ def execute_if_attribute_not_none(attribute: str):
 
     :param attribute: name of the attribute to check
     """
+
     def outer(fun):
         @wraps(fun)
         def inner(self, *args, **kwargs):
             if getattr(self, attribute) is not None:
                 return fun(self, *args, **kwargs)
+
         return inner
+
     return outer
 
 
-def cached_property(prop_name: str, assume_not_loaded = None):
+def cached_property(prop_name: str, assume_not_loaded=None):
     """
     A decorator to use to create cached properties.
 
@@ -437,6 +443,7 @@ def cached_property(prop_name: str, assume_not_loaded = None):
     :param assume_not_loaded: Value if currently the attribute is
         equal to this, it is assumed to not have been loaded
     """
+
     def outer(fun):
         @wraps(fun)
         def inner(self, *args, **kwargs):
@@ -447,5 +454,7 @@ def cached_property(prop_name: str, assume_not_loaded = None):
                 return attr_v
             else:
                 return attr_v
+
         return inner
+
     return outer

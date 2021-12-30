@@ -40,7 +40,7 @@ class ExponentialBackoff:
     :param grace_amount: amount of fails() that this will survive before everything fails
     """
     __slots__ = 'start', 'limit', 'counter', 'sleep_fun', 'unavailable_until', 'condition', \
-        'grace_amount', 'grace_counter'
+                'grace_amount', 'grace_counter'
 
     def __init__(self, start: float = 1, limit: float = 30,
                  sleep_fun: tp.Callable[[float], None] = time.sleep,
@@ -159,6 +159,7 @@ class ExponentialBackoff:
             as a result of this decorator. The function will be called with zero arguments.
         :return: a function, that called, will pass the exactly same parameters
         """
+
         def outer(fun):
             @wraps(fun)
             def inner(*args, **kwargs):
@@ -170,6 +171,7 @@ class ExponentialBackoff:
                     except exceptions_on_failed:
                         self.failed()
                         self.sleep()
+
             if immediate:
                 inner()
 

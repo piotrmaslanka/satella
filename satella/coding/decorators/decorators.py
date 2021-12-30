@@ -345,6 +345,7 @@ def call_method_on_exception(exc_classes, method_name, *args, **kwargs):
     :param args: arguments to pass to given method
     :param kwargs: keyword arguments to pass to given method
     """
+
     def outer(fun):
         @wraps(fun)
         def inner(self, *f_args, **f_kwargs):
@@ -355,6 +356,7 @@ def call_method_on_exception(exc_classes, method_name, *args, **kwargs):
                     return getattr(self, method_name)(*args, **kwargs)
                 else:
                     raise
-        return inner
-    return outer
 
+        return inner
+
+    return outer

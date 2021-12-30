@@ -7,7 +7,6 @@ import warnings
 from concurrent.futures import Future
 from functools import wraps  # import from functools to prevent circular import exception
 
-
 TimeSignal = tp.Callable[[], float]
 
 

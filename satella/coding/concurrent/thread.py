@@ -13,7 +13,6 @@ from ..typing import ExceptionList
 from ...exceptions import ResourceLocked, WouldWaitMore
 
 
-
 def call_in_separate_thread(*t_args, no_thread_attribute: bool = False,
                             delay: float = 0, **t_kwargs):
     """

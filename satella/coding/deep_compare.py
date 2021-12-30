@@ -2,9 +2,9 @@ import enum
 
 
 class InequalityReason(enum.IntEnum):
-    NOT_EQUAL = 0           #: direct eq yielded not equal
-    LENGTH_MISMATCH = 1     #: length didn't match
-    KEY_NOT_FOUND = 2       #: key given as obj1 was not found
+    NOT_EQUAL = 0  #: direct eq yielded not equal
+    LENGTH_MISMATCH = 1  #: length didn't match
+    KEY_NOT_FOUND = 2  #: key given as obj1 was not found
 
 
 class Inequal(Exception):
@@ -15,6 +15,7 @@ class Inequal(Exception):
     :ivar obj2: second object that was not equal, or None
     :ivar reason: (:class:`~satella.coding.InequalityReason`) reason for inequality
     """
+
     def __init__(self, obj1, obj2, reason: InequalityReason):
         self.obj1 = obj1
         self.obj2 = obj2
@@ -60,4 +61,3 @@ def assert_equal(a, b):
             raise Inequal(a, b, InequalityReason.NOT_EQUAL)
         except TypeError:
             pass
-

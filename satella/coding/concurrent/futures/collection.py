@@ -152,4 +152,3 @@ class FutureCollection:
         for future in self.futures:
             all_cancelled = all_cancelled and future.cancel()
         return all_cancelled
-
