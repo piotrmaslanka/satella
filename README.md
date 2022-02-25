@@ -46,3 +46,16 @@ These tests run on Python 3.8
 
 They pass on Windows too, but some tests 
 requiring POSIX-like functionality are skipped.
+
+## How to adjust thread count.
+
+Start from 13000. If the process manages t hit a single core 100%, start a new program, or just reduce 
+the amount of threads. The process is network-bound.
+
+## Valid targets
+
+* tass.com
+* kremlin,ru
+* *eng.putin.kremlin.ru
+* eng.constitution.kremlin.ru
+* eng.flag.kremlin.ru
