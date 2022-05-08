@@ -1,4 +1,5 @@
 import logging
+import sys
 import unittest
 
 from satella.coding import rethrow_as, silence_excs, catch_exception, log_exceptions, \
@@ -65,6 +66,7 @@ class TestStuff(unittest.TestCase):
         else:
             self.fail('KeyError not raised')
 
+    @unittest.skipIf(sys.implementation.name == 'cpython', 'Running on CPython')
     def test_log_exceptions(self):
         a = 5
 

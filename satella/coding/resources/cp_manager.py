@@ -18,6 +18,8 @@ class CPManager(Monitor, Closeable, tp.Generic[T], metaclass=abc.ABCMeta):
     """
     A thread-safe no-hassle connection-pool manager.
 
+    Extend this class to build your own connection pool managers.
+
     This supports automatic connection recycling, connection will be cycled each
     max_cycle_no takings and deposits.
 
@@ -28,13 +30,14 @@ class CPManager(Monitor, Closeable, tp.Generic[T], metaclass=abc.ABCMeta):
     :param max_cycle_no: maximum number of get/put connection cycles.
 
     .. warning:: May not work under PyPy for reasons having to do with id's semantics.
+        A RuntimeWarning will be issued when not running under CPython.
     """
 
     def __init__(self, max_number: int, max_cycle_no: int):
         super().__init__()
         Closeable.__init__(self)
         if sys.implementation.name != 'cpython':
-            warnings.warn(f'This may run bad on {sys.implementation.name}', UserWarning)
+            warnings.warn(f'This may run bad on {sys.implementation.name}', RuntimeWarning)
         self.connections = queue.Queue(max_number)
         self.spawned_connections = 0
         self.max_number = max_number
