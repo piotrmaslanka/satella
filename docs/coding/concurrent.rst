@@ -87,6 +87,11 @@ SequentialIssuer
 .. autoclass:: satella.coding.concurrent.SequentialIssuer
     :members:
 
+CPManager
+=========
+
+.. autoclass:: satella.coding.resources.CPManager
+    :members:
 
 IDAllocator
 ===========
