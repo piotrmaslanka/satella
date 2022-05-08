@@ -14,7 +14,7 @@ from ..typing import T
 logger = logging.getLogger(__name__)
 
 
-class CPManager(Monitor, Closeable, tp.Generic[T]):
+class CPManager(Monitor, Closeable, tp.Generic[T], metaclass=abc.ABCMeta):
     """
     A thread-safe no-hassle connection-pool manager.
 
