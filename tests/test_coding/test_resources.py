@@ -35,3 +35,8 @@ class TestResources(unittest.TestCase):
         ret = do_call()     # type: Future
         cp.release_connection(conns.pop())
         ret.result(timeout=5)
+
+        while conns:
+            cp.release_connection(conns.pop())
+
+        del cp

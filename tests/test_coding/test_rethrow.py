@@ -66,7 +66,6 @@ class TestStuff(unittest.TestCase):
         else:
             self.fail('KeyError not raised')
 
-    @unittest.skipIf(sys.implementation.name == 'cpython', 'Running on CPython')
     def test_log_exceptions(self):
         a = 5
 
