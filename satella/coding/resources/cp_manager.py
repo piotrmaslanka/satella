@@ -34,8 +34,8 @@ class CPManager(Monitor, Closeable, tp.Generic[T], metaclass=abc.ABCMeta):
     """
 
     def __init__(self, max_number: int, max_cycle_no: int):
-        super().__init__()
         Closeable.__init__(self)
+        Monitor.__init__(self)
         if sys.implementation.name != 'cpython':
             warnings.warn(f'This may run bad on {sys.implementation.name}', RuntimeWarning)
         self.connections = queue.Queue(max_number)
@@ -43,29 +43,36 @@ class CPManager(Monitor, Closeable, tp.Generic[T], metaclass=abc.ABCMeta):
         self.max_number = max_number
         self.max_cycle_no = max_cycle_no
         self.id_to_times = {}       # type: tp.Dict[int, int]
+        self.terminating = False
 
-    def close(self) -> bool:
+    def close(self) -> None:
         if super().close():
-            while self.spawned_connections:
+            self.terminating = True
+            while self.spawned_connections > 0:
                 self.teardown_connection(self.connections.get())
                 self.spawned_connections -= 1
 
     def acquire_connection(self) -> T:
         """
         Either acquire a new connection, or just establish it in the background
+
+        :return: a new connection:
+        :raises RuntimeError: CPManager is terminating!
         """
+        if self.terminating:
+            raise RuntimeError('CPManager is terminating')
         try:
             conn = self.connections.get(False)
         except queue.Empty:
             while True:
                 with silence_excs(queue.Empty), Monitor.acquire(self):
-                    if self.spawned_connections == self.max_number:
+                    if self.spawned_connections >= self.max_number:
                         conn = self.connections.get(False, 5)
                         break
                     elif self.spawned_connections < self.max_number:
                         conn = self.create_connection()
-                        self.connections.put(conn)
                         self.spawned_connections += 1
+                        self.connections.put(conn)
                         break
         obj_id = id(conn)
         try:

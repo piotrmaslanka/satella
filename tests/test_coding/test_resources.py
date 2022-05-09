@@ -37,5 +37,4 @@ class TestResources(unittest.TestCase):
 
         while conns:
             cp.release_connection(conns.pop())
-
         del cp
