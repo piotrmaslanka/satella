@@ -20,8 +20,7 @@ class TestResources(unittest.TestCase):
                 return lambda: self.resources + 1
 
             def teardown_connection(self, connection) -> None:
-                assert self.resources
-                self.resources -= 1
+                ...
 
         cp = InheritCPManager(5, 2)
 
