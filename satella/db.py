@@ -29,7 +29,7 @@ class transaction:
 
     def __enter__(self):
         self.cursor = self.connection.cursor()
-        return self.cursor()
+        return self.cursor
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         if exc_val is None:
