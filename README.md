@@ -38,8 +38,7 @@ code taken from elsewhere on the internets, so this is copyright (c) respective 
 
 # Running unit tests
 
-Tests run by default on 
-[Travis CI](https://travis-ci.org/github/piotrmaslanka/satella).
+Tests run by default on CircleCI. 
 Just build and run the attached 
 [Dockerfile](Dockerfile). 
 These tests run on Python 3.8
