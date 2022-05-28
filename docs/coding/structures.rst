@@ -17,6 +17,13 @@ You can also use the following singleton.
     :members:
 
 
+SetZip
+------
+
+.. autoclass:: satella.coding.structures.SetZip
+    :members:
+
+
 PushIterable
 ------------
 

@@ -15,10 +15,23 @@ from satella.coding.structures import TimeBasedHeap, Heap, typednamedtuple, \
     CacheDict, StrEqHashableMixin, ComparableIntEnum, HashableIntEnum, ComparableAndHashableBy, \
     ComparableAndHashableByInt, SparseMatrix, ExclusiveWritebackCache, Subqueue, \
     CountingDict, ComparableEnum, LRU, LRUCacheDict, Vector, DefaultDict, PushIterable, \
-    ComparableAndHashableByStr, NotEqualToAnything, NOT_EQUAL_TO_ANYTHING, DictionaryEQAble
+    ComparableAndHashableByStr, NotEqualToAnything, NOT_EQUAL_TO_ANYTHING, DictionaryEQAble, SetZip
 
 
 class TestStructures(unittest.TestCase):
+
+    def test_zip(self):
+        a = set([1,2, 3])
+        b = set([3,4,5])
+        c = SetZip(a, b)
+        self.assertIn(4, c)
+        self.assertNotIn(9, c)
+        self.assertEqual(len(c), 6)
+        self.assertEqual(set(c), set([1,2,3,4,5]))
+
+        c += set([0])
+        self.assertEqual(len(c), 7)
+        self.assertIn(0, c)
 
     def test_dictionary_eqable(self):
         class Dupa(DictionaryEQAble):

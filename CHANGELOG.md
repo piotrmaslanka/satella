@@ -6,3 +6,4 @@
 * fixed a bug in ListDeleter
 * minor breaking change: changed semantics of ListDeleter
 * added `CPManager`
+* added `SetZip`

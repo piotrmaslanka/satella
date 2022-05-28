@@ -18,11 +18,12 @@ from .typednamedtuple import typednamedtuple
 from .lru import LRU
 from .syncable_droppable import DBStorage, SyncableDroppable
 from .tuples import Vector
+from .zip_dict import SetZip
 from .push_iterable import PushIterable
 
 __all__ = [
     'PushIterable',
-    'Vector',
+    'Vector', 'SetZip',
     'DBStorage', 'SyncableDroppable',
     'LRU',
     'LRUCacheDict',
