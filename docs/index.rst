@@ -28,6 +28,7 @@ Visit the project's page at GitHub_!
            instrumentation/metrics
            exception_handling
            dao
+           db
            json
            posix
            import
