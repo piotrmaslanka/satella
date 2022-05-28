@@ -15,6 +15,7 @@ class SetZip:
     """
     def __iadd__(self, other: set):
         self.args.append(other)
+        return self
 
     def __init__(self, *args: set):
         self.args = list(args)
