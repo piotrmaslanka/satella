@@ -41,8 +41,14 @@ class transaction:
     def __call__(self, fun):
         @wraps(fun)
         def inner(*args, **kwargs):
-            with self:
-                return fun(*args, **kwargs)
+            with self as cur:
+                if fun.__name__ == fun.__qualname__:
+                    return fun(cur, *args, **kwargs)
+                else:
+                    if not len(args):
+                        return fun(*args)
+                    else:
+                        return fun(*args[0], cur, *args[1:], **kwargs)
         return inner
 
     def __enter__(self):
@@ -51,7 +57,7 @@ class transaction:
 
     @property
     def connection(self):
-        if inspect.isfunction(self.connection):
+        if inspect.isfunction(self._connection):
             return self._connection()
         else:
             return self._connection
