@@ -1,4 +1,3 @@
-# v2.19.2
+# v2.20.2
 
-* added `db_call`
-
+* fixed transaction to log only for real exceptions
