@@ -1,4 +1,7 @@
+import inspect
 import logging
+
+from satella.coding import wraps
 
 logger = logging.getLogger(__name__)
 
@@ -16,20 +19,42 @@ class transaction:
 
     Leaving the context manager will automatically close the cursor for you.
 
-    :param connection: the connection object to use
+    >>> def conn_getter_function() -> connection:
+    >>>     ....
+    >>> @transaction(conn_getter_function)
+    >>>     ....
+
+    The same syntax can be used, if you session depends eg. on a thread.
+
+    :param connection_or_getter: the connection object to use, or a callable/0, that called with
+        this thread will provide us with a connection
     :param close_the_connection_after: whether the connection should be closed after use, False by default
     :param log_exception: whether to log an exception if it happens
     """
-    def __init__(self, connection, close_the_connection_after: bool = False,
+    def __init__(self, connection_or_getter, close_the_connection_after: bool = False,
                  log_exception: bool = True):
-        self.connection = connection
+        self._connection = connection_or_getter
         self.close_the_connection_after = close_the_connection_after
         self.cursor = None
         self.log_exception = log_exception
 
+    def __call__(self, fun):
+        @wraps(fun)
+        def inner(*args, **kwargs):
+            with self:
+                return fun(*args, **kwargs)
+        return inner
+
     def __enter__(self):
         self.cursor = self.connection.cursor()
         return self.cursor
+
+    @property
+    def connection(self):
+        if inspect.isfunction(self.connection):
+            return self._connection()
+        else:
+            return self._connection
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         if exc_val is None:
