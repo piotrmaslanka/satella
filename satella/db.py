@@ -37,7 +37,7 @@ class transaction:
         else:
             self.connection.rollback()
 
-        if exc_val is None and self.log_exception:
+        if exc_val is not None and self.log_exception:
             logger.error('Exception occurred of type %s', exc_type, exc_info=exc_val)
 
         self.cursor.close()
