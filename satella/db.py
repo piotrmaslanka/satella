@@ -28,7 +28,7 @@ class transaction:
 
     :param connection_or_getter: the connection object to use, or a callable/0, that called with
         this thread will provide us with a connection
-    :param close_the_connection_after: whether the connection should be closed after use, False by default
+    :param close_the_connection_after: whether the connection should be closed after use
     :param log_exception: whether to log an exception if it happens
     """
     def __init__(self, connection_or_getter, close_the_connection_after: bool = False,
