@@ -1,8 +1,6 @@
 import inspect
 import logging
 
-from satella.coding import wraps
-
 logger = logging.getLogger(__name__)
 
 

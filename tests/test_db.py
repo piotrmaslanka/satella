@@ -28,30 +28,6 @@ class RealConnection:
 class TestDB(unittest.TestCase):
     def test_db(self):
         conn = RealConnection()
-
-        @transaction(conn)
-        def test(cur):
-            pass
-
-        test()
-
-        self.assertEqual(conn.cursor_called, 1)
-        self.assertEqual(conn.commit_called, 1)
-
-    def test_db_imba(self):
-        conn = RealConnection()
-
-        @transaction(conn)
-        def test(cur):
-            raise ValueError()
-
-        test()
-
-        self.assertEqual(conn.cursor_called, 1)
-        self.assertEqual(conn.rollback_called, 1)
-
-    def test_db2(self):
-        conn = RealConnection()
         a = transaction(conn)
         with a as cur:
             self.assertEqual(conn.cursor_called, 1)
