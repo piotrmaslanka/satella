@@ -38,7 +38,9 @@ class transaction:
     @property
     def connection(self):
         if inspect.isfunction(self._connection):
-            return self._connection()
+            conn = self._connection()
+            self._connection = conn
+            return conn
         else:
             return self._connection
 
