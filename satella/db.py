@@ -19,13 +19,6 @@ class transaction:
 
     Leaving the context manager will automatically close the cursor for you.
 
-    >>> def conn_getter_function() -> connection:
-    >>>     ....
-    >>> @transaction(conn_getter_function)
-    >>>     ....
-
-    The same syntax can be used, if you session depends eg. on a thread.
-
     :param connection_or_getter: the connection object to use, or a callable/0, that called with
         this thread will provide us with a connection
     :param close_the_connection_after: whether the connection should be closed after use
@@ -37,19 +30,6 @@ class transaction:
         self.close_the_connection_after = close_the_connection_after
         self.cursor = None
         self.log_exception = log_exception
-
-    def __call__(self, fun):
-        @wraps(fun)
-        def inner(*args, **kwargs):
-            with self as cur:
-                if fun.__name__ == fun.__qualname__:
-                    return fun(cur, *args, **kwargs)
-                else:
-                    if not len(args):
-                        return fun(*args)
-                    else:
-                        return fun(*args[0], cur, *args[1:], **kwargs)
-        return inner
 
     def __enter__(self):
         self.cursor = self.connection.cursor()
