@@ -7,8 +7,3 @@ So enjoy!
 
 .. autoclass:: satella.db.transaction
     :members:
-
-You might use is also a context decorator, eg.
-
->>> @transaction(conn)
->>>    def do_transaction():
