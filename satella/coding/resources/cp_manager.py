@@ -34,6 +34,7 @@ class CPManager(Monitor, Closeable, tp.Generic[T], metaclass=abc.ABCMeta):
 
     :param max_number: maximum number of connections
     :param max_cycle_no: maximum number of get/put connection cycles.
+    :ivar max_number: maximum amount of connections. Can be changed during runtime
 
     .. warning:: May not work under PyPy for reasons having to do with id's semantics.
         A RuntimeWarning will be issued when not running under CPython.
@@ -82,15 +83,12 @@ class CPManager(Monitor, Closeable, tp.Generic[T], metaclass=abc.ABCMeta):
                     if self.connections.qsize() >= self.max_number:
                         conn = self.connections.get(False, 5)
                         break
-                    elif self.connections.qsize() < self.max_number:
+                    else:
                         conn = self.create_connection()
                         break
         with Monitor.acquire(self):
             obj_id = id(conn)
-            try:
-                self.id_to_times[obj_id] += 1
-            except KeyError:
-                self.id_to_times[obj_id] = 1
+            self.id_to_times[obj_id] = self.id_to_times.get(obj_id, 0) + 1
             return conn
 
     def release_connection(self, connection: T) -> None:
@@ -122,8 +120,7 @@ class CPManager(Monitor, Closeable, tp.Generic[T], metaclass=abc.ABCMeta):
 
         :param connection: connection to fail
         """
-        obj_id = id(connection)
-        self.id_to_times[obj_id] = self.max_cycle_no
+        self.id_to_times[id(connection)] = self.max_cycle_no
 
     @abc.abstractmethod
     def teardown_connection(self, connection: T) -> None:

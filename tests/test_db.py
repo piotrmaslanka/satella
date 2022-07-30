@@ -13,7 +13,6 @@ class RealConnection:
 
     def cursor(self):
         self.cursor_called += 1
-        self.commit_called += 1
         return Mock()
 
     def rollback(self):

@@ -20,7 +20,7 @@ class TestTime(unittest.TestCase):
         def dupa(a):
             raise ValueError()
 
-        self.assertRaises(dupa, NotImplementedError)
+        self.assertRaises(NotImplementedError, dupa)
 
     def test_measure_as_method(self):
         self2 = self
