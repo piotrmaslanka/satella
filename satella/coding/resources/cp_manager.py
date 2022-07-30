@@ -45,7 +45,6 @@ class CPManager(Monitor, Closeable, tp.Generic[T], metaclass=abc.ABCMeta):
         if sys.implementation.name != 'cpython':
             warnings.warn(f'This may run bad on {sys.implementation.name}', RuntimeWarning)
         self.connections = queue.Queue(max_number)
-        self.spawned_connections = 0
         self.max_number = max_number
         self.max_cycle_no = max_cycle_no
         self.id_to_times = {}       # type: tp.Dict[int, int]
@@ -61,9 +60,10 @@ class CPManager(Monitor, Closeable, tp.Generic[T], metaclass=abc.ABCMeta):
         """
         Close all connections. Connections have to be released first. Object is ready for use after this
         """
-        while self.spawned_connections > 0:
-            self.teardown_connection(self.connections.get())
-            self.spawned_connections -= 1
+        while self.connections.qsize() > 0:
+            conn = self.connections.get()
+            self.teardown_connection(conn)
+            del self.id_to_times[id(conn)]
 
     def acquire_connection(self) -> T:
         """
