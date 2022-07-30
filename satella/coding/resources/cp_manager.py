@@ -97,7 +97,7 @@ class CPManager(Monitor, Closeable, tp.Generic[T], metaclass=abc.ABCMeta):
         if self.id_to_times[obj_id] == self.max_cycle_no:
             with Monitor.acquire(self), silence_excs(KeyError):
                 self.spawned_connections -= 1
-                del self.id_to_times[connection]
+                del self.id_to_times[obj_id]
 
             self.teardown_connection(connection)
         else:

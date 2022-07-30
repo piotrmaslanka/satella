@@ -2,4 +2,4 @@
 
 * removed the decorator syntax for transaction, it''s confusing and contrary to Zen of Python
 * fixed some random bug
-* fixed docs for CPManager
+* fixed docs for CPManager, also fixed a bug for it
