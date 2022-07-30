@@ -9,9 +9,18 @@ from satella.coding.concurrent import call_in_separate_thread
 from satella.time import measure, time_as_int, time_ms, sleep, ExponentialBackoff, \
     parse_time_string
 from concurrent.futures import Future
+from satella.warnings import mark_temporarily_disabled
 
 
 class TestTime(unittest.TestCase):
+
+    def test_mark_temp_disabled(self):
+
+        @mark_temporarily_disabled('Skipped due to skip')
+        def dupa(a):
+            raise ValueError()
+
+        self.assertRaises(dupa, NotImplementedError)
 
     def test_measure_as_method(self):
         self2 = self

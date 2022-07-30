@@ -5,6 +5,8 @@ Exceptions and warnings
 For you to use
 ==============
 
+.. autofunction:: satella.warnings.mark_temporarily_disabled
+
 Warnings
 --------
 
