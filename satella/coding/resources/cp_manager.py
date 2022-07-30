@@ -26,6 +26,12 @@ class CPManager(Monitor, Closeable, tp.Generic[T], metaclass=abc.ABCMeta):
     Note that you have to overload :meth:`~satella.coding.resources.CPManager.teardown_connection`
     and :meth:`~satella.coding.resources.CPManager.create_connection`.
 
+    You obtain a connection by using :meth:`~satella.coding.resources.CPManager.acquire_connection`.
+    If it fails you should mark it as such using
+    :meth:`~satella.coding.resources.CPManager.fail_connection`.
+    In all cases you have to return it using
+    :meth:`~satella.coding.resources.CPManager.release_connection`.
+
     :param max_number: maximum number of connections
     :param max_cycle_no: maximum number of get/put connection cycles.
 
