@@ -54,9 +54,16 @@ class CPManager(Monitor, Closeable, tp.Generic[T], metaclass=abc.ABCMeta):
     def close(self) -> None:
         if super().close():
             self.terminating = True
-            while self.spawned_connections > 0:
-                self.teardown_connection(self.connections.get())
-                self.spawned_connections -= 1
+            self.invalidate()
+
+    @Monitor.synchronized
+    def invalidate(self) -> None:
+        """
+        Close all connections. Connections have to be released first. Object is ready for use after this
+        """
+        while self.spawned_connections > 0:
+            self.teardown_connection(self.connections.get())
+            self.spawned_connections -= 1
 
     def acquire_connection(self) -> T:
         """
@@ -72,20 +79,19 @@ class CPManager(Monitor, Closeable, tp.Generic[T], metaclass=abc.ABCMeta):
         except queue.Empty:
             while True:
                 with silence_excs(queue.Empty), Monitor.acquire(self):
-                    if self.spawned_connections >= self.max_number:
+                    if self.connections.qsize() >= self.max_number:
                         conn = self.connections.get(False, 5)
                         break
-                    elif self.spawned_connections < self.max_number:
+                    elif self.connections.qsize() < self.max_number:
                         conn = self.create_connection()
-                        self.spawned_connections += 1
-                        self.connections.put(conn)
                         break
-        obj_id = id(conn)
-        try:
-            self.id_to_times[obj_id] += 1
-        except KeyError:
-            self.id_to_times[obj_id] = 1
-        return conn
+        with Monitor.acquire(self):
+            obj_id = id(conn)
+            try:
+                self.id_to_times[obj_id] += 1
+            except KeyError:
+                self.id_to_times[obj_id] = 1
+            return conn
 
     def release_connection(self, connection: T) -> None:
         """
@@ -95,20 +101,21 @@ class CPManager(Monitor, Closeable, tp.Generic[T], metaclass=abc.ABCMeta):
         """
         obj_id = id(connection)
         if self.id_to_times[obj_id] == self.max_cycle_no:
-            with Monitor.acquire(self), silence_excs(KeyError):
-                self.spawned_connections -= 1
-                del self.id_to_times[obj_id]
-
-            self.teardown_connection(connection)
+            self._kill_connection(connection)
         else:
             try:
                 self.connections.put(connection, False)
             except queue.Full:
-                with Monitor.acquire(self), silence_excs(KeyError):
-                    self.spawned_connections -= 1
-                    del self.id_to_times[obj_id]
-                self.teardown_connection(connection)
+                self._kill_connection(connection)
 
+    def _kill_connection(self, connection):
+        obj_id = id(connection)
+        with Monitor.acquire(self):
+            del self.id_to_times[obj_id]
+
+        self.teardown_connection(connection)
+
+    @Monitor.synchronized
     def fail_connection(self, connection: T) -> None:
         """
         Signal that a given connection has been failed

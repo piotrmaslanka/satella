@@ -13,15 +13,17 @@ class RealConnection:
 
     def cursor(self):
         self.cursor_called += 1
-        return Mock()
-rpjg hyosp yh
         self.commit_called += 1
+        return Mock()
 
     def rollback(self):
         self.rollback_called += 1
 
     def close(self):
         self.close_called += 1
+
+    def commit(self):
+        self.commit_called += 1
 
 
 class TestDB(unittest.TestCase):
