@@ -28,6 +28,8 @@ class TestResources(unittest.TestCase):
                 if self.i == 3:
                     self.value_error_emitted = True
                     raise ValueError()
+                elif self.i > 3:
+                    raise RuntimeError('called too often')
 
             def close(self):
                 self.closed = True
@@ -47,9 +49,6 @@ class TestResources(unittest.TestCase):
                     raise RuntimeError('Reacquiring an acquired connection')
                 self.already_acquired.add(v.id)
                 return v
-
-            def fail_connection(self, connection) -> None:
-                super().fail_connection(connection)
 
             def release_connection(self, connection) -> None:
                 print(f'Releasing connection {connection.id}')
@@ -81,6 +80,13 @@ class TestResources(unittest.TestCase):
         cp.release_connection(conns.pop())
         ret.result(timeout=20)
         ret2.result(timeout=20)
+        for i in range(20):
+            conn = cp.acquire_connection()
+            try:
+                conn.do()
+            except ValueError:
+                cp.fail_connection(conn)
+            cp.release_connection(conn)
 
         while conns:
             cp.release_connection(conns.pop())

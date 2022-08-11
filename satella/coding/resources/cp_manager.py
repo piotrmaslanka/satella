@@ -98,7 +98,7 @@ class CPManager(Monitor, Closeable, tp.Generic[T], metaclass=abc.ABCMeta):
         :param connection: connection to release
         """
         obj_id = id(connection)
-        if self.id_to_times[obj_id] == self.max_cycle_no:
+        if self.id_to_times[obj_id] >= self.max_cycle_no:
             self._kill_connection(connection)
         else:
             try:
