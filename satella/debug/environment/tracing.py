@@ -1,37 +1,37 @@
 import inspect
 import threading
 
-from .scope import Scope
+from .scope import Scope, logger
 
 local_data = threading.local()
 ENVIRONMENT_ENABLED = False
 
 
-def tracing(event, arg):
+def tracing(event, *args):
+    """
+    Register for calls
+    """
     if event != 'call' and event != 'return' and event != 'exception':
         return tracing
 
     if event == 'call':
-        if not hasattr(local_data, 'current_scope'):
+        if not hasattr(local_data, 'satella_scope'):
             scope = Scope()
             inspect.currentframe().satella_scope = scope
-            local_data.current_scope = scope
+            local_data.satella_scope = scope
         else:
-            scope = Scope(local_data.current_scope)
-            local_data.current_scope = scope
+            scope = Scope(local_data.satella_scope)
+            local_data.satella_scope = scope
             inspect.currentframe().satella_scope = scope
     elif event == 'return':
-        if hasattr(local_data, 'current_scope'):
-            scope: Scope = local_data.current_scope
-            if scope.parent_scope is None:
-                del local_data.current_scope
-            else:
-                local_data.current_scope = scope.parent_scope
-                scope.send_to_parent()
+        if local_data.current_scope.parent_scope is None:
+            del local_data.satella_scope
+        else:
+            local_data.satella_scope = local_data.satella_scope.parent_scope
+            local_data.satella_scope.send_to_parent()
     elif event == 'exception':
-        from .scope import EXCLUDED_VALUES
-        scope = local_data.current_scope
-        scope.__dict__ = {k: v for k, v in scope.__dict__.items() if k not in EXCLUDED_VALUES}
+        scope = local_data.satella_scope
+        scope.reset_data()
     return tracing
 
 
@@ -39,8 +39,13 @@ def enable_environment():
     """
     Enable Environment and it's features.
 
-    .. warning:: This will register a trace function, and will slow down Python considerably
+    .. warning:: This will register a trace function, and will slow down Python considerablyy.
+        Sorry if this has nothing to do with shaving machines :(
     """
     global ENVIRONMENT_ENABLED
-    ENVIRONMENT_ENABLED = True
-    threading.settrace(tracing)
+    if ENVIRONMENT_ENABLED:
+        from .scope import Scope
+        ENVIRONMENT_ENABLED = True
+        threading.settrace(tracing)
+    else:
+        from .scope import Scope

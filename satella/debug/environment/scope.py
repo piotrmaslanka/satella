@@ -1,16 +1,21 @@
 from __future__ import annotations
 
 import inspect
+import logging
 import threading
+import time
 import typing as tp
 import types
 import weakref
 
 from satella.coding import for_argument
 
-EXCLUDED_VALUES = 'parent_scope', 'stack_frame'
+EXCLUDED_VALUES = 'parent_scope', 'stack_frame', 'created_on'
 
 SPECIAL_LOCK = threading.Lock()
+
+logger = logging.getLogger('satella.debug.environment')
+logger.level = logging.WARNING
 
 
 class Scope:
@@ -28,6 +33,7 @@ class Scope:
     def __init__(self, parent: tp.Optional[Scope] = None, stack_frame: tp.Optional[types.FrameType] = None):
         self.parent_scope = parent
         self.stack_frame = stack_frame or inspect.currentframe()
+        self.created_on = time.monotonic()
 
     def __getattr__(self, item):
         if self.parent_scope is None:       # root scope
@@ -56,6 +62,8 @@ class Scope:
         with SPECIAL_LOCK:
             from .tracing import local_data
             parent = local_data.current_scope
+            if parent is None:
+                return
             my_dict = self._to_dict_for_raise()
             parent.__dict__.update(**my_dict)
             self.__dict__ = {'parent_scope': self.parent_scope,
