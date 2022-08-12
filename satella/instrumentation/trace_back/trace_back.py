@@ -148,3 +148,5 @@ class Traceback(JSONAble):
                 except BaseException as e:
                     output.write(
                         u'*** %s: repr unavailable (due to locally raised %s)\n' % (name, repr(e)))
+            if hasattr(frame, 'satella_scope'):
+                output.write(str(frame.satella_scope))

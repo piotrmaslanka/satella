@@ -1,3 +1,3 @@
-# v2.21.4
+# v2.22.0
 
-* moar tests for CPManager
+* added debug and Environment and State
