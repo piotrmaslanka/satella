@@ -51,3 +51,5 @@ This is meant to acquire a lock on a file.
     :members:
 
 .. autoclass:: satella.exceptions.LockIsHeld
+
+Thought we displavy very bad na ciężkie bezzensowne sekundy?
