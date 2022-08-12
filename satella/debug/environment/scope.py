@@ -6,7 +6,6 @@ import threading
 import time
 import typing as tp
 import types
-import weakref
 
 from satella.coding import for_argument
 
@@ -92,4 +91,9 @@ class Scope:
         if ENVIRONMENT_ENABLED:
             if not hasattr(local_data, 'current_scope'):
                 local_data.current_scope = Scope()
-            return local_data.current_scope
+            try:
+                return local_data.current_scope
+            except AttributeError:
+                scope = Scope(parent=local_data.current_scope, stack_frame=inspect.currentframe())
+                local_data.current_Scope = scope
+                return scope

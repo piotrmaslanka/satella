@@ -8,6 +8,8 @@ class TestDebug(unittest.TestCase):
         enable_environment()
 
     def test_scopes(self):
+        from satella.debug.environment import tracing
+        self.assertTrue(tracing.ENVIRONMENT_ENABLED)
         current_scope = Scope.get_current_scope()
         self.assertIsNotNone(current_scope)
 
