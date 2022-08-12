@@ -43,9 +43,9 @@ def enable_environment():
         Sorry if this has nothing to do with shaving machines :(
     """
     global ENVIRONMENT_ENABLED
-    if ENVIRONMENT_ENABLED:
+    if not ENVIRONMENT_ENABLED:
         from .scope import Scope
         ENVIRONMENT_ENABLED = True
         threading.settrace(tracing)
     else:
-        from .scope import Scope
+        ENVIRONMENT_ENABLED = True
