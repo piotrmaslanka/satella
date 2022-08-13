@@ -2,6 +2,9 @@ import os
 import unittest
 
 from satella.coding import merge_dicts, update_attr_if_none
+from satella.debug.environment import enable_environment
+
+enable_environment()
 
 
 class TestMergeDicts(unittest.TestCase):

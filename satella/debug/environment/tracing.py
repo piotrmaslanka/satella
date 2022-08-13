@@ -47,5 +47,4 @@ def enable_environment():
         from .scope import Scope
         ENVIRONMENT_ENABLED = True
         threading.settrace(tracing)
-    else:
-        ENVIRONMENT_ENABLED = True
+
