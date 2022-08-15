@@ -99,7 +99,7 @@ class Monitor:
         >>> def protected_function(self):
         >>>     .. do some stuff that needs mutual exclusion ..
         >>>     with Monitor.release(self):
-        >>>         .. do some I/O that doesn't need mutual exclusion ..
+        >>>         .. do some I/O that does not need mutual exclusion ..
         >>>     .. back to protected stuff ..
         """
         __slots__ = ('foo',)

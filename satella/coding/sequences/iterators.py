@@ -448,7 +448,7 @@ def zip_shifted(*args: tp.Union[Iteratable, tp.Tuple[Iteratable, int]]) -> \
     warnings.warn('This is deprecated and will be removed in Satella 3.0. '
                   'Use zip(shift(...)) instead!', DeprecationWarning)
 
-    iterators = []  # type: tp.List[tp.Union[tp.Tuple[tp.Iterator[T], tp.List[T]], tp.Iterator[T]]
+    iterators = []  # type: tp.List[tp.Union[tp.Tuple[tp.Iterator[T], tp.List[T]], tp.Iterator[T]]]
     for row in args:
         if not isinstance(row, tuple):
             iterators.append(row)
