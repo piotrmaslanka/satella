@@ -1,3 +1,4 @@
+from __future__ import annotations
 from ..exceptions import WouldWaitMore
 import typing as tp
 import time
