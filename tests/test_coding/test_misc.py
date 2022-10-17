@@ -5,7 +5,7 @@ import unittest
 
 from satella.coding import update_key_if_not_none, overload, class_or_instancemethod, \
     update_key_if_true, get_arguments, call_with_arguments, chain_callables, Closeable, \
-    contains, enum_value, for_argument
+    contains, enum_value, for_argument, length
 from satella.coding.structures import HashableMixin, ComparableEnum
 from satella.coding.transforms import jsonify, intify
 
@@ -98,6 +98,11 @@ class TestCase(unittest.TestCase):
         self.assertEqual(intify('2'), 2)
         self.assertRaises(ValueError, lambda: intify(object()))
         self.assertEqual(intify([1, 2, 3]), 3)
+
+    def test_length(self):
+        y = [1, 2, 3]
+        x = (z for z in y)
+        self.assertEqual(length(x, 3))
 
     def test_execute_with_locals(self):
         def fun(a, b, *args, c=None, **kwargs):

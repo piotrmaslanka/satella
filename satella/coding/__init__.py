@@ -16,7 +16,7 @@ from .metaclasses import metaclass_maker, wrap_with, dont_wrap, wrap_property, D
 from .misc import update_if_not_none, update_key_if_none, update_attr_if_none, queue_iterator, \
     update_key_if_not_none, source_to_function, update_key_if_true, \
     get_arguments, call_with_arguments, chain_callables, Closeable, contains, \
-    enum_value
+    enum_value, length
 from .environment import Context
 from .overloading import overload, class_or_instancemethod
 from .recast_exceptions import rethrow_as, silence_excs, catch_exception, log_exceptions, \
@@ -25,7 +25,7 @@ from .expect_exception import expect_exception
 from .deep_compare import assert_equal, InequalityReason, Inequal
 
 __all__ = [
-    'EmptyContextManager', 'Context',
+    'EmptyContextManager', 'Context', 'length',
     'assert_equal', 'InequalityReason', 'Inequal',
     'Closeable', 'contains', 'enum_value', 'reraise_as',
     'expect_exception',

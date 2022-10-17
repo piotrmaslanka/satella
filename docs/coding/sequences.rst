@@ -11,6 +11,11 @@ Rolling averages
 Standard routines
 =================
 
+length
+------
+
+.. autofunction:: satella.coding.length
+
 IteratorListAdapter
 -------------------
 
