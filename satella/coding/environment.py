@@ -1,13 +1,11 @@
 from __future__ import annotations
-import typing as tp
+
 import threading
+import typing as tp
+
 from satella.coding.typing import V
 
-from .misc import Closeable
-
-
 local = threading.local()
-
 
 THEY_HATIN = object()
 
@@ -19,19 +17,23 @@ class Context:
 
     def __init__(self, parent: tp.Optional[Context] = None, **variables):
         self.parent = parent
-        self.variables = {}
+        self.variables = variables
         self.bool = None
 
     def __str__(self):
         return str(id(self))
 
-    def push_up(self, item: str) -> None:
+    def push_up(self, item: str, value=THEY_HATIN) -> None:
         """
         Advance current variable to the top of the card stack.
 
         :param item: variable name
+        :param value: if not given, current value of given variable will be taken
         """
-        var = self.variables.pop(item)
+        if value is THEY_HATIN:
+            var = self.variables.pop(item)
+        else:
+            var = value
         self.parent.variables[item] = var
 
     def __getattr__(self, item: str):
@@ -51,8 +53,7 @@ class Context:
         except AttributeError:
             parent = None
         ctxt = Context(parent=parent)
-        if ctxt is not parent:
-            ctxt.parent = parent
+        ctxt.parent = parent
         local.thread_context = ctxt
         return ctxt
 

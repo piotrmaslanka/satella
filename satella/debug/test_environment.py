@@ -12,6 +12,18 @@ class TestEnvs(unittest.TestCase):
         with Context() as new_ctxt:
             self.assertEqual(new_ctxt.value, 5)
 
+    def test_push(self):
+        ctxt = Context.get()
+        ctxt.value = 5
+        self.assertEqual(ctxt.value, 5)
+        with Context() as new_ctxt:
+            self.assertEqual(new_ctxt.value, 5)
+            with Context() as new_ctxt2:
+                new_ctxt2.push_up('value', 6)
+            self.assertEqual(new_ctxt.value, 6)
+
+        self.assertEqual(ctxt.value, 5)
+
     def test_delete_envs(self):
         ctxt = Context.get()
         ctxt.value = 5
