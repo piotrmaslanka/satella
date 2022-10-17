@@ -740,9 +740,12 @@ def smart_zip(*iterators: Iteratable) -> tp.Iterator[tp.Tuple[T, ...]]:
     Note that an element of the zipped iterator must be a tuple (ie. isinstance tuple)
     in order for it to be appended to resulting iterator element!
 
+    .. deprecated:: Use the for (a, b), c syntax instead.
+
     :param iterators: list of iterators to zip together
     :return: an iterator zipping the arguments in a smart way
     """
+    warnings.warn('Use the for (a, b), c syntax instead', PendingDeprecationWarning)
     for row in zip(*iterators):
         a = []
         for elem in row:
