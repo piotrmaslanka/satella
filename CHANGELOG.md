@@ -1,6 +1,5 @@
-# v2.22.2
-
-## Things scheduled for deprecation
-
+# v2.23
 
 * smart_zip to be deprecated in 2.23.0
+* removed SIGINT from hang_unti_signal
+
