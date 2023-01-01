@@ -3,16 +3,27 @@ import typing as tp
 from inspect import Parameter
 
 
-def extract_type_signature_from(fun: tp.Callable) -> tp.Tuple[type, ...]:
-    sign = []
+def extract_type_signature_from(fun: tp.Callable) -> tp.Dict[str, type]:
+    """
+    Extract type signature of a function
+    :param fun: function to extract signature from
+    :return: a dict, having all parameters normally passed to the function
+    """
+    sign = {}
     params = inspect.signature(fun).parameters
     for parameter in params.values():
         if parameter.kind in (Parameter.POSITIONAL_ONLY, Parameter.POSITIONAL_OR_KEYWORD):
             if parameter.annotation == Parameter.empty:
-                sign.append(None)
+                sign[parameter.name] = None
             else:
-                sign.append(parameter.annotation)
-    return tuple(sign)
+                sign[parameter.name] = parameter.annotation
+        elif parameter.kind in (Parameter.KEYWORD_ONLY, Parameter.VAR_KEYWORD):
+            if parameter.annotation == Parameter.empty:
+                annot = None
+            else:
+                annot = parameter.annotation
+            sign[parameter.name] = (parameter.kind == Parameter.KEYWORD_ONLY), annot
+    return sign
 
 
 # Taken from https://stackoverflow.com/questions/28237955/same-name-for-classmethod-and-
@@ -36,6 +47,37 @@ class class_or_instancemethod(classmethod):
     def __get__(self, instance, type_):
         descr_get = super().__get__ if instance is None else self.__func__.__get__
         return descr_get(instance, type_)
+
+
+def is_type_a_more_generic_than_b(a: tp.Dict[str, tp.Type], b: tp.Dict[str, tp.Type]) -> bool:
+    """
+    Can it be said that type a is more generic than b
+    :param a: type extracted from a with :func:`~satella.coding.overloading.
+    :param b:
+    :return:
+    """
+    if a is None:
+        return True
+    for key in a:
+        key = b.get(key, None)
+
+        a_ = a[key]
+        b_ = b[key]
+        if isinstance(a_, tuple):
+            if not isinstance(b_, tuple):
+                raise TypeError('Type mismatch %s to %s' % (a_, b_))
+        if issubclass(b_, a_):
+            return True
+    return False
+
+
+def is_signature_a_more_generic_than_b(a: tp.Tuple[{}, [], []], b) -> bool:
+    """
+
+    :param a:
+    @param b:
+    :return: is A more generic than B
+    """
 
 
 class overload:
