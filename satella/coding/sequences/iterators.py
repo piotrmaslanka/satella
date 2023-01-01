@@ -2,6 +2,7 @@ import collections
 import itertools
 import typing as tp
 import warnings
+from typing import _T_co
 
 from ..decorators import for_argument, wraps
 from ..recast_exceptions import rethrow_as, silence_excs
@@ -478,7 +479,7 @@ def skip_first(iterator: Iteratable, n: int) -> tp.Iterator[T]:
 
 
 class _ListWrapperIteratorIterator(tp.Iterator[T]):
-    __slots__ = ('parent', 'pos')
+    __slots__ = 'parent', 'pos'
 
     def __init__(self, parent):
         self.parent = parent
@@ -499,7 +500,7 @@ class _ListWrapperIteratorIterator(tp.Iterator[T]):
         return item
 
 
-class ListWrapperIterator(tp.Generic[T]):
+class ListWrapperIterator(tp.Iterator[T]):
     """
     A wrapped for an iterator, enabling using it as a normal list.
 
@@ -513,7 +514,11 @@ class ListWrapperIterator(tp.Generic[T]):
 
     This is additionally a generic class.
     """
-    __slots__ = ('iterator', 'exhausted', 'list')
+
+    def __next__(self) -> _T_co:
+        return self.next()
+
+    __slots__ = 'iterator', 'exhausted', 'list'
 
     def __init__(self, iterator: Iteratable):
         self.iterator = iter(iterator)
