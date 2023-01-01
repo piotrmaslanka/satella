@@ -5,7 +5,7 @@ import unittest
 
 from satella.coding import update_key_if_not_none, overload, class_or_instancemethod, \
     update_key_if_true, get_arguments, call_with_arguments, chain_callables, Closeable, \
-    contains, enum_value, for_argument, length
+    contains, enum_value, for_argument, length, distance
 from satella.coding.structures import HashableMixin, ComparableEnum
 from satella.coding.transforms import jsonify, intify
 
@@ -102,7 +102,7 @@ class TestCase(unittest.TestCase):
     def test_length(self):
         y = [1, 2, 3]
         x = (z for z in y)
-        self.assertEqual(length(x, 3))
+        self.assertEqual(length(x), 3)
 
     def test_execute_with_locals(self):
         def fun(a, b, *args, c=None, **kwargs):
@@ -229,6 +229,18 @@ class TestCase(unittest.TestCase):
         what_type(2)
         self.assertEqual(a['type'], 'int')
         self.assertRaises(TypeError, lambda: what_type(2.0))
+
+    def test_distance(self):
+        class A:
+            pass
+
+        class B(A):
+            pass
+
+        class C(B):
+            pass
+
+        self.assertEqual(distance(A, C), 2)
 
     def test_update_key_if_not_none(self):
         a = {}
