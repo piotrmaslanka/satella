@@ -69,6 +69,9 @@ Function overloading
 .. autoclass:: satella.coding.overload
     :members:
 
+.. autoclass:: satella.coding.ARGS
+    :members:
+
 .. autofunction:: satella.coding.is_signature_a_more_generic_than_b
 
 

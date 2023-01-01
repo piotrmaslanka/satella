@@ -18,8 +18,7 @@ from .misc import update_if_not_none, update_key_if_none, update_attr_if_none, q
     get_arguments, call_with_arguments, chain_callables, Closeable, contains, \
     enum_value, length
 from .environment import Context
-from .overloading import overload, class_or_instancemethod, is_signature_a_more_generic_than_b, \
-    is_type_a_more_generic_than_b, extract_type_signature_from
+from .overloading import overload, class_or_instancemethod, TypeSignature
 from .recast_exceptions import rethrow_as, silence_excs, catch_exception, log_exceptions, \
     raises_exception, reraise_as
 from .expect_exception import expect_exception
@@ -28,10 +27,9 @@ from .deep_compare import assert_equal, InequalityReason, Inequal
 __all__ = [
     'EmptyContextManager', 'Context', 'length',
     'assert_equal', 'InequalityReason', 'Inequal',
-    'Closeable', 'contains', 'enum_value', 'reraise_as',
+    'Closeable', 'contains', 'enum_value', 'reraise_as'
     'expect_exception',
-    'overload', 'class_or_instancemethod', 'extract_type_signature_from', 'is_signature_a_more_generic_than_b',
-    'is_type_a_more_generic_than_b',
+    'overload', 'class_or_instancemethod', 'TypeSignature',
     'update_if_not_none', 'DocsFromParent', 'update_key_if_none', 'queue_iterator',
     'update_attr_if_none', 'update_key_if_not_none', 'source_to_function',
     'update_key_if_true',
