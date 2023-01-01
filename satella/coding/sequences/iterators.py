@@ -2,7 +2,6 @@ import collections
 import itertools
 import typing as tp
 import warnings
-from typing import _T_co
 
 from ..decorators import for_argument, wraps
 from ..recast_exceptions import rethrow_as, silence_excs
@@ -515,10 +514,20 @@ class ListWrapperIterator(tp.Iterator[T]):
     This is additionally a generic class.
     """
 
-    def __next__(self) -> _T_co:
+    __slots__ = 'iterator', 'exhausted', 'list'
+
+    def __next__(self) -> T:
         return self.next()
 
-    __slots__ = 'iterator', 'exhausted', 'list'
+    def __contains__(self, item: T) -> bool:
+        if item not in self.list and self.exhausted:
+            return False
+        for item2 in self:
+            self.list.append(item2)
+            if item2 == item:
+                return True
+        else:
+            return False
 
     def __init__(self, iterator: Iteratable):
         self.iterator = iter(iterator)
