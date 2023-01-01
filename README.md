@@ -11,8 +11,9 @@ satella
 [![License](https://img.shields.io/pypi/l/satella)](https://github.com/piotrmaslanka/satella)
 
 Satella is an almost-zero-requirements Python 3.5+ library for writing
-server applications, especially those dealing with mundane but
-useful things. It also runs on PyPy.
+server applications. It has arisen out of my requirements to have some classes or design patterns handy, and kinda
+wish-they-were-in-the-stdlib ones. especially those dealing with mundane but useful things. It also runs on PyPy, and
+most of it runs on Windows (the part not dealing with forking processes, you see).
 
 Satella uses [semantic versioning 2.0](https://semver.org/spec/v2.0.0.html).
 
@@ -21,7 +22,13 @@ Satella contains, among other things:
 * things to help you manage your [application's configuration](satella/configuration)
 * a fully equipped [metrics library](satella/instrumentation/metrics)
     * alongside a fully metricized [ThreadPoolExecutor](satella/instrumentation/metrics/structures/threadpool.py)
-* helpful [exception handlers](satella/exception_handling)
+    * and an exporter to [Prometheus](satella/instrumentation/metrics/exporters/prometheus.py)
+    * as well as exporters/metricizers for the following libraries:
+      * [AWS](https://github.com/piotrmaslanka/aws-satella)
+      * [FastAPI](https://github.com/Dronehub/fastapi-satella-metrics)
+      * [Django](https://github.com/piotrmaslanka/django-satella-metrics)
+      * [Flask](https://github.com/piotrmaslanka/flask-satella-metrics)
+* helpful [exception handlers](satella/exception_handling) 
 * common programming [idioms and structures](satella/coding)
 
 Most Satella objects make heavy use of `__slots__`, so they are memory friendly and usable on
