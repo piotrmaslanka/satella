@@ -1,7 +1,12 @@
 from __future__ import annotations
 
+import functools
 import inspect
+import operator
 import typing as tp
+from inspect import Parameter
+
+from satella.coding.structures import frozendict
 
 
 
@@ -29,9 +34,7 @@ class class_or_instancemethod(classmethod):
 
 
 class TypeSignature(inspect.Signature):
-    """
-    Augmented type signature.
-    """
+
     __slots__ = ()
 
     def __init__(self, t_sign: inspect.Signature):

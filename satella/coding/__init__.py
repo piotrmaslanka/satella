@@ -27,7 +27,7 @@ from .deep_compare import assert_equal, InequalityReason, Inequal
 __all__ = [
     'EmptyContextManager', 'Context', 'length',
     'assert_equal', 'InequalityReason', 'Inequal',
-    'Closeable', 'contains', 'enum_value', 'reraise_as'
+    'Closeable', 'contains', 'enum_value',
     'expect_exception',
     'overload', 'class_or_instancemethod', 'TypeSignature',
     'update_if_not_none', 'DocsFromParent', 'update_key_if_none', 'queue_iterator',

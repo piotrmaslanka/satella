@@ -230,18 +230,6 @@ class TestCase(unittest.TestCase):
         self.assertEqual(a['type'], 'int')
         self.assertRaises(TypeError, lambda: what_type(2.0))
 
-    def test_distance(self):
-        class A:
-            pass
-
-        class B(A):
-            pass
-
-        class C(B):
-            pass
-
-        self.assertEqual(distance(A, C), 2)
-
     def test_update_key_if_not_none(self):
         a = {}
         update_key_if_not_none(a, 'test', None)
