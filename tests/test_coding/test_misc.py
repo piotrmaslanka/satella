@@ -5,7 +5,7 @@ import unittest
 
 from satella.coding import update_key_if_not_none, overload, class_or_instancemethod, \
     update_key_if_true, get_arguments, call_with_arguments, chain_callables, Closeable, \
-    contains, enum_value, for_argument, length, distance
+    contains, enum_value, for_argument, length
 from satella.coding.structures import HashableMixin, ComparableEnum
 from satella.coding.transforms import jsonify, intify
 
