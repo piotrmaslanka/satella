@@ -66,19 +66,18 @@ You can also decorate given callables in order not to be wrapped with
 Function overloading
 --------------------
 
+.. warning:: This is coded for cases where the function prototypes differ significantly, for ex. matches
+            only one prototype. For cases where a single call might match multiple prototypes, and if it's
+            desired that the implementation tells them apart, this implementation might not be of sufficient complexity.
+        Go file a ticket that you cannot use Satella with some implementation. Just type down what kind of implementation
+        that was.
+
 .. autoclass:: satella.coding.overload
     :members:
 
-.. autoclass:: satella.coding.ARGS
+.. autoclass:: satella.coding.TypeSignature
     :members:
 
-.. autofunction:: satella.coding.is_signature_a_more_generic_than_b
-
-
-.. autofunction:: satella.coding.is_type_a_more_generic_than_b
-
-
-.. autofunction:: satella.coding.extract_type_signature_from
 
 DocsFromParent
 --------------
