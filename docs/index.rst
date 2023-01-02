@@ -8,7 +8,7 @@ server applications. It has arisen out of my requirements to have some classes o
 wish-they-were-in-the-stdlib ones. especially those dealing with mundane but useful things. It also runs on PyPy, and
 most of it runs on Windows (the part not dealing with forking processes, you see).
 
-It's basically the stuff-I-wish-was-inside-Python-library of piotrmaslanka_.
+It's basically the stuff-I-wish-was-inside-Python-standard-library of piotrmaslanka_.
 
 .. _piotrmaslanka: https://github.com/piotrmaslanka
 
