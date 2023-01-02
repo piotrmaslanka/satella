@@ -228,14 +228,19 @@ class TestCase(unittest.TestCase):
         def what_type(x):
             a['type'] = 'any'
 
+        @what_type.overload
+        def what_type(x: (int, float)):
+            a['type'] = 'num'
+
         what_type('test')
         self.assertEqual(a['type'], 'str')
         what_type(2)
         self.assertEqual(a['type'], 'int')
+        what_type(2.0)
+        self.assertEqual(a['type'], 'num')
         what_type(None)
         self.assertEqual(a['type'], 'any')
-        what_type(2.0)
-        self.assertEqual(a['type'], 'any')
+
 
     def test_update_key_if_not_none(self):
         a = {}

@@ -106,6 +106,7 @@ class overload:
         if hasattr(fun, '__doc__'):
             self.__doc__ = fun.__doc__
         self.__wrapped__ = fun
+        self.history_list = []
 
     def overload(self, fun):
         """
@@ -113,7 +114,7 @@ class overload:
         """
         sign = TypeSignature.from_fun(fun)
         if sign in self.type_signatures_to_functions:
-            raise TypeError('Method of this signature is already overloaded with %s' % (f,))
+            raise TypeError('Method of this signature is already overloaded with %s' % (fun,))
         self.type_signatures_to_functions[sign] = fun
         return self
 
@@ -123,12 +124,16 @@ class overload:
 
         :raises TypeError: no type signature given
         """
-        matching = []
+        matchings = []
         for sign, fun in self.type_signatures_to_functions.items():
+            print('Matching %s against %s', sign, fun)
             if sign.matches(*args, **kwargs):
-                matching.append((sign, fun))
-        matching.sort()
-        if not matching:
+                matchings.append((sign, fun))
+            else:
+                print('Did not score a math between %s:%s and %s', args, kwargs, )
+        matchings.sort()
+        print(matchings)
+        if not matchings:
             raise TypeError('No matching entries!')
         else:
-            return matching[-1][1](*args, **kwargs)     # call the most specific function you could find
+            return matchings[-1][1](*args, **kwargs)     # call the most specific function you could find
