@@ -8,6 +8,20 @@ from satella.coding.sequences import smart_enumerate, ConstruableIterator, walk,
 
 class TestIterators(unittest.TestCase):
 
+    def test_list_wrapper_iterator_contains(self):
+        def iterate():
+            yield 1
+            yield 2
+            yield 3
+            yield 4
+            yield 5
+
+        lwe = ListWrapperIterator(iterate())
+        self.assertTrue(2 in lwe)
+        self.assertLessEqual(len(lwe.list), 2)
+        self.assertFalse(6 in lwe)
+        self.assertEqual(len(lwe.list), 5)
+
     def test_list_wrapper_iterator(self):
         a = {'count': 0}
 

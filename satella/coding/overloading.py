@@ -1,18 +1,13 @@
+from __future__ import annotations
+
+import functools
 import inspect
+import operator
 import typing as tp
 from inspect import Parameter
 
+from satella.coding.structures import frozendict
 
-def extract_type_signature_from(fun: tp.Callable) -> tp.Tuple[type, ...]:
-    sign = []
-    params = inspect.signature(fun).parameters
-    for parameter in params.values():
-        if parameter.kind in (Parameter.POSITIONAL_ONLY, Parameter.POSITIONAL_OR_KEYWORD):
-            if parameter.annotation == Parameter.empty:
-                sign.append(None)
-            else:
-                sign.append(parameter.annotation)
-    return tuple(sign)
 
 
 # Taken from https://stackoverflow.com/questions/28237955/same-name-for-classmethod-and-
@@ -38,6 +33,52 @@ class class_or_instancemethod(classmethod):
         return descr_get(instance, type_)
 
 
+class TypeSignature(inspect.Signature):
+
+    __slots__ = ()
+
+    def __init__(self, t_sign: inspect.Signature):
+        self._return_annotation = t_sign._return_annotation
+        self._parameters = t_sign._parameters
+
+    @staticmethod
+    def from_fun(fun):
+        return TypeSignature(inspect.Signature.from_callable(fun))
+
+    def can_be_called_with_args(self, *args, **kwargs) -> bool:
+        called = self._bind(*args, **kwargs)
+        return all(issubclass(self.signature.parameters.get(arg_name, NONEARGS)._annotation, arg_value)
+                   for arg_name, arg_value in called.items())
+
+    def is_more_generic_than(self, b: TypeSignature) -> bool:
+        if self == {}:
+            for key in self:
+                key1 = self[key]
+                key2 = b.get(key, None)
+                if key2 is None:
+                    return key2 == {}
+
+                if key2.is_more_generic_than(key1):
+                    return False
+        return True
+
+    def __lt__(self, other: TypeSignature) -> bool:
+        return self.is_more_generic_than(other)
+
+    def matches(self, *args, **kwargs) -> bool:
+        """
+        Does this invocation match this signature?
+        """
+        bound_args = self.bind(*args, **kwargs)
+        bound_args.apply_defaults()
+        for param_name, param_value in bound_args.arguments.items():
+            if isinstance(param_value, self._parameters[param_name].annotation):
+                continue
+            else:
+                return False
+        return True
+
+
 class overload:
     """
     A class used for method overloading.
@@ -57,24 +98,23 @@ class overload:
     >>>     print('Int')
 
     Note that this instance's __wrapped__ will refer to the first function.
+    TypeError will be called if no signatures match arguments.
     """
 
     def __init__(self, fun: tp.Callable):
-        self.type_signatures_to_functions = {
-            extract_type_signature_from(fun): fun
-        }  # type: tp.Dict[tp.Tuple[type, ...], tp.Callable]
+        self.type_signatures_to_functions = {TypeSignature.from_fun(fun): fun}
         if hasattr(fun, '__doc__'):
             self.__doc__ = fun.__doc__
         self.__wrapped__ = fun
+        self.history_list = []
 
     def overload(self, fun):
         """
         :raises ValueError: this signature already has an overload
         """
-        sign = extract_type_signature_from(fun)
+        sign = TypeSignature.from_fun(fun)
         if sign in self.type_signatures_to_functions:
-            f = self.type_signatures_to_functions[sign]
-            raise ValueError('Method of this signature is already overloaded with %s' % (f,))
+            raise TypeError('Method of this signature is already overloaded with %s' % (fun,))
         self.type_signatures_to_functions[sign] = fun
         return self
 
@@ -82,17 +122,18 @@ class overload:
         """
         Call one of the overloaded functions.
 
-        :raises TypeError: no type signature matched
+        :raises TypeError: no type signature given
         """
+        matchings = []
         for sign, fun in self.type_signatures_to_functions.items():
-            try:
-                for type_, arg in zip(sign, args):
-                    if type_ is None:
-                        continue
-                    if not isinstance(arg, type_):
-                        raise ValueError()
-
-                return fun(*args, **kwargs)
-            except ValueError:
-                pass
-        raise TypeError('No matching functions found')
+            print('Matching %s against %s', sign, fun)
+            if sign.matches(*args, **kwargs):
+                matchings.append((sign, fun))
+            else:
+                print('Did not score a math between %s:%s and %s', args, kwargs, )
+        matchings.sort()
+        print(matchings)
+        if not matchings:
+            raise TypeError('No matching entries!')
+        else:
+            return matchings[-1][1](*args, **kwargs)     # call the most specific function you could find

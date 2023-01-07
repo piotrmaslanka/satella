@@ -478,7 +478,7 @@ def skip_first(iterator: Iteratable, n: int) -> tp.Iterator[T]:
 
 
 class _ListWrapperIteratorIterator(tp.Iterator[T]):
-    __slots__ = ('parent', 'pos')
+    __slots__ = 'parent', 'pos'
 
     def __init__(self, parent):
         self.parent = parent
@@ -499,7 +499,7 @@ class _ListWrapperIteratorIterator(tp.Iterator[T]):
         return item
 
 
-class ListWrapperIterator(tp.Generic[T]):
+class ListWrapperIterator(tp.Iterator[T]):
     """
     A wrapped for an iterator, enabling using it as a normal list.
 
@@ -513,7 +513,21 @@ class ListWrapperIterator(tp.Generic[T]):
 
     This is additionally a generic class.
     """
-    __slots__ = ('iterator', 'exhausted', 'list')
+
+    __slots__ = 'iterator', 'exhausted', 'list'
+
+    def __next__(self) -> T:
+        return self.next()
+
+    def __contains__(self, item: T) -> bool:
+        if item not in self.list and self.exhausted:
+            return False
+        for item2 in self:
+            self.list.append(item2)
+            if item2 == item:
+                return True
+        else:
+            return False
 
     def __init__(self, iterator: Iteratable):
         self.iterator = iter(iterator)
@@ -740,9 +754,12 @@ def smart_zip(*iterators: Iteratable) -> tp.Iterator[tp.Tuple[T, ...]]:
     Note that an element of the zipped iterator must be a tuple (ie. isinstance tuple)
     in order for it to be appended to resulting iterator element!
 
+    .. deprecated:: Use the for (a, b), c syntax instead.
+
     :param iterators: list of iterators to zip together
     :return: an iterator zipping the arguments in a smart way
     """
+    warnings.warn('Use the for (a, b), c syntax instead', PendingDeprecationWarning)
     for row in zip(*iterators):
         a = []
         for elem in row:

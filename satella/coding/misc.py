@@ -22,6 +22,19 @@ def enum_value(value):
     return value
 
 
+def length(lenable) -> int:
+    """
+    Return length of an item. If it is a generator, exhaust it and return it's length.
+    """
+    try:
+        return len(lenable)
+    except TypeError:
+        i = 0
+        for _ in lenable:
+            i += 1
+        return i
+
+
 def contains(needle, haystack) -> bool:
     """
     A syntactic sugar for the following:

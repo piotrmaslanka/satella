@@ -2,7 +2,6 @@ import unittest
 
 from satella.debug import TaintedObject, TaintingEnvironment, taint
 
-
 class TestTainting(unittest.TestCase):
     def test_declare(self):
         self.assertRaises(RuntimeError, lambda: taint(5))

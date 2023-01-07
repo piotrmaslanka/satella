@@ -28,12 +28,10 @@ def hang_until_sig(extra_signals: tp.Optional[tp.Sequence[int]] = None,
     extra_signals = extra_signals or ()
 
     old_term = signal.getsignal(signal.SIGTERM)
-    old_int = signal.getsignal(signal.SIGINT)
     olds = []
 
     # Set the signal handler
     signal.signal(signal.SIGTERM, __sighandler)
-    signal.signal(signal.SIGINT, __sighandler)
     for s in extra_signals:
         olds.append(signal.getsignal(s))
         signal.signal(s, __sighandler)
@@ -43,7 +41,6 @@ def hang_until_sig(extra_signals: tp.Optional[tp.Sequence[int]] = None,
 
     # Unset the signal handler
     signal.signal(signal.SIGTERM, old_term)
-    signal.signal(signal.SIGINT, old_int)
     for s, old_handler in zip(extra_signals, olds):
         signal.signal(s, old_handler)
 
