@@ -38,6 +38,8 @@ class TaintedObject(tp.Generic[T]):
         from .environment import TaintingEnvironment
         if isinstance(v, TaintedObject):
             # all is already set correctly for this object and it will be returned
+            self.__environment = v.__environment
+            self.__v = v.__v
             return
         self.__environment = TaintingEnvironment.get_session_in_progress()
         self.__v = v

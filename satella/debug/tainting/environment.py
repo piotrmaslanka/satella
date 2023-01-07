@@ -12,7 +12,7 @@ from satella.coding.typing import T
 
 from .tainteds import TaintedObject, access_tainted, taint
 
-local = threading.local()
+LOCAL_ENVIRONMENT = threading.local()
 
 RET_VAL = dis.opmap['RETURN_VALUE']
 
@@ -62,14 +62,14 @@ class TaintingEnvironment:
         :raises RuntimeError: there is already a tainting session in progress
         """
         self.enabled = True
-        global local
-        if hasattr(local, 'satella_tainting'):
+        global LOCAL_ENVIRONMENT
+        if hasattr(LOCAL_ENVIRONMENT, 'satella_tainting'):
             raise RuntimeError('Other tainting session in progress')
-        local.satella_tainting = self
+        LOCAL_ENVIRONMENT.satella_tainting = self
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        del local.satella_tainting
+        del LOCAL_ENVIRONMENT.satella_tainting
         self.enabled = False
         return False
 
@@ -80,9 +80,9 @@ class TaintingEnvironment:
 
         :raises RuntimeError: no tainting session started yet
         """
-        if not hasattr(local, 'satella_tainting'):
+        if not hasattr(LOCAL_ENVIRONMENT, 'satella_tainting'):
             raise RuntimeError('You require a session in progress to do that')
-        return local.satella_tainting
+        return LOCAL_ENVIRONMENT.satella_tainting
 
     def get_tainted_variables(self) -> tp.Iterator[T]:
         """
