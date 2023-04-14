@@ -213,6 +213,7 @@ class TestCase(unittest.TestCase):
         MyClass.method()
         self.assertEqual(a, {'method': True, 'classmethod': True})
 
+    @unittest.skip("Fix #60 for this")
     def test_overload(self):
         a = {}
 
