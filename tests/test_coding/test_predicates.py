@@ -124,7 +124,7 @@ class TestPredicates(unittest.TestCase):
         self.assertFalse(p([2, 2]))
 
     def test_len(self):
-        p = x.len_able() == 2
+        p = x.length() == 2
         self.assertTrue(p([1, 2]))
         self.assertFalse(p([]))
 

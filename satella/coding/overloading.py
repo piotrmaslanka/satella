@@ -83,6 +83,10 @@ class overload:
     """
     A class used for method overloading.
 
+    .. warning::
+
+       This feature is scheduled for an overhaul and may not work as promised. Keep that in mind.
+
     Note that methods can be only overloaded by their positional, or positional-and-keyword
     arguments. Overload distinguishment will be done at the level of positional arguments only.
 
