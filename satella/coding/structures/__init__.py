@@ -6,7 +6,7 @@ from .heaps import Heap, SetHeap, TimeBasedHeap, TimeBasedSetHeap
 from .immutable import Immutable, frozendict, NotEqualToAnything, NOT_EQUAL_TO_ANYTHING
 from .mixins import OmniHashableMixin, ReprableMixin, StrEqHashableMixin, ComparableIntEnum, \
     HashableIntEnum, ComparableAndHashableBy, ComparableAndHashableByInt, ComparableEnum, \
-    HashableMixin, ComparableAndHashableByStr, DictionaryEQAble
+    HashableMixin, ComparableAndHashableByStr, DictionaryEQAble, OnStrOnlyName
 from .proxy import Proxy
 from .queues import Subqueue
 from .ranking import Ranking
@@ -22,7 +22,7 @@ from .zip_dict import SetZip
 from .push_iterable import PushIterable
 
 __all__ = [
-    'PushIterable',
+    'PushIterable', 'OnStrOnlyName',
     'Vector', 'SetZip',
     'DBStorage', 'SyncableDroppable',
     'LRU',

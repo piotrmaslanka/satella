@@ -95,6 +95,12 @@ Mixins are classes whose constructor you do not need to invoke. They magically
 endow your class with chosen properties, often by overloading their specific
 special methods.
 
+OnStrOnlyName
+-------------
+
+.. autoclass:: satella.coding.structures.OnStrOnlyName
+    :members:
+
 HashableMixin
 -------------
 

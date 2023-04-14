@@ -87,3 +87,23 @@ class ComparableIntEnum(HashableIntEnum):
         if isinstance(other, (int, float)):
             return self.value == other
         return self.value == int(other)
+
+
+class OnStrOnlyName:
+    """
+    A mix-in to add the following functionality to your class.
+
+    tl;dr - the name will be used instead of ClassName.name.
+
+    >>> from enum import Enum
+    >>> class MyEnum(OnStrOnlyName, Enum):
+    >>>     A = 0
+    >>>     B = 1
+    >>>     C = 'test'
+    >>> assert str(MyEnum.A) == 'A'
+    >>> assert str(MyEnum.B) == 'B'
+    >>> assert str(MyEnum.C) == 'test'
+    """
+
+    def __str__(self) -> str:
+        return self.name

@@ -1,4 +1,7 @@
-# v2.24.0
+# v2.23.1
 
-* completely overhauled [overload](https://satella.readthedocs.io/en/latest/coding/functions.html#function-overloading), 
-  ie. fixed #57.
+* added OnStrOnlyName
+
+[//]: # (* completely overhauled [overload]&#40;https://satella.readthedocs.io/en/latest/coding/functions.html#function-overloading&#41;, )
+
+[//]: # (  ie. fixed #57.)

@@ -4,7 +4,7 @@ import copy
 import math
 import time
 import unittest
-
+from enum import Enum
 from unittest import mock
 
 from satella.coding.concurrent import call_in_separate_thread
@@ -15,10 +15,38 @@ from satella.coding.structures import TimeBasedHeap, Heap, typednamedtuple, \
     CacheDict, StrEqHashableMixin, ComparableIntEnum, HashableIntEnum, ComparableAndHashableBy, \
     ComparableAndHashableByInt, SparseMatrix, ExclusiveWritebackCache, Subqueue, \
     CountingDict, ComparableEnum, LRU, LRUCacheDict, Vector, DefaultDict, PushIterable, \
-    ComparableAndHashableByStr, NotEqualToAnything, NOT_EQUAL_TO_ANYTHING, DictionaryEQAble, SetZip
+    ComparableAndHashableByStr, NotEqualToAnything, NOT_EQUAL_TO_ANYTHING, DictionaryEQAble, SetZip, OnStrOnlyName
+
+
+def continue_testing_omni(self, omni_class):
+    e1 = omni_class(2)
+    e2 = omni_class(1)
+    e3 = omni_class(1)
+
+    self.assertEqual(e2, e3)
+    self.assertNotEqual(e1, e2)
+    self.assertNotEqual(e1, e3)
+
+    a = {
+        e1: '1', e2: '2', e3: '3'
+    }
+
+    self.assertEqual(a[e1], '1')
+    self.assertEqual(hash(e1), hash(2))
 
 
 class TestStructures(unittest.TestCase):
+
+    def test_onstronlyname(self):
+
+        class MyEnum(OnStrOnlyName, Enum):
+            A = 0
+            B = 1
+            C = 'test'
+
+        self.assertEqual(str(MyEnum.A), 'A')
+        self.assertEqual(str(MyEnum.B), 'B')
+        self.assertEqual(str(MyEnum.C), 'C')
 
     def test_zip(self):
         a = set([1,2, 3])
@@ -694,22 +722,6 @@ class TestStructures(unittest.TestCase):
         self.assertEqual(hash(a), hash(b))
         self.assertRaises(TypeError, lambda: a.update({3: 5}))
 
-    def continue_testing_omni(self, Omni):
-        e1 = Omni(2)
-        e2 = Omni(1)
-        e3 = Omni(1)
-
-        self.assertEqual(e2, e3)
-        self.assertNotEqual(e1, e2)
-        self.assertNotEqual(e1, e3)
-
-        a = {
-            e1: '1', e2: '2', e3: '3'
-        }
-
-        self.assertEqual(a[e1], '1')
-        self.assertEqual(hash(e1), hash(2))
-
     def test_omni_not_filled_in_fields(self):
         class Omni1(OmniHashableMixin):
             _HASH_FIELDS_TO_USE = 'a'
@@ -744,7 +756,7 @@ class TestStructures(unittest.TestCase):
             def __init__(self, a):
                 self.a = a
 
-        self.continue_testing_omni(Omni)
+        continue_testing_omni(self, Omni)
 
     def test_omni(self):
         class Omni(OmniHashableMixin):
@@ -752,7 +764,7 @@ class TestStructures(unittest.TestCase):
 
             def __init__(self, a):
                 self.a = a
-        self.continue_testing_omni(Omni)
+        continue_testing_omni(self, Omni)
 
     def test_tbsh(self):
         tbh = TimeBasedSetHeap()
