@@ -17,7 +17,7 @@ commands:
   unit_test:
     description: Run the unit tests
     steps:
-      - run: pytest -vv --cov=satella
+      - run: pytest -n 8 -vv --cov=satella
 jobs:
   test:
     executor: my-executor
