@@ -10,6 +10,8 @@ class DictObject(dict):
     """
     A dictionary wrapper that can be accessed by attributes.
 
+    Note that it still remains a completely valid dictionary!
+
     You can use keys different than strings, but they will be inaccessible as attributes, and
     you will have to do subscription to get them.
 
@@ -17,6 +19,7 @@ class DictObject(dict):
 
     >>> a = DictObject({'test': 5})
     >>> self.assertEqual(a.test, 5)
+    >>> self.assertEqual(a['test'], 5)
     """
 
     def __copy__(self):

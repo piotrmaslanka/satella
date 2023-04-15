@@ -497,8 +497,11 @@ class TestStructures(unittest.TestCase):
         b = DictObject(a)
         b.c = 4
         self.assertEqual(b.a, 5)
+        self.assertEqual(b['a'], 5)
         self.assertEqual(b.k, 3)
+        self.assertEqual(b['k'], 3)
         self.assertEqual(b.c, 4)
+        self.assertEqual(b['c'], 4)
 
         self.assertIn('DictObject', str(b))
         self.assertIn('DictObject', repr(b))
