@@ -144,6 +144,19 @@ class TestTime(unittest.TestCase):
             time.sleep(1)
             self.assertTrue(measurement.timeouted)
 
+    def test_measure_reset_and_stop(self):
+        m1 = measure(create_stopped=True)
+        m1.start()
+        time.sleep(0.5)
+        self.assertFalse(m1.stopped)
+        self.assertGreaterEqual(m1(), 0.5)
+        m1.reset_and_stop()
+        self.assertTrue(m1.stopped)
+        self.assertEqual(m1(), 0)
+        m1.start()
+        time.sleep(0.5)
+        self.assertGreaterEqual(m1(), 0.5)
+
     @unittest.skipIf('win' in sys.platform, 'Needs POSIX to run')
     def test_sleep(self):
         sleep(-2)

@@ -145,6 +145,15 @@ class measure:
         self.reset()
         self.start()
 
+    def reset_and_stop(self) -> None:
+        """
+        Syntactic sugar for calling stop() and then reset()
+
+        .. versionadded:: 2.23.2
+        """
+        self.stop()
+        self.reset()
+
     def has_exceeded(self, value: float) -> bool:
         """
         Return whether the timer has exceeded provided value.
@@ -244,6 +253,15 @@ class measure:
         if self.elapsed is not None and self.stop_on_stop:
             self.start()
         return self
+
+    @property
+    def stopped(self) -> bool:
+        """
+        Whether this counter is already stopped
+
+        .. versionadded:: 2.23.2
+        """
+        return self.stopped_on is not None
 
     def stop(self) -> None:
         """
