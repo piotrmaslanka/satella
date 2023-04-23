@@ -453,9 +453,12 @@ class TerminableThread(threading.Thread):
 
 class IntervalTerminableThread(TerminableThread, metaclass=ABCMeta):
     """
-    A TerminableThread that calls .loop() once per x seconds.
+    A TerminableThread that calls .loop() once per x seconds, taking into account the length of
+    :meth:`~satella.coding.concurrent.IntervalTerminableThread.loop` runtime.
 
     If executing .loop() takes more than x seconds, on_overrun() will be called.
+    If executing .process() takes more than x seconds, it will be called immediately after it returns (and
+    :meth:`~satella.coding.concurrent.IntervalTerminableThread.on_overrun` executes)
 
     :param seconds: time that a single looping through should take in seconds.
         Can be also a time string. This will include the time spent on calling .loop(), the rest
