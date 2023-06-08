@@ -22,7 +22,9 @@ Satella contains, among other things:
 * things to help you manage your [application's configuration](satella/configuration)
 * a fully equipped [metrics library](satella/instrumentation/metrics)
     * alongside a fully metricized [ThreadPoolExecutor](satella/instrumentation/metrics/structures/threadpool.py)
-    * and an exporter to [Prometheus](satella/instrumentation/metrics/exporters/prometheus.py)
+    * and an exporter to [Prometheus](satella/instrumentation/metrics/exporters/prometheus.py) or really any 
+      [OpenMetrics](https://github.com/OpenObservability/OpenMetrics/blob/main/specification/OpenMetrics.md) compliant
+      ingester
     * as well as exporters/metricizers for the following libraries:
       * [AWS](https://github.com/piotrmaslanka/aws-satella)
       * [FastAPI](https://github.com/Dronehub/fastapi-satella-metrics)
