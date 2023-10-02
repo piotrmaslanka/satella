@@ -364,7 +364,7 @@ def for_argument(*t_ops: ForArgumentArg, **t_kwops: ForArgumentArg):
             @wraps(fun)
             def inner(*args, **kwargs):
                 # add extra 'None' argument if unbound method
-                assert len(args) >= len(t_ops)
+                assert len(args) >= len(t_ops), 'Invalid number of arguments'
                 a = fun(*((_NOP if op2 is None else op2)(arg) for arg, op2 in
                           itertools.zip_longest(args, t_ops, fillvalue=None)),
                         **{k: t_kwops.get(k, _NOP)(v) for k, v in kwargs.items()})
