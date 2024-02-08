@@ -205,3 +205,10 @@ NotEnoughBytes
 
 .. autoclass:: satella.exceptions.NotEnoughBytes
     :members:
+
+
+For you to consume
+==================
+
+.. autoclass:: satella.exceptions.SatellaWarning
+    :members:

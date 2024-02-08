@@ -243,3 +243,9 @@ class NotEnoughBytes(BaseSatellaError):
     """
     Not enough bytes in the parser remain to satisfy this request
     """
+
+
+class SatellaWarning(Warning):
+    """
+    A generic Satella warning.
+    """
