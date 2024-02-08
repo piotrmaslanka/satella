@@ -2,7 +2,7 @@
 Just useful objects to make your coding nicer every day
 """
 
-from .ctxt_managers import EmptyContextManager
+from .var_managers import EmptyContextManager
 from .algos import merge_dicts
 from .concurrent import Monitor, RMonitor
 from .decorators import precondition, short_none, has_keys, \
