@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import queue
 import typing as tp
 import warnings
@@ -248,4 +250,10 @@ class NotEnoughBytes(BaseSatellaError):
 class SatellaWarning(Warning):
     """
     A generic Satella warning.
+    """
+
+
+class ReadonlyError(Exception):
+    """
+    Context is read-only.
     """

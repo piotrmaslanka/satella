@@ -1,18 +1,21 @@
 from __future__ import annotations
 
-import abc
 import typing as tp
 import warnings
 import threading
 
-from satella.exceptions import ImpossibleError, SatellaWarning
+from satella.exceptions import ImpossibleError, SatellaWarning, ReadonlyError
+
+try:
+    import gevent.monkey, gevent.socket
+    import socket
+    GEVENT_ENABLED = socket.socket is gevent.socket.socket
+except ImportError:
+    GEVENT_ENABLED = False
+
 
 THREADED_ROOT: Context = None
 THREADING_LOCK = threading.RLock()
-
-
-class Readonly(Exception):
-    """Context is read-only."""
 
 
 class AssignWarning(Warning):
@@ -38,7 +41,7 @@ class Context(object):
     __slots__ = 'parent', 'data', 'readonly', 'warn_on_assign', 'assign_to_parent'
 
     @classmethod
-    def new_tree(cls, *args, **kwargs):
+    def new_tree(cls, *args, **kwargs) -> Context:
         """
         Start a new tree starting with this context.
 
@@ -46,7 +49,6 @@ class Context(object):
         to be None.
         """
         return cls(None, *args, **kwargs)
-
 
     def __bool__(self) -> bool:
         return bool(self.data)
@@ -64,6 +66,8 @@ class Context(object):
 
     def __init__(self, parent: tp.Optional[Context] = None, data: tp.Optional[dict] = None, readonly: bool = False,
                  warn_on_assign: bool = False, assign_to_parent: bool = False):
+        if parent is None:
+            parent = get_current_context()
         super().__setattr__('parent', parent)
         super().__setattr__('data', data or {})
         super().__setattr__('readonly', readonly)
@@ -90,7 +94,7 @@ class Context(object):
         print(self.data)
         if key in self.data:
             if self.readonly:
-                raise Readonly('This context is readonly')
+                raise ReadonlyError('This context is readonly')
         else:
             if self.warn_on_assign:
                 warnings.warn(f'Warning on assign for {key}', AssignWarning)
@@ -101,7 +105,7 @@ class Context(object):
 
         if self.parent is None:
             if self.readonly:
-                raise Readonly('This context is readonly')
+                raise ReadonlyError('This context is readonly')
             warnings.warn(f'New global {key} is being set', SettingGlobalWarning)
             self.data[key] = value
 
