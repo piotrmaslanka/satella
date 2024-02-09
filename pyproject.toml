@@ -42,3 +42,21 @@ build-backend = "setuptools.build_meta"
 where = ["/"]
 include = ["satella"]
 
+[pytest]
+minversion = 6.0
+addopts = -ra -q
+testpaths =
+    tests
+
+[tool.coverage.run]
+branch = true
+concurrency=thread
+omit=
+  tests/*
+  .eggs/*
+  setup.py
+  satella/__init__.py
+  satella/os/signals.py
+
+[tool.coverage.report]
+ignore_errors = true
