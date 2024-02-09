@@ -22,6 +22,9 @@ class AssignWarning(Warning):
     """A warned assignment was done."""
 
 
+def get_current_context() -> Context:
+    pass
+
 class SettingGlobalWarning(Warning):
     """A new global is being set warning."""
 
@@ -112,11 +115,12 @@ class Context(object):
     def __delattr__(self, item):
         delattr(self.data, item)
 
-    def activate(self, _make_current_parent_this_parent: bool = True) -> None:
+    def activate(self, _make_current_parent_this_parent: bool = True) -> Context:
         """
         Make this the current context
 
         :param _make_current_parent_this_parent: make currently registered context parent of this context
+        :return: context currently in effect
         """
         global THREADED_ROOT, THREADING_LOCK
 
@@ -124,19 +128,21 @@ class Context(object):
             THREADED_ROOT = self
             if _make_current_parent_this_parent:
                 self.parent = get_current_context()
+        return self.parent
 
-    def deactivate(self) -> None:
+    def deactivate(self) -> Context:
         """Deactivate this context"""
         global THREADED_ROOT
 
         if self.parent is None:
-            return
+            return self
 
         with THREADING_LOCK:
             if THREADED_ROOT is not self:
                 raise ImpossibleError('Cannot deactivate a variable manager that is not the active one')
             assert THREADED_ROOT is self
             THREADED_ROOT = self.parent
+        return self
 
 
 class ThreadedContext(Context):
@@ -172,6 +178,7 @@ def get_current_context(use_threading: tp.Optional[bool] = None) -> Context:
             return THREADED_ROOT
         else:
             return THREADED_ROOT
+
 
 
 

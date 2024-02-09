@@ -10,7 +10,7 @@ testable, easy to reason about and reasonably quick.
 Thy're quite similar to Werkzeug's contextlocals_.
 
 
-.. contextlocals_: https://werkzeug.palletsprojects.com/en/2.1.x/local/
+.. _contextlocals: https://werkzeug.palletsprojects.com/en/2.1.x/local/
 
 Let's provide an example. You have a `settings.py` file:
 

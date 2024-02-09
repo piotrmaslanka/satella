@@ -110,7 +110,7 @@ HashableMixin
 ComparableAndHashableByInt
 --------------------------
 
-.. autoclass:: satella.coding.ComparableAndHashableByInt
+.. autoclass:: satella.coding.structures.ComparableAndHashableByInt
     :members:
 
 OmniHashableMixin

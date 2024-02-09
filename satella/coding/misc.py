@@ -4,7 +4,7 @@ import warnings
 from inspect import Parameter, signature
 from queue import Queue
 
-from satella.coding.recast_exceptions import rethrow_as
+from .recast_exceptions import rethrow_as
 from queue import Empty
 
 

@@ -26,7 +26,7 @@ I believe you've already covered project's primary README at GitHub_. If not, pl
 
            configuration/schema
            configuration/sources
-           coding/ctxt_managers
+           coding/var_managers
            coding/environment
            coding/functions
            coding/futures
