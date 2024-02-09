@@ -1,6 +1,7 @@
 import unittest
 
-from satella.coding.var_managers import Context, get_current_context, THREADED_ROOT
+from satella.coding.var_managers import Context, get_current_context
+from satella.coding import var_managers
 
 
 class TestVarManagers(unittest.TestCase):
@@ -12,8 +13,7 @@ class TestVarManagers(unittest.TestCase):
         self.assertEqual(cls.test, 2)
 
     def test_global(self):
-        ctxt = THREADED_ROOT
-        self.assertTrue(ctxt is get_current_context())
+        self.assertTrue(var_managers.THREADED_ROOT is get_current_context())
 
     def test_lookup(self):
         par1 = Context()
@@ -23,3 +23,11 @@ class TestVarManagers(unittest.TestCase):
 
         self.assertIn(par1, list(par2.lookup('test')))
         self.assertIn(par2, list(par2.lookup('test')))
+
+    def test_get_current_context(self):
+        cc = get_current_context()
+        cc.test = 5
+        assert cc.test == 5
+        c2 = cc.new_context()
+        c2.test2 = 4
+        self.assertRaises(AttributeError, lambda: cc.test2)

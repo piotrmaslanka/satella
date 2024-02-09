@@ -4,6 +4,7 @@ import typing as tp
 import warnings
 import threading
 
+from satella.coding.structures import Proxy
 from satella.exceptions import ImpossibleError, SatellaWarning, ReadonlyError
 
 try:
@@ -84,6 +85,9 @@ class Context(object):
             raise AttributeError(f'Attribute "{item}" not found')
         return getattr(self.parent, item)
 
+    def __repr__(self) -> str:
+        return f'%s(%s, %s, ...)' % (self.__class__.__name__, repr(self.parent), repr(self.data))
+
     def __setattr__(self, key, value):
         self.set(key, value)
 
@@ -98,6 +102,7 @@ class Context(object):
         if key in self.data:
             if self.readonly:
                 raise ReadonlyError('This context is readonly')
+            self.data[key] = value
         else:
             if self.warn_on_assign:
                 warnings.warn(f'Warning on assign for {key}', AssignWarning)
@@ -114,6 +119,17 @@ class Context(object):
 
     def __delattr__(self, item):
         delattr(self.data, item)
+
+    def new_context(self, use_threading: bool = None) -> Context:
+        """
+        Prepare a new context.
+
+        :param use_threading: should this context be thread-ready
+        """
+        global THREADED_ROOT, THREADING_LOCK
+        with THREADING_LOCK:
+                THREADED_ROOT = (ThreadedContext if use_threading else Context)(THREADED_ROOT)
+                return THREADED_ROOT
 
     def activate(self, _make_current_parent_this_parent: bool = True) -> Context:
         """
@@ -159,6 +175,15 @@ class ThreadedContext(Context):
 THREADED_ROOT = Context()
 
 
+class Current(Proxy):
+    """A current context."""
+    def __init__(self, context: Context):
+        object.setattr(self, '_Proxy__obj', context)
+
+    def _get_obj(self) -> object:
+        return get_current_context()
+
+
 def get_current_context(use_threading: tp.Optional[bool] = None) -> Context:
     """
     Return a context currently in use.
@@ -172,6 +197,8 @@ def get_current_context(use_threading: tp.Optional[bool] = None) -> Context:
 
     global THREADED_ROOT
     with THREADING_LOCK:
+        if THREADED_ROOT is None:
+            THREADED_ROOT = Context(None, assign_to_parent=False)
         return THREADED_ROOT
         if THREADED_ROOT is None:
             THREADED_ROOT = ThreadedContext() if use_threading else Context()

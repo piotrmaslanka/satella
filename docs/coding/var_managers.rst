@@ -26,6 +26,8 @@ Context manager are convenient ways to
 .. autoclass:: satella.coding.var_managers.Context
     :members:
 
+.. autoclass:: satella.coding.var_managers.Current
+    :members:
 
 .. autoclass:: satella.coding.var_managers.ThreadContext
     :members:
