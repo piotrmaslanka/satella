@@ -5,6 +5,7 @@ import warnings
 
 from satella.coding.typing import T, U
 from satella.exceptions import PreconditionError
+from satella.coding.misc import call_with_arguments
 
 Expression = tp.NewType('Expression', str)
 
