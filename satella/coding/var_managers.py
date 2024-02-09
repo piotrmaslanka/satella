@@ -186,8 +186,10 @@ class ThreadedContext(Context):
 THREADED_ROOT = Context()
 
 
-class current(Proxy):
+class context(Proxy):       # pylint: disable=
     """A current context."""
+    __slots__ = ()
+
     def __init__(self, context: Context):
         object.setattr(self, '_Proxy__obj', context)
 

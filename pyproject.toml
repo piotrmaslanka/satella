@@ -1,0 +1,44 @@
+[project]
+description = "A server writing library"
+authors = [
+    {name="Piotr Maślanka", email="pmaslanka@smok.co"}
+]
+keywords = ["ha", "high availability", "scalable", "scalability", "server", "metrics", "tracing"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: PyPy",
+    "Operating System :: OS Independent",
+    "License :: OSI Approved :: MIT License",
+    "Topic :: Software Development :: Libraries",
+]
+readme = "README.md"
+license = {text="MIT License"}
+maintainers = [
+    {name="Piotr Maślanka", email="pmaslanka@smok.co"}
+]
+dependencies = [
+    "psutil",
+    "pyyaml",
+    "toml",
+    "requests"
+]
+requires-python = ">= 3.5"
+
+[project.urls]
+Homepage = "https://github.com/piotrmaslanka/satella"
+Documentation = "https://satella.readthedocs.org"
+Repository = "https://github.com/piotrmaslanka/satella.git"
+Issues = "https://github.com/piotrmaslanka/satella/issues"
+Changelog = "https://github.com/piotrmaslanka/satella/blob/develop/CHANGELOG.md"
+
+[build-system]
+requires = ["setuptools >= 61.0"]
+build-backend = "setuptools.build_meta"
+
+
+[tool.setuptools.packages.find]
+where = ["/"]
+include = ["satella"]
+

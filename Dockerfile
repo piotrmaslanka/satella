@@ -8,7 +8,7 @@ ADD satella /app/satella
 ADD tests /app/tests
 ADD unittest.cfg /app/unittest.cfg
 ADD setup.py /app/setup.py
-ADD setup.cfg /app/setup.cfg
+ADD setup.cfg.s /app/setup.cfg
 ADD LICENSE /app/LICENSE
 ADD README.md /app/README.md
 ADD MANIFEST.in /app/MANIFEST.in
