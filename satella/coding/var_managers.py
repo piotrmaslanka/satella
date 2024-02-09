@@ -59,7 +59,7 @@ class Context(object):
 
     def lookup(self, key) -> tp.Iterable[Context]:
         """
-        Return a iterable of contexts containing provided key.
+        Return a iterable of contexts containing provided key, sorting from bottom-most to top.
 
         :param key: key to check for
         """
@@ -85,6 +85,17 @@ class Context(object):
             raise AttributeError(f'Attribute "{item}" not found')
         return getattr(self.parent, item)
 
+    def __enter__(self) -> Context:
+        self.activate()
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb) -> bool:
+        try:
+            self.deactivate()
+        except ImpossibleError:
+            warnings.warn('Impossible to deactivate this variable manager!', SatellaWarning)
+        return False
+
     def __repr__(self) -> str:
         return f'%s(%s, %s, ...)' % (self.__class__.__name__, repr(self.parent), repr(self.data))
 
@@ -107,7 +118,7 @@ class Context(object):
             if self.warn_on_assign:
                 warnings.warn(f'Warning on assign for {key}', AssignWarning)
             if self.assign_to_parent:
-                self.parent.__setattr__(key, value)
+                setattr(self.parent, key, value)
             else:
                 self.data[key] = value
 
@@ -143,8 +154,8 @@ class Context(object):
         with THREADING_LOCK:
             THREADED_ROOT = self
             if _make_current_parent_this_parent:
-                self.parent = get_current_context()
-        return self.parent
+                object.__setattr__(self, 'parent', get_current_context())
+        return self
 
     def deactivate(self) -> Context:
         """Deactivate this context"""
@@ -175,13 +186,19 @@ class ThreadedContext(Context):
 THREADED_ROOT = Context()
 
 
-class Current(Proxy):
+class current(Proxy):
     """A current context."""
     def __init__(self, context: Context):
         object.setattr(self, '_Proxy__obj', context)
 
     def _get_obj(self) -> object:
-        return get_current_context()
+        context = get_current_context()
+        return context
+
+
+class ContextProxy(Proxy[Context]):
+    def __init__(self):
+        super().__setattr__('data')
 
 
 def get_current_context(use_threading: tp.Optional[bool] = None) -> Context:

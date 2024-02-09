@@ -1,15 +1,21 @@
 import unittest
 
-from satella.coding.var_managers import Context, get_current_context
+from satella.coding.var_managers import Context, get_current_context, current
 from satella.coding import var_managers
 
 
 class TestVarManagers(unittest.TestCase):
+    def test_var_mgr(self):
+        mgr = get_current_context()
+        with mgr.activate() as data:
+            data.test = 5
+        self.assertRaises(AttributeError, lambda: current.test)
+
     def test_var_managers(self):
         par = Context()
 
         cls = Context(parent=par)
-        cls.set('test', 2)
+        cls.test = 2
         self.assertEqual(cls.test, 2)
 
     def test_global(self):
