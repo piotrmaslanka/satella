@@ -44,11 +44,11 @@ include = ["satella"]
 
 [pytest]
 minversion = 6.0
-addopts = -ra -q
+addopts = "-ra -q"
 testpaths =
     tests
 
-[tool.coverage.run]
+[tool.pytest.ini_options]
 branch = true
 concurrency=thread
 omit=

@@ -18,6 +18,7 @@ except ImportError:
 THREADED_ROOT: Context = None
 THREADING_LOCK = threading.RLock()
 
+current: Context = None
 
 class AssignWarning(Warning):
     """A warned assignment was done."""
