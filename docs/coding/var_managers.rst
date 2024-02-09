@@ -26,11 +26,12 @@ Context manager are convenient ways to
 .. autoclass:: satella.coding.var_managers.Context
     :members:
 
-.. autoclass:: satella.coding.var_managers.Current
-    :members:
-
 .. autoclass:: satella.coding.var_managers.ThreadContext
     :members:
+
+
+.. autoclass:: satella.coding.var_managers.context
+The current context instance. To be used interchangeably with :meth:` satella.coding.var_managers.get_current_context`.
 
 
 .. autofunction:: satella.coding.var_managers.get_current_context
