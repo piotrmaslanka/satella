@@ -26,6 +26,8 @@ class TestFiles(unittest.TestCase):
             assert read_in_file('test3.txt', encoding='utf-8') == 'test'
             af.write('test2')
             assert read_in_file('test3.txt', encoding='utf-8') == 'testtest2'
+            af.truncate(4)
+            assert read_in_file('test3.txt', encoding='utf-8') == 'test'
         finally:
             af.close()
             try_unlink('test3.txt')

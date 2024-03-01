@@ -378,6 +378,13 @@ class AutoflushFile(Proxy[io.FileIO]):
         super().__init__(fle)
         self.__dict__['pointer'] = fle.tell()
 
+    def seek(self, *args, **kwargs) -> int:
+        """Seek to a provided position within the file"""
+        fle = self._open_file()
+        v = fle.seek(*args, **kwargs)
+        self.__dict__['pointer'] = fle.tell()
+        return v
+
     def read(self, *args, **kwargs) -> tp.Union[str, bytes]:
         """
         Read a file, returning the read-in data
@@ -393,7 +400,12 @@ class AutoflushFile(Proxy[io.FileIO]):
     def _get_file(self) -> tp.Optional[AutoflushFile]:
         return self.__dict__.get('_Proxy__obj')
 
-    def _open_file(self) -> open:
+    def readall(self) -> tp.Union[str, bytes]:
+        """Read all contents into the file"""
+        file = self._open_file()
+        return file.readall()
+
+    def _open_file(self) -> io.FileIO:
         file = self._get_file()
         if file is None:
             file = open(*self.con_args, **self.con_kwargs)
@@ -428,3 +440,12 @@ class AutoflushFile(Proxy[io.FileIO]):
         self.__dict__['pointer'] = file.tell()
         self._close_file()
         return val
+
+    def truncate(self, __size: tp.Optional[int] = None) -> int:
+        """Truncate file to __size starting bytes"""
+        fle = self._open_file()
+        v = fle.truncate(__size)
+        self.__dict__['pointer'] = fle.tell()
+        self._close_file()
+        return v
+
