@@ -1,0 +1,87 @@
+[project]
+name = "satella"
+dynamic = ["version"]
+description = "Utilities for writing servers in Python"
+readme = {file = "README.md", content-type="text/markdown"}
+authors = [
+  {name = "Piotr Maślanka", email = "pmaslanka@smok.co"},
+  {name = "Tzu-Ping Chung", email = "tzu-ping@example.com"},
+  {name = "Another person"},
+  {email = "different.person@example.com"},
+]
+maintainers = [
+  {name = "Brett Cannon", email = "brett@example.com"}
+]
+requires-python = ">= 3.5"
+license = {file = "LICENSE", text="MIT License"}
+keywords = ["ha", "high availability", "scalable", "scalability", "server", "metrics", "tracing", "instrumentation"]
+classifiers = [
+   "Programming Language :: Python",
+   "Programming Language :: Python :: 3.5",
+   "Programming Language :: Python :: 3.6",
+   "Programming Language :: Python :: 3.7",
+   "Programming Language :: Python :: 3.8",
+   "Programming Language :: Python :: 3.9",
+   "Programming Language :: Python :: Implementation :: CPython",
+   "Programming Language :: Python :: Implementation :: PyPy",
+   "Operating System :: OS Independent",
+   "Development Status :: 5 - Production/Stable",
+   "License :: OSI Approved :: MIT License",
+   "Topic :: Software Development :: Libraries"
+]
+dependencies = ["psutil"]
+
+[tool.setuptools.dynamic]
+version = {attr = "satella.__version__"}
+
+[project.optional-dependencies]
+HTTPJSONSource = ["requests"]
+YAMLSource = ["pyyaml"]
+TOMLSource = ["toml"]
+FasterJSON = ["ujson"]
+cassandra = ["cassandra-driver"]
+opentracing = ["opentracing"]
+
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+
+[project.urls]
+Homepage = "https://github.com/piotrmaslanka/satella"
+Documentation = "https://satella.readthedocs.io/"
+Issues = "https://github.com/piotrmaslanka/satella/issues"
+Repository = "https://github.com/piotrmaslanka/satella"
+Changelog = "https://github.com/piotrmaslanka/satella/blob/develop/CHANGELOG.md"
+
+[tool.setuptools]
+packages = ["satella",
+            "satella.cassandra",
+            "satella.coding",
+            "satella.coding.concurrent",
+            "satella.coding.concurrent.futures",
+            "satella.coding.decorators",
+            "satella.coding.resources",
+            "satella.coding.sequences",
+            "satella.coding.structures",
+            "satella.coding.structures.dictionaries",
+            "satella.coding.structures.heaps",
+            "satella.coding.structures.mixins",
+            "satella.coding.transforms",
+            "satella.configuration",
+            "satella.configuration.schema",
+            "satella.configuration.sources",
+            "satella.debug",
+            "satella.debug.tainting",
+            "satella.exception_handling",
+            "satella.instrumentation",
+            "satella.instrumentation.cpu_time",
+            "satella.instrumentation.memory",
+            "satella.instrumentation.metrics",
+            "satella.instrumentation.metrics.exporters",
+            "satella.instrumentation.metrics.metric_types",
+            "satella.instrumentation.metrics.structures",
+            "satella.instrumentation.trace_back",
+            "satella.opentracing",
+            "satella.os",
+            "satella.time"]
