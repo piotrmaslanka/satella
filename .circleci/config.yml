@@ -12,8 +12,12 @@ commands:
       - run:
           command: |
             pip install -r requirements.txt
-            pip install -U pytest-xdist pytest-cov pytest pytest-forked pluggy py opentracing
+            pip install -U pytest-xdist pytest-cov pytest pytest-forked pluggy py opentracing pylint
             python setup.py install
+  pylint:
+    description: Run pylint
+    steps:
+      - run: pylint -j 4 satella || true
   unit_test:
     description: Run the unit tests
     steps:
@@ -25,6 +29,7 @@ jobs:
       - checkout
       - code-climate/install
       - setup_python
+      - pylint
       - unit_test
       - run:
           name: Collect results

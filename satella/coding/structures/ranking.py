@@ -41,7 +41,7 @@ class Ranking(tp.Generic[T]):
 
     def add(self, item: T) -> None:
         """
-        Add a single element to the ranking and recalculate it
+        Add a single element to the ranking and _recalculate it
         """
         index = self.ranking.add(item)
         for position, item in enumerate(self.ranking[index:], start=index):
@@ -49,7 +49,7 @@ class Ranking(tp.Generic[T]):
 
     def remove(self, item: T) -> None:
         """
-        Remove a single element from the ranking and recalculate it
+        Remove a single element from the ranking and _recalculate it
         """
         index = self.ranking.index(item)
         self.ranking.remove(item)

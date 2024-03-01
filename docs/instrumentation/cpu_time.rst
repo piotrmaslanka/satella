@@ -23,4 +23,8 @@ And here's a helpful variant of
 .. autoclass:: satella.instrumentation.cpu_time.CPUTimeAwareIntervalTerminableThread
     :members:
 
+.. autofunction:: satella.instrumentation.cpu_time.get_own_cpu_usage
 
+
+.. autoclass:: satella.instrumentation.cpu_time.pCPUtimes
+    :members:

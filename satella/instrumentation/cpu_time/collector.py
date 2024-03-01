@@ -1,20 +1,27 @@
+from __future__ import annotations
+import os
 import typing as tp
 import threading
 import multiprocessing
 import time
+import collections
 
 import psutil
 
 from satella.coding import for_argument
-from satella.coding.structures import Singleton
+from satella.coding.decorators import repeat_forever
 from satella.coding.transforms import percentile
 from satella.time import parse_time_string
 
-DEFAULT_REFRESH_EACH = '30m'
-DEFAULT_WINDOW_SECONDS = '5m'
+DEFAULT_REFRESH_EACH = '10s'
+DEFAULT_WINDOW_SECONDS = '10s'
 
 
-@Singleton
+pCPUtimes = collections.namedtuple('pcputimes',
+                       ['user', 'system', 'children_user', 'children_system',
+                        'iowait'])
+
+
 class CPUProfileBuilderThread(threading.Thread):
     """
     A CPU profile builder thread and a core singleton object to use.
@@ -25,6 +32,7 @@ class CPUProfileBuilderThread(threading.Thread):
         Or a time string.
     :param refresh_each: time of seconds to sleep between rebuilding of profiles, or a time string.
     """
+    thread = None
 
     def __init__(self, window_seconds: tp.Union[str, int] = DEFAULT_WINDOW_SECONDS,
                  refresh_each: tp.Union[str, int] = DEFAULT_REFRESH_EACH,
@@ -33,10 +41,49 @@ class CPUProfileBuilderThread(threading.Thread):
         self.window_size = int(parse_time_string(window_seconds))
         self.refresh_each = parse_time_string(refresh_each)
         self.data = []
+        self.process = psutil.Process(os.getpid())
         self.percentiles_requested = list(percentiles_requested)
         self.percentile_values = []
         self.percentiles_regenerated = False
-        self.start()
+        self.started = False
+        self.own_load_average = collections.deque()      # typing: tuple[float, pCPUtimes]
+
+    @staticmethod
+    def get_instance():
+        """Access instances of this thread in this way ONLY!"""
+        if CPUProfileBuilderThread.thread is None:
+            CPUProfileBuilderThread.thread = CPUProfileBuilderThread()
+            CPUProfileBuilderThread.thread.start()
+        return CPUProfileBuilderThread.thread
+
+    def start(self) -> None:
+        if self.started:
+            return
+        super().start()
+        self.started = True
+
+    def save_load(self, times: pCPUtimes) -> None:
+        while len(self.own_load_average) > 3 and \
+                self.own_load_average[0][0] < self.own_load_average[-1][0] - self.window_size:
+            self.own_load_average.popleft()
+        tpl = time.monotonic(), times
+        self.own_load_average.append(tpl)
+
+    def get_own_cpu_usage(self) -> tp.Optional[pCPUtimes]:
+        """
+        Return own CPU usage.
+
+        :return: None if data not yet ready, or a PCPUtimes namedtuple
+        """
+        if len(self.own_load_average) < 2:
+            return None
+        time_p, times_v = self.own_load_average[-2]
+        time_c, times_c = self.own_load_average[-1]
+        difference = time_c - time_p
+        tp = {}
+        for field in times_v._fields:
+            tp[field] = (getattr(times_c, field) - getattr(times_v, field)) / difference
+        return pCPUtimes(**tp)
 
     def request_percentile(self, percent: float) -> None:
         if percent not in self.percentiles_requested:
@@ -54,7 +101,8 @@ class CPUProfileBuilderThread(threading.Thread):
     def is_done(self) -> bool:
         return bool(self.data)
 
-    def recalculate(self) -> None:
+    def _recalculate(self) -> None:
+        """Takes as long as window size"""
         data = []
         calculate_occupancy_factor()  # as first values tend to be a bit wonky
         for _ in range(int(self.window_size)):
@@ -68,10 +116,11 @@ class CPUProfileBuilderThread(threading.Thread):
         self.percentiles_regenerated = True
         self.data = data
 
+    @repeat_forever
     def run(self):
-        while True:
-            time.sleep(self.refresh_each)
-            self.recalculate()
+        self._recalculate()
+        self.save_load(self.process.cpu_times())
+        time.sleep(self.refresh_each)
 
 
 class CPUTimeManager:
@@ -82,7 +131,7 @@ class CPUTimeManager:
         :param percent: float between 0 and 1
         :return: the value of the percentile
         """
-        return CPUProfileBuilderThread().percentile(percent)
+        return CPUProfileBuilderThread.get_instance().percentile(percent)
 
     @staticmethod
     def set_window_size(window_size: float) -> None:
@@ -91,7 +140,13 @@ class CPUTimeManager:
 
         :param window_size: time, in seconds
         """
-        CPUProfileBuilderThread().window_size = window_size
+        CPUProfileBuilderThread.get_instance().window_size = window_size
+
+    @staticmethod
+    def set_refresh_each(refresh: tp.Union[str, float, int]) -> None:
+        """Change the refresh interval for the CPU usage collection thread"""
+
+        CPUProfileBuilderThread.get_instance().refresh_each = parse_time_string(refresh)
 
 
 @for_argument(parse_time_string)
@@ -179,8 +234,20 @@ def calculate_occupancy_factor() -> float:
 
     :return: a float between 0 and 1 telling you how occupied CPU-wise is your system.
     """
+    CPUProfileBuilderThread.get_instance()
     c = _calculate_occupancy_factor()
     while c is None:
         time.sleep(0.1)
         c = _calculate_occupancy_factor()
     return c
+
+
+def get_own_cpu_usage() -> tp.Optional[pCPUtimes]:
+    """
+    Return own CPU usage (this process only)
+
+    :return: a namedtuple of (user, system, children_user, children_system, iowait) divided by number of seconds that
+        passed since the last measure.
+        or None if data not yet ready
+    """
+    return CPUProfileBuilderThread.get_instance().get_own_cpu_usage()

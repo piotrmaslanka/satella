@@ -23,6 +23,8 @@ Decorators
 
 .. autofunction:: satella.coding.decorators.loop_while
 
+.. autofunction:: satella.coding.decorators.repeat_forever
+
 .. autofunction:: satella.coding.for_argument
 
 .. autofunction:: satella.coding.chain_functions

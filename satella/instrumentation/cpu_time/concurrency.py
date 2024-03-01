@@ -31,7 +31,7 @@ class CPUTimeAwareIntervalTerminableThread(IntervalTerminableThread, metaclass=A
         self.seconds = parse_time_string(seconds)
         self.wakeup_interval = parse_time_string(wakeup_interval)
         self.max_sooner = max_sooner or seconds * 0.1
-        cp_bt = CPUProfileBuilderThread()
+        cp_bt = CPUProfileBuilderThread.get_instance()
         cp_bt.request_percentile(percentile)
         self.percentile = percentile
         super().__init__(seconds, *args, **kwargs)
@@ -48,7 +48,7 @@ class CPUTimeAwareIntervalTerminableThread(IntervalTerminableThread, metaclass=A
         return measurement()
 
     def __sleep_waiting_for_cpu(self, how_long: float) -> None:
-        cp_bt = CPUProfileBuilderThread()
+        cp_bt = CPUProfileBuilderThread.get_instance()
         per_val = cp_bt.percentile(self.percentile)
 
         while how_long > 0 and not self._terminating:

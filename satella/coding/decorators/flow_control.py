@@ -7,6 +7,19 @@ from satella.coding.typing import ExceptionClassType, NoArgCallable, Predicate
 Queue = tp.TypeVar('Queue')
 
 
+def repeat_forever(fun):
+    """
+    A decorator that will place your function inside a while True loop.
+    """
+    @wraps(fun)
+    def inner(*args, **kwargs):
+        while True:
+            fun(*args, **kwargs)
+    doc = '' if inner.__doc__ is None else inner.__doc__
+    inner.__doc__ = doc + "\nThis will be repeated forever."
+    return inner
+
+
 def queue_get(queue_getter: tp.Union[str, tp.Callable[[object], Queue]],
               timeout: tp.Optional[float] = None,
               exception_empty: tp.Union[
