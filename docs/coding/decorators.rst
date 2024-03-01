@@ -17,8 +17,6 @@ Decorators
 
 .. autofunction:: satella.coding.decorators.cache_memoize
 
-.. autofunction:: satella.coding.decorators.call_with_arguments
-
 .. autofunction:: satella.coding.decorators.queue_get
 
 .. autofunction:: satella.coding.decorators.copy_arguments

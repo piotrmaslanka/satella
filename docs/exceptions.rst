@@ -176,7 +176,7 @@ ConfigurationValidationError
 Empty
 ~~~~~
 
-.. autoclass:: satella.exceptions.empty
+.. autoclass:: satella.exceptions.Empty
     :members:
 
 MetricAlreadyExists

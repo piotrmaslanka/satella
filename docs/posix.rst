@@ -49,5 +49,3 @@ This is meant to acquire a lock on a file.
 
 .. autoclass:: satella.os.PIDFileLock
     :members:
-
-.. autoclass:: satella.exceptions.LockIsHeld
