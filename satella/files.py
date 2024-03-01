@@ -349,7 +349,11 @@ def write_out_file_if_different(path: str, data: tp.Union[bytes, str],
 
 class AutoflushFile(Proxy[io.FileIO]):
     """
-    A file that is supposed to be closed after each write command issued. Use like:
+    A file that is supposed to be closed after each write command issued.
+
+    Best for appending so that other processes can read.
+
+    Use like:
 
     >>> f = AutoflushFile('test.txt', 'rb+', encoding='utf-8')
     >>> f.write('test')
@@ -358,8 +362,8 @@ class AutoflushFile(Proxy[io.FileIO]):
     """
 
     def __init__(self, file, mode='r', *con_args, **con_kwargs):
-        object.__setattr__(self, 'con_kwargs', con_kwargs)
-        object.__setattr__(self, 'pointer', None)
+        self.__dict__['con_kwargs'] = con_kwargs
+        self.__dict__['pointer'] = None
 
         if mode in ('w+', 'wb+'):
             fle = open(*(file, 'wb'))
@@ -368,13 +372,18 @@ class AutoflushFile(Proxy[io.FileIO]):
 
         mode = {'w': 'a', 'wb': 'ab', 'w+': 'a+', 'wb+': 'ab+', 'a': 'a', 'ab': 'ab'}[mode]
 
-        object.__setattr__(self, 'con_args', (file, mode, *con_args))
+        self.__dict__['con_args'] = (file, mode, *con_args)
+
         fle = self._open_file()
         super().__init__(fle)
-        object.__setattr__(self, 'pointer', fle.tell())
+        self.__dict__['pointer'] = fle.tell()
 
     def read(self, *args, **kwargs) -> tp.Union[str, bytes]:
-        """Read a file, returning the read-in data"""
+        """
+        Read a file, returning the read-in data
+
+        :return: data readed
+        """
         file = self._open_file()
         p = file.read(*args, **kwargs)
         self.__dict__['pointer'] = file.tell()
@@ -402,12 +411,18 @@ class AutoflushFile(Proxy[io.FileIO]):
             self.__dict__['_Proxy__obj'] = None
 
     def close(self) -> None:
-        """Closes the file"""
+        """
+        Closes the file.
+        """
         self._open_file()
         self._close_file()
 
     def write(self, *args, **kwargs) -> int:
-        """Write a particular value to the file, close it afterwards."""
+        """
+        Write a particular value to the file, close it afterwards.
+
+        :return: amount of bytes written
+        """
         file = self._open_file()
         val = file.write(*args, **kwargs)
         self.__dict__['pointer'] = file.tell()
