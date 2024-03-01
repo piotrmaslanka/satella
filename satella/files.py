@@ -4,8 +4,6 @@ import io
 import os
 import re
 import shutil
-import types
-import typing
 import typing as tp
 
 __all__ = ['read_re_sub_and_write', 'find_files', 'split', 'read_in_file', 'write_to_file',
