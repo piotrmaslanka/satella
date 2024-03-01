@@ -1,6 +1,6 @@
 import typing as tp
 
-from ..decorators.decorators import wraps
+from satella.coding.decorators.decorators import wraps
 
 
 # noinspection PyPep8Naming

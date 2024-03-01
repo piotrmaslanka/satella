@@ -61,6 +61,10 @@ class Proxy(tp.Generic[T]):
         self.__obj = object_to_wrap  # type: T
         self.__wrap_operations = wrap_operations  # type: bool
 
+    def _get_object(self) -> T:
+        """For your internal application usage, primarily extending Proxy classes"""
+        return self.__obj
+
     def __call__(self, *args, **kwargs):
         return self.__obj(*args, **kwargs)
 
@@ -79,7 +83,7 @@ class Proxy(tp.Generic[T]):
         else:
             setattr(self.__obj, key, value)
 
-    def __getattr__(self, item):
+    def __getattr__(self, item: str):
         return getattr(self.__obj, item)
 
     def __delattr__(self, item) -> None:

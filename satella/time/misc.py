@@ -1,12 +1,12 @@
 import time
 import typing as tp
 
-__all__ = ['time_as_int', 'time_ms', 'sleep', 'time_us', 'ExponentialBackoff']
+__all__ = ['time_as_int', 'time_ms', 'sleep', 'time_us']
 
 from satella.coding.concurrent.thread import Condition
 from satella.exceptions import WouldWaitMore
-from .parse import parse_time_string
-from .measure import measure
+from satella.time.parse import parse_time_string
+from satella.time.measure import measure
 
 
 def sleep(y: tp.Union[str, float], abort_on_interrupt: bool = False) -> bool:

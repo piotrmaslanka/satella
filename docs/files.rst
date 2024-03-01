@@ -43,3 +43,9 @@ write_out_file_if_different
 ---------------------------
 
 .. autofunction:: satella.files.write_out_file_if_different
+
+AutoflushFile
+-------------
+
+.. autoclass:: satella.files.AutoflushFile
+    :members:

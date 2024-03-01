@@ -2,7 +2,7 @@ import collections
 import typing as tp
 
 from satella.coding.typing import T
-from .sorted_list import SortedList
+from satella.coding.structures.sorted_list import SortedList
 
 
 class Ranking(tp.Generic[T]):

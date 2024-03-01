@@ -4,11 +4,11 @@ import typing as tp
 import weakref
 from abc import ABCMeta, abstractmethod
 
-from ..heaps import TimeBasedSetHeap
-from ..singleton import Singleton
-from ...concurrent.monitor import Monitor
-from ...recast_exceptions import rethrow_as, silence_excs
-from ...typing import K, V, NoArgCallable
+from satella.coding.structures.heaps import TimeBasedSetHeap
+from satella.coding.structures.singleton import Singleton
+from satella.coding.concurrent.monitor import Monitor
+from satella.coding.recast_exceptions import rethrow_as, silence_excs
+from satella.coding.typing import K, V, NoArgCallable
 
 
 class Cleanupable(metaclass=ABCMeta):

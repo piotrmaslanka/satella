@@ -2,8 +2,8 @@ import inspect
 import threading
 import typing as tp
 
-from ..decorators import wraps
-from ...exceptions import ResourceLocked, ResourceNotLocked, WouldWaitMore
+from satella.coding.decorators import wraps
+from satella.exceptions import ResourceLocked, ResourceNotLocked, WouldWaitMore
 
 
 class LockedDataset:

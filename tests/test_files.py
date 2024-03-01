@@ -6,7 +6,7 @@ import unittest
 import shutil
 from satella.files import read_re_sub_and_write, find_files, split, read_in_file, write_to_file, \
     write_out_file_if_different, make_noncolliding_name, try_unlink, DevNullFilelikeObject, \
-    read_lines
+    read_lines, AutoflushFile
 
 
 def putfile(path: str) -> None:
@@ -18,6 +18,17 @@ class TestFiles(unittest.TestCase):
 
     def test_read_nonexistent_file(self):
         self.assertRaises(FileNotFoundError, lambda: read_in_file('moot'))
+
+    def test_autoflush_file(self):
+        af = AutoflushFile('test3.txt', 'w+', encoding='utf-8')
+        try:
+            af.write('test')
+            assert read_in_file('test3.txt', encoding='utf-8') == 'test'
+            af.write('test2')
+            assert read_in_file('test3.txt', encoding='utf-8') == 'testtest2'
+        finally:
+            af.close()
+            try_unlink('test3.txt')
 
     def test_read_lines(self):
         lines = read_lines('LICENSE')
@@ -35,9 +46,13 @@ class TestFiles(unittest.TestCase):
     def test_devnullfilelikeobject(self):
         null = DevNullFilelikeObject()
         self.assertEqual(null.write('ala'), 3)
+        assert null.seek(0) == 0
+        assert null.tell() == 0
+        assert null.seekable()
+        assert null.truncate(0) == 0
         self.assertEqual(null.write(b'ala'), 3)
-        self.assertRaises(io.UnsupportedOperation, lambda: null.read())
-        self.assertRaises(io.UnsupportedOperation, lambda: null.read(7))
+        self.assertEqual(null.read(), '')
+        self.assertEqual(null.read(7), '')
         null.flush()
         null.close()
         self.assertRaises(ValueError, lambda: null.write('test'))

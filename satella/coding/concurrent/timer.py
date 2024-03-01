@@ -4,10 +4,10 @@ import threading
 import time
 
 from satella.coding.recast_exceptions import log_exceptions
-from .monitor import Monitor
-from ..structures.heaps.time import TimeBasedHeap
-from ..structures.singleton import Singleton
-from ...time.parse import parse_time_string
+from satella.coding.concurrent.monitor import Monitor
+from satella.coding.structures.heaps.time import TimeBasedHeap
+from satella.coding.structures.singleton import Singleton
+from satella.time.parse import parse_time_string
 
 logger = logging.getLogger(__name__)
 

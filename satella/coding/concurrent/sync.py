@@ -2,11 +2,11 @@ import time
 import typing as tp
 from concurrent.futures import wait, ThreadPoolExecutor
 
-from .atomic import AtomicNumber
-from .futures import ExecutorWrapper
-from .thread import Condition
-from ...exceptions import WouldWaitMore
-from ...time.measure import measure
+from satella.coding.concurrent.atomic import AtomicNumber
+from satella.coding.concurrent.futures import ExecutorWrapper
+from satella.coding.concurrent.thread import Condition
+from satella.exceptions import WouldWaitMore
+from satella.time.measure import measure
 
 
 def sync_threadpool(tpe: tp.Union[ExecutorWrapper, ThreadPoolExecutor],

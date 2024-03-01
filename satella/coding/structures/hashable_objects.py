@@ -1,4 +1,4 @@
-from .proxy import Proxy
+from satella.coding.structures.proxy import Proxy
 
 
 class HashableWrapper(Proxy):

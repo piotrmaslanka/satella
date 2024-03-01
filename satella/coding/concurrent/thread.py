@@ -9,8 +9,8 @@ from concurrent.futures import Future
 from threading import Condition as PythonCondition
 
 from satella.coding.decorators import wraps
-from ..typing import ExceptionList
-from ...exceptions import ResourceLocked, WouldWaitMore
+from satella.coding.typing import ExceptionList
+from satella.exceptions import ResourceLocked, WouldWaitMore
 
 
 def call_in_separate_thread(*t_args, no_thread_attribute: bool = False,

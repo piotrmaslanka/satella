@@ -1,38 +1,65 @@
+from __future__ import annotations
 import codecs
 import io
 import os
 import re
 import shutil
+import types
+import typing
 import typing as tp
 
 __all__ = ['read_re_sub_and_write', 'find_files', 'split', 'read_in_file', 'write_to_file',
            'write_out_file_if_different', 'make_noncolliding_name', 'try_unlink',
-           'DevNullFilelikeObject', 'read_lines']
+           'DevNullFilelikeObject', 'read_lines', 'AutoflushFile']
 
 from satella.coding.recast_exceptions import silence_excs
+from satella.coding.structures import Proxy
 from satella.coding.typing import Predicate
 
 SEPARATORS = {'\\', '/'}
 SEPARATORS.add(os.path.sep)
 
 
-class DevNullFilelikeObject:
+class DevNullFilelikeObject(io.FileIO):
     """
     A /dev/null filelike object. For multiple uses.
+
+    :param binary: is this a binary file
     """
-    __slots__ = 'is_closed',
+    __slots__ = 'is_closed', 'binary'
 
-    def __init__(self):
+    def __init__(self, binary: bool = False):
         self.is_closed = False
+        self.binary = binary
 
-    def read(self, byte_count: tp.Optional[int] = None):
+    def tell(self) -> int:
+        """Return the current file offset"""
+        return 0
+
+    def truncate(self, __size: tp.Optional[int] = None) -> int:
+        """Truncate file to __size starting bytes"""
+        return 0
+
+    def writable(self) -> bool:
+        """Is this object writable"""
+        return True
+
+    def seek(self, v: int) -> int:
+        """Seek to a particular file offset"""
+        return 0
+
+    def seekable(self) -> bool:
+        """Is this file seekable?"""
+        return True
+
+    def read(self, byte_count: tp.Optional[int] = None) -> tp.Union[str, bytes]:
         """
         :raises ValueError: this object has been closed
         :raises io.UnsupportedOperation: since reading from this is forbidden
         """
         if self.is_closed:
             raise ValueError('Reading from closed /dev/null!')
-        raise io.UnsupportedOperation('read')
+        return b'' if self.binary else ''
 
     def write(self, x: tp.Union[str, bytes]) -> int:
         """
@@ -320,3 +347,71 @@ def write_out_file_if_different(path: str, data: tp.Union[bytes, str],
     except FileNotFoundError:
         write_to_file(path, data, encoding)
         return True
+
+
+class AutoflushFile(Proxy[io.FileIO]):
+    """
+    A file that is supposed to be closed after each write command issued. Use like:
+
+    >>> f = AutoflushFile('test.txt', 'rb+', encoding='utf-8')
+    >>> f.write('test')
+    >>> with open('test.txt', 'a+', encoding='utf-8') as fin:
+    >>>     assert fin.read() == 'test'
+    """
+
+    def __init__(self, file, mode='r', *con_args, **con_kwargs):
+        object.__setattr__(self, 'con_kwargs', con_kwargs)
+        object.__setattr__(self, 'pointer', None)
+
+        if mode in ('w+', 'wb+'):
+            fle = open(*(file, 'wb'))
+            fle.truncate(0)
+            fle.close()
+
+        mode = {'w': 'a', 'wb': 'ab', 'w+': 'a+', 'wb+': 'ab+', 'a': 'a', 'ab': 'ab'}[mode]
+
+        object.__setattr__(self, 'con_args', (file, mode, *con_args))
+        fle = self._open_file()
+        super().__init__(fle)
+        object.__setattr__(self, 'pointer', fle.tell())
+
+    def read(self, *args, **kwargs) -> tp.Union[str, bytes]:
+        """Read a file, returning the read-in data"""
+        file = self._open_file()
+        p = file.read(*args, **kwargs)
+        self.__dict__['pointer'] = file.tell()
+        self._close_file()
+        return p
+
+    def _get_file(self) -> tp.Optional[AutoflushFile]:
+        return self.__dict__.get('_Proxy__obj')
+
+    def _open_file(self) -> open:
+        file = self._get_file()
+        if file is None:
+            file = open(*self.con_args, **self.con_kwargs)
+            ptr = file.tell()
+            self.__dict__['_Proxy__obj'] = file
+            self.__dict__['pointer'] = ptr
+        return file
+
+    def _close_file(self) -> None:
+        file = self._get_file()
+        if file is not None:
+            ptr = file.tell()
+            self.__dict__['pointer'] = ptr
+            file.close()
+            self.__dict__['_Proxy__obj'] = None
+
+    def close(self) -> None:
+        """Closes the file"""
+        self._open_file()
+        self._close_file()
+
+    def write(self, *args, **kwargs) -> int:
+        """Write a particular value to the file, close it afterwards."""
+        file = self._open_file()
+        val = file.write(*args, **kwargs)
+        self.__dict__['pointer'] = file.tell()
+        self._close_file()
+        return val

@@ -1,5 +1,5 @@
 from __future__ import annotations
-from ..exceptions import WouldWaitMore
+from satella.exceptions import WouldWaitMore
 import typing as tp
 import time
 import copy

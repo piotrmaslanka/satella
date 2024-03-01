@@ -1,9 +1,9 @@
 import typing as tp
 
-from .monitor import Monitor
-from .thread import Condition
-from ...exceptions import WouldWaitMore
-from ...time.measure import measure
+from satella.coding.concurrent.monitor import Monitor
+from satella.coding.concurrent.thread import Condition
+from satella.exceptions import WouldWaitMore
+from satella.time.measure import measure
 
 Number = tp.Union[int, float]
 

@@ -372,6 +372,7 @@ class TestStructures(unittest.TestCase):
 
     def test_proxy(self):
         a = Proxy(2)
+        self.assertIs(a._get_object(), 2)
         self.assertEqual(int(a), 2)
         self.assertEqual(a, 2)
         self.assertEqual(a+2, 4)

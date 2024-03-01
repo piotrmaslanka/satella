@@ -3,9 +3,9 @@ import itertools
 import typing as tp
 import warnings
 
-from ..decorators import for_argument, wraps
-from ..recast_exceptions import rethrow_as, silence_excs
-from ..typing import Iteratable, T, U, Predicate, V, K
+from satella.coding.decorators import for_argument, wraps
+from satella.coding.recast_exceptions import rethrow_as, silence_excs
+from satella.coding.typing import Iteratable, T, U, Predicate, V, K
 
 
 def iterate_callable(clbl: tp.Callable[[int], V], start_from: int = 0,

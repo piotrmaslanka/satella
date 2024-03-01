@@ -6,8 +6,8 @@ from satella.coding.decorators.decorators import wraps
 from satella.coding.typing import ExceptionList
 
 from satella.coding.concurrent.thread import Condition
-from .measure import measure
-from ..exceptions import WouldWaitMore
+from satella.time.measure import measure
+from satella.exceptions import WouldWaitMore
 
 
 class ExponentialBackoff:

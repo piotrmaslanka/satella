@@ -5,9 +5,9 @@ import typing as tp
 from inspect import Parameter
 
 from satella.coding.typing import T, Predicate
-from .decorators import wraps
-from ..misc import source_to_function, get_arguments, call_with_arguments, _get_arguments
-from ..predicates import PredicateClass, build_structure
+from satella.coding.decorators.decorators import wraps
+from satella.coding.misc import source_to_function, get_arguments, call_with_arguments, _get_arguments
+from satella.coding.predicates import PredicateClass, build_structure
 
 U = tp.TypeVar('U')
 
