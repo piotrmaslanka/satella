@@ -4,7 +4,7 @@ from abc import ABCMeta, abstractmethod
 
 class HashableMixin:
     """
-    Make a class hashable by it's ID.
+    Make a class hashable by its ID.
 
     Just remember to add the following to your class definition
     if you're overriding __eq__:
@@ -41,7 +41,7 @@ class ComparableAndHashableBy(metaclass=ABCMeta):
 
     @property
     @abstractmethod
-    def _COMPARABLE_BY(self) -> str:
+    def _COMPARABLE_BY(self) -> str:        # pylint: disable=invalid-name
         """
         Return the sequence of names of properties and attributes
         that will be used for __eq__ and __hash__
@@ -159,7 +159,7 @@ class OmniHashableMixin(metaclass=ABCMeta):
 
     @property
     @abstractmethod
-    def _HASH_FIELDS_TO_USE(self) -> tp.Union[str, tp.Sequence[str]]:
+    def _HASH_FIELDS_TO_USE(self) -> tp.Union[str, tp.Sequence[str]]:               # pylint: disable=invalid-name
         """
         Return the sequence of names of properties and attributes
         that will be used for __eq__ and __hash__
@@ -183,37 +183,38 @@ class OmniHashableMixin(metaclass=ABCMeta):
         if not isinstance(other, type(self)):
             return False
 
-        if isinstance(other, OmniHashableMixin):
-            cmpr_by = self._HASH_FIELDS_TO_USE
-            try:
-                if isinstance(cmpr_by, str):
-                    return getattr(self, cmpr_by) == getattr(other, cmpr_by)
-
-                for field_name in self._HASH_FIELDS_TO_USE:
-                    if getattr(self, field_name) != getattr(other, field_name):
-                        return False
-                return True
-            except AttributeError:
-                return False
-        else:
+        if not isinstance(other, OmniHashableMixin):
             return super().__eq__(other)
+        cmpr_by = self._HASH_FIELDS_TO_USE
+        try:
+            if isinstance(cmpr_by, str):
+                return getattr(self, cmpr_by) == getattr(other, cmpr_by)
+
+            for field_name in self._HASH_FIELDS_TO_USE:
+                if getattr(self, field_name) != getattr(other, field_name):
+                    return False
+            return True
+        except AttributeError:
+            return False
+
 
     def __ne__(self, other) -> bool:
         if not isinstance(other, type(self)):
             return True
 
-        if isinstance(other, OmniHashableMixin):
-            cmpr_by = self._HASH_FIELDS_TO_USE
-
-            try:
-                if isinstance(cmpr_by, str):
-                    return getattr(self, cmpr_by) != getattr(other, cmpr_by)
-
-                for field_name in cmpr_by:
-                    if getattr(self, field_name) != getattr(other, field_name):
-                        return True
-                return False
-            except AttributeError:
-                return True
-        else:
+        if not isinstance(other, OmniHashableMixin):
             return super().__ne__(other)
+
+        cmpr_by = self._HASH_FIELDS_TO_USE
+
+        try:
+            if isinstance(cmpr_by, str):
+                return getattr(self, cmpr_by) != getattr(other, cmpr_by)
+
+            for field_name in cmpr_by:
+                if getattr(self, field_name) != getattr(other, field_name):
+                    return True
+            return False
+        except AttributeError:
+            return True
+
