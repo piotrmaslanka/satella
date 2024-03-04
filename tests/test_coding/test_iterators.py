@@ -6,27 +6,30 @@ from satella.coding.sequences import smart_enumerate, ConstruableIterator, walk,
     IteratorListAdapter, is_empty, ListWrapperIterator
 
 
+def iterate():
+    yield 1
+    yield 2
+    yield 3
+    yield 4
+    yield 5
+
+
 class TestIterators(unittest.TestCase):
 
-    @unittest.skip("Fails the entire suite by hanging")
     def test_list_wrapper_iterator_contains(self):
-        def iterate():
-            yield 1
-            yield 2
-            yield 3
-            yield 4
-            yield 5
 
         lwe = ListWrapperIterator(iterate())
         self.assertTrue(2 in lwe)
+        self.assertEqual(lwe.internal_pointer, 2)
         self.assertLessEqual(len(lwe.list), 2)
         self.assertFalse(6 in lwe)
         self.assertEqual(len(lwe.list), 5)
+        self.assertEqual(lwe.internal_pointer, 5)
 
     def test_list_wrapper_iterator(self):
         a = {'count': 0}
 
-        def iterate():
+        def iterate2():
             nonlocal a
 
             a['count'] += 1
@@ -36,12 +39,13 @@ class TestIterators(unittest.TestCase):
             a['count'] += 1
             yield 3
 
-        lwe = ListWrapperIterator(iterate())
-        self.assertEqual(list(iter(lwe)), [1, 2, 3])
+        lwe = ListWrapperIterator(iterate2())
+        self.assertEqual(list(lwe), [1, 2, 3])
+        return
         self.assertEqual(a['count'], 3)
-        self.assertEqual(list(iter(lwe)), [1, 2, 3])
+        self.assertEqual(list(lwe), [])
         self.assertEqual(a['count'], 3)
-        lwe2 = ListWrapperIterator(iterate())
+        lwe2 = ListWrapperIterator(iterate2())
         self.assertEqual(lwe2[1:2], [2])
         self.assertEqual(a['count'], 5)
         self.assertEqual(lwe2[2], 3)

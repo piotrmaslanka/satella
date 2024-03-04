@@ -480,8 +480,8 @@ def skip_first(iterator: Iteratable, n: int) -> tp.Iterator[T]:
 class _ListWrapperIteratorIterator(tp.Iterator[T]):
     __slots__ = 'parent', 'pos'
 
-    def __init__(self, parent):
-        self.parent = parent
+    def __init__(self, parent: Iteratable[T]):
+        self.parent = parent if isinstance(parent, tp.Iterator) else iter(parent)
         self.pos = 0
 
     def __length_hint__(self) -> int:
@@ -514,25 +514,21 @@ class ListWrapperIterator(tp.Iterator[T]):
     This is additionally a generic class.
     """
 
-    __slots__ = 'iterator', 'exhausted', 'list'
-
-    def __next__(self) -> T:
-        return self.next()
+    __slots__ = 'iterator', 'exhausted', 'list', 'internal_pointer'
 
     def __contains__(self, item: T) -> bool:
         if item not in self.list and self.exhausted:
             return False
-        for item2 in self:
-            self.list.append(item2)
+        for item2 in itertools.chain(self.list, self):
             if item2 == item:
                 return True
-        else:
-            return False
+        return False
 
-    def __init__(self, iterator: Iteratable):
-        self.iterator = iter(iterator)
+    def __init__(self, iterator: Iteratable[T]):
+        self.iterator = iterator if isinstance(iterator, tp.Iterator) else iter(iterator)
         self.exhausted = False
         self.list = []
+        self.internal_pointer = 0
 
     def exhaust(self) -> None:
         """
@@ -553,16 +549,20 @@ class ListWrapperIterator(tp.Iterator[T]):
 
         while len(self.list) < i:
             try:
-                self.list.append(next(self.iterator))
+                item = next(self.iterator)
+                self.list.append(item)
             except StopIteration:
                 self.exhausted = True
-                return
+                break
 
     def __len__(self) -> int:
         self.exhaust()
         return len(self.list)
 
     def __getitem__(self, item: tp.Union[slice, int]) -> tp.Union[tp.List[T], T]:
+        """
+        :raises IndexError: invalid index
+        """
         if isinstance(item, int):
             if len(self.list) < item + 1:
                 self.advance_to_item(item + 1)
@@ -570,21 +570,37 @@ class ListWrapperIterator(tp.Iterator[T]):
             self.advance_to_item(item.stop)
         return self.list[item]
 
-    def next(self) -> T:
+    def __next__(self) -> T:
         """
         Get the next item
 
         :raises StopIteration: next element is not available due to iterator finishing
         """
-        if self.exhausted:
+        if self.internal_pointer == len(self.list) and self.exhausted:
             raise StopIteration()
-        else:
+
+        # We can serve that from memory
+        if len(self.list) > self.internal_pointer:
+            in_ptr = self.internal_pointer
+            elem = self.list[in_ptr]
+            self.internal_pointer += 1
+            return elem
+
+        # We cannot serve it from memory
+        try:
             item = next(self.iterator)
             self.list.append(item)
+            self.internal_pointer += 1
             return item
+        except StopIteration:
+            self.exhausted = True
+            raise
 
     def __iter__(self) -> tp.Iterator[T]:
-        return _ListWrapperIteratorIterator(self)
+        """
+        Return a brand new iterator, that will use this iterator
+        """
+        return self
 
 
 @silence_excs(StopIteration)
