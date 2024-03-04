@@ -20,17 +20,16 @@ class Timer:
 
     There might be up to a second of delay before the timer is picked up.
 
-    If spawn_separate is False, exceptions will be logged
+n     If spawn_separate is False, exceptions will be logged.
 
-    :param interval: amount of seconds that should elapsed between calling start() and function
+    :param interval: amount of seconds that should elapse between calling start() and function
         executing. Can be also a time string.
     :param function: function to execute
     :param args: argument for function
     :param kwargs: kwargs for function
     :param spawn_separate: whether to call the function in a separate thread
     """
-    __slots__ = ('args', 'kwargs', 'spawn_separate', 'interval',
-                 'function', 'execute_at', 'cancelled')
+    __slots__ = 'args', 'kwargs', 'spawn_separate', 'interval', 'function', 'execute_at', 'cancelled'
 
     def __init__(self, interval: tp.Union[str, float], function, args=None, kwargs=None,
                  spawn_separate=False):

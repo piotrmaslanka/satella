@@ -2,12 +2,9 @@ import time
 import typing as tp
 from threading import Event
 
+from satella.coding.misc import _BLANK
 from satella.coding.typing import T
 from satella.exceptions import WouldWaitMore
-
-
-class _UNSET:
-    pass
 
 
 class DeferredValue(tp.Generic[T]):
@@ -29,7 +26,7 @@ class DeferredValue(tp.Generic[T]):
 
     def __init__(self):
         self.lock = Event()
-        self.val = _UNSET
+        self.val = _BLANK
 
     def set_value(self, va: T) -> None:
         """
@@ -38,7 +35,7 @@ class DeferredValue(tp.Generic[T]):
         :param va: value to set
         :raises ValueError: value is already set
         """
-        if self.val is not _UNSET:
+        if self.val is not _BLANK:
             raise ValueError('Value curently set!')
         self.val = va
         self.lock.set()
@@ -49,13 +46,13 @@ class DeferredValue(tp.Generic[T]):
 
     def value(self, timeout: tp.Optional[float] = None) -> T:
         """
-        Wait until value is available.
+        Wait until value is available, and return it.
 
         :param timeout: number of seconds to wait. If None is given, this will take as long as necessary.
         :return: a value
         :raises WouldWaitMore: timeout was given and it has expired
         """
-        if self.val is not _UNSET:
+        if self.val is not _BLANK:
             return self.val
         tout = self.lock.wait(timeout)
         if not tout:
