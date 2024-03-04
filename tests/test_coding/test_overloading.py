@@ -23,4 +23,5 @@ class TestOverloading(unittest.TestCase):
             self.assertIsInstance(i, str)
 
         fun(2)
+        self.assertRaises(TypeError, lambda: fun(2.5))
         fun('test')
