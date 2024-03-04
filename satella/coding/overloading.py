@@ -6,6 +6,8 @@ import typing as tp
 
 # Taken from https://stackoverflow.com/questions/28237955/same-name-for-classmethod-and-
 # instancemethod
+
+
 class class_or_instancemethod(classmethod):
     """
     A decorator to make your methods both classmethods (they will receive an instance of type
@@ -110,6 +112,8 @@ class overload:
     >>> @what_type.overload
     >>> def what_type(x: int):
     >>>     print('Int')
+    >>> what_type(5)
+    >>> what_type('string')
 
     Note that this instance's __wrapped__ will refer to the first function.
     TypeError will be called if no signatures match arguments.
@@ -120,7 +124,11 @@ class overload:
         if hasattr(fun, '__doc__'):
             self.__doc__ = fun.__doc__
         self.__wrapped__ = fun
-        self.history_list = []
+
+    @property
+    def all_functions(self) -> tp.Iterable[object]:
+        """Return a list of all functions registered within this overload"""
+        return self.type_signatures_to_functions.values()
 
     def overload(self, fun):
         """
@@ -138,12 +146,12 @@ class overload:
 
         :raises TypeError: no type signature given
         """
-        matchings = []
+        matching = []
         for sign, fun in self.type_signatures_to_functions.items():
             if sign.matches(*args, **kwargs):
-                matchings.append((sign, fun))
-        matchings.sort()
-        if not matchings:
+                matching.append((sign, fun))
+        matching.sort()
+        if not matching:
             raise TypeError('No matching entries!')
         else:
-            return matchings[-1][1](*args, **kwargs)  # call the most specific function you could find
+            return matching[-1][1](*args, **kwargs)  # call the most specific function you could find
