@@ -43,10 +43,15 @@ class DeferredValue(tp.Generic[T]):
         self.val = va
         self.lock.set()
 
+    def result(self, timeout=None) -> T:
+        """An alias for :meth:`~satella.coding.concurrent.DeferredValue.value`"""
+        return self.value(timeout)
+
     def value(self, timeout: tp.Optional[float] = None) -> T:
         """
         Wait until value is available.
 
+        :param timeout: number of seconds to wait. If None is given, this will take as long as necessary.
         :return: a value
         :raises WouldWaitMore: timeout was given and it has expired
         """
