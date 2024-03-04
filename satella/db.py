@@ -22,6 +22,7 @@ class transaction:
     :param close_the_connection_after: whether the connection should be closed after use
     :param log_exception: whether to log an exception if it happens
     """
+
     def __init__(self, connection_or_getter, close_the_connection_after: bool = False,
                  log_exception: bool = True):
         self._connection = connection_or_getter

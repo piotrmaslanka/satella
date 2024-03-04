@@ -2,8 +2,8 @@ import typing as tp
 from abc import abstractmethod, ABCMeta
 
 from satella.coding.concurrent import IntervalTerminableThread
-from .collector import sleep_cpu_aware, _CPUProfileBuilderThread
 from satella.time import measure, parse_time_string
+from .collector import sleep_cpu_aware, _CPUProfileBuilderThread
 
 
 class CPUTimeAwareIntervalTerminableThread(IntervalTerminableThread, metaclass=ABCMeta):

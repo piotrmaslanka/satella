@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 import functools
 import typing as tp
 
@@ -12,6 +13,7 @@ def might_accept_tainted(taint_result: bool = False):
     This both unpacks your first argument if is was a TaintedObject, you'll receive it's value
     :param taint_result: result will be tainted
     """
+
     def outer(fun):
         @functools.wraps(fun)
         def inner(self, *args):
@@ -22,7 +24,9 @@ def might_accept_tainted(taint_result: bool = False):
                 return taint(p)
             else:
                 return p
+
         return inner
+
     return outer
 
 
@@ -69,7 +73,7 @@ class TaintedObject(tp.Generic[T]):
         return taint(next(self.__v))
 
     @might_accept_tainted()
-    def __str__(self) -> str:       # it must be a str otherwise Python will complain
+    def __str__(self) -> str:  # it must be a str otherwise Python will complain
         return str(self.__v)
 
     def __call__(self, *args, **kwargs):
@@ -83,7 +87,7 @@ class TaintedObject(tp.Generic[T]):
     def __getattr__(self, item: str) -> TaintedObject[T]:
         return getattr(self.__v, item)
 
-    def __len__(self) -> int:          # This has to return an int otherwise Python will break
+    def __len__(self) -> int:  # This has to return an int otherwise Python will break
         return len(self.__v)
 
     def __bool__(self) -> bool:  # This has to return a bool otherwise Python will break
@@ -186,4 +190,3 @@ def taint(v: T) -> TaintedObject[T]:
     :raises RuntimeError: no tainting session in progress
     """
     return v if isinstance(v, TaintedObject) else TaintedObject(v)
-

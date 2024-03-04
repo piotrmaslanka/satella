@@ -1,15 +1,14 @@
 import abc
+import logging
+import queue
 import sys
 import typing as tp
-import queue
-import logging
 import warnings
 
 from ..concurrent import Monitor
 from ..misc import Closeable
 from ..recast_exceptions import silence_excs
 from ..typing import T
-
 
 logger = logging.getLogger(__name__)
 
@@ -48,7 +47,7 @@ class CPManager(Monitor, Closeable, tp.Generic[T], metaclass=abc.ABCMeta):
         self.connections = queue.Queue(max_number)
         self.max_number = max_number
         self.max_cycle_no = max_cycle_no
-        self.id_to_times = {}       # type: tp.Dict[int, int]
+        self.id_to_times = {}  # type: tp.Dict[int, int]
         self.terminating = False
 
     def close(self) -> None:

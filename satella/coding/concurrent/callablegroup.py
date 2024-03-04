@@ -1,6 +1,5 @@
 import collections
 import copy
-import weakref
 import time
 import typing as tp
 

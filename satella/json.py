@@ -1,11 +1,10 @@
 import enum
+import json
 import typing as tp
 from abc import ABCMeta, abstractmethod
-import json
-
-from satella.files import write_out_file_if_different
 
 from satella.coding.typing import NoneType
+from satella.files import write_out_file_if_different
 
 __all__ = ['JSONEncoder', 'JSONAble', 'json_encode', 'read_json_from_file',
            'write_json_to_file', 'write_json_to_file_if_different']

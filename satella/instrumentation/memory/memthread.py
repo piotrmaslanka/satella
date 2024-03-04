@@ -1,6 +1,5 @@
 import logging
 import os
-import time
 import typing as tp
 
 import psutil
@@ -8,7 +7,6 @@ import psutil
 from satella.coding.concurrent import CallableGroup, CallNoOftenThan, CancellableCallback, \
     IntervalTerminableThread
 from satella.coding.structures import Singleton
-from satella.time import measure
 from .conditions import BaseCondition, ZerothSeverity
 
 logger = logging.getLogger(__name__)

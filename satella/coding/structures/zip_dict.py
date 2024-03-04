@@ -13,6 +13,7 @@ class SetZip:
 
     Provided arguments must implement contains, length and iter.
     """
+
     def __iadd__(self, other: set):
         self.args.append(other)
         return self

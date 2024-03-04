@@ -3,8 +3,8 @@ import typing as tp
 
 from satella.coding.typing import T, Predicate
 from satella.exceptions import PreconditionError
-from .decorators import wraps
 from .arguments import for_argument
+from .decorators import wraps
 from ..misc import source_to_function
 
 Expression = tp.NewType('Expression', str)

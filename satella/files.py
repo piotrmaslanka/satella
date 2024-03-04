@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 import codecs
 import functools
 import io
@@ -10,8 +11,6 @@ import typing as tp
 __all__ = ['read_re_sub_and_write', 'find_files', 'split', 'read_in_file', 'write_to_file',
            'write_out_file_if_different', 'make_noncolliding_name', 'try_unlink',
            'DevNullFilelikeObject', 'read_lines', 'AutoflushFile']
-
-import warnings
 
 from satella.coding import wraps
 from satella.coding.recast_exceptions import silence_excs, reraise_as
@@ -29,7 +28,9 @@ def value_error_on_closed_file(getter):
             if getter(self):
                 raise ValueError('File closed')
             return fun(self, *args, **kwargs)
+
         return inner
+
     return outer
 
 
@@ -395,6 +396,7 @@ def open_file(fun):
     @wraps(fun)
     def inner(self, *args, **kwargs):
         return fun(self, self._open_file(), *args, **kwargs)
+
     return inner
 
 
@@ -499,7 +501,7 @@ class AutoflushFile(Proxy[io.FileIO]):
     @is_closed_getter
     @open_file
     @close_file_after
-    def close(self, fle) -> None:       # pylint: disable=unused-argument
+    def close(self, fle) -> None:  # pylint: disable=unused-argument
         """
         Closes the file.
         """
@@ -526,4 +528,3 @@ class AutoflushFile(Proxy[io.FileIO]):
         v = fle.truncate(__size)
         self.__dict__['pointer'] = fle.tell()
         return v
-

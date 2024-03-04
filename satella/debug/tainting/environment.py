@@ -1,15 +1,13 @@
 from __future__ import annotations
 
 import dis
-import inspect
+import gc
 import sys
 import threading
-import gc
 import typing as tp
 import warnings
 
 from satella.coding.typing import T
-
 from .tainteds import TaintedObject, access_tainted, taint
 
 local = threading.local()

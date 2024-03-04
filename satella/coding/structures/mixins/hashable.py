@@ -41,7 +41,7 @@ class ComparableAndHashableBy(metaclass=ABCMeta):
 
     @property
     @abstractmethod
-    def _COMPARABLE_BY(self) -> str:        # pylint: disable=invalid-name
+    def _COMPARABLE_BY(self) -> str:  # pylint: disable=invalid-name
         """
         Return the sequence of names of properties and attributes
         that will be used for __eq__ and __hash__
@@ -159,7 +159,7 @@ class OmniHashableMixin(metaclass=ABCMeta):
 
     @property
     @abstractmethod
-    def _HASH_FIELDS_TO_USE(self) -> tp.Union[str, tp.Sequence[str]]:               # pylint: disable=invalid-name
+    def _HASH_FIELDS_TO_USE(self) -> tp.Union[str, tp.Sequence[str]]:  # pylint: disable=invalid-name
         """
         Return the sequence of names of properties and attributes
         that will be used for __eq__ and __hash__
@@ -197,7 +197,6 @@ class OmniHashableMixin(metaclass=ABCMeta):
         except AttributeError:
             return False
 
-
     def __ne__(self, other) -> bool:
         if not isinstance(other, type(self)):
             return True
@@ -217,4 +216,3 @@ class OmniHashableMixin(metaclass=ABCMeta):
             return False
         except AttributeError:
             return True
-

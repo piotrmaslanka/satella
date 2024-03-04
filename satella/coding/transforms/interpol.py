@@ -1,6 +1,7 @@
-import typing as tp
-from satella.coding.typing import U, K
 import bisect
+import typing as tp
+
+from satella.coding.typing import U, K
 
 
 def linear_interpolate(series: tp.Sequence[tp.Tuple[K, U]], t: K,

@@ -1,8 +1,8 @@
 import bisect
 import itertools
 import math
-from abc import ABCMeta, abstractmethod
 import typing as tp
+from abc import ABCMeta, abstractmethod
 
 from satella.coding.concurrent.monitor import RMonitor
 from satella.coding.sequences import try_close

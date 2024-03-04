@@ -1,7 +1,7 @@
-import stat
-import typing as tp
 import os
+import stat
 import sys
+import typing as tp
 import warnings
 
 from satella.coding import silence_excs

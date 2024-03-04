@@ -11,10 +11,12 @@ def repeat_forever(fun):
     """
     A decorator that will place your function inside a while True loop.
     """
+
     @wraps(fun)
     def inner(*args, **kwargs):
         while True:
             fun(*args, **kwargs)
+
     doc = '' if inner.__doc__ is None else inner.__doc__
     inner.__doc__ = doc + "\nThis will be repeated forever."
     return inner

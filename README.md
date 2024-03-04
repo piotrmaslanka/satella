@@ -11,32 +11,32 @@ satella
 [![License](https://img.shields.io/pypi/l/satella)](https://github.com/piotrmaslanka/satella)
 [![linting: pylint](https://img.shields.io/badge/linting-pylint-yellowgreen)](https://github.com/pylint-dev/pylint)
 
-
-Satella is an almost-zero-requirements Python 3.5+ library for writing
-server applications. It has arisen out of my requirements to have some classes or design patterns handy, and kinda
-wish-they-were-in-the-stdlib ones. especially those dealing with mundane but useful things. It also runs on PyPy, and
-most of it runs on Windows (the part not dealing with forking processes, you see).
+Satella is an almost-zero-requirements Python 3.5+ library for writing server applications. It has arisen out of my
+requirements to have some classes or design patterns handy, and kinda wish-they-were-in-the-stdlib ones. especially
+those dealing with mundane but useful things. It also runs on PyPy, and most of it runs on Windows (the part not dealing
+with forking processes, you see).
 
 Satella uses [semantic versioning 2.0](https://semver.org/spec/v2.0.0.html).
 
 Satella contains, among other things:
- 
+
 * things to help you manage your [application's configuration](satella/configuration)
 * a fully equipped [metrics library](satella/instrumentation/metrics)
     * alongside a fully metricized [ThreadPoolExecutor](satella/instrumentation/metrics/structures/threadpool.py)
-    * and an exporter to [Prometheus](satella/instrumentation/metrics/exporters/prometheus.py) or really any 
+    * and an exporter to [Prometheus](satella/instrumentation/metrics/exporters/prometheus.py) or really any
       [OpenMetrics](https://github.com/OpenObservability/OpenMetrics/blob/main/specification/OpenMetrics.md) compliant
       ingester
     * as well as exporters/metricizers for the following libraries:
-      * [AWS](https://github.com/piotrmaslanka/aws-satella)
-      * [FastAPI](https://github.com/Dronehub/fastapi-satella-metrics)
-      * [Django](https://github.com/piotrmaslanka/django-satella-metrics)
-      * [Flask](https://github.com/piotrmaslanka/flask-satella-metrics)
-* helpful [exception handlers](satella/exception_handling) 
+        * [AWS](https://github.com/piotrmaslanka/aws-satella)
+        * [FastAPI](https://github.com/Dronehub/fastapi-satella-metrics)
+        * [Django](https://github.com/piotrmaslanka/django-satella-metrics)
+        * [Flask](https://github.com/piotrmaslanka/flask-satella-metrics)
+* helpful [exception handlers](satella/exception_handling)
+* monitoring [CPU usage](satella/instrumentation/cpu_time/collectors) on the system and by your own process
 * common programming [idioms and structures](satella/coding)
 
-Most Satella objects make heavy use of `__slots__`, so they are memory friendly and usable on
-embedded systems, where memory is at premium.
+Most Satella objects make heavy use of `__slots__`, so they are memory friendly and usable on embedded systems, where
+memory is at premium.
 
 Change log is kept as part of [release notes](https://github.com/piotrmaslanka/satella/releases).
 The [CHANGELOG.md](CHANGELOG.md) file is only to track changes since last release.
@@ -44,15 +44,13 @@ The [CHANGELOG.md](CHANGELOG.md) file is only to track changes since last releas
 Full [documentation](http://satella.readthedocs.io/en/latest/?badge=latest)
 is available for the brave souls that do decide to use this library.
 
-See [LICENSE](LICENSE) for text of the license. This library may contain
-code taken from elsewhere on the internets, so this is copyright (c) respective authors.
+See [LICENSE](LICENSE) for text of the license. This library may contain code taken from elsewhere on the internets, so
+this is copyright (c) respective authors.
 
-# Running unit tests
+Running unit tests
+------------------
 
-Tests run by default on CircleCI. 
-Just build and run the attached 
-[Dockerfile](Dockerfile). 
-These tests run on Python 3.8
+Tests run by default on CircleCI. Just build and run the attached [Dockerfile](Dockerfile). These tests run on Python
+3.8. Also, if you run it under PyPy it will launch some tests targeted at that platform.
 
-They pass on Windows too, but some tests 
-requiring POSIX-like functionality are skipped.
+They pass on Windows too, but some tests requiring POSIX-like functionality are skipped.

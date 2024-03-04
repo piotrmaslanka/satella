@@ -1,5 +1,6 @@
-from satella.coding.typing import ExceptionList
 import typing as tp
+
+from satella.coding.typing import ExceptionList
 
 
 class expect_exception:

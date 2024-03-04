@@ -1,10 +1,9 @@
-import typing as tp
-
 import collections
 import threading
+import typing as tp
 
-from satella.coding.recast_exceptions import rethrow_as
 from satella.coding.concurrent.thread import Condition
+from satella.coding.recast_exceptions import rethrow_as
 from satella.coding.typing import T
 from satella.exceptions import WouldWaitMore, Empty
 from satella.time.measure import measure

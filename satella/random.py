@@ -1,8 +1,7 @@
-import typing as tp
 import os
 import random
-import typing as tp
 import string
+import typing as tp
 
 __all__ = ['shuffle_together', 'random_binary', 'random_word']
 

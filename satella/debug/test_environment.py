@@ -40,4 +40,3 @@ class TestEnvs(unittest.TestCase):
                 new_ctxt.value = 66
                 assert new_ctxt.value == 66
             assert ctxt.value == 55
-

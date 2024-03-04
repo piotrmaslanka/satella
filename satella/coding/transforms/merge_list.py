@@ -1,6 +1,7 @@
+import typing as tp
+
 from satella.coding.structures import Heap
 from satella.coding.typing import K, V
-import typing as tp
 
 
 class merge_list(tp.Iterator[tp.Tuple[K, V]]):

@@ -1,13 +1,7 @@
 from __future__ import annotations
 
-import functools
 import inspect
-import operator
 import typing as tp
-from inspect import Parameter
-
-from satella.coding.structures import frozendict
-
 
 
 # Taken from https://stackoverflow.com/questions/28237955/same-name-for-classmethod-and-
@@ -34,7 +28,6 @@ class class_or_instancemethod(classmethod):
 
 
 class TypeSignature(inspect.Signature):
-
     __slots__ = ()
 
     def __init__(self, t_sign: inspect.Signature):
@@ -140,4 +133,4 @@ class overload:
         if not matchings:
             raise TypeError('No matching entries!')
         else:
-            return matchings[-1][1](*args, **kwargs)     # call the most specific function you could find
+            return matchings[-1][1](*args, **kwargs)  # call the most specific function you could find

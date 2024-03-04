@@ -1,4 +1,5 @@
 import warnings
+
 __all__ = ['ExperimentalWarning', 'warnings', 'mark_temporarily_disabled']
 
 
@@ -22,12 +23,15 @@ def mark_temporarily_disabled(reason: str = ''):
     >>> def serialize_report(analysis):
     >>>     ...
     """
+
     def outer(fun):
         def inner(*args, **kwargs):
             """
             Function temporarily disabled. Don't call it.
             """
             raise NotImplementedError(f'Function disabled due to {reason}')
+
         warnings.warn(f'Function {fun.__name__} temporarily disabled due to {reason}')
         return inner
+
     return outer

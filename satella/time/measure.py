@@ -1,17 +1,19 @@
 from __future__ import annotations
-import typing as tp
-import time
+
 import copy
 import inspect
+import time
+import typing as tp
 import warnings
 from concurrent.futures import Future
 from functools import wraps  # import from functools to prevent circular import exception
+
 from satella.exceptions import WouldWaitMore
 
 TimeSignal = tp.Callable[[], float]
 
 
-class measure:      # pylint: disable=invalid-name
+class measure:  # pylint: disable=invalid-name
     """
     A class used to measure time elapsed. Use for example like this:
 
@@ -92,7 +94,7 @@ class measure:      # pylint: disable=invalid-name
     def __init__(self, future_to_measure: tp.Optional[Future] = None, stop_on_stop: bool = True,
                  adjust: float = 0.0, time_getter_callable: TimeSignal = time.monotonic,
                  create_stopped: bool = False,
-                 timeout: tp.Optional[float] = None):       # pylint: disable=too-many-arguments
+                 timeout: tp.Optional[float] = None):  # pylint: disable=too-many-arguments
         self.time_getter_callable = time_getter_callable
         self.timeout = timeout
         self.started_on = time_getter_callable() + adjust

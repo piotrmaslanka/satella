@@ -1,10 +1,11 @@
 from __future__ import annotations
-import os
-import typing as tp
-import threading
-import multiprocessing
-import time
+
 import collections
+import multiprocessing
+import os
+import threading
+import time
+import typing as tp
 
 import psutil
 
@@ -16,10 +17,9 @@ from satella.time import parse_time_string
 DEFAULT_REFRESH_EACH = '10s'
 DEFAULT_WINDOW_SECONDS = '10s'
 
-
 pCPUtimes = collections.namedtuple('pcputimes',
-                       ['user', 'system', 'children_user', 'children_system',
-                        'iowait'])
+                                   ['user', 'system', 'children_user', 'children_system',
+                                    'iowait'])
 
 
 class _CPUProfileBuilderThread(threading.Thread):
@@ -46,7 +46,7 @@ class _CPUProfileBuilderThread(threading.Thread):
         self.percentile_values = []
         self.percentiles_regenerated = False
         self.started = False
-        self.own_load_average = collections.deque()      # typing: tuple[float, pCPUtimes]
+        self.own_load_average = collections.deque()  # typing: tuple[float, pCPUtimes]
 
     @staticmethod
     def get_instance():
@@ -83,7 +83,7 @@ class _CPUProfileBuilderThread(threading.Thread):
         if difference == 0:
             return None
         tuple_build = {}
-        for field in times_v._fields:       # pylint: disable=protected-access
+        for field in times_v._fields:  # pylint: disable=protected-access
             tuple_build[field] = (getattr(times_c, field) - getattr(times_v, field)) / difference
         return pCPUtimes(**tuple_build)
 

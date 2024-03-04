@@ -1,7 +1,7 @@
+import enum
 import typing as tp
 
 from satella.json import JSONAble
-import enum
 
 
 def jsonify(data: tp.Any) -> tp.Optional[tp.Union[str, int, float, list, dict]]:

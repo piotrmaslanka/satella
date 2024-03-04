@@ -1,8 +1,8 @@
 import collections
 import typing as tp
 
-from satella.coding.typing import T
 from satella.coding.structures.sorted_list import SortedList
+from satella.coding.typing import T
 
 
 class Ranking(tp.Generic[T]):
