@@ -185,6 +185,7 @@ class OmniHashableMixin(metaclass=ABCMeta):
 
         if not isinstance(other, OmniHashableMixin):
             return super().__eq__(other)
+
         cmpr_by = self._HASH_FIELDS_TO_USE
         try:
             if isinstance(cmpr_by, str):

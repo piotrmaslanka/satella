@@ -5,3 +5,6 @@ disable=
     W0603,  # global-statement
     C0103,   # invalid-name
     R0913  # too-many-arguments
+
+[FORMAT]
+max-line-length=110

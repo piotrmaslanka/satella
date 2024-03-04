@@ -40,6 +40,8 @@ class TypeSignature(inspect.Signature):
 
     def can_be_called_with_args(self, *args, **kwargs) -> bool:
         called = self._bind(*args, **kwargs)
+
+        # pylint: disable=protected-access
         return all(issubclass(self.signature.parameters.get(arg_name, NONEARGS)._annotation, arg_value)
                    for arg_name, arg_value in called.items())
 
