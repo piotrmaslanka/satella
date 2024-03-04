@@ -35,14 +35,15 @@ class TypeSignature(inspect.Signature):
 
     You can compare signatures:
 
-    >>> def a(a: object):
+    >>> def a(y: object):
     >>>     pass
-    >>> def b(a: int):
+    >>> def b(y: int):
     >>>     pass
     >>> TypeSignature.from_fun(a) < TypeSignature(b)
     """
     __slots__ = ()
 
+    # pylint: disable=protected-access
     def __init__(self, t_sign: inspect.Signature):
         """
         :param t_sign: a inspect.Signature
@@ -150,7 +151,7 @@ class overload:
         for sign, fun in self.type_signatures_to_functions.items():
             if sign.matches(*args, **kwargs):
                 matching.append((sign, fun))
-        matching.sort()
+        matching.sort()     # This sorting should result in most precise class at the end of the list
         if not matching:
             raise TypeError('No matching entries!')
         else:
