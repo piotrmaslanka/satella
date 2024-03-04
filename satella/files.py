@@ -492,7 +492,7 @@ class AutoflushFile(Proxy[io.FileIO]):
 
     @is_closed_getter
     @close_file_after
-    def close(self, fle) -> None:  # pylint: disable=unused-argument
+    def close(self) -> None:  # pylint: disable=unused-argument
         """
         Closes the file.
         """
