@@ -1,24 +1,2 @@
-# v2.23.5
+# v2.24.1
 
-The software
-------------
-
-* added AutoflushFile.seek()
-* added AutoflushFile.truncate()
-* fixed behaviour with AutoflushFile.close()
-* fixed behavior for AutoflushFile(..., 'wb')
-* added CPUTimeManager.set_refresh_each()
-* added satella.instrumentation.cpu_time.get_own_cpu_time()
-* better documentation for satella.time.sleep()
-* fixed behaviour of PIDFileLock
-* multiple minor code changes to improve pylint statistics
-
-Build process
--------------
-
-* added pylint to CodeClimate
-
-Documentation
--------------
-
-* Improved the documentation for CPU usage functions - noted that there will be a thread spawned in the background.
