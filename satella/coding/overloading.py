@@ -28,17 +28,33 @@ class class_or_instancemethod(classmethod):
 
 
 class TypeSignature(inspect.Signature):
+    """
+    A type signature.
+
+    You can compare signatures:
+
+    >>> def a(a: object):
+    >>>     pass
+    >>> def b(a: int):
+    >>>     pass
+    >>> TypeSignature.from_fun(a) < TypeSignature(b)
+    """
     __slots__ = ()
 
     def __init__(self, t_sign: inspect.Signature):
+        """
+        :param t_sign: a inspect.Signature
+        """
         self._return_annotation = t_sign._return_annotation
         self._parameters = t_sign._parameters
 
     @staticmethod
-    def from_fun(fun):
+    def from_fun(fun) -> TypeSignature:
+        """Return a type signature from a function"""
         return TypeSignature(inspect.Signature.from_callable(fun))
 
     def can_be_called_with_args(self, *args, **kwargs) -> bool:
+        """Can this type signature be called with following arguments?"""
         called = self._bind(*args, **kwargs)
 
         # pylint: disable=protected-access
@@ -46,6 +62,7 @@ class TypeSignature(inspect.Signature):
                    for arg_name, arg_value in called.items())
 
     def is_more_generic_than(self, b: TypeSignature) -> bool:
+        """Is this type signature more generic than an other?"""
         if self == {}:
             for key in self:
                 key1 = self[key]
@@ -67,9 +84,7 @@ class TypeSignature(inspect.Signature):
         bound_args = self.bind(*args, **kwargs)
         bound_args.apply_defaults()
         for param_name, param_value in bound_args.arguments.items():
-            if isinstance(param_value, self._parameters[param_name].annotation):
-                continue
-            else:
+            if not isinstance(param_value, self._parameters[param_name].annotation):
                 return False
         return True
 
@@ -125,13 +140,9 @@ class overload:
         """
         matchings = []
         for sign, fun in self.type_signatures_to_functions.items():
-            print('Matching %s against %s', sign, fun)
             if sign.matches(*args, **kwargs):
                 matchings.append((sign, fun))
-            else:
-                print('Did not score a math between %s:%s and %s', args, kwargs, )
         matchings.sort()
-        print(matchings)
         if not matchings:
             raise TypeError('No matching entries!')
         else:
