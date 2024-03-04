@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import threading
 import typing as tp
+import warnings
 
 from satella.coding.typing import V
 
@@ -13,9 +14,12 @@ THEY_HATIN = object()
 class Context:
     """
     New layer of environment. Can have it's own variables, or can hoist them onto the parent.
+
+    .. warning:: This is considered experimental. I just haven't found out a good use case for it yet.
     """
 
     def __init__(self, parent: tp.Optional[Context] = None, **variables):
+        warnings.warn('This is experimental', RuntimeWarning)
         self.parent = parent
         self.variables = variables
         self.bool = None

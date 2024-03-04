@@ -1,3 +1,4 @@
+import threading
 import unittest
 
 from satella.coding.environment import Context
@@ -11,6 +12,19 @@ class TestEnvs(unittest.TestCase):
         self.assertEqual(ctxt.value, 5)
         with Context() as new_ctxt:
             self.assertEqual(new_ctxt.value, 5)
+
+    def test_threads(self):
+        ctxt = Context.get()
+        ctxt.value = 2
+        with ctxt:
+            def thread():
+                with Context() as new_ctxt:
+                    self.assertEqual(new_ctxt.value, 2)
+                    new_ctxt.value2 = 2
+            thr = threading.Thread(target=thread)
+            thr.start()
+            thr.join()
+            self.assertRaises(AttributeError, lambda: ctxt.value2)
 
     def test_push(self):
         ctxt = Context.get()
