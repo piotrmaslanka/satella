@@ -77,7 +77,7 @@ class TestSyncableDroppable(unittest.TestCase):
         sd.cleanup_keep_in_db()
         self.assertEqual(sd.start_entry, 200)
         self.assertEqual(db.data, [])
-
+        self.assertWarns(UserWarning, lambda: sd.cleanup())
         sd.cleanup_keep_in_memory()
         self.assertEqual(db.data, [(200, 5), (220, 5)])
         synces = list(sd.on_sync_request())

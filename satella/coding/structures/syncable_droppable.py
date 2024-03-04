@@ -2,6 +2,7 @@ import bisect
 import itertools
 import math
 import typing as tp
+import warnings
 from abc import ABCMeta, abstractmethod
 
 from satella.coding.concurrent.monitor import RMonitor
@@ -163,9 +164,10 @@ class SyncableDroppable(RMonitor, tp.Generic[K, V]):
         and span_to_keep_in_memory.
 
         This may block for a while.
+
+        .. warning:: This bugs out for now. For now, a UserWarning will be raised and nothing will be done.
         """
-        self.cleanup_keep_in_db()
-        self.cleanup_keep_in_memory()
+        warnings.warn('Nothing done', UserWarning)
 
     def _cleanup_the_db(self) -> bool:
         """
