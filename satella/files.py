@@ -392,14 +392,6 @@ def close_file_after(fun):
     return inner
 
 
-def open_file(fun):
-    @wraps(fun)
-    def inner(self, *args, **kwargs):
-        return fun(self, self._open_file(), *args, **kwargs)
-
-    return inner
-
-
 class AutoflushFile(Proxy[io.FileIO]):
     """
     A file that is supposed to be closed after each write command issued.
@@ -444,8 +436,7 @@ class AutoflushFile(Proxy[io.FileIO]):
 
     @is_closed_getter
     @close_file_after
-    @open_file
-    def seek(self, fle: AutoflushFile, offset: int, whence: int = os.SEEK_SET) -> int:
+    def seek(self, offset: int, whence: int = os.SEEK_SET) -> int:
         """
         Seek to a provided position within the file
 
@@ -454,19 +445,20 @@ class AutoflushFile(Proxy[io.FileIO]):
 
         :return: current pointer
         """
+        fle = self._open_file()
         v = fle.seek(offset, whence)
         self.__dict__['pointer'] = fle.tell()
         return v
 
     @is_closed_getter
     @close_file_after
-    @open_file
-    def read(self, fle: AutoflushFile, *args, **kwargs) -> tp.Union[str, bytes]:
+    def read(self, *args, **kwargs) -> tp.Union[str, bytes]:
         """
         Read a file, returning the read-in data
 
         :return: data readed
         """
+        fle = self._open_file()
         p = fle.read(*args, **kwargs)
         self.__dict__['pointer'] = fle.tell()
         return p
@@ -476,10 +468,10 @@ class AutoflushFile(Proxy[io.FileIO]):
 
     @is_closed_getter
     @close_file_after
-    @open_file
-    def readall(self, fle) -> tp.Union[str, bytes]:
+    def readall(self) -> tp.Union[str, bytes]:
         """Read all contents into the file"""
-        return file.readall()
+        fle = self._open_file()
+        return fle.readall()
 
     def _open_file(self) -> io.FileIO:
         file = self._get_file()
@@ -499,7 +491,6 @@ class AutoflushFile(Proxy[io.FileIO]):
             self.__dict__['_Proxy__obj'] = None
 
     @is_closed_getter
-    @open_file
     @close_file_after
     def close(self, fle) -> None:  # pylint: disable=unused-argument
         """
@@ -509,22 +500,22 @@ class AutoflushFile(Proxy[io.FileIO]):
 
     @is_closed_getter
     @close_file_after
-    @open_file
-    def write(self, fle, *args, **kwargs) -> int:
+    def write(self, *args, **kwargs) -> int:
         """
         Write a particular value to the file, close it afterwards.
 
         :return: amount of bytes written
         """
+        fle = self._open_file()
         val = fle.write(*args, **kwargs)
         self.__dict__['pointer'] = fle.tell()
         return val
 
     @is_closed_getter
     @close_file_after
-    @open_file
-    def truncate(self, fle, __size: tp.Optional[int] = None) -> int:
+    def truncate(self, _size: tp.Optional[int] = None) -> int:
         """Truncate file to __size starting bytes"""
-        v = fle.truncate(__size)
+        fle = self._open_file()
+        v = fle.truncate(_size)
         self.__dict__['pointer'] = fle.tell()
         return v
