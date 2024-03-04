@@ -3,13 +3,13 @@ from __future__ import annotations
 import collections
 import multiprocessing
 import os
-import threading
 import time
 import typing as tp
 
 import psutil
 
 from satella.coding import for_argument
+from satella.coding.concurrent import SingleStartThread
 from satella.coding.decorators import repeat_forever
 from satella.coding.transforms import percentile
 from satella.time import parse_time_string
@@ -22,13 +22,13 @@ pCPUtimes = collections.namedtuple('pcputimes',
                                     'iowait'])
 
 
-class _CPUProfileBuilderThread(threading.Thread):
+class _CPUProfileBuilderThread(SingleStartThread):
     """
     A CPU profile builder thread and a core singleton object to use.
 
     :param window_seconds: the amount of seconds for which to collect data.
         Generally, this should be the interval during which your system cycles through all of
-        it's load, eg. if it asks it's devices each 5 minutes, the interval should be 300 seconds.
+        its load, eg. if it asks its devices each 5 minutes, the interval should be 300 seconds.
         Or a time string.
     :param refresh_each: time of seconds to sleep between rebuilding of profiles, or a time string.
     """
@@ -55,12 +55,6 @@ class _CPUProfileBuilderThread(threading.Thread):
             _CPUProfileBuilderThread.thread = _CPUProfileBuilderThread()
             _CPUProfileBuilderThread.thread.start()
         return _CPUProfileBuilderThread.thread
-
-    def start(self) -> None:
-        if self.started:
-            return
-        self.started = True
-        super().start()
 
     def save_load(self, times: pCPUtimes) -> None:
         while len(self.own_load_average) > 3 and \
