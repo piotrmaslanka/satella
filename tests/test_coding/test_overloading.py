@@ -25,3 +25,21 @@ class TestOverloading(unittest.TestCase):
         fun(2)
         self.assertRaises(TypeError, lambda: fun(2.5))
         fun('test')
+
+    def test_something_2(self):
+        class A:
+            pass
+
+        class B(A):
+            pass
+
+        @overload
+        def fun(a: B):
+            self.assertEquals(type(a), B)
+
+        @fun.overload
+        def fun(a: A):
+            self.assertEquals(type(a), A)
+
+        fun(A())
+        fun(B())
