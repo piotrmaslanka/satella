@@ -70,10 +70,10 @@ class TestFiles(unittest.TestCase):
     def test_devnullfilelikeobject_2(self):
         null = DevNullFilelikeObject(binary=True)
         null.write(b'test')
-        null.write('ala')
+        self.assertRaises(TypeError, lambda: null.write('ala'))
 
-        null = DevNullFilelikeObject(ignore_typing_issues=True)
-        null.write(b'test')
+        null = DevNullFilelikeObject()
+        self.assertRaises(TypeError, lambda: null.write(b'test'))
         null.write('test')
 
     def test_devnullfilelikeobject_3(self):
@@ -84,15 +84,14 @@ class TestFiles(unittest.TestCase):
         assert null.seekable()
         assert null.truncate(0) == 0
         self.assertEqual(null.write(b'ala'), 3)
-        self.assertEqual(null.read(), '')
-        self.assertEqual(null.read(7), '')
+        self.assertEqual(null.read(), b'')
+        self.assertEqual(null.read(7), b'')
         null.flush()
         null.close()
         self.assertRaises(ValueError, lambda: null.write('test'))
         self.assertRaises(ValueError, lambda: null.flush())
         self.assertRaises(ValueError, lambda: null.read())
         null.close()
-
 
     def try_directory(self):
         os.system('mkdir test')
