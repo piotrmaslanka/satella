@@ -9,6 +9,8 @@ satella
 [![PyPI](https://img.shields.io/pypi/implementation/satella.svg)](https://pypi.python.org/pypi/satella)
 [![Documentation Status](https://readthedocs.org/projects/satella/badge/?version=latest)](http://satella.readthedocs.io/en/latest/?badge=latest)
 [![License](https://img.shields.io/pypi/l/satella)](https://github.com/piotrmaslanka/satella)
+[![linting: pylint](https://img.shields.io/badge/linting-pylint-yellowgreen)](https://github.com/pylint-dev/pylint)
+
 
 Satella is an almost-zero-requirements Python 3.5+ library for writing
 server applications. It has arisen out of my requirements to have some classes or design patterns handy, and kinda

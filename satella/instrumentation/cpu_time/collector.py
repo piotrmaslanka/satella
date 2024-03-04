@@ -22,7 +22,7 @@ pCPUtimes = collections.namedtuple('pcputimes',
                         'iowait'])
 
 
-class CPUProfileBuilderThread(threading.Thread):
+class _CPUProfileBuilderThread(threading.Thread):
     """
     A CPU profile builder thread and a core singleton object to use.
 
@@ -51,16 +51,16 @@ class CPUProfileBuilderThread(threading.Thread):
     @staticmethod
     def get_instance():
         """Access instances of this thread in this way ONLY!"""
-        if CPUProfileBuilderThread.thread is None:
-            CPUProfileBuilderThread.thread = CPUProfileBuilderThread()
-            CPUProfileBuilderThread.thread.start()
-        return CPUProfileBuilderThread.thread
+        if _CPUProfileBuilderThread.thread is None:
+            _CPUProfileBuilderThread.thread = _CPUProfileBuilderThread()
+            _CPUProfileBuilderThread.thread.start()
+        return _CPUProfileBuilderThread.thread
 
     def start(self) -> None:
         if self.started:
             return
-        super().start()
         self.started = True
+        super().start()
 
     def save_load(self, times: pCPUtimes) -> None:
         while len(self.own_load_average) > 3 and \
@@ -131,7 +131,7 @@ class CPUTimeManager:
         :param percent: float between 0 and 1
         :return: the value of the percentile
         """
-        return CPUProfileBuilderThread.get_instance().percentile(percent)
+        return _CPUProfileBuilderThread.get_instance().percentile(percent)
 
     @staticmethod
     def set_window_size(window_size: float) -> None:
@@ -140,13 +140,13 @@ class CPUTimeManager:
 
         :param window_size: time, in seconds
         """
-        CPUProfileBuilderThread.get_instance().window_size = window_size
+        _CPUProfileBuilderThread.get_instance().window_size = window_size
 
     @staticmethod
     def set_refresh_each(refresh: tp.Union[str, float, int]) -> None:
         """Change the refresh interval for the CPU usage collection thread"""
 
-        CPUProfileBuilderThread.get_instance().refresh_each = parse_time_string(refresh)
+        _CPUProfileBuilderThread.get_instance().refresh_each = parse_time_string(refresh)
 
 
 @for_argument(parse_time_string)
@@ -234,7 +234,7 @@ def calculate_occupancy_factor() -> float:
 
     :return: a float between 0 and 1 telling you how occupied CPU-wise is your system.
     """
-    CPUProfileBuilderThread.get_instance()
+    _CPUProfileBuilderThread.get_instance()
     c = _calculate_occupancy_factor()
     while c is None:
         time.sleep(0.1)
@@ -250,4 +250,4 @@ def get_own_cpu_usage() -> tp.Optional[pCPUtimes]:
         passed since the last measure.
         or None if data not yet ready
     """
-    return CPUProfileBuilderThread.get_instance().get_own_cpu_usage()
+    return _CPUProfileBuilderThread.get_instance().get_own_cpu_usage()

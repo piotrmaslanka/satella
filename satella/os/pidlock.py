@@ -76,6 +76,7 @@ class PIDFileLock:
         fd = os.fdopen(self.file_no, 'w')
         fd.write(str(os.getpid()) + '\n')
         fd.close()
+        return True
 
     def __enter__(self) -> None:
         self.acquire()

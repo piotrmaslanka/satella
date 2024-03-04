@@ -9,6 +9,8 @@ The software
 * fixed behavior for AutoflushFile(..., 'wb')
 * added CPUTimeManager.set_refresh_each()
 * added satella.instrumentation.cpu_time.get_own_cpu_time()
+* better documentation for satella.time.sleep()
+* fixed behaviour of PIDFileLock
 
 Build process
 -------------

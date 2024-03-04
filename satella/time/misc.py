@@ -3,8 +3,6 @@ import typing as tp
 
 __all__ = ['time_as_int', 'time_ms', 'sleep', 'time_us']
 
-from satella.coding.concurrent.thread import Condition
-from satella.exceptions import WouldWaitMore
 from satella.time.parse import parse_time_string
 from satella.time.measure import measure
 
@@ -19,11 +17,12 @@ def sleep(y: tp.Union[str, float], abort_on_interrupt: bool = False) -> bool:
     :param y: the interval to wait in seconds, can be also a time string
     :param abort_on_interrupt: whether to abort at once when KeyboardInterrupt is seen
     :returns: whether the function has completed its sleep naturally. False is seen on
-        aborts thanks to KeyboardInterrupt only if abort_on_interrupt is True
+        aborts thanks to KeyboardInterrupt only if abort_on_interrupt is True. False will be also
+        seen on negative y.
     """
     y = parse_time_string(y)
     if y < 0:
-        return
+        return False
 
     with measure() as measurement:
         while measurement() < y:

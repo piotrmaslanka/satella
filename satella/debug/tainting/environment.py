@@ -10,7 +10,7 @@ import warnings
 
 from satella.coding.typing import T
 
-from satella.debug.tainting.tainteds import TaintedObject, access_tainted, taint
+from .tainteds import TaintedObject, access_tainted, taint
 
 local = threading.local()
 
