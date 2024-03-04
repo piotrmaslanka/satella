@@ -499,7 +499,7 @@ class _ListWrapperIteratorIterator(tp.Iterator[T]):
         return item
 
 
-class ListWrapperIterator(tp.Iterator[T]):
+class ListWrapperIterator(tp.Sequence[T], tp.Iterator[T]):
     """
     A wrapped for an iterator, enabling using it as a normal list.
 
@@ -512,6 +512,8 @@ class ListWrapperIterator(tp.Iterator[T]):
     Essentially a class that lets you reuse one-shot iterators.
 
     This is additionally a generic class.
+
+    :ivar internal_pointer: (int) the number of element this list internally points to
     """
 
     __slots__ = 'iterator', 'exhausted', 'list', 'internal_pointer'

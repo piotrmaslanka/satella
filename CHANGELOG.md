@@ -6,4 +6,5 @@
 * unit tests for overloading
 * fixed #60
 * fixed #59
+* extended type signature of ListWrapperIterator
 
