@@ -17,7 +17,7 @@ class DeferredValue(tp.Generic[T]):
     Usage:
 
     >>> def thread1(value):
-    >>>     print(value.val())
+     >>>     print(value.value())
 
     >>> val = DeferredValue()
     >>> threading.Thread(target=thread1, args=(val, )).start()
