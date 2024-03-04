@@ -14,13 +14,31 @@ from satella.coding.concurrent import TerminableThread, CallableGroup, Condition
     LockedStructure, AtomicNumber, Monitor, IDAllocator, call_in_separate_thread, Timer, \
     parallel_execute, run_as_future, sync_threadpool, IntervalTerminableThread, Future, \
     WrappingFuture, PeekableQueue, SequentialIssuer, CancellableCallback, ThreadCollection, \
-    BogusTerminableThread, SingleStartThread, FutureCollection, MonitorSet, parallel_construct
+    BogusTerminableThread, SingleStartThread, FutureCollection, MonitorSet, parallel_construct, \
+    DeferredValue
 from satella.coding.concurrent.futures import call_in_future, ExecutorWrapper
 from satella.coding.sequences import unique
 from satella.exceptions import WouldWaitMore, AlreadyAllocated, Empty
 
 
 class TestConcurrent(unittest.TestCase):
+
+    def test_deferred_value(self):
+        val = DeferredValue()
+
+        def thread(value):
+            self.assertRaises(WouldWaitMore, lambda: value.value(5))
+            val2 = value.value()
+            self.assertEqual(val2, 4)
+
+        thr = threading.Thread(target=thread, args=(val, ))
+        thr.start()
+        thr2 = threading.Thread(target=thread, args=(val, ))
+        thr2.start()
+        time.sleep(6)
+        val.set_value(4)
+        thr.join()
+        thr2.join()
 
     def test_parallel_construct(self):
         mock = MockTracer()

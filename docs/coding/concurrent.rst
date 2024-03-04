@@ -2,6 +2,12 @@
 Concurrent data structures
 ==========================
 
+DeferredValue
+=============
+
+.. autoclass:: satella.coding.concurrent.DeferredValue
+    :members:
+
 CallableGroup
 =============
 

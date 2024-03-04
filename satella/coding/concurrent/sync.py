@@ -1,5 +1,5 @@
-import time
 import typing as tp
+import time
 from concurrent.futures import wait, ThreadPoolExecutor
 
 from satella.coding.concurrent.atomic import AtomicNumber

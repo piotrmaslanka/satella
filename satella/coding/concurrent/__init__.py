@@ -4,6 +4,7 @@ from .functions import parallel_execute, run_as_future
 from .futures import Future, WrappingFuture, InvalidStateError, FutureCollection
 from .id_allocator import IDAllocator, SequentialIssuer
 from .list_processor import parallel_construct
+from .value import DeferredValue
 from .locked_dataset import LockedDataset
 from .locked_structure import LockedStructure
 from .monitor import MonitorList, Monitor, MonitorDict, RMonitor, MonitorSet
@@ -21,4 +22,4 @@ __all__ = ['LockedDataset', 'Monitor', 'RMonitor', 'CallableGroup', 'TerminableT
            'sync_threadpool', 'IntervalTerminableThread', 'Future', 'MonitorSet',
            'WrappingFuture', 'InvalidStateError', 'PeekableQueue', 'parallel_construct',
            'CancellableCallback', 'ThreadCollection', 'FutureCollection',
-           'SequentialIssuer']
+           'SequentialIssuer', 'DeferredValue']
