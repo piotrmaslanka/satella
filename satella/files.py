@@ -1,5 +1,6 @@
 from __future__ import annotations
 import codecs
+import functools
 import io
 import os
 import re
@@ -10,7 +11,10 @@ __all__ = ['read_re_sub_and_write', 'find_files', 'split', 'read_in_file', 'writ
            'write_out_file_if_different', 'make_noncolliding_name', 'try_unlink',
            'DevNullFilelikeObject', 'read_lines', 'AutoflushFile']
 
-from satella.coding.recast_exceptions import silence_excs
+import warnings
+
+from satella.coding import wraps
+from satella.coding.recast_exceptions import silence_excs, reraise_as
 from satella.coding.structures import Proxy
 from satella.coding.typing import Predicate
 
@@ -18,64 +22,91 @@ SEPARATORS = {'\\', '/'}
 SEPARATORS.add(os.path.sep)
 
 
+def value_error_on_closed_file(getter):
+    def outer(fun):
+        @functools.wraps(fun)
+        def inner(self, *args, **kwargs):
+            if getter(self):
+                raise ValueError('File closed')
+            return fun(self, *args, **kwargs)
+        return inner
+    return outer
+
+
+closed_devnull = value_error_on_closed_file(lambda y: y.is_closed)
+
+
 class DevNullFilelikeObject(io.FileIO):
     """
     A /dev/null filelike object. For multiple uses.
 
     :param binary: is this a binary file
+    :param ignore_typing_issues:
     """
-    __slots__ = 'is_closed', 'binary'
+    __slots__ = 'is_closed', 'binary', 'ignore_typing_issues'
 
-    def __init__(self, binary: bool = False):
+    def __init__(self, binary: bool = False, ignore_typing_issues: bool = False):
         self.is_closed = False
         self.binary = binary
+        self.ignore_typing_issues = ignore_typing_issues
 
+    @closed_devnull
     def tell(self) -> int:
         """Return the current file offset"""
         return 0
 
+    @closed_devnull
     def truncate(self, __size: tp.Optional[int] = None) -> int:
         """Truncate file to __size starting bytes"""
         return 0
 
+    @closed_devnull
     def writable(self) -> bool:
         """Is this object writable"""
         return True
 
+    @closed_devnull
     def seek(self, v: int) -> int:
         """Seek to a particular file offset"""
         return 0
 
+    @closed_devnull
     def seekable(self) -> bool:
         """Is this file seekable?"""
         return True
 
+    @closed_devnull
     def read(self, byte_count: tp.Optional[int] = None) -> tp.Union[str, bytes]:
         """
         :raises ValueError: this object has been closed
         :raises io.UnsupportedOperation: since reading from this is forbidden
         """
-        if self.is_closed:
-            raise ValueError('Reading from closed /dev/null!')
         return b'' if self.binary else ''
 
-    def write(self, x: tp.Union[str, bytes]) -> int:
+    @closed_devnull
+    def write(self, y: tp.Union[str, bytes]) -> int:
         """
-        Discard any amount of bytes
+        Discard any amount of bytes.
+
+        This will raise a RuntimeWarning warning upon writing invalid type.
 
         :raises ValueError: this object has been closed
         :return: length of written content
         """
-        if self.is_closed:
-            raise ValueError('Writing to closed /dev/null!')
-        return len(x)
+        if not self.ignore_typing_issues:
+            if isinstance(y, bytes) and not self.binary:
+                warnings.warn('Non binary data written to stream, but required binary', RuntimeWarning)
+            elif isinstance(y, str) and self.binary:
+                warnings.warn('Non binary data written to stream, but required binary', RuntimeWarning)
+            else:
+                warnings.warn('Non binary data written to stream, but required binary', RuntimeWarning)
+        return len(y)
 
+    @closed_devnull
     def flush(self) -> None:
         """
         :raises ValueError: when this object has been closed
         """
-        if self.is_closed:
-            raise ValueError('flush of closed file')
 
     def close(self) -> None:
         """
@@ -347,9 +378,25 @@ def write_out_file_if_different(path: str, data: tp.Union[bytes, str],
         return True
 
 
+is_closed_getter = value_error_on_closed_file(lambda y: y.__dict__['closed'])
+
+
+def close_file_after(fun):
+    @wraps(fun)
+    def inner(self, *args, **kwargs):
+        try:
+            return fun(self, *args, **kwargs)
+        finally:
+            self._close_file()
+
+    return inner
+
+
 class AutoflushFile(Proxy[io.FileIO]):
     """
     A file that is supposed to be closed after each write command issued.
+
+    The file will be open only when there's an action to do on it called.
 
     Best for appending so that other processes can read.
 
@@ -361,23 +408,34 @@ class AutoflushFile(Proxy[io.FileIO]):
     >>>     assert fin.read() == 'test'
     """
 
-    def __init__(self, file, mode='r', *con_args, **con_kwargs):
+    def __init__(self, file: str, mode: str, *con_args, **con_kwargs):
+        """
+        :param file: path to the file
+        :param mode: mode to open the file with. Allowed values are w, wb, w+, a+, wb+, ab+, a, ab.
+            w+ and wb+ will truncate the file. Effective mode will be chosen by the class whatever just makes sense.
+        :raises ValueError: invalid mode chosen
+        """
         self.__dict__['con_kwargs'] = con_kwargs
         self.__dict__['pointer'] = None
+        self.__dict__['closed'] = False
 
-        if mode in ('w+', 'wb+'):
+        if mode in ('w', 'w+', 'wb+', 'wb'):
             fle = open(*(file, 'wb'))
             fle.truncate(0)
             fle.close()
 
-        mode = {'w': 'a', 'wb': 'ab', 'w+': 'a+', 'wb+': 'ab+', 'a': 'a', 'ab': 'ab'}[mode]
+        with reraise_as(KeyError, ValueError, f'Unsupported mode "{mode}"'):
+            mode = {'w': 'a', 'wb': 'ab', 'w+': 'a+', 'wb+': 'ab+', 'a': 'a', 'ab': 'ab'}[mode]
 
         self.__dict__['con_args'] = (file, mode, *con_args)
 
         fle = self._open_file()
         super().__init__(fle)
         self.__dict__['pointer'] = fle.tell()
+        self._close_file()
 
+    @is_closed_getter
+    @close_file_after
     def seek(self, *args, **kwargs) -> int:
         """Seek to a provided position within the file"""
         fle = self._open_file()
@@ -385,6 +443,8 @@ class AutoflushFile(Proxy[io.FileIO]):
         self.__dict__['pointer'] = fle.tell()
         return v
 
+    @is_closed_getter
+    @close_file_after
     def read(self, *args, **kwargs) -> tp.Union[str, bytes]:
         """
         Read a file, returning the read-in data
@@ -394,12 +454,13 @@ class AutoflushFile(Proxy[io.FileIO]):
         file = self._open_file()
         p = file.read(*args, **kwargs)
         self.__dict__['pointer'] = file.tell()
-        self._close_file()
         return p
 
     def _get_file(self) -> tp.Optional[AutoflushFile]:
         return self.__dict__.get('_Proxy__obj')
 
+    @is_closed_getter
+    @close_file_after
     def readall(self) -> tp.Union[str, bytes]:
         """Read all contents into the file"""
         file = self._open_file()
@@ -422,13 +483,17 @@ class AutoflushFile(Proxy[io.FileIO]):
             file.close()
             self.__dict__['_Proxy__obj'] = None
 
+    @is_closed_getter
     def close(self) -> None:
         """
         Closes the file.
         """
         self._open_file()
         self._close_file()
+        self.__dict__['closed'] = True
 
+    @is_closed_getter
+    @close_file_after
     def write(self, *args, **kwargs) -> int:
         """
         Write a particular value to the file, close it afterwards.
@@ -438,14 +503,14 @@ class AutoflushFile(Proxy[io.FileIO]):
         file = self._open_file()
         val = file.write(*args, **kwargs)
         self.__dict__['pointer'] = file.tell()
-        self._close_file()
         return val
 
+    @is_closed_getter
+    @close_file_after
     def truncate(self, __size: tp.Optional[int] = None) -> int:
         """Truncate file to __size starting bytes"""
         fle = self._open_file()
         v = fle.truncate(__size)
         self.__dict__['pointer'] = fle.tell()
-        self._close_file()
         return v
 

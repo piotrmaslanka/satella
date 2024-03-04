@@ -32,6 +32,11 @@ class TestFiles(unittest.TestCase):
             af.close()
             try_unlink('test3.txt')
 
+        af = AutoflushFile('test3.txt', 'w', encoding='utf-8')
+        os.unlink('test3.txt')
+        af.close()
+        self.assertRaises(ValueError, lambda: af.write('test'))
+
     def test_read_lines(self):
         lines = read_lines('LICENSE')
         self.assertTrue(all(lines))
@@ -52,6 +57,32 @@ class TestFiles(unittest.TestCase):
         assert null.tell() == 0
         assert null.seekable()
         assert null.truncate(0) == 0
+        self.assertRaises(TypeError, lambda: null.write(b'ala'))
+        self.assertEqual(null.read(), '')
+        self.assertEqual(null.read(7), '')
+        null.flush()
+        null.close()
+        self.assertRaises(ValueError, lambda: null.write('test'))
+        self.assertRaises(ValueError, lambda: null.flush())
+        self.assertRaises(ValueError, lambda: null.read())
+        null.close()
+
+    def test_devnullfilelikeobject_2(self):
+        null = DevNullFilelikeObject(binary=True)
+        null.write(b'test')
+        null.write('ala')
+
+        null = DevNullFilelikeObject(ignore_typing_issues=True)
+        null.write(b'test')
+        null.write('test')
+
+    def test_devnullfilelikeobject_3(self):
+        null = DevNullFilelikeObject(binary=True)
+        self.assertEqual(null.write(b'ala'), 3)
+        assert null.seek(0) == 0
+        assert null.tell() == 0
+        assert null.seekable()
+        assert null.truncate(0) == 0
         self.assertEqual(null.write(b'ala'), 3)
         self.assertEqual(null.read(), '')
         self.assertEqual(null.read(7), '')
@@ -61,6 +92,7 @@ class TestFiles(unittest.TestCase):
         self.assertRaises(ValueError, lambda: null.flush())
         self.assertRaises(ValueError, lambda: null.read())
         null.close()
+
 
     def try_directory(self):
         os.system('mkdir test')

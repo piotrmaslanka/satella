@@ -1,15 +1,16 @@
-engines:
+plugins:
   duplication:
     enabled: true
     config:
       languages:
         python:
-
   fixme:
     enabled: true
   markdownlint:
     enabled: true
   pep8:
+    enabled: true
+  pylint:
     enabled: true
 exclude_paths:
   - tests/**

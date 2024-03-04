@@ -5,10 +5,13 @@ The software
 
 * added AutoflushFile.seek()
 * added AutoflushFile.truncate()
+* fixed behaviour with AutoflushFile.close()
+* fixed behavior for AutoflushFile(..., 'wb')
 * added CPUTimeManager.set_refresh_each()
 * added satella.instrumentation.cpu_time.get_own_cpu_time()
 
 Build process
 -------------
 
-* added pylint
+* added pylint to CodeClimate
+
