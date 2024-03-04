@@ -10,6 +10,9 @@ from Satella solves that problem.
 
 .. autofunction:: satella.instrumentation.memory.get_size
 
+.. warning:: Using these conditions will spawn a daemon thread to monitor the memory usage
+    in the background.
+
 Defining severity levels
 ------------------------
 
