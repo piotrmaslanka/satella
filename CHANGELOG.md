@@ -11,6 +11,7 @@ The software
 * added satella.instrumentation.cpu_time.get_own_cpu_time()
 * better documentation for satella.time.sleep()
 * fixed behaviour of PIDFileLock
+* multiple minor code changes to improve pylint statistics
 
 Build process
 -------------
