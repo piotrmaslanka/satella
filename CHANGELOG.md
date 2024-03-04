@@ -18,3 +18,7 @@ Build process
 
 * added pylint to CodeClimate
 
+Documentation
+-------------
+
+* Improved the documentation for CPU usage functions - noted that there will be a thread spawned in the background.

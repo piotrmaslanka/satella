@@ -80,10 +80,12 @@ class _CPUProfileBuilderThread(threading.Thread):
         time_p, times_v = self.own_load_average[-2]
         time_c, times_c = self.own_load_average[-1]
         difference = time_c - time_p
-        tp = {}
-        for field in times_v._fields:
-            tp[field] = (getattr(times_c, field) - getattr(times_v, field)) / difference
-        return pCPUtimes(**tp)
+        if difference == 0:
+            return None
+        tuple_build = {}
+        for field in times_v._fields:       # pylint: disable=protected-access
+            tuple_build[field] = (getattr(times_c, field) - getattr(times_v, field)) / difference
+        return pCPUtimes(**tuple_build)
 
     def request_percentile(self, percent: float) -> None:
         if percent not in self.percentiles_requested:
@@ -246,8 +248,8 @@ def get_own_cpu_usage() -> tp.Optional[pCPUtimes]:
     """
     Return own CPU usage (this process only)
 
-    :return: a namedtuple of (user, system, children_user, children_system, iowait) divided by number of seconds that
-        passed since the last measure.
-        or None if data not yet ready
+    :return: None if data not ready (just try again in some time), or a a namedtuple of (user, system, children_user,
+        children_system, iowait) divided by number of seconds that passed since the last measure. The result is divided
+        by passed time, so a 1 means 100% during the time, and 0.5 means exactly 50% of the CPU used.
     """
     return _CPUProfileBuilderThread.get_instance().get_own_cpu_usage()

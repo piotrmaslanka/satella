@@ -4,8 +4,14 @@ CPU time
 Satella's cpu_time helps your processes play nice with the overall CPU usage, ie. deferring
 non-critical tasks to until CPU usage falls lower than the average.
 
+You can even check how much CPU is your process using.
+
 cpu_time does this by periodically monitoring CPU's usage and building your usage profile.
 The profile is refreshed each X minutes.
+
+.. warning:: Note that running the following procedures will launch a background daemonic thread
+    spawning to gather data. This thread will run only once, and it will be daemonic, but it will use
+    some of the CPU. If you don't call any of these, the thread won't be spawned.
 
 .. autofunction:: satella.instrumentation.cpu_time.calculate_occupancy_factor
 

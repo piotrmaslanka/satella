@@ -3,5 +3,5 @@ disable=
     C0114, # missing-module-docstring
     C0116, # missing-function-docstring
     W0603,  # global-statement
-    C0103   # invalid-name
-
+    C0103,   # invalid-name
+    R0913  # too-many-arguments
