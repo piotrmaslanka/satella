@@ -97,7 +97,7 @@ disable = '''
 '''
 
 [tool.coverage.run]
-branch = 1
+branch = true
 source = ["satella"]
 concurrency = "thread"
 omit= [
