@@ -37,8 +37,8 @@ class TestOptionals(unittest.TestCase):
         self.assertEqual(obj.a, 6)
         self.assertEqual(opt.a, 6)
         del opt.a
-        self.assertRaises(AttributeError, obj.a)
-        self.assertRaises(AttributeError, opt.a)
+        self.assertRaises(AttributeError, lambda: obj.a)
+        self.assertRaises(AttributeError, lambda: opt.a)
 
     def test_list(self):
         a = [1, 2, 3]
