@@ -23,11 +23,10 @@ def _max_wait_atm_n(measurement, max_wait, atm_n):
     while measurement() < max_wait:
         try:
             atm_n.wait_until_equal(0, 1)
-            break
+            return
         except WouldWaitMore:
             continue
-    else:
-        raise WouldWaitMore('timeout exceeded')
+    raise WouldWaitMore('timeout exceeded')
 
 
 def sync_threadpool(tpe: tp.Union[ExecutorWrapper, ThreadPoolExecutor],
