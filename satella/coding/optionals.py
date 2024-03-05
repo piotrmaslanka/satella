@@ -77,31 +77,34 @@ class Optional(Proxy[T]):
         return other == me
 
     def __getattr__(self, item):
-        return EMPTY_OPTIONAL if getattr(self, '_Proxy__obj') is None else super().__getattr__(item)
+        obj = getattr(self, '_Proxy__obj')
+        return EMPTY_OPTIONAL if obj is None else getattr(obj, item)
 
     def __call__(self, *args, **kwargs):
-        return EMPTY_OPTIONAL if getattr(self, '_Proxy__obj') is None else super().__call__(*args, **kwargs)
+        obj = getattr(self, '_Proxy__obj')
+        return EMPTY_OPTIONAL if obj is None else obj(*args, **kwargs)
 
     def __bool__(self):
-        return False if getattr(self, '_Proxy__obj') is None else super().__bool__()
+        obj = getattr(self, '_Proxy__obj')
+        return False if obj is None else bool(obj)
 
     def __getitem__(self, item):
-        return EMPTY_OPTIONAL if getattr(self, '_Proxy__obj') is None else super().__getattr__(item)
+        obj = getattr(self, '_Proxy__obj')
+        return EMPTY_OPTIONAL if getattr(self, '_Proxy__obj') is None else obj[item]
 
     def __setitem__(self, key, value) -> None:
-        if getattr(self, '_Proxy__obj') is None:
-            return
-        super().__setitem__(key, value)
+        obj = getattr(self, '_Proxy__obj')
+        if obj is not None:
+            obj.__setitem__(key, value)
 
     def __delitem__(self, key) -> None:
-        if getattr(self, '_Proxy__obj') is None:
-            return
-        super().__delitem__(key)
+        obj = getattr(self, '_Proxy__obj')
+        if obj is not None:
+            del obj[key]
 
     def __len__(self) -> int:
         obj = getattr(self, '_Proxy__obj')
         return 0 if obj is None else len(obj)
-
 
 
 EMPTY_OPTIONAL = Optional(None)
