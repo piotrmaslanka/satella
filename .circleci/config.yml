@@ -11,9 +11,7 @@ commands:
     steps:
       - run:
           command: |
-            pip install -r requirements.txt
-            pip install -U pytest-xdist pytest-cov pytest pytest-forked pluggy py
-            pip install .
+            pip install -e .[dev,test,extras]
   unit_test:
     description: Run the unit tests
     steps:

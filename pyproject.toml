@@ -29,12 +29,10 @@ dependencies = ["psutil"]
 version = {attr = "satella.__version__"}
 
 [project.optional-dependencies]
-HTTPJSONSource = ["requests"]
-YAMLSource = ["pyyaml"]
-TOMLSource = ["toml"]
-FasterJSON = ["ujson"]
-cassandra = ["cassandra-driver"]
-opentracing = ["opentracing"]
+dev = ["pylint", "pyyaml", "toml", "requests", "opentracing"]
+test =  ["pytest-cov", "pytest-xdist", "pytest", "pytest-forked", "pluggy", "py"]
+extras = ["requests","pyyaml","toml", "ujson", "cassandra-driver", "opentracing"]
+
 
 [build-system]
 requires = ["setuptools", "setuptools-scm"]

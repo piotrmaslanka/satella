@@ -1,5 +1,0 @@
-psutil
-pyyaml
-toml
-requests
-opentracing
