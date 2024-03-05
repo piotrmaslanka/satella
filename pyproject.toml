@@ -99,7 +99,7 @@ disable = '''
 [tool.coverage.run]
 branch = true
 source = ["satella"]
-concurrency = "thread"
+concurrency = ["thread"]
 omit= [
   "tests/*",
   ".eggs/*",
