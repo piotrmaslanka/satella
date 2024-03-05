@@ -12,8 +12,8 @@ commands:
       - run:
           command: |
             pip install -r requirements.txt
-            pip install -U pytest-xdist pytest-cov pytest pytest-forked pluggy py opentracing
-            python setup.py install
+            pip install -U pytest-xdist pytest-cov pytest pytest-forked pluggy py
+            pip install .
   unit_test:
     description: Run the unit tests
     steps:
