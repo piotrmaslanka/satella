@@ -21,11 +21,11 @@ def _worker(executor_reference, work_queue, initializer, initargs):
     if initializer is not None:
         try:
             initializer(*initargs)
-        except BaseException:
+        except BaseException:       # pylint: disable=broad-exception-caught
             _base.LOGGER.critical('Exception in initializer:', exc_info=True)
             executor = executor_reference()
             if executor is not None:
-                executor._initializer_failed()
+                executor._initializer_failed()          # pylint: disable=protected-access
             return
     try:
         while True:
@@ -48,7 +48,7 @@ def _worker(executor_reference, work_queue, initializer, initargs):
                 # attempt to increment idle count
 
                 if executor is not None:
-                    executor._idle_semaphore.release()
+                    executor._idle_semaphore.release()      # pylint: disable=protected-access
                 del executor
                 continue
 
@@ -57,11 +57,11 @@ def _worker(executor_reference, work_queue, initializer, initargs):
             #   - The interpreter is shutting down OR
             #   - The executor that owns the worker has been collected OR
             #   - The executor that owns the worker has been shutdown.
-            if thread._shutdown or executor is None or executor._shutdown:
+            if thread._shutdown or executor is None or executor._shutdown:  # pylint: disable=protected-access
                 # Flag the executor as shutting down as early as possible if it
                 # is not gc-ed yet.
                 if executor is not None:
-                    executor._shutdown = True
+                    executor._shutdown = True       # pylint: disable=protected-access
                 # Notice other workers
                 work_queue.put(None)
                 return
@@ -136,7 +136,7 @@ class MetrifiedThreadPoolExecutor(ThreadPoolExecutor):
 
             if self._shutdown:
                 raise RuntimeError('cannot schedule new futures after shutdown')
-            if thread._shutdown:
+            if thread._shutdown:            # pylint: disable=protected-access
                 raise RuntimeError('cannot schedule new futures after '
                                    'interpreter shutdown')
 
