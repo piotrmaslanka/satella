@@ -191,14 +191,13 @@ def _generic_eq(self, other, truth, comparator):
     if not isinstance(other, type(self)):
         return truth
 
-    cmpr_by = self._HASH_FIELDS_TO_USE
+    cmpr_by = self._HASH_FIELDS_TO_USE      # pylint: disable=protected-access
     try:
         if isinstance(cmpr_by, str):
             return comparator(getattr(self, cmpr_by), getattr(other, cmpr_by))
 
-        for field_name in cmpr_by:
-            if getattr(self, field_name) != getattr(other, field_name):
-                return truth
+        if any(getattr(self, field_name) != getattr(other, field_name) for field_name in cmpr_by):
+            return truth
         return not truth
     except AttributeError:
         return truth
