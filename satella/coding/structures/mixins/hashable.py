@@ -181,18 +181,15 @@ class OmniHashableMixin(metaclass=ABCMeta):
         """
         Note that this will only compare _HASH_FIELDS_TO_USE
         """
-        return _generic_eq(self, other, False, operator.eq, 'eq', )
+        return _generic_eq(self, other, False, operator.eq)
 
     def __ne__(self, other) -> bool:
-        return _generic_eq(self, other, True,  operator.ne, 'ne')
+        return _generic_eq(self, other, True, operator.ne)
 
 
-def _generic_eq(self, other, truth, comparator, name):
+def _generic_eq(self, other, truth, comparator):
     if not isinstance(other, type(self)):
         return truth
-
-    if not isinstance(other, OmniHashableMixin):
-        return comparator(self, other)
 
     cmpr_by = self._HASH_FIELDS_TO_USE
     try:

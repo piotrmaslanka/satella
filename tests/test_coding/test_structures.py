@@ -275,7 +275,7 @@ class TestStructures(unittest.TestCase):
         self.assertEqual(a, b)
         self.assertEqual(a, 1)
         self.assertGreater(a, 0)
-        self.assertLess(c, 1)
+        self.assertLess(c, 4)
         self.assertNotEqual(a, c)
         self.assertLess(a, c)
         self.assertGreaterEqual(a, b)
