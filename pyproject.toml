@@ -4,13 +4,7 @@ dynamic = ["version"]
 description = "Utilities for writing servers in Python"
 readme = {file = "README.md", content-type="text/markdown"}
 authors = [
-  {name = "Piotr Maślanka", email = "pmaslanka@smok.co"},
-  {name = "Tzu-Ping Chung", email = "tzu-ping@example.com"},
-  {name = "Another person"},
-  {email = "different.person@example.com"},
-]
-maintainers = [
-  {name = "Brett Cannon", email = "brett@example.com"}
+  {name = "Piotr Maślanka", email = "pmaslanka@smok.co"}
 ]
 requires-python = ">= 3.5"
 license = {file = "LICENSE", text="MIT License"}
@@ -85,3 +79,35 @@ packages = ["satella",
             "satella.opentracing",
             "satella.os",
             "satella.time"]
+
+[tool.pytest]
+log_cli = true
+
+[tool.pylint.format]
+max-line-length = 120
+
+[tool.pylint.MASTER]
+disable = '''
+    missing-module-docstring,
+    missing-class-docstring,
+    missing-function-docstring,
+    global-statement,
+    invalid-name,
+    too-many-arguments
+'''
+
+[tool.coverage.run]
+branch=1
+source= ["satella"]
+concurrency="thread"
+omit= [
+  "tests/*",
+  ".eggs/*",
+  "setup.py",
+  "satella/__init__.py",
+  "satella/os/signals.py"]
+
+[report]
+include=[
+    "satella/*"]
+
