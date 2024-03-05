@@ -332,6 +332,19 @@ class SyncableDroppable(RMonitor, tp.Generic[K, V]):
         finally:
             try_close(iterator)
 
+    def __append_item(self, data, iterator, maximum_entries):
+        while len(data) < maximum_entries:
+            try:
+                data.append(next(iterator))
+            except StopIteration:
+                for index, tpl in enumerate(self.data_in_memory):
+                    if len(data) >= maximum_entries:
+                        break
+                    if self.synced_up_to is not None:
+                        if tpl[0] > self.synced_up_to:
+                            break
+                return itertools.chain(data, self.data_in_memory[:index])
+
     def _on_sync_request_synced_up_is_not_none(self, maximum_entries):
         if self.first_key_in_memory <= self.synced_up_to:
             # Means we have to sync from memory
@@ -349,18 +362,7 @@ class SyncableDroppable(RMonitor, tp.Generic[K, V]):
             data = []
             iterator = self.db_storage.iterate(self.start_entry)
             try:
-                while len(data) < maximum_entries:
-                    try:
-                        data.append(next(iterator))
-                    except StopIteration:
-                        for index, tpl in enumerate(self.data_in_memory):
-                            if len(data) >= maximum_entries:
-                                break
-                            if self.synced_up_to is not None:
-                                if tpl[0] > self.synced_up_to:
-                                    break
-                        v = itertools.chain(data, self.data_in_memory[:index])
-                        break
+                v = self.__append_item(data, iterator, maximum_entries)
             finally:
                 try_close(iterator)
         return v

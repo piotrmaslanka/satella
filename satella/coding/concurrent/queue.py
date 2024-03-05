@@ -44,6 +44,33 @@ class PeekableQueue(tp.Generic[T]):
                 self.queue.append(item)
         self.inserted_condition.notify(items_count)
 
+    def __get_timeout_none(self, item_getter):
+        while True:
+            self.lock.release()
+            self.inserted_condition.wait()
+            self.lock.acquire()
+            if len(self.queue):
+                try:
+                    return item_getter(self.queue)
+                finally:
+                    self.lock.release()
+
+    def __get_timeout(self, item_getter, timeout):
+        with measure(timeout=timeout) as measurement:
+            while not measurement.timeouted:
+                self.lock.release()
+                # raises WouldWaitMore
+                self.inserted_condition.wait(timeout=measurement.time_remaining)
+                self.lock.acquire()
+                if len(self.queue):
+                    try:
+                        return item_getter(self.queue)
+                    finally:
+                        self.lock.release()
+            else:
+                self.lock.release()
+                raise Empty('queue is empty')
+
     @rethrow_as(WouldWaitMore, Empty)
     def __get(self, timeout, item_getter) -> T:
         self.lock.acquire()
@@ -55,30 +82,9 @@ class PeekableQueue(tp.Generic[T]):
                 self.lock.release()
         else:
             if timeout is None:
-                while True:
-                    self.lock.release()
-                    self.inserted_condition.wait()
-                    self.lock.acquire()
-                    if len(self.queue):
-                        try:
-                            return item_getter(self.queue)
-                        finally:
-                            self.lock.release()
+                return self.__get_timeout_none(item_getter)
             else:
-                with measure(timeout=timeout) as measurement:
-                    while not measurement.timeouted:
-                        self.lock.release()
-                        # raises WouldWaitMore
-                        self.inserted_condition.wait(timeout=measurement.time_remaining)
-                        self.lock.acquire()
-                        if len(self.queue):
-                            try:
-                                return item_getter(self.queue)
-                            finally:
-                                self.lock.release()
-                    else:
-                        self.lock.release()
-                        raise Empty('queue is empty')
+                return self.__get_timeout(item_getter, timeout)
 
     def get(self, timeout: tp.Optional[float] = None) -> T:
         """

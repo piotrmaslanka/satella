@@ -27,18 +27,20 @@ def whereis(name: str) -> tp.Iterator[str]:
         available_extensions = '',
 
     for directory in paths_to_look_in:
-        with silence_excs(FileNotFoundError):
-            for file in os.listdir(directory):
-                path = os.path.join(directory, file)
-                if 'x' not in stat.filemode(os.stat(path).st_mode):
-                    continue
+        yield from _whereis(directory, name, available_extensions)
 
-                if sys.platform.startswith('win'):  # a POSIX-specific check
-                    file = file.upper()  # paths are not case-sensitive on Windows
 
-                for extension in available_extensions:
-                    if file == '%s%s' % (name, extension):
-                        yield path
+@silence_excs(FileNotFoundError)
+def _whereis(directory: str, name, available_extensions):
+    for file in os.listdir(directory):
+        path = os.path.join(directory, file)
+        if 'x' in stat.filemode(os.stat(path).st_mode):
+            if sys.platform.startswith('win'):  # a POSIX-specific check
+                file = file.upper()  # paths are not case-sensitive on Windows
+
+            for extension in available_extensions:
+                if file == '%s%s' % (name, extension):
+                    yield path
 
 
 def is_running_as_root() -> bool:
