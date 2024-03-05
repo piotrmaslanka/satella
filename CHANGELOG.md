@@ -7,3 +7,8 @@
 * added __len__ to Optional
 * major bugfix in Optional
 * deprecated call_if_nnone
+
+Build system
+------------
+
+* switched to pyproject.toml
