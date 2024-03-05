@@ -7,7 +7,7 @@ authors = [
   {name = "Piotr Maślanka", email = "pmaslanka@smok.co"}
 ]
 requires-python = ">= 3.5"
-license = {file = "LICENSE", text="MIT License"}
+license = {text="MIT License"}
 keywords = ["ha", "high availability", "scalable", "scalability", "server", "metrics", "tracing", "instrumentation"]
 classifiers = [
    "Programming Language :: Python",
@@ -97,17 +97,20 @@ disable = '''
 '''
 
 [tool.coverage.run]
-branch=1
-source= ["satella"]
-concurrency="thread"
+branch = 1
+source = ["satella"]
+concurrency = "thread"
 omit= [
   "tests/*",
   ".eggs/*",
   "setup.py",
   "satella/__init__.py",
-  "satella/os/signals.py"]
+  "satella/os/signals.py"
+]
 
-[report]
+[tool.coverage.report]
 include=[
-    "satella/*"]
+    "satella/*"
+]
+
 
