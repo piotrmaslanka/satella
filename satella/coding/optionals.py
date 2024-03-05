@@ -15,10 +15,7 @@ def iterate_if_nnone(iterable: tp.Optional[tp.Iterable]) -> tp.Iterable:
     :param iterable: iterable to iterate over
     :return: an empty generator if iterable is none, else an iterator over iterable
     """
-    if iterable is not None:
-        return iter(iterable)
-    else:
-        return iter(tuple())
+    return iter(iterable) if iterable is not None else iter(tuple())
 
 
 def call_if_nnone(clbl: tp.Optional[tp.Callable[..., V]], *args, **kwargs) -> tp.Optional[V]:
@@ -77,41 +74,34 @@ class Optional(Proxy[T]):
         me = getattr(self, '_Proxy__obj')
         if me is None:
             return False
-        return me == other
+        return other == me
 
     def __getattr__(self, item):
-        if getattr(self, '_Proxy__obj') is None:
-            return EMPTY_OPTIONAL
-        else:
-            return super().__getattr__(item)
+        return EMPTY_OPTIONAL if getattr(self, '_Proxy__obj') is None else super().__getattr__(item)
 
     def __call__(self, *args, **kwargs):
-        if getattr(self, '_Proxy__obj') is None:
-            return EMPTY_OPTIONAL
-        else:
-            return super().__call__(*args, **kwargs)
+        return EMPTY_OPTIONAL if getattr(self, '_Proxy__obj') is None else super().__call__(*args, **kwargs)
 
     def __bool__(self):
-        if getattr(self, '_Proxy__obj') is None:
-            return False
-        else:
-            return super().__bool__()
+        return False if getattr(self, '_Proxy__obj') is None else super().__bool__()
 
     def __getitem__(self, item):
-        if getattr(self, '_Proxy__obj') is None:
-            return EMPTY_OPTIONAL
-        else:
-            return super().__getitem__(item)
+        return EMPTY_OPTIONAL if getattr(self, '_Proxy__obj') is None else super().__getattr__(item)
 
     def __setitem__(self, key, value) -> None:
         if getattr(self, '_Proxy__obj') is None:
             return
-        return super().__setitem__(key, value)
+        super().__setitem__(key, value)
 
     def __delitem__(self, key) -> None:
         if getattr(self, '_Proxy__obj') is None:
             return
-        return super().__delitem__(key)
+        super().__delitem__(key)
+
+    def __len__(self) -> int:
+        obj = getattr(self, '_Proxy__obj')
+        return 0 if obj is None else len(obj)
+
 
 
 EMPTY_OPTIONAL = Optional(None)
@@ -125,7 +115,4 @@ def extract_optional(v: tp.Union[T, Optional[T]]) -> T:
     :param v: value to extract the value from
     :return: resulting value
     """
-    if isinstance(v, Optional):
-        return getattr(v, '_Proxy__obj')
-    else:
-        return v
+    return getattr(v, '_Proxy__obj') if isinstance(v, Optional) else v

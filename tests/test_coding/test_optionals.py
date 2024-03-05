@@ -20,6 +20,35 @@ class TestOptionals(unittest.TestCase):
         self.assertFalse(c)
         self.assertTrue(b)
 
+    def test_optional_lambda(self):
+        Optional(None())
+        Optional(lambda: 5)()
+
+    def test_object(self):
+        class Obj:
+            def __init__(self):
+                self.a = 5
+
+        obj = Obj()
+        opt = Optional(obj)
+        Optional(None).a
+        self.assertEqual(opt.a, 5)
+        opt.a = 6
+        self.assertEqual(obj.a, 6)
+        self.assertEqual(opt.a, 6)
+        del opt.a
+        self.assertRaises(AttributeError, obj.a)
+        self.assertRaises(AttributeError, opt.a)
+
+    def test_list(self):
+        a = [1, 2, 3]
+        opt = Optional(a)
+        self.assertEqual(opt[0], 1)
+        del opt[0]
+        self.assertEqual(len(opt), 2)
+        opt[0] = 4
+        self.assertEqual(opt[0], 4)
+
     def test_optional_eq(self):
         class Opt:
             a = 5
@@ -30,6 +59,7 @@ class TestOptionals(unittest.TestCase):
         self.assertIn(2, Optional(a).b)
         self.assertNotEqual(Optional(None).a, 5)
         self.assertNotIn(2, Optional(None).b)
+        self.assertEqual(Optional(5), Optional(5))
 
     def test_optional(self):
         self.assertIsNone(call_if_nnone(None))
