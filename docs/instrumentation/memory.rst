@@ -54,6 +54,10 @@ that level 1 is still in effect. You can register your handlers here:
 .. autoclass:: satella.instrumentation.memory.MemoryPressureManager
     :members:
 
+Note that you can also register objects to have their methods called on entering a memory
+severity level, if these objects have a way to to for example drop some data onto disk and
+decrease memory usage via :meth:`~satella.instrumentation.memory.MemoryPressureManager.cleanup_on_entered`.
+
 install_force_gc_collect
 ------------------------
 

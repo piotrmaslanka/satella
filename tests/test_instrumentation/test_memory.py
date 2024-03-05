@@ -53,9 +53,21 @@ class TestMemory(unittest.TestCase):
              'cancelled': 0,
              'mem_normal': 0}
 
+        class ObjectToCleanup:
+            def __init__(self):
+                self.cleaned_up = False
+
+            def cleanup(self):
+                self.cleaned_up = True
+
+        obj1 = ObjectToCleanup()
+        obj2 = ObjectToCleanup()
+
         cc = CustomCondition(lambda: a['level_2_engaged'])
 
         MemoryPressureManager(None, [odc, All(cc, Any(cc, cc))], 2)
+        MemoryPressureManager.cleanup_on_entered(1, obj1)
+        MemoryPressureManager.cleanup_on_entered(2, obj2)
 
         def memory_normal():
             nonlocal a
@@ -96,7 +108,9 @@ class TestMemory(unittest.TestCase):
         self.assertTrue(a['memory'])
         self.assertFalse(a['improved'])
         self.assertGreater(a['calls'], 0)
+        self.assertTrue(obj1.cleaned_up)
         self.assertEqual(a['times_entered_1'], 1)
+        del obj1
         odc.value = False
         time.sleep(3)
         self.assertTrue(a['improved'])
@@ -105,8 +119,10 @@ class TestMemory(unittest.TestCase):
         self.assertEqual(a['mem_normal'], 1)
         a['level_2_engaged'] = True
         time.sleep(3)
+        self.assertEqual(MemoryPressureManager().objects_to_cleanup_on_entered[1], [])
         self.assertEqual(MemoryPressureManager().severity_level, 2)
         self.assertEqual(a['cancelled'], 1)
         self.assertEqual(a['times_entered_1'], 2)
         self.assertTrue(a['level_2_confirmed'])
         self.assertEqual(a['mem_normal'], 1)
+        self.assertTrue(obj2.cleaned_up)

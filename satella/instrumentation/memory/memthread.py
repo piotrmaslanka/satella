@@ -1,6 +1,8 @@
+from __future__ import annotations
 import logging
 import os
 import typing as tp
+import weakref
 
 import psutil
 
@@ -38,7 +40,8 @@ class MemoryPressureManager(IntervalTerminableThread):
 
     :param maximum_available: maximum amount of memory that this program can use
     :param severity_levels: this defines the levels of severity. A level is reached when program's
-        consumption is other this many percent of it's maximum_available amount of memory.
+        consumption is other this many percent of it's maximum_available amount of memory. Note that you need to
+        specify only the abnormal memory levels, the default level of 0 will be added automatically.
     :param check_interval: amount of seconds of pause between consecutive checks, or
         a time string
     :param log_transitions: whether to log to logger when a transition takes place
@@ -67,10 +70,25 @@ class MemoryPressureManager(IntervalTerminableThread):
         self.callbacks_on_left = [CallableGroup(gather=False) for _ in
                                   range(len(
                                       self.severity_levels))]  # type: tp.List[CallableGroup]
+        self.objects_to_cleanup_on_entered = [[] for _ in range(len(self.severity_levels))]
         self.callbacks_on_memory_normal = CallableGroup(gather=False)
         self.severity_level = 0  # type: int
         self.stopped = False  # type: bool
         self.start()
+
+    @staticmethod
+    def cleanup_on_entered(target_level: int, obj: tp.Any,
+                           collector: tp.Callable[[tp.Any], None] = lambda y: y.cleanup()):
+        """
+        Attempt to recover memory by calling a particular method on an object.
+
+        A weak reference will be stored to this object
+
+        :param target_level: cleanup will be attempted on entering this severity level
+        :param obj: object to call this on
+        :param collector: a lambda to call a routine on this object
+        """
+        MemoryPressureManager().objects_to_cleanup_on_entered[target_level].append((weakref.ref(obj), collector))
 
     def advance_to_severity_level(self, target_level: int):
         while self.severity_level != target_level:
@@ -81,6 +99,13 @@ class MemoryPressureManager(IntervalTerminableThread):
                 # Means we are ENTERING a severity level
                 self.severity_level += delta
                 self.callbacks_on_entered[self.severity_level]()
+                new_list = []
+                for ref, collector in self.objects_to_cleanup_on_entered[self.severity_level]:
+                    obj = ref()
+                    if obj is not None:
+                        collector(obj)
+                        new_list.append((ref, collector))
+                self.objects_to_cleanup_on_entered[self.severity_level] = new_list
                 if self.log_transitions:
                     logger.warning('Entered severity level %s' % (self.severity_level,))
             elif delta < 0:
