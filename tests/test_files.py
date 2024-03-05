@@ -110,6 +110,10 @@ class TestFiles(unittest.TestCase):
 
     def test_write_out_file_if_different(self):
         try:
+            os.unlink('test')
+        except FileNotFoundError:
+            pass
+        try:
             self.assertTrue(write_out_file_if_different('test', 'test', 'UTF-8'))
             self.assertFalse(write_out_file_if_different('test', 'test', 'UTF-8'))
         finally:
