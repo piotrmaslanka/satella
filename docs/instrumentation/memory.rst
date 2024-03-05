@@ -10,11 +10,27 @@ from Satella solves that problem.
 
 .. autofunction:: satella.instrumentation.memory.get_size
 
-.. warning:: Using these conditions will spawn a daemon thread to monitor the memory usage
-    in the background.
+install_force_gc_collect
+------------------------
+
+If you want, you can install a GC handler that will
+force a complete GC collection upon entering given severity level.
+
+.. autofunction:: satella.instrumentation.memory.install_force_gc_collect
+
+Dumping memory information
+--------------------------
+
+.. autofunction:: satella.instrumentation.memory.dump_memory_on
+
+.. autofunction:: satella.instrumentation.memory.install_dump_memory_on
+
 
 Defining severity levels
 ------------------------
+
+.. warning:: Using following routines will spawn a daemon thread to monitor the memory usage
+    in the background.
 
 To define a severity level, use the following classes:
 
@@ -57,18 +73,3 @@ that level 1 is still in effect. You can register your handlers here:
 Note that you can also register objects to have their methods called on entering a memory
 severity level, if these objects have a way to to for example drop some data onto disk and
 decrease memory usage via :meth:`~satella.instrumentation.memory.MemoryPressureManager.cleanup_on_entered`.
-
-install_force_gc_collect
-------------------------
-
-If you want, you can install a GC handler that will
-force a complete GC collection upon entering given severity level.
-
-.. autofunction:: satella.instrumentation.memory.install_force_gc_collect
-
-Dumping memory information
---------------------------
-
-.. autofunction:: satella.instrumentation.memory.dump_memory_on
-
-.. autofunction:: satella.instrumentation.memory.install_dump_memory_on

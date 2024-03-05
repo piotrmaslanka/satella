@@ -19,7 +19,7 @@ DEFAULT_WINDOW_SECONDS = '10s'
 
 pCPUtimes = collections.namedtuple('pcputimes',
                                    ['user', 'system', 'children_user', 'children_system',
-                                    'iowait'])
+                                    'iowait'], defaults=[0, 0, 0, 0, 0])
 
 
 class _CPUProfileBuilderThread(SingleStartThread):
