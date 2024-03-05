@@ -1,4 +1,5 @@
 import typing as tp
+import warnings
 
 from satella.coding.structures import Proxy
 from satella.coding.typing import V, T
@@ -22,6 +23,9 @@ def call_if_nnone(clbl: tp.Optional[tp.Callable[..., V]], *args, **kwargs) -> tp
     """
     Call clbl with provided arguments, but only if clbl is not None.
 
+    .. deprecated:: 2.24.2
+        Use Optional(clbl)(*args, **kwargs) instead
+
     If it's None, then None will be returned. Else, the result of this callable will be returned.
 
     :param clbl: callable to call, or a None
@@ -29,10 +33,8 @@ def call_if_nnone(clbl: tp.Optional[tp.Callable[..., V]], *args, **kwargs) -> tp
     :param kwargs: keyword arguments to provide to clbl
     :return: return value or None
     """
-    if clbl is not None:
-        return clbl(*args, **kwargs)
-    else:
-        return None
+    warnings.warn('This is deprecated, use Optional(clbl)() instead', DeprecationWarning)
+    return clbl(*args, **kwargs) if clbl is not None else None
 
 
 class Optional(Proxy[T]):

@@ -21,7 +21,7 @@ class TestOptionals(unittest.TestCase):
         self.assertTrue(b)
 
     def test_optional_lambda(self):
-        Optional(None())
+        Optional(None)()
         Optional(lambda: 5)()
 
     def test_object(self):
