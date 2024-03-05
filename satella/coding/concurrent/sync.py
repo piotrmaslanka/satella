@@ -19,6 +19,17 @@ def _while_sync_threadpool(tpe, max_wait, measurement, futures):
         time.sleep(0.5)
 
 
+def _max_wait_atm_n(measurement, max_wait, atm_n):
+    while measurement() < max_wait:
+        try:
+            atm_n.wait_until_equal(0, 1)
+            break
+        except WouldWaitMore:
+            continue
+    else:
+        raise WouldWaitMore('timeout exceeded')
+
+
 def sync_threadpool(tpe: tp.Union[ExecutorWrapper, ThreadPoolExecutor],
                     max_wait: tp.Optional[float] = None) -> None:
     """
@@ -54,13 +65,6 @@ def sync_threadpool(tpe: tp.Union[ExecutorWrapper, ThreadPoolExecutor],
         if max_wait is None:
             atm_n.wait_until_equal(0)
         else:
-            while measurement() < max_wait:
-                try:
-                    atm_n.wait_until_equal(0, 1)
-                    break
-                except WouldWaitMore:
-                    continue
-            else:
-                raise WouldWaitMore('timeout exceeded')
+            _max_wait_atm_n(measurement, max_wait, atm_n)
         cond.notify_all()
         wait(futures)
