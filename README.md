@@ -50,7 +50,6 @@ this is copyright (c) respective authors.
 Running unit tests
 ------------------
 
-Tests run by default on CircleCI. Just build and run the attached [Dockerfile](Dockerfile). These tests run on Python
-3.8. Also, if you run it under PyPy it will launch some tests targeted at that platform.
+Tests run by default on CircleCI.
 
-They pass on Windows too, but some tests requiring POSIX-like functionality are skipped.
+They should pass on Windows too, but some tests requiring POSIX-like functionality are skipped.
