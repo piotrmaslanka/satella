@@ -23,6 +23,16 @@ class OnDemandCondition(CustomCondition):
 
 class TestMemory(unittest.TestCase):
 
+    def test_get_size_dict(self):
+        a = {'aba': 'aba'}
+
+        class Aba:
+            def __init__(self):
+                self.aba = 'aba'
+
+        self.assertGreater(get_size(a), 6)
+        self.assertGreater(get_size(Aba()), 6)
+
     @unittest.skipIf(sys.platform == 'win32', 'testable only on unices')
     def test_install_dump_on(self):
         install_dump_frames_on(signal.SIGUSR1)
