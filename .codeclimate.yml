@@ -4,12 +4,6 @@ plugins:
     config:
       languages:
         python:
-  fixme:
-    enabled: true
-  markdownlint:
-    enabled: true
-    config:
-      line-length: 120
   pep8:
     enabled: true
   pylint:
