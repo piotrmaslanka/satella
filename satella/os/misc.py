@@ -30,9 +30,23 @@ def whereis(name: str) -> tp.Iterator[str]:
         yield from _whereis(directory, name, available_extensions)
 
 
+def safe_listdir(directory: str) -> tp.Iterator[str]:
+    """
+    Return elements of directory.
+
+    Retuns nothing if directory does not exist, or is not a directory.
+
+    :param directory: path to the element.
+    """
+    try:
+        yield from os.listdir(directory)
+    except (FileNotFoundError, NotADirectoryError):
+        return
+
+
 @silence_excs(FileNotFoundError)
 def _whereis(directory: str, name, available_extensions):
-    for file in os.listdir(directory):
+    for file in safe_listdir(directory):
         path = os.path.join(directory, file)
         if 'x' in stat.filemode(os.stat(path).st_mode):
             if sys.platform.startswith('win'):  # a POSIX-specific check

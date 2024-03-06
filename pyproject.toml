@@ -2,37 +2,37 @@
 name = "satella"
 dynamic = ["version"]
 description = "Utilities for writing servers in Python"
-readme = {file = "README.md", content-type="text/markdown"}
+readme = { file = "README.md", content-type = "text/markdown" }
 authors = [
-  {name = "Piotr Maślanka", email = "pmaslanka@smok.co"}
+    { name = "Piotr Maślanka", email = "pmaslanka@smok.co" }
 ]
 requires-python = ">= 3.7"
-license = {text="MIT License"}
+license = { text = "MIT License" }
 keywords = ["ha", "high availability", "scalable", "scalability", "server", "metrics", "tracing", "instrumentation"]
 classifiers = [
-   "Programming Language :: Python",
-   "Programming Language :: Python :: 3.7",
-   "Programming Language :: Python :: 3.8",
-   "Programming Language :: Python :: 3.9",
-   "Programming Language :: Python :: 3.10",
-   "Programming Language :: Python :: 3.11",
-   "Programming Language :: Python :: 3.12",
-   "Programming Language :: Python :: Implementation :: CPython",
-   "Programming Language :: Python :: Implementation :: PyPy",
-   "Operating System :: OS Independent",
-   "Development Status :: 5 - Production/Stable",
-   "License :: OSI Approved :: MIT License",
-   "Topic :: Software Development :: Libraries"
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: PyPy",
+    "Operating System :: OS Independent",
+    "Development Status :: 5 - Production/Stable",
+    "License :: OSI Approved :: MIT License",
+    "Topic :: Software Development :: Libraries"
 ]
 dependencies = ["psutil"]
 
 [tool.setuptools.dynamic]
-version = {attr = "satella.__version__"}
+version = { attr = "satella.__version__" }
 
 [project.optional-dependencies]
 dev = ["pylint", "toml", "requests", "codeclimate-test-reporter", "opentracing"]
-test =  ["pytest-cov", "pytest-xdist", "pytest", "pytest-forked", "pluggy", "py", "coverage"]
-extras = ["requests","pyyaml","toml", "ujson", "cassandra-driver", "opentracing"]
+test = ["pytest-cov", "pytest-xdist", "pytest", "pytest-forked", "pluggy", "py", "coverage"]
+extras = ["requests", "pyyaml", "toml", "ujson", "cassandra-driver", "opentracing"]
 
 
 [build-system]
@@ -54,35 +54,35 @@ Changelog = "https://github.com/piotrmaslanka/satella/blob/develop/CHANGELOG.md"
 
 [tool.setuptools]
 packages = ["satella",
-            "satella.cassandra",
-            "satella.coding",
-            "satella.coding.concurrent",
-            "satella.coding.concurrent.futures",
-            "satella.coding.decorators",
-            "satella.coding.resources",
-            "satella.coding.sequences",
-            "satella.coding.structures",
-            "satella.coding.structures.dictionaries",
-            "satella.coding.structures.heaps",
-            "satella.coding.structures.mixins",
-            "satella.coding.transforms",
-            "satella.configuration",
-            "satella.configuration.schema",
-            "satella.configuration.sources",
-            "satella.debug",
-            "satella.debug.tainting",
-            "satella.exception_handling",
-            "satella.instrumentation",
-            "satella.instrumentation.cpu_time",
-            "satella.instrumentation.memory",
-            "satella.instrumentation.metrics",
-            "satella.instrumentation.metrics.exporters",
-            "satella.instrumentation.metrics.metric_types",
-            "satella.instrumentation.metrics.structures",
-            "satella.instrumentation.trace_back",
-            "satella.opentracing",
-            "satella.os",
-            "satella.time"]
+    "satella.cassandra",
+    "satella.coding",
+    "satella.coding.concurrent",
+    "satella.coding.concurrent.futures",
+    "satella.coding.decorators",
+    "satella.coding.resources",
+    "satella.coding.sequences",
+    "satella.coding.structures",
+    "satella.coding.structures.dictionaries",
+    "satella.coding.structures.heaps",
+    "satella.coding.structures.mixins",
+    "satella.coding.transforms",
+    "satella.configuration",
+    "satella.configuration.schema",
+    "satella.configuration.sources",
+    "satella.debug",
+    "satella.debug.tainting",
+    "satella.exception_handling",
+    "satella.instrumentation",
+    "satella.instrumentation.cpu_time",
+    "satella.instrumentation.memory",
+    "satella.instrumentation.metrics",
+    "satella.instrumentation.metrics.exporters",
+    "satella.instrumentation.metrics.metric_types",
+    "satella.instrumentation.metrics.structures",
+    "satella.instrumentation.trace_back",
+    "satella.opentracing",
+    "satella.os",
+    "satella.time"]
 
 [tool.pytest]
 log_cli = true
@@ -104,16 +104,16 @@ disable = '''
 branch = true
 source = ["satella"]
 concurrency = ["thread"]
-omit= [
-  "tests/*",
-  ".eggs/*",
-  "setup.py",
-  "satella/__init__.py",
-  "satella/os/signals.py"
+omit = [
+    "tests/*",
+    ".eggs/*",
+    "setup.py",
+    "satella/__init__.py",
+    "satella/os/signals.py"
 ]
 
 [tool.coverage.report]
-include=[
+include = [
     "satella/*"
 ]
 

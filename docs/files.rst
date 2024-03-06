@@ -9,6 +9,11 @@ A file-like object that will dispose of your content.
 .. autoclass:: satella.files.DevNullFilelikeObject
     :members:
 
+safe_listdir
+------------
+
+.. autofunction:: satella.os.safe_listdir
+
 read_lines
 ----------
 

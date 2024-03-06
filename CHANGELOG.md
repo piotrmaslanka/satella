@@ -1,5 +1,8 @@
 # v2.25.0
 
+* added safe_listdir
+* fixed a bug occurring in Python 3.10 with whereis
+
 Build system
 ============
 
