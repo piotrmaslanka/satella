@@ -6,16 +6,17 @@ readme = {file = "README.md", content-type="text/markdown"}
 authors = [
   {name = "Piotr Maślanka", email = "pmaslanka@smok.co"}
 ]
-requires-python = ">= 3.5"
+requires-python = ">= 3.7"
 license = {text="MIT License"}
 keywords = ["ha", "high availability", "scalable", "scalability", "server", "metrics", "tracing", "instrumentation"]
 classifiers = [
    "Programming Language :: Python",
-   "Programming Language :: Python :: 3.5",
-   "Programming Language :: Python :: 3.6",
    "Programming Language :: Python :: 3.7",
    "Programming Language :: Python :: 3.8",
    "Programming Language :: Python :: 3.9",
+   "Programming Language :: Python :: 3.10",
+   "Programming Language :: Python :: 3.11",
+   "Programming Language :: Python :: 3.12",
    "Programming Language :: Python :: Implementation :: CPython",
    "Programming Language :: Python :: Implementation :: PyPy",
    "Operating System :: OS Independent",
@@ -29,8 +30,8 @@ dependencies = ["psutil"]
 version = {attr = "satella.__version__"}
 
 [project.optional-dependencies]
-dev = ["pylint", "pyyaml", "toml", "requests", "opentracing", "codeclimate-test-reporter"]
-test =  ["pytest-cov", "pytest-xdist", "pytest", "pytest-forked", "pluggy", "py", "coverage<4.4"]
+dev = ["pylint", "toml", "requests", "codeclimate-test-reporter"]
+test =  ["pytest-cov", "pytest-xdist", "pytest", "pytest-forked", "pluggy", "py", "coverage"]
 extras = ["requests","pyyaml","toml", "ujson", "cassandra-driver", "opentracing"]
 
 
