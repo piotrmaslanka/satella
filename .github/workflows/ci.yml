@@ -19,15 +19,14 @@ jobs:
           sudo apt-get install -y python3-setuptools python3-yaml
           pip install -U pip setuptools wheel disttools packaging
           pip install -U -e .[test,dev]
-      - name: Test everything
+      - name: Test
         run: pytest -n 8 -vv --cov=satella
-      - run: |
-          pip install coverage[toml] codeclimate-test-reporter
-          coverage xml
-          codeclimate-test-reporter
+      - uses: paambaati/codeclimate-action@main
+        with:
+          coverageCommand: coverage xml
         name: Submit the code coverage
         env:
-          CODECLIMATE_REPO_TOKEN: ${{ secrets.CC_TEST_REPORTER_ID }}
+          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
   build-project:
     runs-on: ubuntu-20.04
     steps:
