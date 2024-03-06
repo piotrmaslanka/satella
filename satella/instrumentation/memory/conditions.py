@@ -1,4 +1,5 @@
 import functools
+import operator
 import typing as tp
 from abc import ABCMeta, abstractmethod
 
@@ -40,35 +41,32 @@ class ZerothSeverity(BaseCondition):
 class OperationJoin(BaseCondition):
     __slots__ = ('conditions',)
 
+    _OPERATOR = lambda y, z: y and z        # pylint: disable=invalid-name
+    _STARTING_VALUE = False                 # pylint: disable=invalid-name
+
     def __init__(self, *conditions: BaseCondition):
         self.conditions = conditions
 
     def can_fire(self, local_memory_data, local_maximum_consume: tp.Optional[int]) -> bool:
-        return functools.reduce(self.OPERATOR, (
+        return functools.reduce(self._OPERATOR, (
             condition.can_fire(local_memory_data, local_maximum_consume) for condition in
-            self.conditions), self.STARTING_VALUE)
+            self.conditions), self._STARTING_VALUE)
 
 
 class Any(OperationJoin):
     """This is true if one of the arguments is True"""
     __slots__ = ()
 
-    @staticmethod
-    def OPERATOR(a, b):
-        return a or b
-
-    STARTING_VALUE = False
+    _OPERATOR = operator.or_
+    _STARTING_VALUE = False
 
 
 class All(OperationJoin):
     """This is true if all arguments are True"""
     __slots__ = ()
 
-    @staticmethod
-    def OPERATOR(a, b):
-        return a and b
-
-    STARTING_VALUE = True
+    _OPERATOR = operator.and_
+    _STARTING_VALUE = True
 
 
 class Not(BaseCondition):

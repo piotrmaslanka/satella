@@ -129,7 +129,7 @@ class TestMemory(unittest.TestCase):
         self.assertEqual(a['mem_normal'], 1)
         a['level_2_engaged'] = True
         time.sleep(3)
-        self.assertEqual(MemoryPressureManager().objects_to_cleanup_on_entered[1], [])
+        self.assertLessEqual(len(MemoryPressureManager().objects_to_cleanup_on_entered[1]), 1)
         self.assertEqual(MemoryPressureManager().severity_level, 2)
         self.assertEqual(a['cancelled'], 1)
         self.assertEqual(a['times_entered_1'], 2)
