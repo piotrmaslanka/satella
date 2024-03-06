@@ -8,6 +8,8 @@ plugins:
     enabled: true
   pylint:
     enabled: true
+  radon:
+    enabled: true
 exclude_paths:
   - tests/**
   - docs/**

@@ -1,4 +1,4 @@
-name: build-satella
+name: CI
 run-name: ${{ github.actor }}
 on: [ push ]
 jobs:
@@ -44,7 +44,7 @@ jobs:
           pip install -U pip setuptools wheel disttools packaging build
       - name: Alter Version
         if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
-        run: |      
+        run: |
           echo -e '__version__ = "' > satella/__init__.py
           echo -e '${{ github.event.release.tag_name }}' >> satella/__init__.py
           echo '"' >> satella/__init__.py
@@ -55,10 +55,10 @@ jobs:
         with:
           name: builds
           path: |
-             dist
+            dist
   send-to-pypi:
     runs-on: "ubuntu-20.04"
-    needs: ["build-project", "tests"]
+    needs: [ "build-project", "tests" ]
     if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
     steps:
       - uses: actions/setup-python@main
@@ -71,7 +71,7 @@ jobs:
       - name: Download all builds artifacts
         uses: actions/download-artifact@main
         with:
-            name: builds
+          name: builds
       - name: Send over packages to PyPI
         run: |
           echo $PYPIRC_PASSWORD_DATA > ~/.pypirc
