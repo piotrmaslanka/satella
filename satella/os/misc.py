@@ -34,9 +34,9 @@ def safe_listdir(directory: str) -> tp.Iterator[str]:
     """
     Return elements of directory.
 
-    Retuns nothing if directory does not exist, or is not a directory.
+    Returns nothing (an empty iterator) if directory does not exist, or is not a directory.
 
-    :param directory: path to the element.
+    :param directory: path to the element to examine.
     """
     try:
         yield from os.listdir(directory)

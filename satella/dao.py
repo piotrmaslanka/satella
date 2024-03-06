@@ -47,7 +47,7 @@ def must_be_loaded(fun):
         assert isinstance(self,
                           Loadable), 'must_be_loaded called with a class that does not subclass ' \
                                      'Loadable'
-        if not self._loaded:
+        if not self._loaded:        # pylint disable:protected-access
             self.refresh()
         return fun(self, *args, **kwargs)
 
