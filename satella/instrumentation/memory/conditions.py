@@ -39,7 +39,7 @@ class ZerothSeverity(BaseCondition):
 
 
 class OperationJoin(BaseCondition):
-    __slots__ = ('conditions',)
+    __slots__ = 'conditions',
 
     _OPERATOR = lambda y, z: y and z        # pylint: disable=invalid-name
     _STARTING_VALUE = False                 # pylint: disable=invalid-name
@@ -71,7 +71,7 @@ class All(OperationJoin):
 
 class Not(BaseCondition):
     """True only if provided condition is false"""
-    __slots__ = ('condition',)
+    __slots__ = 'condition',
 
     def __init__(self, condition: BaseCondition):
         self.condition = condition
@@ -128,7 +128,7 @@ class CustomCondition(BaseCondition):
     :param callable_: callable to call upon asking whether this condition is valid. This
         should be relatively cheap to compute.
     """
-    __slots__ = ('callable',)
+    __slots__ = 'callable',
 
     def __init__(self, callable_: NoArgCallable[bool]):
         self.callable = callable_

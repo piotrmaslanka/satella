@@ -90,7 +90,7 @@ log_cli = true
 [tool.pylint.format]
 max-line-length = 120
 
-[tool.pylint."MESSAGES CONTROL"]
+[tool.pylint.'MESSAGES CONTROL']
 disable = '''
     missing-module-docstring,
     missing-class-docstring,
