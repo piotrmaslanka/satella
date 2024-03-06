@@ -18,8 +18,7 @@ jobs:
         with:
           python-version: '${{ matrix.python-version }}'
           cache: 'pip'
-    paths:
-      - 'dist/*'
+    paths: ["dist/*"]
   tests:
     runs-on: ubuntu-latest
     strategy:
@@ -36,7 +35,5 @@ jobs:
         with:
           python-version: '${{ matrix.python-version }}'
           cache: 'pip'
-        tags:
-          - '!*' # Do not execute on tags
     paths:
       - '!*.MD'
