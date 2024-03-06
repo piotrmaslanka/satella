@@ -41,8 +41,5 @@ jobs:
   convert_and_upload_coverage:
     steps:
       - run: coverage xml
-      - uses: caffco/code-climate-github-action@v1.0.0
-        env:
-          CC_TEST_REPORTER_ID: """
-    paths:
-      - '!*.MD'
+      - uses: caffco/code-climate-github-action@v1.0.1
+    paths: ["*.MD"]
