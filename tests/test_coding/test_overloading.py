@@ -35,11 +35,11 @@ class TestOverloading(unittest.TestCase):
 
         @overload
         def fun(a: B):
-            self.assertEquals(type(a), B)
+            self.assertEqual(type(a), B)
 
         @fun.overload
         def fun(a: A):
-            self.assertEquals(type(a), A)
+            self.assertEqual(type(a), A)
 
         fun(A())
         fun(B())
