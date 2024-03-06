@@ -11,8 +11,10 @@ class AlternativeSource(BaseSource):
     """
     If first source of configuration fails with ConfigurationError, use the next one instead, ad
     nauseam.
+
+    :ivar: sources (list[BaseSource]) sources to examine left to right
     """
-    __slots__ = ('sources',)
+    __slots__ = 'sources',
 
     def __init__(self, *sources: BaseSource):
         super().__init__()
@@ -69,7 +71,7 @@ class MergingSource(BaseSource):
 
     RAISE = 0  # Raise ConfigurationError if one of sources fails
     SILENT = 1  # Silently continue loading from next files if one fails
-    __slots__ = ('sources', 'on_fail', 'fail_if_no_sources_are_correct')
+    __slots__ = 'sources', 'on_fail', 'fail_if_no_sources_are_correct'
 
     def __init__(self, *sources: BaseSource, on_fail: int = RAISE,
                  fail_if_no_sources_are_correct: bool = True):
@@ -97,7 +99,7 @@ class MergingSource(BaseSource):
             cfg = merge_dicts(cfg, p)
             assert isinstance(cfg, dict), 'what merge_dicts returned wasn''t a dict'
 
-        if correct_sources == 0 and self.sources and self.fail_if_no_sources_are_correct:
+        if not correct_sources and self.sources and self.fail_if_no_sources_are_correct:
             raise ConfigurationError('No source was able to load the configuration')
 
         return cfg

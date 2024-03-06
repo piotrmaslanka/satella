@@ -1,3 +1,4 @@
+from __future__ import annotations
 import copy
 import typing as tp
 import warnings
@@ -97,17 +98,16 @@ class KeyAwareDefaultDict(tp.MutableMapping[K, V]):
         self.dict = dict(*args, **kwargs)
         self.factory_function = factory_function
 
-    def __getitem__(self, item) -> V:
+    def __getitem__(self, item: K) -> V:
         if item in self.dict:
             return self.dict[item]
-        else:
-            self.dict[item] = self.factory_function(item)
-            return self.dict[item]
+        self.dict[item] = self.factory_function(item)
+        return self.dict[item]
 
-    def __setitem__(self, key, value) -> None:
+    def __setitem__(self, key: K, value: V) -> None:
         self.dict[key] = value
 
-    def __delitem__(self, key) -> None:
+    def __delitem__(self, key: K) -> None:
         del self.dict[key]
 
 
@@ -137,7 +137,7 @@ class TwoWayDictionary(tp.MutableMapping[K, V]):
     :raises ValueError: on being given data from which it is impossible to construct a reverse
         mapping (ie. same value appears at least twice)
     """
-    __slots__ = ('data', 'reverse_data', '_reverse')
+    __slots__ = 'data', 'reverse_data', '_reverse'
 
     def done(self) -> None:
         """
@@ -160,7 +160,7 @@ class TwoWayDictionary(tp.MutableMapping[K, V]):
             self._reverse.reverse_data = self.data
             self._reverse._reverse = self
 
-    def __enter__(self) -> 'TwoWayDictionary':
+    def __enter__(self) -> TwoWayDictionary:
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb) -> bool:
@@ -179,10 +179,9 @@ class TwoWayDictionary(tp.MutableMapping[K, V]):
 
         try:
             prev_val = self.data[key]
+            del self.reverse_data[prev_val]
         except KeyError:
             pass
-        else:
-            del self.reverse_data[prev_val]
 
         self.data[key] = value
         self.reverse_data[value] = key
@@ -227,9 +226,9 @@ class DictionaryView(tp.MutableMapping[K, V]):
         dictionary that contains that key. If not, all updates will be stored in master_dict. If
         this is True, updates made to keys that are not in this dictionary will go to master_dict.
     """
-    __slots__ = ('assign_to_same_dict', 'master_dict', 'dictionaries', 'propagate_deletes')
+    __slots__ = 'assign_to_same_dict', 'master_dict', 'dictionaries', 'propagate_deletes'
 
-    def __copy__(self) -> 'DictionaryView':
+    def __copy__(self) -> DictionaryView:
         return DictionaryView(*copy.copy(self.dictionaries))
 
     def __deepcopy__(self, memo) -> 'DictionaryView':
@@ -290,5 +289,4 @@ class DictionaryView(tp.MutableMapping[K, V]):
                     del dictionary[key]
                     return
             raise KeyError('Key not found')
-        else:
-            del self.master_dict[key]
+        del self.master_dict[key]

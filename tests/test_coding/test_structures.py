@@ -595,7 +595,13 @@ class TestStructures(unittest.TestCase):
 
     def test_dirty_dict(self):
         a = DirtyDict({1: 2, 3: 4})
+        self.assertEqual(len(a), 1)
+        self.assertEqual(set(a.keys()), {1, 3})
         self.assertFalse(a.dirty)
+        self.assertIn(3, a)
+        b = copy.copy(a)
+        b[1] = 5
+        self.assertEqual(a[1], 2)
         a[1] = 3
         self.assertTrue(a.dirty)
         a.clear_dirty()
