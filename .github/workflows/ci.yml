@@ -2,48 +2,83 @@ name: build-satella
 run-name: ${{ github.actor }}
 on: [ push ]
 jobs:
-  prepare-system:
-    runs-on: "ubuntu-latest"
-    strategy:
-      matrix:
-        python-version: [ "3.9" ]
-    steps:
-      - uses: actions/checkout@4
-      - uses: actions/setup-python@4
-      - name: Install everything
-        run: pip install -e .[test,dev,extras]
-        with:
-          python-version: '${{ matrix.python-version }}'
-          cache: 'pip'
-    paths: ["dist/*"]
   tests:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
         python-version: [ "3.6", "3.7", "3.8", "pypy3.9", "pypy3.10", "3.9", "3.10", "3.11", "3.12" ]
     steps:
-      - uses: actions/checkout@4
-      - uses: actions/setup-python@4
+      - uses: actions/checkout@main
+      - uses: actions/setup-python@main
         with:
-          python-version: '${{ matrix.python-version }}'
+          python-version: ${{ matrix.python-version }}
           cache: 'pip'
+      - name: Install everything
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3-setuptools python3-yaml
+          pip install -U pip setuptools wheel disttools packaging
+          pip install -U -e .[test,dev]
       - name: Test everything
         run: pytest -n 8 -vv --cov=satella
-        with:
-          python-version: '${{ matrix.python-version }}'
-          cache: 'pip'
-  build-package:
-    needs: ["prepare-system"]
-    runs-on: ubuntu-latest
+  upload-coverage:
+    runs-on: "ubuntu-latest"
+    needs: ["tests"]
     steps:
-      - name: Build package
+      - uses: actions/setup-python@main
+        with:
+          python-version: '3.10'
+      - run: coverage xml
+      - uses: caffco/code-climate-github-action@v1.0.0
+  build-project:
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        python-version: [ "3.6.15", "3.7.1", "3.8.18", "pypy3.9", "pypy3.10", "3.9", "3.10", "3.11", "3.12" ]
+    steps:
+      - uses: actions/setup-python@main
+        name: Setup Python
+        with:
+          python-version: '$${{ matrix.version }}'
+          cache: 'pip'
+      - name: Update system
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3-setuptools python3-yaml
+          pip install -U pip setuptools wheel disttools packaging
+      - name: Alter Version
+        if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
+        run: |      
+          echo -e '__version__ = "' > satella/__init__.py
+          echo -e '${{ github.event.release.tag_name }}' >> satella/__init__.py
+          echo '"' >> satella/__init__.py
+          python -v
+      - name: Build
         run: python -m build .
-      - name: Store credentials
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@master
+        with:
+          name: builds
+          path: |
+             dist
+  send-to-pypi:
+    runs-on: "ubuntu-latest"
+    needs: ["build-project", "tests"]
+    if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
+    steps:
+      - uses: actions/setup-python@main
+        name: Setup Python
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+      - name: Install Twine
+        run: pip install twine
+      - name: Download all builds artifacts
+        uses: actions/download-artifact@main
+        with:
+            name: builds
+      - name: Send over packages to PyPI
         run: |
           echo $PYPIRC_PASSWORD_DATA > ~/.pypirc
           twine upload dist/*
-  convert-and-upload-coverage:
-    needs: ["build-package", "tests"]
-    steps:
-      - run: coverage xml
-      - uses: caffco/code-climate-github-action@v1.0.0
+

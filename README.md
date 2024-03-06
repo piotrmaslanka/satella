@@ -1,7 +1,6 @@
 satella
 ========
-[![Build Status](https://circleci.com/gh/piotrmaslanka/satella.svg?style=svg)](https://app.circleci.com/pipelines/github/piotrmaslanka/satella)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/34b392b61482d98ad3f0/test_coverage)](https://codeclimate.com/github/piotrmaslanka/satella/test_coverage)
+![example workflow](https://github.com/piotrmaslanka/satella/actions/workflows/main.yml/badge.svg)[![Test Coverage](https://api.codeclimate.com/v1/badges/34b392b61482d98ad3f0/test_coverage)](https://codeclimate.com/github/piotrmaslanka/satella/test_coverage)
 [![Code Climate](https://codeclimate.com/github/piotrmaslanka/satella/badges/gpa.svg)](https://codeclimate.com/github/piotrmaslanka/satella)
 [![Issue Count](https://codeclimate.com/github/piotrmaslanka/satella/badges/issue_count.svg)](https://codeclimate.com/github/piotrmaslanka/satella)
 [![PyPI](https://img.shields.io/pypi/pyversions/satella.svg)](https://pypi.python.org/pypi/satella)
@@ -56,6 +55,13 @@ pip install satella[extras]
 Running unit tests
 ------------------
 
-Tests run by default on CircleCI.
+Tests run by default on GitHub Actions.
 
 They should pass on Windows too, but some tests requiring POSIX-like functionality are skipped.
+
+Automatic release system
+------------------------
+
+Releases happen automatically. Just add a tag with the name of the version.
+
+**NOTE that changes from 2.25 will be numbered as tags without the prefix ```v```**!
