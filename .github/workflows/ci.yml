@@ -19,12 +19,19 @@ jobs:
           sudo apt-get install -y python3-setuptools python3-yaml
           pip install -U pip setuptools wheel disttools packaging
           pip install -U -e .[test,dev]
+      - name: Before the coverage
+        run: |
+           wget https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64
+           chmod ugo+x test-reporter-latest-linux-amd64
+          ./test-reporter-latest-linux-amd64 before-build
+        env:
+          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
       - name: Test
         run: pytest -n 8 -vv --cov=satella
-      - uses: paambaati/codeclimate-action@main
-        with:
-          coverageCommand: coverage xml
-        name: Submit the code coverage
+      - name: Submit the code coverage
+        run: |
+          ./test-reporter-latest-linux-amd64 format-coverage -t coverage.py
+          ./test-reporter-latest-linux-amd64 after-build
         env:
           CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
   build-project:
