@@ -44,17 +44,17 @@ def safe_listdir(directory: str) -> tp.Iterator[str]:
         return
 
 
-@silence_excs(FileNotFoundError)
 def _whereis(directory: str, name, available_extensions):
     for file in safe_listdir(directory):
         path = os.path.join(directory, file)
-        if 'x' in stat.filemode(os.stat(path).st_mode):
-            if sys.platform.startswith('win'):  # a POSIX-specific check
-                file = file.upper()  # paths are not case-sensitive on Windows
+        with silence_excs(FileNotFoundError):
+            if 'x' in stat.filemode(os.stat(path).st_mode):
+                if sys.platform.startswith('win'):  # a POSIX-specific check
+                    file = file.upper()  # paths are not case-sensitive on Windows
 
-            for extension in available_extensions:
-                if file == '%s%s' % (name, extension):
-                    yield path
+                for extension in available_extensions:
+                    if file == '%s%s' % (name, extension):
+                        yield path
 
 
 def is_running_as_root() -> bool:
