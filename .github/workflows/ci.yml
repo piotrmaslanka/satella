@@ -21,16 +21,22 @@ jobs:
           pip install -U -e .[test,dev]
       - name: Test everything
         run: pytest -n 8 -vv --cov=satella
+      - name: List
+        run: ls .*
   upload-coverage:
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-latest"
     needs: ["tests"]
     steps:
       - uses: actions/checkout@main
       - uses: actions/setup-python@main
         with:
           python-version: '3.8'
-      - run: coverage xml
-      - uses: caffco/code-climate-github-action@v1.0.0
+      - run: |
+          pip install coverage
+          coverage xml
+      - uses: caffco/code-climate-github-action@main
+        env:
+          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
   build-project:
     runs-on: ubuntu-20.04
     steps:
@@ -79,4 +85,6 @@ jobs:
         run: |
           echo $PYPIRC_PASSWORD_DATA > ~/.pypirc
           twine upload dist/*
+        env:
+          PYPIRC_PASSWORD_DATA: ${{ secrets.PYPIRC_PASSWORD_DATA }}
 
