@@ -35,9 +35,8 @@ jobs:
   build_package:
     runs-on: ubuntu-latest
     steps:
-      name: Build package
-      uses: python -m build .
-
+      - name: Build package
+        uses: python -m build .
   convert_and_upload_coverage:
     steps:
       - run: coverage xml
