@@ -25,10 +25,12 @@ jobs:
           pip install coverage[toml]
           coverage xml
         name: Installing coverage[toml]
-      - uses: caffco/code-climate-github-action@main
+      - run : |
+            pip install codeclimate-test-reporter
+            codeclimate-test-reporter
         name: submitting coverage to CodeClimate
         env:
-          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+          CODECLIMATE_REPO_TOKEN: ${{ secrets.CC_TEST_REPORTER_ID }}
   build-project:
     runs-on: ubuntu-20.04
     steps:
