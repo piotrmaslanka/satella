@@ -29,8 +29,8 @@ dependencies = ["psutil"]
 version = {attr = "satella.__version__"}
 
 [project.optional-dependencies]
-dev = ["pylint", "pyyaml", "toml", "requests", "opentracing"]
-test =  ["pytest-cov", "pytest-xdist", "pytest", "pytest-forked", "pluggy", "py"]
+dev = ["pylint", "pyyaml", "toml", "requests", "opentracing", "codeclimate-test-reporter"]
+test =  ["pytest-cov", "pytest-xdist", "pytest", "pytest-forked", "pluggy", "py", "coverage<4.4"]
 extras = ["requests","pyyaml","toml", "ujson", "cassandra-driver", "opentracing"]
 
 
@@ -40,6 +40,9 @@ build-backend = "setuptools.build_meta"
 
 [tool.pep8]
 max-line-length = 119
+
+[tool.distutils.bdist_wheel]
+universal = true
 
 [project.urls]
 Homepage = "https://github.com/piotrmaslanka/satella"
