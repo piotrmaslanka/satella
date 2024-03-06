@@ -2,17 +2,14 @@ name: build-satella
 run-name: ${{ github.actor }}
 on: [ push ]
 jobs:
-  build-wheel:
+  prepare-system:
     runs-on: "ubuntu-latest"
     strategy:
       matrix:
-        python-version: [ "3.6", "3.7", "3.8", "pypy3.9", "pypy3.10", "3.9", "3.10", "3.11", "3.12" ]
+        python-version: [ "3.9" ]
     steps:
       - uses: actions/checkout@4
       - uses: actions/setup-python@4
-        with:
-          python-version: '${{ matrix.python-version }}'
-          cache: 'pip'
       - name: Install everything
         run: pip install -e .[test,dev,extras]
         with:
@@ -35,5 +32,18 @@ jobs:
         with:
           python-version: '${{ matrix.python-version }}'
           cache: 'pip'
-    paths:
-      - '!*.MD'
+  build-package:
+    needs: ["prepare-system"]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build package
+        run: python -m build .
+      - name: Store credentials
+        run: |
+          echo $PYPIRC_PASSWORD_DATA > ~/.pypirc
+          twine upload dist/*
+  convert-and-upload-coverage:
+    needs: ["build-package", "tests"]
+    steps:
+      - run: coverage xml
+      - uses: caffco/code-climate-github-action@v1.0.0
