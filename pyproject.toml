@@ -30,7 +30,7 @@ dependencies = ["psutil"]
 version = {attr = "satella.__version__"}
 
 [project.optional-dependencies]
-dev = ["pylint", "toml", "requests", "codeclimate-test-reporter"]
+dev = ["pylint", "toml", "requests", "codeclimate-test-reporter", "opentracing"]
 test =  ["pytest-cov", "pytest-xdist", "pytest", "pytest-forked", "pluggy", "py", "coverage"]
 extras = ["requests","pyyaml","toml", "ujson", "cassandra-driver", "opentracing"]
 
