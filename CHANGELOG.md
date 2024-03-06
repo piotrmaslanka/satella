@@ -10,3 +10,4 @@ Build system
   to build this
 * fixed unit tests to run on Py3.12
 * removed Docker unit tests
+* an unit test had some problems running under PyPy

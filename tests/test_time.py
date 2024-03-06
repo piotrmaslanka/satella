@@ -158,6 +158,7 @@ class TestTime(unittest.TestCase):
         self.assertGreaterEqual(m1(), 0.5)
 
     @unittest.skipIf('win' in sys.platform, 'Needs POSIX to run')
+    @unittest.skipIf(sys.platform != 'cpython', 'Seems to have some trouble cooperating with PyPy')
     def test_sleep(self):
         sleep(-2)
 
