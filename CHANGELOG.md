@@ -6,8 +6,8 @@
 Build system
 ============
 
-* Python 3.6 support dropped as it does not emply pyproject.toml, which is necessary
+* Python 3.6 support dropped as it does not employ pyproject.toml, which is necessary
   to build this
 * fixed unit tests to run on Py3.12
 * removed Docker unit tests
-* an unit test had some problems running under PyPy
+* a unit test had some problems running under PyPy

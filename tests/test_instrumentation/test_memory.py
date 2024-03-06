@@ -22,7 +22,7 @@ class OnDemandCondition(CustomCondition):
 
 
 class TestMemory(unittest.TestCase):
-
+    @unittest.skipIf(sys.platform == 'PyPy', 'This will not work on PyPy')
     def test_get_size_dict(self):
         a = {'aba': 'aba'}
 
