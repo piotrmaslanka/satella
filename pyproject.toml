@@ -31,10 +31,8 @@ version = { attr = "satella.__version__" }
 
 [project.optional-dependencies]
 dev = ["pylint", "toml", "requests", "codeclimate-test-reporter", "opentracing"]
-# at most coverage 4.3 can be used because CodeClimate's test reporter is a bit stupid
-test = ["pytest-cov", "pytest-xdist<=1.34.0", "pytest", "pytest-forked", "pluggy", "py", "coverage<4.4"]
+test = ["pytest-cov", "pytest-xdist", "pytest", "pytest-forked", "pluggy", "py", "coverage"]
 extras = ["requests", "pyyaml", "toml", "ujson", "cassandra-driver", "opentracing"]
-
 
 [build-system]
 requires = ["setuptools", "setuptools-scm"]
