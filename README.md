@@ -9,7 +9,7 @@ satella
 [![License](https://img.shields.io/pypi/l/satella)](https://github.com/piotrmaslanka/satella)
 [![linting: pylint](https://img.shields.io/badge/linting-pylint-yellowgreen)](https://github.com/pylint-dev/pylint)
 
-Satella is an almost-zero-requirements Python 3.5+ library for writing server applications. It has arisen out of my
+Satella is an almost-zero-requirements Python 3.7+ library for writing server applications. It has arisen out of my
 requirements to have some classes or design patterns handy, and kinda wish-they-were-in-the-stdlib ones. especially
 those dealing with mundane but useful things. It also runs on PyPy, and most of it runs on Windows (the part not dealing
 with forking processes, you see).
