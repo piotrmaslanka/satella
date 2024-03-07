@@ -43,15 +43,14 @@ class JSONEncoder(json.JSONEncoder):
             try:
                 v = super().default(o)
             except TypeError:
-                dct = {}
+                v = {}
                 try:
-                    for k, v in o.__dict__.items():
-                        dct[k] = self.default(v)
-                    v = dct
+                    for k, val in o.__dict__.items():
+                        v[k] = self.default(val)
                 except AttributeError:  # o has no attribute '__dict__', try with slots
                     try:
                         for slot in o.__slots__:
-                            dct[slot] = self.default(getattr(o, slot))
+                            v[slot] = self.default(getattr(o, slot))
                     except AttributeError:  # it doesn't have __slots__ either?
                         v = '<an instance of %s>' % (o.__class__.__name__,)
         return v
