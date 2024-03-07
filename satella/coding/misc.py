@@ -62,7 +62,7 @@ def contains(needle, haystack) -> bool:
 
 class Closeable:
     """
-    A class that needs to clean up it's own resources.
+    A class that needs to clean up its own resources.
 
     It's destructor calls .close(). Use like this:
 
@@ -254,8 +254,7 @@ def update_key_if_true(dictionary: tp.Dict, key: tp.Hashable, value: tp.Any,
     return dictionary
 
 
-def get_arguments(function: tp.Callable, *args, **kwargs) -> \
-        tp.Dict[str, tp.Any]:
+def get_arguments(function: tp.Callable, *args, **kwargs) -> tp.Dict[str, tp.Any]:
     """
     Return local variables that would be defined for given function if called with
     provided arguments.
@@ -273,6 +272,7 @@ def get_arguments(function: tp.Callable, *args, **kwargs) -> \
     return _get_arguments(function, False, *args, **kwargs)
 
 
+# pylint: disable=too-many-locals
 @rethrow_as(IndexError, TypeError)
 def _get_arguments(function: tp.Callable, special_behaviour: bool, *args, **kwargs):
     """
@@ -283,9 +283,7 @@ def _get_arguments(function: tp.Callable, special_behaviour: bool, *args, **kwar
     local_vars = {}
 
     positionals = [param for param in reversed(params) if
-                   param.kind in (Parameter.POSITIONAL_OR_KEYWORD,
-                                  Parameter.POSITIONAL_ONLY,
-                                  Parameter.VAR_POSITIONAL)]
+                   param.kind in (Parameter.POSITIONAL_OR_KEYWORD, Parameter.POSITIONAL_ONLY, Parameter.VAR_POSITIONAL)]
     args = list(reversed(args))
 
     arguments_left = set(param.name for param in params)
@@ -303,8 +301,7 @@ def _get_arguments(function: tp.Callable, special_behaviour: bool, *args, **kwar
                 try:
                     if arg.default != Parameter.empty:
                         raise AttributeError()
-                    else:
-                        break
+                    break
                 except (AttributeError, TypeError):
                     v = arg.default
             local_vars[arg_name] = v
@@ -368,8 +365,7 @@ def call_with_arguments(function: tp.Callable, arguments: tp.Dict[str, tp.Any]) 
                 continue
             elif param.default == Parameter.empty:
                 raise TypeError('Argument %s not found' % (param_name,))
-            else:
-                continue
+            continue
 
         if param_kind == Parameter.POSITIONAL_ONLY or param_kind == Parameter.POSITIONAL_OR_KEYWORD:
             args.append(arguments.pop(param_name))

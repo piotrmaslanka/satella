@@ -34,8 +34,7 @@ class expect_exception:
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         if exc_type is None:
-            raise self.else_raise(*self.else_raise_args,
-                                  **self.else_raise_kwargs)
+            raise self.else_raise(*self.else_raise_args, **self.else_raise_kwargs)
         elif not isinstance(exc_val, self.exc_to_except):
             return False
         return True

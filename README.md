@@ -1,6 +1,6 @@
 satella
 ========
-![example workflow](https://github.com/piotrmaslanka/satella/actions/workflows/ci.yml/badge.svg)[![Code Climate](https://codeclimate.com/github/piotrmaslanka/satella/badges/gpa.svg)](https://codeclimate.com/github/piotrmaslanka/satella)
+![Workflow](https://github.com/piotrmaslanka/satella/actions/workflows/ci.yml/badge.svg)[![Code Climate](https://codeclimate.com/github/piotrmaslanka/satella/badges/gpa.svg)](https://codeclimate.com/github/piotrmaslanka/satella)
 [![Issue Count](https://codeclimate.com/github/piotrmaslanka/satella/badges/issue_count.svg)](https://codeclimate.com/github/piotrmaslanka/satella)
 [![PyPI](https://img.shields.io/pypi/pyversions/satella.svg)](https://pypi.python.org/pypi/satella)
 [![PyPI version](https://badge.fury.io/py/satella.svg)](https://badge.fury.io/py/satella)
@@ -18,7 +18,9 @@ Satella uses [semantic versioning 2.0](https://semver.org/spec/v2.0.0.html).
 
 Satella contains, among other things:
 
-* things to help you manage your [application's configuration](satella/configuration)
+* things to help you manage your [application's configuration](satella/configuration) that allows
+    you to both load a configuration and specify it's schema using only
+    Python dictionaries
 * a fully equipped [metrics library](satella/instrumentation/metrics)
     * alongside a fully metricized [ThreadPoolExecutor](satella/instrumentation/metrics/structures/threadpool.py)
     * and an exporter to [Prometheus](satella/instrumentation/metrics/exporters/prometheus.py) or really any
@@ -29,7 +31,8 @@ Satella contains, among other things:
         * [FastAPI](https://github.com/Dronehub/fastapi-satella-metrics)
         * [Django](https://github.com/piotrmaslanka/django-satella-metrics)
         * [Flask](https://github.com/piotrmaslanka/flask-satella-metrics)
-* helpful [exception handlers](satella/exception_handling)
+* helpful [exception handlers](satella/exception_handling) as well as capacity to dump all stack frames
+    along with their local variables for each thread
 * monitoring [CPU usage](satella/instrumentation/cpu_time/collectors) on the system and by your own process
 * common programming [idioms and structures](satella/coding)
 

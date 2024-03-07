@@ -263,8 +263,7 @@ class rethrow_as:
                 elif self.returns_factory is not None:
                     return self.returns_factory()
                 return
-            else:
-                return v
+            return v
 
         return inner
 
@@ -279,8 +278,7 @@ class rethrow_as:
                     self.__exception_remapped.was_raised = True
                     if to is None:
                         return True
-                    else:
-                        raise to(self.exception_preprocessor(exc_val))
+                    raise to(self.exception_preprocessor(exc_val))
 
 
 def raises_exception(exc_class: tp.Union[ExceptionClassType, tp.Tuple[ExceptionClassType, ...]],
