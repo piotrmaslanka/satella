@@ -30,9 +30,9 @@ class FileSource(BaseSource):
         """
         super().__init__()
         from .. import sources
-        self.source_classes = [  # type: tp.List[tp.Type[FormatSource]]
+        self.source_classes = [
             (p if not isinstance(p, str) else getattr(sources, p)) for p in
-            interpret_as]
+            interpret_as]        # type: tp.List[tp.Type[FormatSource]]
         self.path = path  # type: str
         self.encoding = encoding  # type: str
 
@@ -93,10 +93,13 @@ class DirectorySource(FileSource):
         try:
             files = self.filter(os.path.join(directory, x) for x in os.listdir(directory))
         except OSError as e:
-            logger.warning(
-                'OSError %s while accessing configuration directory %s, skipping files' % (
-                    e, directory))
-            return []
+            if self.on_fail == DirectorySource.SILENT:
+                logger.warning(
+                    'OSError %s while accessing configuration directory %s, skipping files' % (
+                        e, directory))
+                return []
+            else:
+                raise ConfigurationError(f'Directory {directory} does not exist')
 
         for file_name in files:
 

@@ -5,6 +5,7 @@ import unittest
 from satella.coding import silence_excs
 from satella.configuration.sources import FileSource, FORMAT_SOURCES, \
     DirectorySource
+from satella.exceptions import ConfigurationError
 from .utils import SourceTestCase
 
 
@@ -53,6 +54,12 @@ class TestDirectorySource(SourceTestCase):
             self.ds = DirectorySource(outdir, on_fail=DirectorySource.SILENT)
             self.assertEqual(self.ds.provide(),
                              {'amqp': 'amqp', 'logstash': {'host': 'localhost', 'port': 9600}})
+
+    def test_invalid_directory(self):
+        ds = DirectorySource('not-existing', on_fail=DirectorySource.SILENT)
+        self.assertEqual(ds.provide(), {})
+        ds = DirectorySource('not-existing', on_fail=DirectorySource.RAISE)
+        self.assertRaises(ConfigurationError, ds.provide)
 
     def test_directory_source(self):
         with tempfile.TemporaryDirectory() as outdir:

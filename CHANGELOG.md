@@ -2,6 +2,7 @@
 
 * added safe_listdir
 * fixed a bug occurring in Python 3.10 with whereis
+* DirectorySource will raise an exception if directory does not exist and on_fail is set to RAISE
 
 Build system
 ============
