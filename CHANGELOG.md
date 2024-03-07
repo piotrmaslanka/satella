@@ -4,6 +4,7 @@
 * fixed a bug occurring in Python 3.10 with whereis
 * DirectorySource will raise an exception if directory does not exist and on_fail is set to RAISE
 * JSONEncoder will behave correctly on weird classes (no __slots and no __dict__)
+* write_json_to_file will warn upon setting its kwargs (which never did anything)
 
 Build system
 ============

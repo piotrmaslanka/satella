@@ -1,6 +1,7 @@
 import enum
 import json
 import typing as tp
+import warnings
 from abc import ABCMeta, abstractmethod
 
 from satella.coding.typing import NoneType
@@ -73,8 +74,10 @@ def write_json_to_file(path: str, value: JSONAble, **kwargs) -> None:
 
     :param path: path to the file
     :param value: JSON-able content
-    :param kwargs: will be passed to ujson/json's dump
+    :param kwargs: Legacy argument do not use it, will raise a warning upon non-empty. This never did anything.
     """
+    if kwargs:
+        warnings.warn('Do not use kwargs, it has no effect', DeprecationWarning)
     with open(path, 'w') as f_out:
         f_out.write(JSONEncoder().encode(value))
 
