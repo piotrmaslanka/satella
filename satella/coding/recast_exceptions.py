@@ -31,8 +31,7 @@ def silence_excs(*exc_types: ExceptionClassType, returns=None,
 
     :raises ValueError: you gave both returns and returns_factory. You can only pass one of them!
     """
-    return rethrow_as(exc_types, None, returns=returns,
-                      returns_factory=returns_factory)
+    return rethrow_as(exc_types, None, returns=returns, returns_factory=returns_factory)
 
 
 class log_exceptions:
@@ -59,8 +58,7 @@ class log_exceptions:
         log on all exceptions
     :param swallow_exception: if True, exception will be swallowed
     """
-    __slots__ = ('logger', 'severity', 'format_string', 'locals', 'exc_types',
-                 'swallow_exception')
+    __slots__ = 'logger', 'severity', 'format_string', 'locals', 'exc_types', 'swallow_exception'
 
     def __init__(self, logger: logging.Logger,
                  severity: int = logging.ERROR,
@@ -81,24 +79,20 @@ class log_exceptions:
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         if exc_type is not None:
-            if not self.analyze_exception(exc_val, (), {}):
-                return False
-            else:
-                return self.swallow_exception
+            return False if not self.analyze_exception(exc_val, (), {}) else self.swallow_exception
         return False
 
     def analyze_exception(self, e, args, kwargs) -> bool:
         """Return whether the exception has been logged"""
-        if isinstance(e, self.exc_types):
-            format_dict = {'args': args,
-                           'kwargs': kwargs}
-            if self.locals is not None:
-                format_dict.update(self.locals)
-            format_dict['e'] = e
-            self.logger.log(self.severity, self.format_string.format(**format_dict),
-                            exc_info=e)
-            return True
-        return False
+        if not isinstance(e, self.exc_types):
+            return False
+        format_dict = {'args': args, 'kwargs': kwargs}
+        if self.locals is not None:
+            format_dict.update(self.locals)
+        format_dict['e'] = e
+        self.logger.log(self.severity, self.format_string.format(**format_dict),
+                        exc_info=e)
+        return True
 
     def __call__(self, fun):
         if inspect.isgeneratorfunction(fun):
@@ -107,10 +101,8 @@ class log_exceptions:
                 # noinspection PyBroadException
                 try:
                     yield from fun(*args, **kwargs)
-                except Exception as e:
-                    if not self.analyze_exception(e, args, kwargs):
-                        raise
-                    elif not self.swallow_exception:
+                except Exception as e:      # pylint: disable=broad-except
+                    if not self.analyze_exception(e, args, kwargs) or not self.swallow_exception:
                         raise
 
             return inner
@@ -120,10 +112,8 @@ class log_exceptions:
                 # noinspection PyBroadException
                 try:
                     return fun(*args, **kwargs)
-                except Exception as e:
-                    if not self.analyze_exception(e, args, kwargs):
-                        raise
-                    elif not self.swallow_exception:
+                except Exception as e:      # pylint: disable=broad-except
+                    if not self.analyze_exception(e, args, kwargs) or not self.swallow_exception:
                         raise
 
             return inner
@@ -175,12 +165,10 @@ class reraise_as:
         def inner(*args, **kwargs):
             try:
                 return fun(*args, **kwargs)
-            except Exception as e:
-                if isinstance(e, self.source):
-                    if self.target_exc is not None:
-                        raise self.target_exc(*self.args, **self.kwargs) from e
-                else:
-                    raise
+            except Exception as e:          # pylint: disable=broad-except
+                if isinstance(e, self.source) and self.target_exc is not None:
+                    raise self.target_exc(*self.args, **self.kwargs) from e
+                raise
 
         return inner
 
@@ -234,8 +222,7 @@ class rethrow_as:
         is used as as decorator
     :raises ValueError: you specify both returns and returns_factory
     """
-    __slots__ = 'mapping', 'exception_preprocessor', 'returns', '__exception_remapped', \
-                'returns_factory'
+    __slots__ = 'mapping', 'exception_preprocessor', 'returns', '__exception_remapped', 'returns_factory'
 
     def __init__(self, *pairs: ExceptionList,
                  exception_preprocessor: tp.Optional[tp.Callable[[Exception], str]] = repr,
@@ -305,8 +292,7 @@ def raises_exception(exc_class: tp.Union[ExceptionClassType, tp.Tuple[ExceptionC
         clb()
     except exc_class:
         return True
-    else:
-        return False
+    return False
 
 
 def catch_exception(exc_class: tp.Union[ExceptionClassType, tp.Tuple[ExceptionClassType, ...]],
