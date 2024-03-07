@@ -166,8 +166,10 @@ class reraise_as:
             try:
                 return fun(*args, **kwargs)
             except Exception as e:          # pylint: disable=broad-except
-                if isinstance(e, self.source) and self.target_exc is not None:
-                    raise self.target_exc(*self.args, **self.kwargs) from e
+                if isinstance(e, self.source):
+                    if self.target_exc is not None:
+                        raise self.target_exc(*self.args, **self.kwargs) from e
+                    return
                 raise
 
         return inner

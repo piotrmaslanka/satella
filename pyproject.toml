@@ -24,7 +24,7 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Topic :: Software Development :: Libraries"
 ]
-dependencies = ["psutil"]
+dependencies = ["psutil>=5.9.8"]
 
 [tool.setuptools.dynamic]
 version = { attr = "satella.__version__" }
