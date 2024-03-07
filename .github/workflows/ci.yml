@@ -18,7 +18,8 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y python3-setuptools python3-yaml
           pip install -U pip setuptools wheel disttools packaging
-          pip install -U -e .[test,dev]
+          pip install -e .[test,dev]
+          pip install -U pytest-xdist pytest-cov pytest pytest-forked pluggy py opentracing
       - name: Before the coverage
         run: |
            wget https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64
@@ -30,8 +31,9 @@ jobs:
         run: pytest -n 8 -vv --cov=satella
       - name: Submit the code coverage
         run: |
-          ./test-reporter-latest-linux-amd64 format-coverage -t coverage.py
           ./test-reporter-latest-linux-amd64 after-build
+          ./test-reporter-latest-linux-amd64 format-coverage -t coverage.py -o codeclimate.json
+          ./test-reporter-latest-linux-amd64 upload-coverage -i codeclimate.json
         env:
           CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
   build-project:
