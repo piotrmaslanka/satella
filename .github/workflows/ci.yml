@@ -56,8 +56,11 @@ jobs:
         if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
         run: |
           echo -n '__version__ = "' > satella/__init__.py
-          echo -n '${{ github.event.release.tag_name }}' >> satella/__init__.py
+          echo -n  $TAG_NAME >> satella/__init__.py
           echo '"' >> satella/__init__.py
+          cat satella/__init__.py
+        env:
+          TAG_NAME: ${{ github.ref_name }}
       - name: Build
         run: python -m build .
       - name: Archive production artifacts
@@ -72,6 +75,7 @@ jobs:
     if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
     environment: Env1
     steps:
+      - uses: actions/checkout@main
       - uses: actions/setup-python@main
         name: Setup Python
         with:
@@ -86,7 +90,7 @@ jobs:
       - name: Send over packages to PyPI
         run: |
           echo $PYPIRC_PASSWORD_DATA > ~/.pypirc
-          twine upload dist/*
+          twine upload /home/runner/work/satella/satella/satella*.whl /home/runner/work/satella/satella/satella*.tar.gz
         env:
           PYPIRC_PASSWORD_DATA: ${{ secrets.PYPIRC_PASSWORD_DATA }}
 
