@@ -55,8 +55,8 @@ jobs:
       - name: Alter Version
         if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
         run: |
-          echo -e '__version__ = "' > satella/__init__.py
-          echo -e '${{ github.event.release.tag_name }}' >> satella/__init__.py
+          echo -n '__version__ = "' > satella/__init__.py
+          echo -n '${{ github.event.release.tag_name }}' >> satella/__init__.py
           echo '"' >> satella/__init__.py
       - name: Build
         run: python -m build .
