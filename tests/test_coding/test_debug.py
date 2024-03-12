@@ -9,7 +9,7 @@ from satella.exceptions import PreconditionError
 class TestTypecheck(unittest.TestCase):
 
     def test_empty_ctxt_manager(self):
-        with EmptyContextManager() as p:
+        with EmptyContextManager(1, 2) as p:
             pass
 
     def test_except_exception(self):

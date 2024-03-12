@@ -9,7 +9,12 @@ class EmptyContextManager:
     >>>     ctxt = EmptyContextManager()
     >>> with ctxt:
     >>>     ...
+
+    Note that it will accept any parameters, and then throw them on the ground.
     """
+
+    def __init__(self, *args, **kwargs):
+        pass
 
     def __enter__(self):
         return self
