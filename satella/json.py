@@ -1,6 +1,7 @@
 import enum
 import json
 import typing as tp
+import warnings
 from abc import ABCMeta, abstractmethod
 
 from satella.coding.typing import NoneType
@@ -42,17 +43,16 @@ class JSONEncoder(json.JSONEncoder):
             try:
                 v = super().default(o)
             except TypeError:
-                dct = {}
+                v = {}
                 try:
-                    for k, v in o.__dict__.items():
-                        dct[k] = self.default(v)
+                    for k, val in o.__dict__.items():
+                        v[k] = self.default(val)
                 except AttributeError:  # o has no attribute '__dict__', try with slots
                     try:
                         for slot in o.__slots__:
-                            dct[slot] = self.default(getattr(o, slot))
+                            v[slot] = self.default(getattr(o, slot))
                     except AttributeError:  # it doesn't have __slots__ either?
                         v = '<an instance of %s>' % (o.__class__.__name__,)
-                v = dct
         return v
 
 
@@ -73,8 +73,10 @@ def write_json_to_file(path: str, value: JSONAble, **kwargs) -> None:
 
     :param path: path to the file
     :param value: JSON-able content
-    :param kwargs: will be passed to ujson/json's dump
+    :param kwargs: Legacy argument do not use it, will raise a warning upon non-empty. This never did anything.
     """
+    if kwargs:
+        warnings.warn('Do not use kwargs, it has no effect', DeprecationWarning)
     with open(path, 'w') as f_out:
         f_out.write(JSONEncoder().encode(value))
 

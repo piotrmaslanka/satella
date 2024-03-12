@@ -18,6 +18,6 @@ def wrap_future(future: ResponseFuture) -> Future:
 
     fut = Future()
     fut.set_running_or_notify_cancel()
-    future.add_callback(lambda result: fut.set_result(result))
-    future.add_errback(lambda exception: fut.set_exception(exception))
+    future.add_callback(fut.set_result)
+    future.add_errback(fut.set_exception)
     return fut

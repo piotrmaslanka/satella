@@ -8,6 +8,19 @@ plugins:
     enabled: true
   pylint:
     enabled: true
+    checks:
+      missing-module-docstring:
+        enabled: false
+      missing-class-docstring:
+        enabled: false
+    missing-function-docstring:
+        enabled: false
+    global-statement:
+        enabled: false
+    invalid-name:
+        enabled: false
+    too-many-arguments:
+        enabled: false
   radon:
     enabled: true
 exclude_paths:

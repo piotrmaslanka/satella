@@ -62,7 +62,7 @@ def contains(needle, haystack) -> bool:
 
 class Closeable:
     """
-    A class that needs to clean up it's own resources.
+    A class that needs to clean up its own resources.
 
     It's destructor calls .close(). Use like this:
 
@@ -168,8 +168,7 @@ def chain_callables(callable1: tp.Callable, callable2: tp.Callable) -> tp.Callab
         try:
             res = callable2(res)
         except TypeError as e:
-            if 'positional arguments but' in e.args[0] \
-                    and 'was given' in e.args[0] and 'takes' in e.args[0]:
+            if 'positional arguments but' in e.args[0] and 'was given' in e.args[0] and 'takes' in e.args[0]:
                 res = callable2()
             else:
                 raise
@@ -195,8 +194,7 @@ def source_to_function(src: tp.Union[tp.Callable, str]) -> tp.Callable[[tp.Any],
         q = dict(globals())
         exec('_precond = lambda x: ' + src, q)
         return q['_precond']
-    else:
-        return src
+    return src
 
 
 def update_attr_if_none(obj: object, attr: str, value: tp.Any,
@@ -224,14 +222,13 @@ def update_attr_if_none(obj: object, attr: str, value: tp.Any,
             if val is None:
                 setattr(obj, attr, value)
         except AttributeError:
-            if on_attribute_error:
-                setattr(obj, attr, value)
-            else:
+            if not on_attribute_error:
                 raise
+            setattr(obj, attr, value)
     return obj
 
 
-class _BLANK:
+class _BLANK:       # pylint: disable=too-few-public-methods
     pass
 
 
@@ -257,8 +254,7 @@ def update_key_if_true(dictionary: tp.Dict, key: tp.Hashable, value: tp.Any,
     return dictionary
 
 
-def get_arguments(function: tp.Callable, *args, **kwargs) -> \
-        tp.Dict[str, tp.Any]:
+def get_arguments(function: tp.Callable, *args, **kwargs) -> tp.Dict[str, tp.Any]:
     """
     Return local variables that would be defined for given function if called with
     provided arguments.
@@ -276,6 +272,7 @@ def get_arguments(function: tp.Callable, *args, **kwargs) -> \
     return _get_arguments(function, False, *args, **kwargs)
 
 
+# pylint: disable=too-many-locals
 @rethrow_as(IndexError, TypeError)
 def _get_arguments(function: tp.Callable, special_behaviour: bool, *args, **kwargs):
     """
@@ -286,13 +283,11 @@ def _get_arguments(function: tp.Callable, special_behaviour: bool, *args, **kwar
     local_vars = {}
 
     positionals = [param for param in reversed(params) if
-                   param.kind in (Parameter.POSITIONAL_OR_KEYWORD,
-                                  Parameter.POSITIONAL_ONLY,
-                                  Parameter.VAR_POSITIONAL)]
+                   param.kind in (Parameter.POSITIONAL_OR_KEYWORD, Parameter.POSITIONAL_ONLY, Parameter.VAR_POSITIONAL)]
     args = list(reversed(args))
 
     arguments_left = set(param.name for param in params)
-    while len(positionals):
+    while positionals:
         arg = positionals.pop()
         arg_kind = arg.kind
         arg_name = arg.name
@@ -306,8 +301,7 @@ def _get_arguments(function: tp.Callable, special_behaviour: bool, *args, **kwar
                 try:
                     if arg.default != Parameter.empty:
                         raise AttributeError()
-                    else:
-                        break
+                    break
                 except (AttributeError, TypeError):
                     v = arg.default
             local_vars[arg_name] = v
@@ -321,30 +315,28 @@ def _get_arguments(function: tp.Callable, special_behaviour: bool, *args, **kwar
         keyword_name = keyword.name
         if keyword.kind == Parameter.VAR_KEYWORD and not special_behaviour:
             local_vars[keyword_name] = kwargs
-        else:
+            continue
+        try:
+            v = kwargs.pop(keyword_name)
+        except KeyError:
             try:
-                v = kwargs.pop(keyword_name)
-            except KeyError:
-                try:
-                    if Parameter.empty == keyword.default:
-                        if special_behaviour:
-                            v = None
-                        else:
-                            raise TypeError('Not enough keyword arguments')
-                    else:
-                        v = keyword.default
-                except (AttributeError, TypeError):
-                    continue  # comparison was impossible
+                if Parameter.empty == keyword.default:
+                    if not special_behaviour:
+                        raise TypeError('Not enough keyword arguments')
+                    v = None
+                else:
+                    v = keyword.default
+            except (AttributeError, TypeError):
+                continue  # comparison was impossible
 
-            local_vars[keyword_name] = v
+        local_vars[keyword_name] = v
 
     for param in params:
         param_name = param.name
         if param_name not in local_vars:
-            if special_behaviour:
-                local_vars[param_name] = None
-            else:
+            if not special_behaviour:
                 raise TypeError('Not enough keyword arguments')
+            local_vars[param_name] = None
 
     return local_vars
 
@@ -373,8 +365,7 @@ def call_with_arguments(function: tp.Callable, arguments: tp.Dict[str, tp.Any]) 
                 continue
             elif param.default == Parameter.empty:
                 raise TypeError('Argument %s not found' % (param_name,))
-            else:
-                continue
+            continue
 
         if param_kind == Parameter.POSITIONAL_ONLY or param_kind == Parameter.POSITIONAL_OR_KEYWORD:
             args.append(arguments.pop(param_name))

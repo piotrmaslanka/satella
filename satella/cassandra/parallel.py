@@ -37,7 +37,7 @@ def parallel_for(cursor, query: tp.Union[tp.List[str], str, 'Statement', tp.List
     """
     warnings.warn('This is deprecated and will be removed in Satella 3.0', DeprecationWarning)
     try:
-        from cassandra.query import Statement
+        from cassandra.query import Statement       # pylint: disable=import-outside-toplevel
         query_classes = (str, Statement)
     except ImportError:
         query_classes = str
@@ -46,11 +46,8 @@ def parallel_for(cursor, query: tp.Union[tp.List[str], str, 'Statement', tp.List
         query = itertools.repeat(query)
 
     futures = []
-    for query, args in zip(query, arguments):
-        if args is None:
-            future = cursor.execute_async(query)
-        else:
-            future = cursor.execute_async(query, args)
+    for loc_query, args in zip(query, arguments):
+        future = cursor.execute_async(loc_query) if args is None else cursor.execute_async(loc_query, args)
         futures.append(future)
 
     for future in futures:
