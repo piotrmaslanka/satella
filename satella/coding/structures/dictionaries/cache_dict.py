@@ -6,6 +6,7 @@ from concurrent.futures import ThreadPoolExecutor, Executor, Future
 from satella.coding.recast_exceptions import silence_excs
 from satella.coding.structures.lru import LRU
 from satella.coding.typing import K, V, NoArgCallable
+from satella.time import parse_time_string
 
 logger = logging.getLogger(__name__)
 
@@ -29,15 +30,17 @@ class CacheDict(tp.Mapping[K, V]):
 
     :param stale_interval: time in seconds after which an entry will be stale, ie.
         it will be served from cache, but a task will be launched in background to
-        refresh it
+        refresh it. Note that this will accept time-like strings eg. 23m.
     :param expiration_interval: time in seconds after which an entry will be ejected
-        from dict, and further calls to get it will block until the entry is available
+        from dict, and further calls to get it will block until the entry is available.
+        Note that this will accept time-like strings eg. 23m.
     :param value_getter: a callable that accepts a key, and returns a value for given entry.
         If value_getter raises KeyError, then given entry will be evicted from the cache
     :param value_getter_executor: an executor to execute the value_getter function in background.
         If None is passed, a ThreadPoolExecutor will be used with max_workers of 4.
     :param cache_failures_interval: if any other than None is defined, this is the timeout
         for which failed lookups will be cached. By default they won't be cached at all.
+        Note that this will accept time-like strings eg. 23m.
     :param time_getter: a routine used to get current time in seconds
     :param default_value_factory: if given, this is the callable that will return values
         that will be given to user instead of throwing KeyError. If not given (default),
@@ -80,17 +83,17 @@ class CacheDict(tp.Mapping[K, V]):
 
         return False
 
-    def __init__(self, stale_interval: float, expiration_interval: float,
+    def __init__(self, stale_interval: tp.Union[float, int, str], expiration_interval: tp.Union[float, int, str],
                  value_getter: tp.Callable[[K], V],
                  value_getter_executor: tp.Optional[Executor] = None,
-                 cache_failures_interval: tp.Optional[float] = None,
+                 cache_failures_interval: tp.Optional[tp.Union[float, int, str]] = None,
                  time_getter: NoArgCallable[float] = time.monotonic,
                  default_value_factory: tp.Optional[NoArgCallable[V]] = None):
+        self.stale_interval = parse_time_string(stale_interval)
+        self.expiration_interval = parse_time_string(expiration_interval)
         assert stale_interval <= expiration_interval, 'Stale interval may not be larger ' \
                                                       'than expiration interval!'
-        self.stale_interval = stale_interval
         self.default_value_factory = default_value_factory
-        self.expiration_interval = expiration_interval
         self.value_getter = value_getter
         if value_getter_executor is None:
             value_getter_executor = ThreadPoolExecutor(max_workers=4)
@@ -99,6 +102,8 @@ class CacheDict(tp.Mapping[K, V]):
         self.timestamp_data = {}  # type: tp.Dict[K, float]
         self.cache_missed = set()  # type: tp.Set[K]
         self.cache_failures = cache_failures_interval is not None
+        if cache_failures_interval is not None:
+            cache_failures_interval = parse_time_string(cache_failures_interval)
         self.cache_failures_interval = cache_failures_interval
         self.time_getter = time_getter
 

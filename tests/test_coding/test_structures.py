@@ -446,7 +446,7 @@ class TestStructures(unittest.TestCase):
                 return self.value
 
         cg = TestCacheGetter()
-        cd = CacheDict(1, 2, cg)
+        cd = CacheDict('1s', '2s', cg)
         now = time.monotonic()
         self.assertEqual(cd[2], 2)
         self.assertEqual(list(cd), [2])
