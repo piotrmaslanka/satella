@@ -3,6 +3,7 @@ import time
 import typing as tp
 from concurrent.futures import ThreadPoolExecutor, Executor, Future
 
+from satella.coding.decorators.decorators import short_none
 from satella.coding.recast_exceptions import silence_excs
 from satella.coding.structures.lru import LRU
 from satella.coding.typing import K, V, NoArgCallable
@@ -91,8 +92,8 @@ class CacheDict(tp.Mapping[K, V]):
                  default_value_factory: tp.Optional[NoArgCallable[V]] = None):
         self.stale_interval = parse_time_string(stale_interval)
         self.expiration_interval = parse_time_string(expiration_interval)
-        assert stale_interval <= expiration_interval, 'Stale interval may not be larger ' \
-                                                      'than expiration interval!'
+        assert self.stale_interval <= self.expiration_interval, 'Stale interval may not be larger ' \
+                                                                'than expiration interval!'
         self.default_value_factory = default_value_factory
         self.value_getter = value_getter
         if value_getter_executor is None:
@@ -102,9 +103,7 @@ class CacheDict(tp.Mapping[K, V]):
         self.timestamp_data = {}  # type: tp.Dict[K, float]
         self.cache_missed = set()  # type: tp.Set[K]
         self.cache_failures = cache_failures_interval is not None
-        if cache_failures_interval is not None:
-            cache_failures_interval = parse_time_string(cache_failures_interval)
-        self.cache_failures_interval = cache_failures_interval
+        self.cache_failures_interval = short_none(parse_time_string)(cache_failures_interval)
         self.time_getter = time_getter
 
     def get_value_block(self, key: K) -> V:
