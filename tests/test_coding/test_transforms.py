@@ -6,10 +6,17 @@ import base64
 from satella.coding.predicates import x
 from satella.coding.transforms import stringify, split_shuffle_and_join, one_tuple, \
     merge_series, pad_to_multiple_of_length, clip, b64encode, linear_interpolate, \
-    hashables_to_int, none_if_false, merge_list, is_subset, unpack_dict
+    hashables_to_int, none_if_false, merge_list, is_subset, unpack_dict, list_values_to_indices
 
 
 class TestTransforms(unittest.TestCase):
+
+    def test_list_values_to_indices(self):
+        a = ['abc', 'def', 'ghi']
+        b = list_values_to_indices(a)
+        self.assertEqual(b, {'abc': 0, 'def': 1, 'ghi': 2})
+        c = ['abc', 'abc', 'def']
+        self.assertRaises(ValueError, list_values_to_indices, c)
 
     def test_unpack_dict(self):
         a, b, c = unpack_dict({1: 2, 2: 3, 4: 5}, 1, 2, 4)

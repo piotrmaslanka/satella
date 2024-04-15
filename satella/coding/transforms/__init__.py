@@ -12,11 +12,12 @@ from .merger import merge_series
 from .percentile import percentile
 from .predicates import is_subset
 from .words import hashables_to_int
+from .misc import list_values_to_indices
 
 __all__ = ['stringify', 'split_shuffle_and_join', 'one_tuple', 'none_if_false',
            'merge_series', 'pad_to_multiple_of_length', 'clip', 'hashables_to_int',
            'jsonify', 'intify', 'percentile', 'b64encode', 'linear_interpolate',
-           'merge_list', 'is_subset', 'unpack_dict']
+           'merge_list', 'is_subset', 'unpack_dict', 'list_values_to_indices']
 
 from satella.coding.typing import T, NoArgCallable, Appendable, Number, Predicate, K, V
 
