@@ -3,7 +3,7 @@ import typing as tp
 from satella.coding.typing import V
 
 
-def list_values_to_indices(lst: tp.List[V]) -> dict[V, int]:
+def list_values_to_indices(lst: tp.List[V]) -> tp.Dict[V, int]:
     """
     Transform a list of entries into a dict mapping where given entry can be found.
 
