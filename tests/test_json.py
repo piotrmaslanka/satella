@@ -16,9 +16,9 @@ class TestJson(unittest.TestCase):
             language: str
 
         a = CultureContext(language='pl', timezone='Europe/Warsaw')
-        self.assertEquals(a.to_json(), {'language': 'pl', 'timezone': 'Europe/Warsaw', 'units': 'metric'})
-        self.assertEquals(CultureContext.from_json(a.to_json()), a)
-        self.assertEquals(hash(CultureContext.from_json(a.to_json())), hash(a))
+        self.assertEqual(a.to_json(), {'language': 'pl', 'timezone': 'Europe/Warsaw', 'units': 'metric'})
+        self.assertEqual(CultureContext.from_json(a.to_json()), a)
+        self.assertEqual(hash(CultureContext.from_json(a.to_json())), hash(a))
 
     def test_json_encoder_enums(self):
         enc = JSONEncoder()
