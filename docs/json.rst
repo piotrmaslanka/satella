@@ -8,6 +8,9 @@ with
 .. autoclass:: satella.json.JSONAble
     :members:
 
+.. autoclass:: satella.json.JSONAbleDataObject
+    :members:
+
 Then you can convert structures made out of standard serializable Python JSON objects, such as dicts
 and lists, and also JSONAble objects, by this all
 

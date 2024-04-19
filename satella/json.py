@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import enum
 import json
 import typing as tp
@@ -8,7 +10,8 @@ from satella.coding.typing import NoneType
 from satella.files import write_out_file_if_different
 
 __all__ = ['JSONEncoder', 'JSONAble', 'json_encode', 'read_json_from_file',
-           'write_json_to_file', 'write_json_to_file_if_different']
+           'write_json_to_file', 'write_json_to_file_if_different', 'JSONAbleDataObject']
+
 
 Jsonable = tp.TypeVar('Jsonable', list, dict, str, int, float, None)
 
@@ -119,3 +122,57 @@ def read_json_from_file(path: str) -> JSONAble:
             except json.decoder.JSONDecodeError as e:
                 raise ValueError(str(e))
     return v
+
+
+class JSONAbleDataObject:
+    """
+    A data-class that supports conversion of it's classes to JSON
+
+    Define like this:
+
+    >>> class CultureContext(JSONAbleDataObject):
+    >>>     language: str
+    >>>     timezone: str
+    >>>     units: str = 'metric'
+
+    Note that type annotation is mandatory and default values are supported. Being data value objects, these are
+    eq-able and hashable.
+
+    And use like this:
+
+    >>> a = CultureContext(language='pl', timezone='Europe/Warsaw')
+    >>> assert a.to_json() == {'language': 'pl', 'timezone': 'Europe/Warsaw', 'units': 'metric'}
+    >>> assert CultureContext.from_json(a.to_json) == a
+    """
+
+    def __eq__(self, other) -> bool:
+        return all(getattr(self, annotation) == getattr(other, annotation) for annotation in self.__class__.__annotations__.keys())
+
+    def __hash__(self) -> int:
+        hash_ = 0
+        for annotation in self.__class__.__annotations__.keys():
+            hash_ ^= hash(getattr(self, annotation))
+        return hash_
+
+    def __init__(self, **kwargs):
+        """
+        :raises ValueError: a non-default value was not provided
+        """
+        for annotation in self.__class__.__annotations__.keys():
+            try:
+                annot_val = kwargs.pop(annotation)
+                setattr(self, annotation, annot_val)
+            except KeyError:
+                if not hasattr(self, annotation):
+                    raise ValueError(f'Argument {annotation} not provided!')
+
+    def to_json(self) -> tp.Dict:
+        """Convert self to JSONable value"""
+        result = {}
+        for annotation in self.__class__.__annotations__.keys():
+            result[annotation] = getattr(self, annotation)
+        return result
+
+    @classmethod
+    def from_json(cls, jsonable) -> JSONAbleDataObject:
+        return cls(**jsonable)

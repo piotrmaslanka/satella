@@ -15,7 +15,7 @@ from satella.coding.structures import TimeBasedHeap, Heap, typednamedtuple, \
     CacheDict, StrEqHashableMixin, ComparableIntEnum, HashableIntEnum, ComparableAndHashableBy, \
     ComparableAndHashableByInt, SparseMatrix, ExclusiveWritebackCache, Subqueue, \
     CountingDict, ComparableEnum, LRU, LRUCacheDict, Vector, DefaultDict, PushIterable, \
-    ComparableAndHashableByStr, NotEqualToAnything, NOT_EQUAL_TO_ANYTHING, DictionaryEQAble, SetZip, OnStrOnlyName
+    ComparableAndHashableByStr, NotEqualToAnything, NOT_EQUAL_TO_ANYTHING, DictionaryEQAble, SetZip, OnStrOnlyNameJSONAbleDataObject
 
 
 def continue_testing_omni(self, omni_class):

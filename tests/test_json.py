@@ -4,10 +4,21 @@ import typing as tp
 import unittest
 
 from satella.json import JSONAble, json_encode, read_json_from_file, write_json_to_file, \
-    write_json_to_file_if_different, JSONEncoder
+    write_json_to_file_if_different, JSONEncoder, JSONAbleDataObject
 
 
 class TestJson(unittest.TestCase):
+
+    def test_jsonable_data_object(self):
+        class CultureContext(JSONAbleDataObject):
+            units: str = 'metric'
+            timezone: str
+            language: str
+
+        a = CultureContext(language='pl', timezone='Europe/Warsaw')
+        self.assertEquals(a.to_json(), {'language': 'pl', 'timezone': 'Europe/Warsaw', 'units': 'metric'})
+        self.assertEquals(CultureContext.from_json(a.to_json()), a)
+        self.assertEquals(hash(CultureContext.from_json(a.to_json())), hash(a))
 
     def test_json_encoder_enums(self):
         enc = JSONEncoder()
