@@ -126,7 +126,7 @@ def read_json_from_file(path: str) -> JSONAble:
 
 class JSONAbleDataObject:
     """
-    A data-class that supports conversion of it's classes to JSON
+    A data-class that supports conversion of its classes to JSON
 
     Define like this:
 
