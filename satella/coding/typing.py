@@ -17,7 +17,7 @@ NoArgCallable = tp.Callable[[], T]
 Predicate = tp.Callable[[T], bool]
 
 ExceptionClassType = tp.Type[Exception]
-ExceptionList = tp.Union[ExceptionClassType, tp.Tuple[ExceptionClassType]]
+ExceptionList = tp.Union[ExceptionClassType, tp.Tuple[ExceptionClassType, ...]]
 
 
 class ClassComparable(metaclass=ABCMeta):
