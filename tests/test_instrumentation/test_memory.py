@@ -22,7 +22,6 @@ class OnDemandCondition(CustomCondition):
 
 
 class TestMemory(unittest.TestCase):
-    @unittest.skipIf(platform.python_implementation(), 'This will not work on PyPy')
     def test_get_size_dict(self):
         a = {'aba': 'aba'}
 
@@ -30,8 +29,12 @@ class TestMemory(unittest.TestCase):
             def __init__(self):
                 self.aba = 'aba'
 
-        self.assertGreater(get_size(a), 6)
-        self.assertGreater(get_size(Aba()), 6)
+        if platform.python_implementation() == 'PyPy':
+            self.assertRaises(RuntimeError, get_size, a)
+            self.assertRaises(RuntimeError, get_size, Aba())
+        else:
+            self.assertGreater(get_size(a), 6)
+            self.assertGreater(get_size(Aba()), 6)
 
     @unittest.skipIf(sys.platform == 'win32', 'testable only on unices')
     def test_install_dump_on(self):

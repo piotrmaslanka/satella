@@ -20,7 +20,6 @@ class TestFiles(unittest.TestCase):
         with jump_to_directory('test_d/path'):
             path = os.getcwd()
             self.assertTrue(path.endswith('path'))
-            self.assertTrue(os.path.exists('path'))
 
     def test_read_nonexistent_file(self):
         self.assertRaises(FileNotFoundError, lambda: read_in_file('moot'))

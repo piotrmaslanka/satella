@@ -63,8 +63,7 @@ class jump_to_directory(object):
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         assert self.prev_path is not None
-        with reraise_as(FileNotFoundError):
-            os.chdir(self.prev_path)
+        os.chdir(self.prev_path)
         return False
 
 

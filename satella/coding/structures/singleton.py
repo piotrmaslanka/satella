@@ -61,7 +61,8 @@ def SingletonWithRegardsTo(num_args: int, weak_refs: bool = False):
     :param weak_refs: if True, then singleton will be stored within a weak dictionary, so that it cleans up after itself
                       when the values are gone.
 
-    .. warning:: If you set weak_refs to False and have a potentially unbounded number of arguments, you better watch out.
+    .. warning:: If you set weak_refs to False and have a potentially unbounded number of argument values, you better
+                 watch out for the memory usage.
     """
 
     def inner(cls):

@@ -1,3 +1,4 @@
+import platform
 import sys
 
 
@@ -11,10 +12,9 @@ def get_size(obj, seen=None) -> int:
     :return: size in bytes of the object and all of it's subcomponents
     :raises RuntimeError: when ran on PyPy
     """
-    try:
-        size = sys.getsizeof(obj)
-    except TypeError:
-        raise RuntimeError('Running on PyPy?')
+    if platform.python_implementation() != 'CPython':
+        raise RuntimeError('Runnable only on CPython')
+    size = sys.getsizeof(obj)
     if seen is None:
         seen = set()
     obj_id = id(obj)
