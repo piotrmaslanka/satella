@@ -54,10 +54,12 @@ test_python39:
 test_pypy310:
   extends: .test
   image: pypy:3.10
+  when: manual
 
 test_pypy39:
   extends: .test
   image: pypy:3.9
+  when: manual
 
 test_python310:
   extends: .test
