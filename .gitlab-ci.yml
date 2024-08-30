@@ -1,0 +1,88 @@
+stages:
+  - test
+  - build
+
+pages:
+  image: zoo.smok.co/build/build:latest
+  stage: build
+  script:
+    - cd docs
+    - make html
+    - cd ..
+    - mv docs/_build/html public
+  artifacts:
+    paths:
+      - public
+
+.test:
+  stage: test
+  before_script:
+    - pip install --break-system-packages --upgrade Cython setuptools pip coverage nose2
+    - pip install --break-system-packages -r requirements.txt
+  script:
+    - python setup.py install
+    - cd example
+    - python setup.py build_ext --inplace
+    - nose2 -vv
+
+test_python35:
+  extends: .test
+  image: python:3.5
+  before_script:
+    - pip install --upgrade Cython setuptools pip coverage nose2
+    - pip install -r requirements.txt
+
+test_python36:
+  extends: .test
+  image: python:3.6
+  before_script:
+    - pip install --upgrade Cython setuptools pip coverage nose2
+    - pip install -r requirements.txt
+
+test_python37:
+  extends: .test
+  image: python:3.7
+
+test_python38:
+  extends: .test
+  image: python:3.8
+
+test_python39:
+  extends: .test
+  image: python:3.9
+
+test_pypy310:
+  extends: .test
+  image: pypy:3.10
+
+test_pypy311:
+  extends: .test
+  image: pypy:3.11
+
+test_python310:
+  extends: .test
+  image: python:3.10
+
+
+test_python311:
+  extends: .test
+  image: python:3.11
+
+
+build_python:
+  stage: build
+  before_script:
+    - pip install --break-system-packages --upgrade Cython setuptools pip twine
+  script:
+    - python setup.py bdist_wheel
+    - mv dist/*.whl .
+  artifacts:
+    paths:
+      - "*.whl"
+  after_script:
+    - TWINE_PASSWORD=${CI_JOB_TOKEN} TWINE_USERNAME=gitlab-ci-token python3 -m twine upload --repository-url ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/pypi *.whl
+  only:
+    - tags
+  except:
+    - branches
+
