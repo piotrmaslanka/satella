@@ -55,9 +55,9 @@ test_pypy310:
   extends: .test
   image: pypy:3.10
 
-test_pypy311:
+test_pypy39:
   extends: .test
-  image: pypy:3.11
+  image: pypy:3.9
 
 test_python310:
   extends: .test
