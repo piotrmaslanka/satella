@@ -6,7 +6,7 @@ import unittest
 import shutil
 from satella.files import read_re_sub_and_write, find_files, split, read_in_file, write_to_file, \
     write_out_file_if_different, make_noncolliding_name, try_unlink, DevNullFilelikeObject, \
-    read_lines, AutoflushFile
+    read_lines, AutoflushFile, jump_to_directory
 
 
 def putfile(path: str) -> None:
@@ -15,6 +15,12 @@ def putfile(path: str) -> None:
 
 
 class TestFiles(unittest.TestCase):
+
+    def test_monotonous(self):
+        with jump_to_directory('test/path'):
+            path = os.getcwd()
+            self.assertTrue(path.endswith('path'))
+            self.assertTrue(os.path.exists('path'))
 
     def test_read_nonexistent_file(self):
         self.assertRaises(FileNotFoundError, lambda: read_in_file('moot'))

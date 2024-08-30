@@ -1,3 +1,4 @@
+import gc
 import queue
 import unittest
 
@@ -57,3 +58,24 @@ class TestSingleton(unittest.TestCase):
         self.assertEqual(set(get_instances_for_singleton(MyClass)), {('a',), ('b',)})
         delete_singleton_for(MyClass, 'a')
         self.assertEqual(set(get_instances_for_singleton(MyClass)), {('b',)})
+
+    def test_singleton_with_regards_to_weak_refs(self):
+        instantiations = 0
+        @SingletonWithRegardsTo(num_args=1, weak_refs=True)
+        class MyClass:
+            def __init__(self, device_id: str):
+                nonlocal instantiations
+                self.device_id = device_id
+                instantiations += 1
+
+        a = MyClass('a')
+        b = MyClass('b')
+        c = MyClass('a')
+        self.assertEqual(instantiations, 2)
+        del a
+        a = MyClass('a')
+        self.assertEqual(instantiations, 2)
+        del b
+        gc.collect()
+        b = MyClass('b')
+        self.assertEqual(instantiations, 3)

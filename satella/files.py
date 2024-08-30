@@ -10,7 +10,8 @@ import typing as tp
 
 __all__ = ['read_re_sub_and_write', 'find_files', 'split', 'read_in_file', 'write_to_file',
            'write_out_file_if_different', 'make_noncolliding_name', 'try_unlink',
-           'DevNullFilelikeObject', 'read_lines', 'AutoflushFile']
+           'DevNullFilelikeObject', 'read_lines', 'AutoflushFile',
+           'jump_to_directory']
 
 from satella.coding import wraps
 from satella.coding.recast_exceptions import silence_excs, reraise_as
@@ -35,6 +36,36 @@ def value_error_on_closed_file(getter):
 
 
 closed_devnull = value_error_on_closed_file(lambda y: y.is_closed)
+
+
+class jump_to_directory(object):
+    """
+    This will temporarily change current working directory. Note however is doesn't proof you against deliberately
+    changing the working directory by the user.
+
+    Non existing directories will be created.
+
+    :ivar path: (str) target path
+    :ivar prev_path: (str) path that was here before this was called.
+    """
+
+    __slots__ = 'path', 'prev_path'
+
+    def __init__(self, path: tp.Optional[str], mode=0o777):
+        self.path = path
+        self.prev_path = None
+        os.makedirs(self.path, mode=mode, exist_ok=True)
+
+    def __enter__(self):
+        self.prev_path = os.getcwd()
+        os.chdir(self.path)
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        assert self.prev_path is not None
+        with reraise_as(FileNotFoundError):
+            os.chdir(self.prev_path)
+        return False
 
 
 class DevNullFilelikeObject(io.FileIO):

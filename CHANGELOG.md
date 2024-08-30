@@ -2,3 +2,5 @@
 
 * add JSONAbleDataObject
 * improved typing for reraise_as
+* added weak_refs to SingletonWithRegardsTo
+* added jump_to_directory
