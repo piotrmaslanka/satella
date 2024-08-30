@@ -17,27 +17,13 @@ pages:
 .test:
   stage: test
   before_script:
-    - pip install --break-system-packages --upgrade Cython setuptools pip coverage nose2
-    - pip install --break-system-packages -r requirements.txt
+    - pip install --break-system-packages --upgrade pytest setuptools pip coverage nose2
+    - pip install ".[dev,test]"
   script:
-    - python setup.py install
-    - cd example
-    - python setup.py build_ext --inplace
-    - nose2 -vv
-
-test_python35:
-  extends: .test
-  image: python:3.5
-  before_script:
-    - pip install --upgrade Cython setuptools pip coverage nose2
-    - pip install -r requirements.txt
-
-test_python36:
-  extends: .test
-  image: python:3.6
-  before_script:
-    - pip install --upgrade Cython setuptools pip coverage nose2
-    - pip install -r requirements.txt
+    - pytest -n 8 -vv --cov=satella
+    - coverage xml
+    - coverage report
+  coverage: /TOTAL.*\s+(\d+\%)/
 
 test_python37:
   extends: .test
