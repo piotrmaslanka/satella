@@ -17,7 +17,7 @@ def putfile(path: str) -> None:
 class TestFiles(unittest.TestCase):
 
     def test_monotonous(self):
-        with jump_to_directory('test/path'):
+        with jump_to_directory('test_d/path'):
             path = os.getcwd()
             self.assertTrue(path.endswith('path'))
             self.assertTrue(os.path.exists('path'))
