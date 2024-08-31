@@ -37,6 +37,13 @@ def continue_testing_omni(self, omni_class):
 
 class TestStructures(unittest.TestCase):
 
+    def test_heap_bugfix(self):
+        heap = Heap()
+
+        heap.push_many([(1, object()), (2, object())])
+        item = heap.pop()
+        self.assertEqual(item[0], 1)
+
     def test_onstronlyname(self):
 
         class MyEnum(OnStrOnlyName, Enum):

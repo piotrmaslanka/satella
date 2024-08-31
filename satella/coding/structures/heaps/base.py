@@ -30,8 +30,17 @@ class Heap(collections.UserList, tp.Generic[T]):
         heapq.heapify(self.data)
 
     def push_many(self, items: tp.Iterable[T]) -> None:
-        for item in items:
-            self.push(item)
+        """
+        Put multiple items on the heap.
+        Faster than
+
+        >>> for item in items:
+        >>>     heap.push(item)
+
+        :param: an iterable with items to put
+        """
+        self.data.extend(items)
+        heapq.heapify(self.data)
 
     def pop_item(self, item: T) -> T:
         """

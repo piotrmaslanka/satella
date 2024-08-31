@@ -1,6 +1,6 @@
 # v2.25.5
 
-
+* slight optimization for Heap.push_many
 
 # v2.25.4
 
