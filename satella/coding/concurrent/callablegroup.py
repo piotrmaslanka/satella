@@ -111,6 +111,8 @@ class CallableGroup(tp.Generic[T]):
         """
         Add a callable.
 
+        .. note:: Same callable can't be added twice. It will silently fail.
+
         Can be a :class:`~satella.coding.concurrent.CancellableCallback`, in that case
         method :meth:`~satella.coding.concurrent.CallableGroup.remove_cancelled` might
         be useful.
