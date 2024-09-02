@@ -4,10 +4,11 @@ import time
 import typing as tp
 
 from satella.coding.deleters import DictDeleter
+from satella.coding.structures.mixins import HashableMixin
 from satella.coding.typing import T, NoArgCallable
 
 
-class CancellableCallback:
+class CancellableCallback(HashableMixin):
     """
     A callback that you can cancel.
 
@@ -17,7 +18,8 @@ class CancellableCallback:
     If called, the function itself won't be called as well if this was cancelled. In this case
     a None will be returned instead of the result of callback_fun()
 
-    This short circuits __bool__ to return not .cancelled.
+    This short circuits __bool__ to return not .cancelled. So, the bool value of this callback depends on whether it
+    has been cancelled or not.
 
     Hashable and __eq__-able by identity.
 
@@ -25,13 +27,10 @@ class CancellableCallback:
 
     :ivar cancelled: whether this callback was cancelled (bool)
     """
-    __slots__ = ('cancelled', 'callback_fun')
+    __slots__ = 'cancelled', 'callback_fun'
 
     def __bool__(self) -> bool:
         return not self.cancelled
-
-    def __hash__(self) -> int:
-        return hash(id(self))
 
     def __init__(self, callback_fun: tp.Callable):
         self.callback_fun = callback_fun
@@ -46,6 +45,35 @@ class CancellableCallback:
         Cancel this callback.
         """
         self.cancelled = True
+#
+# class CancellableCallbackGroup:
+#     """
+#
+#     A group of callbacks that you can simultaneously cancel.
+#
+#     Immutable. Also, hashable and __eq__able.
+#
+#     Regarding it's truth value - it's True if at least one callback has not been cancelled.
+#     """
+#
+#     def __init__(self, callbacks: tp.Iterable[CancellableCallback]):
+#         self.callbacks = list(callbacks)      # type: tp.List[CancellableCallback]
+#
+#     def cancel(self) -> None:
+#         """
+#         Cancel all of the callbacks.
+#         """
+#         for callback in self.callbacks:
+#             callback.cancel()
+#
+#     def __bool__(self) -> bool:
+#         return any(not callback.cancelled for callback in self.callbacks)
+#
+#     def __hash__(self):
+#         y = 0
+#         for callback in self.callbacks:
+#             y ^= hash(callback)
+#         return y
 
 
 class CallableGroup(tp.Generic[T]):
@@ -64,21 +92,13 @@ class CallableGroup(tp.Generic[T]):
     will be propagated.
 
     """
-    __slots__ = ('callables', 'gather', 'swallow_exceptions',
-                 '_has_cancellable_callbacks')
+    __slots__ = 'callables', 'gather', 'swallow_exceptions',
 
     def __init__(self, gather: bool = True, swallow_exceptions: bool = False):
-        """
-        :param gather: if True, results from all callables will be gathered
-                       into a list and returned from __call__
-        :param swallow_exceptions: if True, exceptions from callables will be
-                                   silently ignored. If gather is set,
-                                   result will be the exception instance
-        """
-        self.callables = collections.OrderedDict()  # type: tp.Dict[tp.Callable, bool]
+
+        self.callables = collections.OrderedDict()  # type: tp.Dict[tp.Callable, tuple[bool, int]]
         self.gather = gather  # type: bool
         self.swallow_exceptions = swallow_exceptions  # type: bool
-        self._has_cancellable_callbacks = False
 
     @property
     def has_cancelled_callbacks(self) -> bool:
@@ -87,10 +107,8 @@ class CallableGroup(tp.Generic[T]):
         :class:`~satella.coding.concurrent.CancellableCallback` instances and whether any
         of them was cancelled
         """
-        if not self._has_cancellable_callbacks:
-            return False
         for clb in self.callables:
-            if isinstance(clb, CancellableCallback) and not clb:
+             if clb:
                 return True
         return False
 
@@ -98,16 +116,13 @@ class CallableGroup(tp.Generic[T]):
         """
         Remove it's entries that are CancelledCallbacks and that were cancelled
         """
-        if not self.has_cancelled_callbacks:
-            return
-
         with DictDeleter(self.callables) as dd:
             for callable_ in dd:
                 if isinstance(callable_, CancellableCallback) and not callable_:
                     dd.delete()
 
     def add(self, callable_: tp.Union[CancellableCallback, NoArgCallable[T]],
-            one_shot: bool = False):
+            one_shot: bool = False) -> CancellableCallback:
         """
         Add a callable.
 
@@ -117,16 +132,21 @@ class CallableGroup(tp.Generic[T]):
         method :meth:`~satella.coding.concurrent.CallableGroup.remove_cancelled` might
         be useful.
 
+        Basically every callback is cancellable.
+
         :param callable_: callable
         :param one_shot: if True, callable will be unregistered after single call
+        :returns: callable_ if it was a cancellable callback, else one constructed after it
+
+        .. deprecated:: v2.25.5
+            Do not pass a CancellableCallback, you'll get your own
         """
-        if isinstance(callable_, CancellableCallback):
-            self._has_cancellable_callbacks = True
-        from ..structures.hashable_objects import HashableWrapper
-        callable_ = HashableWrapper(callable_)
+        if not isinstance(callable_, CancellableCallback):
+            callable_ = CancellableCallback(callable_)
         if callable_ in self.callables:
-            return
+            return callable_
         self.callables[callable_] = one_shot
+        return callable_
 
     def __call__(self, *args, **kwargs) -> tp.Optional[tp.List[T]]:
         """

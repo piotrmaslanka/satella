@@ -218,6 +218,19 @@ class TestConcurrent(unittest.TestCase):
                                9: True,
                                10: True, 11: True})
 
+    def test_auto_cancellable_callback(self):
+        a = {'test': True}
+
+        def y():
+            nonlocal a
+            a['test'] = False
+
+        cg = CallableGroup()
+        can = cg.add(y)
+        can.cancel()
+        cg()
+        self.assertTrue(a['test'])
+
     def test_cancellable_callback(self):
         a = {'test': True}
 

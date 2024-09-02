@@ -2,6 +2,8 @@
 
 * slight optimization for Heap.push_many
 * bugfix for Heap.push and a deprecation
+* changed how CallableGroup works - now every add adds a CancellableCallback
+  and it's always true that CallableGroup has it's own cancellable callbacks.
 
 # v2.25.4
 

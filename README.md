@@ -1,7 +1,5 @@
 satella
 ========
-![Workflow](https://github.com/piotrmaslanka/satella/actions/workflows/ci.yml/badge.svg)[![Code Climate](https://codeclimate.com/github/piotrmaslanka/satella/badges/gpa.svg)](https://codeclimate.com/github/piotrmaslanka/satella)
-[![Issue Count](https://codeclimate.com/github/piotrmaslanka/satella/badges/issue_count.svg)](https://codeclimate.com/github/piotrmaslanka/satella)
 [![PyPI](https://img.shields.io/pypi/pyversions/satella.svg)](https://pypi.python.org/pypi/satella)
 [![PyPI version](https://badge.fury.io/py/satella.svg)](https://badge.fury.io/py/satella)
 [![PyPI](https://img.shields.io/pypi/implementation/satella.svg)](https://pypi.python.org/pypi/satella)
@@ -39,10 +37,10 @@ Satella contains, among other things:
 Most Satella objects make heavy use of `__slots__`, so they are memory friendly and usable on embedded systems, where
 memory is at premium.
 
-Change log is kept as part of [release notes](https://github.com/piotrmaslanka/satella/releases).
-The [CHANGELOG.md](CHANGELOG.md) file is only to track changes since last release.
+Change log is kept as part of [old release notes](https://github.com/piotrmaslanka/satella/releases),
+new [CHANGELOG.md](CHANGELOG.md) is to remain for all posteriority.
 
-Full [documentation](http://satella.readthedocs.io/en/latest/?badge=latest)
+Full [documentation](http://smokserwis.docs.smok.co/satella)
 is available for the brave souls that do decide to use this library.
 
 See [LICENSE](LICENSE) for text of the license. This library may contain code taken from elsewhere on the internets, so
@@ -50,20 +48,21 @@ this is copyright (c) respective authors.
 
 If you want to install extra modules, just run
 
+Installation
+------------
+
 ```bash
-pip install satella[extras]
+pip install --extra-index-url https://git.dms-serwis.com.pl/api/v4/groups/330/-/packages/pypi/simple satella
 ```
 
 Running unit tests
 ------------------
 
-Tests run by default on GitHub Actions.
+Tests run by default on local CI/CD.
 
 They should pass on Windows too, but some tests requiring POSIX-like functionality are skipped.
 
 Automatic release system
 ------------------------
 
-Releases happen automatically. Just add a tag with the name of the version.
-
-**NOTE that changes from 2.25 will be numbered as tags without the prefix ```v```**!
+Releases happen to our local PyPI. Just add a tag for it to work.

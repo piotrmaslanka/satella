@@ -1,7 +1,6 @@
 import time
 import typing as tp
 
-from satella.coding.concurrent.thread import Condition
 from satella.coding.decorators.decorators import wraps
 from satella.coding.typing import ExceptionList
 from satella.exceptions import WouldWaitMore
@@ -43,6 +42,7 @@ class ExponentialBackoff:
     def __init__(self, start: float = 1, limit: float = 30,
                  sleep_fun: tp.Callable[[float], None] = time.sleep,
                  grace_amount: int = 0):
+        from satella.coding.concurrent.thread import Condition
         self.start = start
         self.grace_amount = grace_amount
         self.grace_counter = 0
