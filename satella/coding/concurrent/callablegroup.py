@@ -20,7 +20,7 @@ class CancellableCallback:
     This short circuits __bool__ to return not .cancelled. So, the bool value of this callback depends on whether it
     has been cancelled or not.
 
-    Hashable and __eq__-able by identity.
+    Hashable and __eq__-able by identity. Equal only to itself.
 
     :param callback_fun: function to call
 
@@ -36,10 +36,10 @@ class CancellableCallback:
         self.cancelled = False
 
     def __hash__(self):
-        return hash(self.id)
+        return hash(id(self))
 
     def __eq__(self, other) -> bool:
-        return hash(self) == hash(other)
+        return id(self) == id(other)
 
     def __call__(self, *args, **kwargs):
         if not self.cancelled:
