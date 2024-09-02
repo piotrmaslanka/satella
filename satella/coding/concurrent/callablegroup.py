@@ -4,11 +4,10 @@ import time
 import typing as tp
 
 from satella.coding.deleters import DictDeleter
-from satella.coding.structures.mixins import HashableMixin
 from satella.coding.typing import T, NoArgCallable
 
 
-class CancellableCallback(HashableMixin):
+class CancellableCallback:
     """
     A callback that you can cancel.
 
@@ -35,6 +34,12 @@ class CancellableCallback(HashableMixin):
     def __init__(self, callback_fun: tp.Callable):
         self.callback_fun = callback_fun
         self.cancelled = False
+
+    def __hash__(self):
+        return hash(self.id)
+
+    def __eq__(self, other) -> bool:
+        return hash(self) == hash(other)
 
     def __call__(self, *args, **kwargs):
         if not self.cancelled:
