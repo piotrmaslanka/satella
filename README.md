@@ -19,6 +19,15 @@ In order to install latest Satella just type:
 pip install --extra-index-url https://git.dms-serwis.com.pl/api/v4/groups/330/-/packages/pypi/simple satella
 ```
 
+If you want to put it in requirements.txt just type:
+
+```
+--extra-index-url https://git.dms-serwis.com.pl/api/v4/groups/330/-/packages/pypi/simple
+satella
+nose2
+coverage
+```
+
 It's still free, MIT-licensed and publicly available. No one's taking it from you :)
 
 What is Satella?
