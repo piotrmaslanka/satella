@@ -7,7 +7,7 @@ from satella.coding.decorators.decorators import short_none
 from satella.coding.recast_exceptions import silence_excs
 from satella.coding.structures.lru import LRU
 from satella.coding.typing import K, V, NoArgCallable
-from satella.time import parse_time_string
+from satella.time.parse import parse_time_string
 
 logger = logging.getLogger(__name__)
 

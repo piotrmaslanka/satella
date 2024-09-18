@@ -1,3 +1,7 @@
+# v.25.6.
+
+* fixed circular import
+
 # v2.25.5
 
 * slight optimization for Heap.push_many
