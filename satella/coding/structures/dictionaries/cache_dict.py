@@ -7,9 +7,9 @@ from satella.coding.decorators.decorators import short_none
 from satella.coding.recast_exceptions import silence_excs
 from satella.coding.structures.lru import LRU
 from satella.coding.typing import K, V, NoArgCallable
-from satella.time.parse import parse_time_string
 
 logger = logging.getLogger(__name__)
+
 
 
 class CacheDict(tp.Mapping[K, V]):
@@ -90,8 +90,8 @@ class CacheDict(tp.Mapping[K, V]):
                  cache_failures_interval: tp.Optional[tp.Union[float, int, str]] = None,
                  time_getter: NoArgCallable[float] = time.monotonic,
                  default_value_factory: tp.Optional[NoArgCallable[V]] = None):
-        self.stale_interval = parse_time_string(stale_interval)
-        self.expiration_interval = parse_time_string(expiration_interval)
+        self.stale_interval = _parse_time_string(stale_interval)
+        self.expiration_interval = _parse_time_string(expiration_interval)
         assert self.stale_interval <= self.expiration_interval, 'Stale interval may not be larger ' \
                                                                 'than expiration interval!'
         self.default_value_factory = default_value_factory
@@ -103,7 +103,7 @@ class CacheDict(tp.Mapping[K, V]):
         self.timestamp_data = {}  # type: tp.Dict[K, float]
         self.cache_missed = set()  # type: tp.Set[K]
         self.cache_failures = cache_failures_interval is not None
-        self.cache_failures_interval = short_none(parse_time_string)(cache_failures_interval)
+        self.cache_failures_interval = short_none(_parse_time_string)(cache_failures_interval)
         self.time_getter = time_getter
 
     def get_value_block(self, key: K) -> V:
