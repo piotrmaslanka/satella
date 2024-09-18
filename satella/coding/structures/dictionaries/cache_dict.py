@@ -18,7 +18,8 @@ _TIME_MODIFIERS = [
     ('d', 24 * 60 * 60),
     ('w', 7 * 24 * 60 * 60)
 ]
-def _parse_time_string(s: tp.Union[int, float, str]) -> float:
+
+def _parse_time_string(s: tp.Union[int, float, str]) -> tp.Union[int, float]:
     """
     Parse a time string into seconds, so eg. '30m' will be equal to 1800, and so will
     be '30 min'.
@@ -42,7 +43,7 @@ def _parse_time_string(s: tp.Union[int, float, str]) -> float:
         if modifier in s:
             return float(s[:s.index(modifier)]) * multiple
 
-    return float(s)
+        return float(s) if float(int(s)) != int(s) else int(s)
 
 
 class CacheDict(tp.Mapping[K, V]):

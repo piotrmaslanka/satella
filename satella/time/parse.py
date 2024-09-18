@@ -9,7 +9,7 @@ TIME_MODIFIERS = [
 ]
 
 
-def parse_time_string(s: tp.Union[int, float, str]) -> float:
+def parse_time_string(s: tp.Union[int, float, str]) -> tp.Union[int, float]:
     """
     Parse a time string into seconds, so eg. '30m' will be equal to 1800, and so will
     be '30 min'.
@@ -24,13 +24,14 @@ def parse_time_string(s: tp.Union[int, float, str]) -> float:
     .. warning:: This does not handle fractions of a second!
 
     :param s: time string or time value in seconds
-    :return: value in seconds
+    :return: value in seconds (an int)
     """
     if isinstance(s, (int, float)):
-        return s
+        return int(s)
 
     for modifier, multiple in TIME_MODIFIERS:
         if modifier in s:
             return float(s[:s.index(modifier)]) * multiple
 
-    return float(s)
+    return float(s) if float(int(s)) != int(s) else int(s)
+

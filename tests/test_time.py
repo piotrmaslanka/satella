@@ -14,6 +14,12 @@ from satella.warnings import mark_temporarily_disabled
 
 class TestTime(unittest.TestCase):
 
+    def test_parse_time(self):
+        p = parse_time_string('1800s')
+        self.assertEqual(p, 1800)
+        p = parse_time_string('1.5s')
+        self.assertEqual(p, 1.5)
+
     def test_mark_temp_disabled(self):
 
         @mark_temporarily_disabled('Skipped due to skip')
