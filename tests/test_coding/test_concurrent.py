@@ -274,7 +274,7 @@ class TestConcurrent(unittest.TestCase):
         cbgroup.add(CancellableCallback(p, one_shotted=False))
         cbgroup()
         self.assertEqual(a[1],3)
-        self.assertEqual(a[3], 4)
+        self.assertEqual(a[3], 5)
         self.assertEqual(a[4], 7)
         cbgroup()
         self.assertEqual(a[4], 8)

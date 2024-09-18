@@ -3,6 +3,8 @@
 * fixed circular import
 * added __len__ to PeekableQueue
 * fixed CallableGroup, added new class
+* added enum to DictDeleter
+* added faster enumeration to PeekableQueue
 
 # v2.25.5
 

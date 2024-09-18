@@ -312,5 +312,9 @@ ListDeleter
 DictDeleter
 -----------
 
+.. autoclass:: satella.coding.IterMode:
+    :members:
+
+
 .. autoclass:: satella.coding.DictDeleter
     :members:

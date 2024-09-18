@@ -4,7 +4,7 @@ import copy
 import time
 import typing as tp
 
-from satella.coding.deleters import DictDeleter
+from satella.coding.deleters import DictDeleter, IterMode
 from satella.coding.typing import T, NoArgCallable
 
 
@@ -33,16 +33,16 @@ class CancellableCallback:
     def __bool__(self) -> bool:
         return not self.cancelled
 
-    def __init__(self, callback_fun: tp.Callable, one_shotted=False):
+    def __init__(self, callback_fun: tp.Callable):
         self.callback_fun = callback_fun
         self.cancelled = False
-        self.one_shotted = one_shotted
+        self.one_shotted = False
 
     def __hash__(self):
         return hash(id(self))
 
     def __eq__(self, other: CancellableCallback) -> bool:
-        return id(self) == id(other) and self.one_shotted == other.one_shotted and self.cancelled == other.cancelled
+        return id(self) == id(other) and self.cancelled == other.cancelled
 
     def __call__(self, *args, **kwargs):
         if not self.cancelled:
@@ -55,7 +55,7 @@ class CancellableCallback:
         self.cancelled = True
 
 
-def _callable_to_cancellablecallback(callback: NoArgCallable[[T], None], one_shot=False) -> CancellableCallback:
+def _callable_to_cancellablecallback(callback: NoArgCallable[[T], None]) -> CancellableCallback:
     if isinstance(callback, NoArgCallable[[T], None]):
         return CancellableCallback(callback)
     elif isinstance(callback, CancellableCallback):
@@ -111,8 +111,7 @@ class CallableGroup(tp.Generic[T]):
     __slots__ = 'callables', 'gather', 'swallow_exceptions',
 
     def __init__(self, gather: bool = True, swallow_exceptions: bool = False):
-
-        self.callables = collections.OrderedDict()  # type: tp.Dict[tp.Callable, tuple[bool, int]]
+        self.callables = collections.OrderedDict()  # type: tp.Dict[tp.Callable, tuple[bool]]
         self.gather = gather  # type: bool
         self.swallow_exceptions = swallow_exceptions  # type: bool
 
@@ -130,11 +129,13 @@ class CallableGroup(tp.Generic[T]):
 
     def remove_cancelled(self) -> None:
         """
-        Remove it's entries that are CancelledCallbacks and that were cancelled
+        Remove it's entries that are CancelledCallbacks and that were cancelled and move one shots
         """
-        with DictDeleter(self.callables) as dd:
-            for callable_ in dd:
+        with DictDeleter(self.callables, iter_mode=IterMode.ITER_VALUES) as dd:
+            for callable_, oneshot in dd:
                 if isinstance(callable_, CancellableCallback) and not callable_:
+                    dd.delete()
+                if oneshot:
                     dd.delete()
 
     def add_many(self, callable_: tp.Sequence[tp.Union[NoArgCallable[T],
@@ -154,8 +155,13 @@ class CallableGroup(tp.Generic[T]):
 
         cancellable_callbacks = []
         for clbl in callable_:
-            canc_callback = _callable_to_cancellablecallback(clbl)
-            self.add(canc_callback, one_shot=canc_callback.one_shotted)
+            if isinstance(clbl, tuple):
+                clbl_, one_shot = clbl
+                canc_callback = _callable_to_cancellablecallback(clbl_)
+            else:
+                one_shot = False
+            cancellable_callbacks.append(canc_callback)
+            self.add(canc_callback, one_shot=one_shot)
             return CancellableCallbackGroup(cancellable_callbacks)
 
     def add(self, callable_: tp.Union[CancellableCallback, NoArgCallable[T]],
@@ -180,10 +186,10 @@ class CallableGroup(tp.Generic[T]):
             Do not pass a CancellableCallback, you'll get your own
         """
         if not isinstance(callable_, CancellableCallback):
-            callable_ = CancellableCallback(callable_)
+            callable_ = _callable_to_cancellablecallback(callable_)
+            self.callables[callable_] = one_shot
         if callable_ in self.callables:
             return callable_
-        self.callables[callable_] = one_shot
         return callable_
 
     def __call__(self, *args, **kwargs) -> tp.Optional[tp.List[T]]:

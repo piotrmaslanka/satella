@@ -1,12 +1,14 @@
 import collections
 import copy
+import enum
 import typing as tp
 
 from satella.coding.typing import T
 
-ITER_KEYS = 0
-ITER_VALUES = 1
-ITER_ITEMS = 2
+class IterMode(enum.IntEnum):
+    ITER_KEYS = 0
+    ITER_VALUES = 1
+    ITER_ITEMS = 2
 
 
 class DictDeleter:
@@ -37,9 +39,9 @@ class DictDeleter:
     __slots__ = ('dict_to_process', 'current_iterator', 'keys_to_delete', 'iter_mode',
                  'current_key')
 
-    def __init__(self, dict_to_process: collections.abc.MutableMapping):
+    def __init__(self, dict_to_process: collections.abc.MutableMapping, iter_mode: IterMode.ITER_KEYS):
         self.dict_to_process = dict_to_process
-        self.iter_mode = ITER_KEYS
+        self.iter_mode = iter_mode
 
     def __enter__(self):
         self.keys_to_delete = set()
@@ -52,23 +54,23 @@ class DictDeleter:
     def __next__(self):
         key, value = next(self.current_iterator)  # raises StopIteration
         self.current_key = key
-        if self.iter_mode == ITER_ITEMS:
+        if self.iter_mode == IterMode.ITER_ITEMS:
             return key, value
-        elif self.iter_mode == ITER_VALUES:
+        elif self.iter_mode == IterMode.ITER_VALUES:
             return value
-        elif self.iter_mode == ITER_KEYS:
+        elif self.iter_mode == IterMode.ITER_KEYS:
             return key
 
     def items(self) -> 'DictDeleter':
-        self.iter_mode = ITER_ITEMS
+        self.iter_mode = IterMode.ITER_ITEMS
         return self
 
     def keys(self) -> 'DictDeleter':
-        self.iter_mode = ITER_KEYS
+        self.iter_mode = IterMode.ITER_KEYS
         return self
 
     def values(self) -> 'DictDeleter':
-        self.iter_mode = ITER_VALUES
+        self.iter_mode = IterMode.ITER_VALUES
         return self
 
     def delete(self) -> None:
