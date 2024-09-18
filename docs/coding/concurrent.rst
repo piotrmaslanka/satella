@@ -9,27 +9,32 @@ DeferredValue
     :members:
 
 CallableGroup
-=============
+-------------
 
 .. autoclass:: satella.coding.concurrent.CallableGroup
     :members:
 
-CallNoOftenThan
----------------
-
-.. autoclass:: satella.coding.concurrent.CallNoOftenThan
+.. autoclass:: satella.coding.concurrent.CancellableCallbackGroup
     :members:
 
-parallel_construct
-------------------
-
-.. autofunction:: satella.coding.concurrent.parallel_construct
 
 CancellableCallback
 -------------------
 
 .. autoclass:: satella.coding.concurrent.CancellableCallback
     :members:
+
+CallNoOftenThan
+===============
+
+.. autoclass:: satella.coding.concurrent.CallNoOftenThan
+    :members:
+
+parallel_construct
+==================
+
+.. autofunction:: satella.coding.concurrent.parallel_construct
+
 
 LockedDataset
 =============

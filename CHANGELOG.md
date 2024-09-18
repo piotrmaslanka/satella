@@ -2,6 +2,7 @@
 
 * fixed circular import
 * added __len__ to PeekableQueue
+* fixed CallableGroup, added new class
 
 # v2.25.5
 

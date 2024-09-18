@@ -255,6 +255,30 @@ class TestConcurrent(unittest.TestCase):
         d = si.issue()
         self.assertGreater(d, c)
 
+    def test_callable_group(self):
+        cbgroup = CallableGroup()
+        a = {1:2, 3:4, 4:6}
+        def y():
+            nonlocal a
+            a[1] = 3
+
+        def z():
+            nonlocal a
+            a[3] += 4
+
+        def p():
+            nonlocal a
+            a[4] += 1
+
+        cbgroup.add_many(y, z)
+        cbgroup.add(CancellableCallback(p, one_shotted=False))
+        cbgroup()
+        self.assertEqual(a[1],3)
+        self.assertEqual(a[3], 4)
+        self.assertEqual(a[4], 7)
+        cbgroup()
+        self.assertEqual(a[4], 8)
+
     def test_peekable_queue_put_many(self):
         pkb = PeekableQueue()
 

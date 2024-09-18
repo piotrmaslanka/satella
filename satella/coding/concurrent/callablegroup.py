@@ -1,3 +1,4 @@
+from __future__ import annotations
 import collections
 import copy
 import time
@@ -25,21 +26,23 @@ class CancellableCallback:
     :param callback_fun: function to call
 
     :ivar cancelled: whether this callback was cancelled (bool)
+    :ivar one_shotted: whether this callback was invoked (bool)
     """
-    __slots__ = 'cancelled', 'callback_fun'
+    __slots__ = 'cancelled', 'callback_fun', 'one_shotted'
 
     def __bool__(self) -> bool:
         return not self.cancelled
 
-    def __init__(self, callback_fun: tp.Callable):
+    def __init__(self, callback_fun: tp.Callable, one_shotted=False):
         self.callback_fun = callback_fun
         self.cancelled = False
+        self.one_shotted = one_shotted
 
     def __hash__(self):
         return hash(id(self))
 
-    def __eq__(self, other) -> bool:
-        return id(self) == id(other)
+    def __eq__(self, other: CancellableCallback) -> bool:
+        return id(self) == id(other) and self.one_shotted == other.one_shotted and self.cancelled == other.cancelled
 
     def __call__(self, *args, **kwargs):
         if not self.cancelled:
@@ -50,35 +53,43 @@ class CancellableCallback:
         Cancel this callback.
         """
         self.cancelled = True
-#
-# class CancellableCallbackGroup:
-#     """
-#
-#     A group of callbacks that you can simultaneously cancel.
-#
-#     Immutable. Also, hashable and __eq__able.
-#
-#     Regarding it's truth value - it's True if at least one callback has not been cancelled.
-#     """
-#
-#     def __init__(self, callbacks: tp.Iterable[CancellableCallback]):
-#         self.callbacks = list(callbacks)      # type: tp.List[CancellableCallback]
-#
-#     def cancel(self) -> None:
-#         """
-#         Cancel all of the callbacks.
-#         """
-#         for callback in self.callbacks:
-#             callback.cancel()
-#
-#     def __bool__(self) -> bool:
-#         return any(not callback.cancelled for callback in self.callbacks)
-#
-#     def __hash__(self):
-#         y = 0
-#         for callback in self.callbacks:
-#             y ^= hash(callback)
-#         return y
+
+
+def _callable_to_cancellablecallback(callback: NoArgCallable[[T], None], one_shot=False) -> CancellableCallback:
+    if isinstance(callback, NoArgCallable[[T], None]):
+        return CancellableCallback(callback)
+    elif isinstance(callback, CancellableCallback):
+        return callback
+
+
+class CancellableCallbackGroup:
+    """
+
+    A group of callbacks that you can simultaneously cancel.
+
+    Immutable. Also, hashable and __eq__able.
+
+    Regarding it's truth value - it's True if at least one callback has not been cancelled.
+    """
+
+    def __init__(self, callbacks: tp.Iterable[CancellableCallback]):
+        self.callbacks = list(callbacks)  # type: tp.List[CancellableCallback]
+
+    def cancel(self) -> None:
+        """
+        Cancel all of the callbacks.
+        """
+        for callback in self.callbacks:
+            callback.cancel()
+
+    def __bool__(self) -> bool:
+        return any(not callback.cancelled for callback in self.callbacks)
+
+    def __hash__(self):
+        y = 0
+        for callback in self.callbacks:
+            y ^= hash(callback)
+        return y
 
 
 class CallableGroup(tp.Generic[T]):
@@ -113,7 +124,7 @@ class CallableGroup(tp.Generic[T]):
         of them was cancelled
         """
         for clb in self.callables:
-             if clb:
+            if clb:
                 return True
         return False
 
@@ -126,12 +137,34 @@ class CallableGroup(tp.Generic[T]):
                 if isinstance(callable_, CancellableCallback) and not callable_:
                     dd.delete()
 
+    def add_many(self, callable_: tp.Sequence[tp.Union[NoArgCallable[T],
+                 tp.Tuple[NoArgCallable[T], bool]]]) -> CancellableCallbackGroup:
+        """
+        Add multiple callbacks
+
+        .. note:: Same callable can't be added twice. It will silently fail.
+                  Note that already called one-shots can be added twice
+
+        Basically every callback is cancellable.
+
+        :param callable_: sequence of either callables with will be registered as multiple-shots or a tuple of callback
+            (with an argument to register it as a one-shot)
+        :returns: CancellableCallbackGroup to cancel all of the callbacks
+        """
+
+        cancellable_callbacks = []
+        for clbl in callable_:
+            canc_callback = _callable_to_cancellablecallback(clbl)
+            self.add(canc_callback, one_shot=canc_callback.one_shotted)
+            return CancellableCallbackGroup(cancellable_callbacks)
+
     def add(self, callable_: tp.Union[CancellableCallback, NoArgCallable[T]],
             one_shot: bool = False) -> CancellableCallback:
         """
         Add a callable.
 
-        .. note:: Same callable can't be added twice. It will silently fail.
+        .. note:: Same callable can't be added twice. It will silently fail, and return an existing callbacks.
+                  Note that already called one-shots can be added twice
 
         Can be a :class:`~satella.coding.concurrent.CancellableCallback`, in that case
         method :meth:`~satella.coding.concurrent.CallableGroup.remove_cancelled` might
@@ -186,6 +219,8 @@ class CallableGroup(tp.Generic[T]):
 
             if not one_shot:
                 self.add(call, one_shot)
+            else:
+                call.one_shotted = True
 
         if self.gather:
             return results
