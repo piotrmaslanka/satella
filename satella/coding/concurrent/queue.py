@@ -55,6 +55,7 @@ class PeekableQueue(tp.Generic[T]):
                 try:
                     return item_getter(self.queue)
                 finally:
+                    self.items_count -= 1
                     self.lock.release()
 
     def __get_timeout(self, item_getter, timeout):
@@ -68,6 +69,7 @@ class PeekableQueue(tp.Generic[T]):
                     try:
                         return item_getter(self.queue)
                     finally:
+                        self.items_count -= 1
                         self.lock.release()
             else:
                 self.lock.release()
@@ -75,21 +77,19 @@ class PeekableQueue(tp.Generic[T]):
 
     @rethrow_as(WouldWaitMore, Empty)
     def __get(self, timeout, item_getter) -> T:
-        try:
-            self.lock.acquire()
-            if len(self.queue):
-                # Fast path
-                try:
-                    return item_getter(self.queue)
-                finally:
-                    self.lock.release()
+        self.lock.acquire()
+        if len(self.queue):
+            # Fast path
+            try:
+                return item_getter(self.queue)
+            finally:
+                self.items_count -= 1
+                self.lock.release()
+        else:
+            if timeout is None:
+                return self.__get_timeout_none(item_getter)
             else:
-                if timeout is None:
-                    return self.__get_timeout_none(item_getter)
-                else:
-                    return self.__get_timeout(item_getter, timeout)
-        finally:
-            self.items_count -= 1
+                return self.__get_timeout(item_getter, timeout)
 
     def get(self, timeout: tp.Optional[float] = None) -> T:
         """
@@ -100,10 +100,7 @@ class PeekableQueue(tp.Generic[T]):
         :return: the item
         :raise Empty: queue was empty
         """
-        try:
-            return self.__get(timeout, lambda queue: queue.popleft())
-        finally:
-            self.items_count -= 1
+        return self.__get(timeout, lambda queue: queue.popleft())
 
     def peek(self, timeout: tp.Optional[float] = None) -> T:
         """

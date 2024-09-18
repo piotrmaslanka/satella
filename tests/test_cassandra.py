@@ -1,4 +1,4 @@
-from satella.coding.concurrent import CallableGroup
+from satella.coding.concurrent import CallableGroup, IDAllocator
 
 from satella.cassandra import parallel_for, wrap_future
 import unittest
@@ -6,6 +6,7 @@ import unittest
 
 class TestCassandra(unittest.TestCase):
     def test_wrap_future(self):
+
         class MockCassandraFuture:
             def __init__(self):
                 self.value = None

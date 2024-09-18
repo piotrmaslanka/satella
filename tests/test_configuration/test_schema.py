@@ -15,6 +15,11 @@ class Environment(enum.IntEnum):
 
 class TestSchema(unittest.TestCase):
 
+    def setUp(self):
+        for file in ['test']:
+            if os.path.exists(file):
+                os.unlink(file)
+
     def test_file(self):
         schema = {
             "key": "file"

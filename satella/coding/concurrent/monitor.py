@@ -3,7 +3,7 @@ import copy
 import threading
 import typing as tp
 
-from satella.coding.decorators.decorators import wraps
+from satella.coding.decorators.wraps import wraps
 from satella.coding.typing import K, V, T
 
 

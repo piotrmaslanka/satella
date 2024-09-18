@@ -39,7 +39,7 @@ class DictDeleter:
     __slots__ = ('dict_to_process', 'current_iterator', 'keys_to_delete', 'iter_mode',
                  'current_key')
 
-    def __init__(self, dict_to_process: collections.abc.MutableMapping, iter_mode: IterMode.ITER_KEYS):
+    def __init__(self, dict_to_process: collections.abc.MutableMapping, iter_mode: IterMode = IterMode.ITER_KEYS):
         self.dict_to_process = dict_to_process
         self.iter_mode = iter_mode
 

@@ -2,7 +2,7 @@ import logging
 import math
 import typing as tp
 
-from satella.coding.decorators.decorators import wraps
+from satella.coding.decorators.wraps import wraps
 from satella.coding.recast_exceptions import rethrow_as
 from satella.coding.typing import T
 

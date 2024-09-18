@@ -2,7 +2,7 @@ import operator
 import typing as tp
 
 from satella.coding.typing import Predicate
-from satella.configuration.schema import Descriptor
+from satella.configuration.schema.base import Descriptor
 
 __all__ = ['x', 'build_structure', 'PredicateClass']
 

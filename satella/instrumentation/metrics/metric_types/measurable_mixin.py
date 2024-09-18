@@ -2,7 +2,7 @@ import inspect
 import time
 from concurrent.futures import Future
 
-from satella.coding.decorators.decorators import wraps
+from satella.coding.decorators.wraps import wraps
 from satella.coding.typing import NoArgCallable
 from .base import MetricLevel
 

@@ -6,6 +6,7 @@ import typing as tp
 
 from satella.coding.deleters import DictDeleter, IterMode
 from satella.coding.typing import T, NoArgCallable
+import inspect
 
 
 class CancellableCallback:
@@ -24,6 +25,7 @@ class CancellableCallback:
     Hashable and __eq__-able by identity. Equal only to itself.
 
     :param callback_fun: function to call
+    :param hash: reserved for internal use, don't use
 
     :ivar cancelled: whether this callback was cancelled (bool)
     :ivar one_shotted: whether this callback was invoked (bool)
@@ -39,7 +41,7 @@ class CancellableCallback:
         self.one_shotted = False
 
     def __hash__(self):
-        return hash(id(self))
+        return hash(id(self)) ^ self.__hash
 
     def __eq__(self, other: CancellableCallback) -> bool:
         return id(self) == id(other) and self.cancelled == other.cancelled
@@ -55,11 +57,12 @@ class CancellableCallback:
         self.cancelled = True
 
 
-def _callable_to_cancellablecallback(callback: NoArgCallable[[T], None]) -> CancellableCallback:
-    if isinstance(callback, NoArgCallable[[T], None]):
-        return CancellableCallback(callback)
-    elif isinstance(callback, CancellableCallback):
+def _callable_to_cancellablecallback(callback: NoArgCallable) -> CancellableCallback:
+    if isinstance(callback, CancellableCallback):
         return callback
+    if callable(callback):
+        return CancellableCallback(callback)
+    raise ValueError('Invalid callable')
 
 
 class CancellableCallbackGroup:
@@ -111,7 +114,7 @@ class CallableGroup(tp.Generic[T]):
     __slots__ = 'callables', 'gather', 'swallow_exceptions',
 
     def __init__(self, gather: bool = True, swallow_exceptions: bool = False):
-        self.callables = collections.OrderedDict()  # type: tp.Dict[tp.Callable, tuple[bool]]
+        self.callables = collections.OrderedDict()  # type: tp.Dict[CancellableCallback, bool]
         self.gather = gather  # type: bool
         self.swallow_exceptions = swallow_exceptions  # type: bool
 
@@ -131,22 +134,21 @@ class CallableGroup(tp.Generic[T]):
         """
         Remove it's entries that are CancelledCallbacks and that were cancelled and move one shots
         """
-        with DictDeleter(self.callables, iter_mode=IterMode.ITER_VALUES) as dd:
+        with DictDeleter(self.callables, iter_mode=IterMode.ITER_ITEMS) as dd:
             for callable_, oneshot in dd:
-                if isinstance(callable_, CancellableCallback) and not callable_:
+                if isinstance(callable_, CancellableCallback) and not callable_.cancelled:
                     dd.delete()
                 if oneshot:
                     dd.delete()
 
-    def add_many(self, callable_: tp.Sequence[tp.Union[NoArgCallable[T],
-                 tp.Tuple[NoArgCallable[T], bool]]]) -> CancellableCallbackGroup:
+    def add_many(self, callable_: tp.Sequence[tp.Union[NoArgCallable,
+                 tp.Tuple[NoArgCallable, bool]]]) -> CancellableCallbackGroup:
         """
         Add multiple callbacks
 
-        .. note:: Same callable can't be added twice. It will silently fail.
-                  Note that already called one-shots can be added twice
-
         Basically every callback is cancellable.
+
+        .. warning: Same callable cannot be added twice. A RuntimeError will be raised in that case.
 
         :param callable_: sequence of either callables with will be registered as multiple-shots or a tuple of callback
             (with an argument to register it as a one-shot)
@@ -169,17 +171,17 @@ class CallableGroup(tp.Generic[T]):
         """
         Add a callable.
 
-        .. note:: Same callable can't be added twice. It will silently fail, and return an existing callbacks.
-                  Note that already called one-shots can be added twice
-
         Can be a :class:`~satella.coding.concurrent.CancellableCallback`, in that case
         method :meth:`~satella.coding.concurrent.CallableGroup.remove_cancelled` might
         be useful.
+
+        .. warning: Same callable cannot be added twice. A RuntimeError will be raised in that case.
 
         Basically every callback is cancellable.
 
         :param callable_: callable
         :param one_shot: if True, callable will be unregistered after single call
+        :param hash: internal, don't use
         :returns: callable_ if it was a cancellable callback, else one constructed after it
 
         .. deprecated:: v2.25.5
@@ -189,7 +191,7 @@ class CallableGroup(tp.Generic[T]):
             callable_ = _callable_to_cancellablecallback(callable_)
             self.callables[callable_] = one_shot
         if callable_ in self.callables:
-            return callable_
+            raise RuntimeError('Same callable added twice')
         return callable_
 
     def __call__(self, *args, **kwargs) -> tp.Optional[tp.List[T]]:
@@ -230,6 +232,10 @@ class CallableGroup(tp.Generic[T]):
 
         if self.gather:
             return results
+
+    def __len__(self):
+        self.remove_cancelled()
+        return len(self.callables)
 
 
 class CallNoOftenThan:

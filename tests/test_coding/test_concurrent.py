@@ -270,7 +270,7 @@ class TestConcurrent(unittest.TestCase):
             nonlocal a
             a[4] += 1
 
-        cbgroup.add_many(y, z)
+        cb = cbgroup.add_many(y, z)
         cbgroup.add(CancellableCallback(p, one_shotted=False))
         cbgroup()
         self.assertEqual(a[1],3)
@@ -278,6 +278,9 @@ class TestConcurrent(unittest.TestCase):
         self.assertEqual(a[4], 7)
         cbgroup()
         self.assertEqual(a[4], 8)
+        cb.cancel()
+        cbgroup()
+        self.assertEqual(a[4], 7)
 
     def test_peekable_queue_put_many(self):
         pkb = PeekableQueue()
@@ -765,8 +768,11 @@ class TestConcurrent(unittest.TestCase):
     def test_cg_proforma(self):
         cg = CallableGroup()
         a = {}
-        cg.add(lambda: a.__setitem__('test', 'value'))
-        cg()
+        def cg_proforma(val):
+            nonlocal a
+            a['test'] = val
+        cg.add(cg_proforma)
+        cg('value')
         self.assertEqual(a['test'], 'value')
 
     def test_terminable_thread(self):
@@ -877,18 +883,18 @@ class TestConcurrent(unittest.TestCase):
 
     def test_callable_group(self):
         a = {
-            'a': False,
-            'b': False
+            'a': 1
         }
 
         def op_f(what):
-            return lambda: a.__setitem__(what, True)
+            what['a'] += 1
 
         cg = CallableGroup()
 
-        cg.add(op_f('a'))
-        cg.add(op_f('b'))
+        cg.add(op_f)
+        self.assertRaises(RuntimeError, cg.add, op_f)
+        self.assertEqual(len(cg), 2)
 
-        cg()
+        cg(a)
 
-        self.assertTrue(all(a.values()))
+        self.assertEqual(a, {'a': 3})

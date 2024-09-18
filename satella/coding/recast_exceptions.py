@@ -3,7 +3,7 @@ import logging
 import threading
 import typing as tp
 
-from .decorators.decorators import wraps
+from .decorators.wraps import wraps
 from .typing import ExceptionClassType, T, NoArgCallable, ExceptionList
 
 

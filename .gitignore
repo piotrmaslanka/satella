@@ -4,12 +4,14 @@
 test*.json
 test*.txt
 .pytest_cache
+test-*
 .eggs
 satella.sublime*
 hs_err_pid*.log
 *.pydevproject
 .coverage.*
 .project
+tests/test_coding/__pycache__
 venv
 coverage.xml
 .coverage.*

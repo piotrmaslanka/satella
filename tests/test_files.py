@@ -1,5 +1,6 @@
 import io
 import os
+import uuid
 from os.path import join
 import tempfile
 import unittest
@@ -114,15 +115,17 @@ class TestFiles(unittest.TestCase):
         self.assertFalse(try_unlink('test.txt'))
 
     def test_write_out_file_if_different(self):
-        try:
-            os.unlink('test')
-        except FileNotFoundError:
-            pass
-        try:
-            self.assertTrue(write_out_file_if_different('test', 'test', 'UTF-8'))
-            self.assertFalse(write_out_file_if_different('test', 'test', 'UTF-8'))
-        finally:
-            os.unlink('test')
+        # Wait until Windows releases the file
+        while True:
+            try:
+                os.unlink('test')
+            except (PermissionError, FileNotFoundError):
+                pass
+            try:
+                self.assertTrue(write_out_file_if_different('test-'+uuid.uuid4().hex, 'test', 'UTF-8'))
+                self.assertFalse(write_out_file_if_different('test-'+uuid.uuid4().hex, 'test', 'UTF-8'))
+            finally:
+                os.unlink('test')
 
     def test_read_in_and_write_to(self):
         data = 'żażółć gęślą jaźń'

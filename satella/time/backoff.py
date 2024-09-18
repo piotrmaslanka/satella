@@ -1,7 +1,7 @@
 import time
 import typing as tp
 
-from satella.coding.decorators.decorators import wraps
+from satella.coding.decorators.wraps import wraps
 from satella.coding.typing import ExceptionList
 from satella.exceptions import WouldWaitMore
 from satella.time.measure import measure

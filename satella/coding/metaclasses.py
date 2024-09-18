@@ -1,6 +1,6 @@
 import inspect
 
-from .decorators import wraps
+from .decorators.wraps import wraps
 from .sequences.iterators import walk
 from .typing import Predicate
 

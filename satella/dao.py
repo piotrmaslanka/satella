@@ -1,6 +1,6 @@
 from abc import ABCMeta, abstractmethod
 
-from satella.coding.decorators.decorators import wraps
+from satella.coding.decorators.wraps import wraps
 
 __all__ = ['Loadable', 'must_be_loaded']
 

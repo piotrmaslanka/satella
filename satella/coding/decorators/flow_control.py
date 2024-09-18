@@ -1,7 +1,7 @@
 import queue
 import typing as tp
 
-from satella.coding.decorators.decorators import wraps
+from satella.coding.decorators.wraps import wraps
 from satella.coding.typing import ExceptionClassType, NoArgCallable, Predicate
 
 Queue = tp.TypeVar('Queue')

@@ -2,7 +2,7 @@ import typing as tp
 from concurrent.futures import Future
 from threading import Thread
 
-from satella.coding.decorators.decorators import wraps
+from satella.coding.decorators.wraps import wraps
 from satella.coding.sequences.sequences import infinite_iterator
 from satella.coding.typing import T
 

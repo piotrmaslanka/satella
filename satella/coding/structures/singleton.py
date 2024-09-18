@@ -1,7 +1,7 @@
 import typing as tp
 import weakref
 
-from satella.coding.decorators.decorators import wraps
+from satella.coding.decorators.wraps import wraps
 
 
 # noinspection PyPep8Naming
