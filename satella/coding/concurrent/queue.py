@@ -13,13 +13,14 @@ class PeekableQueue(tp.Generic[T]):
     """
     A thread-safe FIFO queue that supports peek()ing for elements.
     """
-    __slots__ = ('queue', 'lock', 'inserted_condition')
+    __slots__ = ('queue', 'lock', 'inserted_condition', 'items_count')
 
     def __init__(self):
         super().__init__()
         self.queue = collections.deque()
         self.lock = threading.Lock()
         self.inserted_condition = Condition()
+        self.items_count = 0
 
     def put(self, item: T) -> None:
         """
@@ -29,6 +30,7 @@ class PeekableQueue(tp.Generic[T]):
         """
         with self.lock:
             self.queue.append(item)
+            self.items_count += 1
         self.inserted_condition.notify()
 
     def put_many(self, items: tp.Sequence[T]) -> None:
@@ -40,7 +42,7 @@ class PeekableQueue(tp.Generic[T]):
         with self.lock:
             items_count = 0
             for item in items:
-                items_count += 1
+                self.items_count += 1
                 self.queue.append(item)
         self.inserted_condition.notify(items_count)
 
@@ -114,4 +116,7 @@ class PeekableQueue(tp.Generic[T]):
         guarantee that a subsequent get() will not block.
         :return: approximate size of the queue
         """
-        return len(self.queue)
+        return self.items_count
+
+    def __len__(self):
+        return self.items_count

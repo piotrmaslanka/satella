@@ -1,6 +1,7 @@
-# v.25.a3
+# v.25.a7
 
 * fixed circular import
+* added __len__ to PeekableQueue
 
 # v2.25.5
 
