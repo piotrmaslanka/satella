@@ -1,9 +1,8 @@
 import logging
-import sys
 import unittest
 
 from satella.coding import rethrow_as, silence_excs, catch_exception, log_exceptions, \
-    raises_exception, reraise_as
+    raises_exception
 
 logger = logging.getLogger(__name__)
 
@@ -46,8 +45,14 @@ class TestStuff(unittest.TestCase):
             pass
         get_me_normal(KeyError)
 
+        @log_exceptions(logger, logging.CRITICAL, '{args}', exc_types=IndexError, swallow_exception=False)
+        def dupa2():
+            dupa = []
+            dupa[1]
+
         self.assertRaises(ValueError, lambda: list(get_me(ValueError)))
         self.assertRaises(ValueError, lambda: get_me_normal(ValueError))
+        self.assertRaises(IndexError, dupa2)
 
     def test_log_exceptions_decorator(self):
 
@@ -139,7 +144,7 @@ class TestStuff(unittest.TestCase):
 
     def test_reraise(self):
         try:
-            with reraise_as(ValueError, NameError):
+            with rethrow_as(ValueError, NameError):
                 raise ValueError()
         except NameError:
             return
@@ -148,7 +153,7 @@ class TestStuff(unittest.TestCase):
 
     def test_reraise_silencer(self):
 
-        @reraise_as(ValueError, None)
+        @rethrow_as(ValueError, None)
         def lol():
             raise ValueError()
 

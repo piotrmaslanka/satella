@@ -13,6 +13,7 @@ hs_err_pid*.log
 venv
 coverage.xml
 .coverage.*
+*__pycache__*
 .metadata
 test
 lock
