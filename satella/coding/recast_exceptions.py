@@ -2,6 +2,7 @@ import inspect
 import logging
 import threading
 import typing as tp
+import warnings
 
 from .decorators.decorators import wraps
 from .typing import ExceptionClassType, T, NoArgCallable, ExceptionList
@@ -238,6 +239,7 @@ class rethrow_as:
                  exception_preprocessor: tp.Optional[tp.Callable[[Exception], str]] = repr,
                  returns=None,
                  returns_factory: tp.Optional[NoArgCallable[tp.Any]] = None):
+        warnings.warn('Deprecated, use reraise_as', DeprecationWarning)
         try:
             a, b = pairs  # throws ValueError
             op = issubclass(b, BaseException)  # throws TypeError

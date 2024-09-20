@@ -1,5 +1,6 @@
-# v.25.a3
+# v2.25.6
 
+* deprecated rethrow_as
 * fixed circular import
 
 # v2.25.5
