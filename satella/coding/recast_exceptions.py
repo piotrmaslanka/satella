@@ -86,9 +86,15 @@ class log_exceptions:
         """Return whether the exception has been logged"""
         if not isinstance(e, self.exc_types):
             return False
-        format_dict = {'args': args, 'kwargs': kwargs}
+        format_dict = {}
+        if '{args}' in self.format_string:
+            format_dict['args'] = args
+        if '{kwargs}' in self.format_string:
+            format_dict['kwargs'] = kwargs
         if self.locals is not None:
-            format_dict.update(self.locals)
+            for key, value in self.locals.items():
+                if '{%s}' % (key,) in self.format_string:
+                    format_dict[key] = value
         format_dict['e'] = e
         self.logger.log(self.severity, self.format_string.format(**format_dict),
                         exc_info=e)
@@ -217,6 +223,8 @@ class rethrow_as:
         However, during to richer set of switches and capability to return a value
         this is not deprecated.
 
+    .. deprecated:: v
+
     :param exception_preprocessor: other callable/1 to use instead of repr.
         Should return a str, a text description of the exception
     :param returns: what value should the function return if this is used as a decorator
@@ -281,6 +289,8 @@ class rethrow_as:
                     if to is None:
                         return True
                     raise to(self.exception_preprocessor(exc_val))
+
+
 
 
 def raises_exception(exc_class: tp.Union[ExceptionClassType, tp.Tuple[ExceptionClassType, ...]],
