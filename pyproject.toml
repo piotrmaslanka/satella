@@ -45,11 +45,11 @@ max-line-length = 119
 universal = true
 
 [project.urls]
-Homepage = "https://github.com/piotrmaslanka/satella"
-Documentation = "https://satella.readthedocs.io/"
-Issues = "https://github.com/piotrmaslanka/satella/issues"
-Repository = "https://github.com/piotrmaslanka/satella"
-Changelog = "https://github.com/piotrmaslanka/satella/blob/develop/CHANGELOG.md"
+Homepage = "https://git.dms-serwis.com.pl/smokserwis/satella"
+Documentation = "https://smokserwis.docs.smok.co/satella"
+Issues = "https://git.dms-serwis.com.pl/smokserwis/satella/-/issues"
+Repository = "https://git.dms-serwis.com.pl/smokserwis/satella"
+Changelog = "https://git.dms-serwis.com.pl/smokserwis/satella/-/blob/master/CHANGELOG.md?ref_type=heads"
 
 [tool.setuptools]
 packages = ["satella",

@@ -44,14 +44,12 @@ class TestResources(unittest.TestCase):
 
             def acquire_connection(self):
                 v = super().acquire_connection()
-                print(f'Acquiring connection {v.id}')
                 if v.id in self.already_acquired:
                     raise RuntimeError('Reacquiring an acquired connection')
                 self.already_acquired.add(v.id)
                 return v
 
             def release_connection(self, connection) -> None:
-                print(f'Releasing connection {connection.id}')
                 self.already_acquired.remove(connection.id)
                 super().release_connection(connection)
 

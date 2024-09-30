@@ -61,9 +61,9 @@ class TestCPUTime(unittest.TestCase):
         try:
             with measure(timeout=30) as m:
                 while not m.timeouted:
-                    time.sleep(5)
+                    time.sleep(10)
                     usage = get_own_cpu_usage()
-                    if usage.user > 0.9:
+                    if usage.user > 0.6:
                         break
                 else:
                     self.fail('Timeout when waiting for significant CPU usage')

@@ -2,6 +2,9 @@
 
 * deprecated rethrow_as
 * fixed circular import
+* paths changed in pyproject.toml
+* removed prints from unit tests
+* fixed a subtle bug in _CPUProfileBuilderThread.get_own_cpu_usage
 
 # v2.25.5
 

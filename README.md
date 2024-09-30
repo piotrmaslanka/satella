@@ -27,7 +27,9 @@ coverage
 ```
 
 It's still free, MIT-licensed and publicly available. No one's taking it from you :)
-I'll try to submit the builds to PyPI as well
+
+**I'll try to submit the builds to regular [PyPI](https://pypi.org/project/satella/) as well!!**
+
 
 What is Satella?
 ----------------

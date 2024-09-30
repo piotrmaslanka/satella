@@ -75,6 +75,7 @@ class _CPUProfileBuilderThread(SingleStartThread):
         time_c, times_c = self.own_load_average[-1]
         difference = time_c - time_p
         if difference == 0:
+            del self.own_load_average[-2]
             return None
         tuple_build = {}
         for field in times_v._fields:  # pylint: disable=protected-access
