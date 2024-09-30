@@ -1,4 +1,5 @@
 import typing as tp
+import weakref
 
 from satella.coding.decorators.decorators import wraps
 
@@ -36,7 +37,7 @@ def Singleton(cls):
 
 
 # noinspection PyPep8Naming
-def SingletonWithRegardsTo(num_args: int):
+def SingletonWithRegardsTo(num_args: int, weak_refs: bool = False):
     """
     Make a memoized singletion depending on the arguments.
 
@@ -55,6 +56,13 @@ def SingletonWithRegardsTo(num_args: int):
     >>> c = MyClass('dev1')
     >>> assert a is c
     >>> assert b is not c
+
+    :param num_args: number of arguments to consume
+    :param weak_refs: if True, then singleton will be stored within a weak dictionary, so that it cleans up after itself
+                      when the values are gone.
+
+    .. warning:: If you set weak_refs to False and have a potentially unbounded number of argument values, you better
+                 watch out for the memory usage.
     """
 
     def inner(cls):
@@ -65,7 +73,10 @@ def SingletonWithRegardsTo(num_args: int):
         def singleton_new(cls, *args, **kw):
             it = cls.__dict__.get('__it__')
             if it is None:
-                it = cls.__it__ = {}
+                if weak_refs:
+                    it = cls.__it__ = weakref.WeakValueDictionary()
+                else:
+                    it = cls.__it__ = {}
 
             key = args[:num_args]
             if key in it:

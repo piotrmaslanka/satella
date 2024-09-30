@@ -19,6 +19,8 @@ Rudimentary data transforms and algorithms
 
 .. autofunction:: satella.coding.transforms.b64encode
 
+.. autofunction:: satella.coding.transforms.list_values_to_indices
+
 pad_to_multiple_of_length
 -------------------------
 

@@ -656,7 +656,7 @@ class TestConcurrent(unittest.TestCase):
         mt.start().join()
         mt.terminate()
 
-    @unittest.skipUnless(sys.implementation.name == 'cpython', 'Does not work on PyPy :(')
+    @unittest.skipUnless(sys.implementation.name != 'cpython', 'Does not work on PyPy :(')
     def test_condition(self):
         dct = {'a': False}
         slf = self

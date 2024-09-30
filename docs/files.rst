@@ -9,6 +9,14 @@ A file-like object that will dispose of your content.
 .. autoclass:: satella.files.DevNullFilelikeObject
     :members:
 
+
+jump_to_directory
+-----------------
+
+.. autofunction:: jump_to_directory
+    :members:
+
+
 safe_listdir
 ------------
 

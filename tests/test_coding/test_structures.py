@@ -446,7 +446,7 @@ class TestStructures(unittest.TestCase):
                 return self.value
 
         cg = TestCacheGetter()
-        cd = CacheDict(1, 2, cg)
+        cd = CacheDict('1s', '2s', cg)
         now = time.monotonic()
         self.assertEqual(cd[2], 2)
         self.assertEqual(list(cd), [2])
@@ -865,6 +865,15 @@ class TestStructures(unittest.TestCase):
 
 
 class TestDictObject(unittest.TestCase):
+
+    def test_constructor2(self):
+        a = {'a': 4, 'b': {'c': 1, 'd': 2}}
+        a = apply_dict_object(a)
+        self.assertEqual(a.a, 4)
+        self.assertEqual(a.b.c, 1)
+        self.assertEqual(a.b.d, 2)
+        self.assertEqual(a['a'], 4)
+        self.assertEqual(a['b'], {'c': 1, 'd': 2})
 
     def test_constructor(self):
         a = DictObject({'a': 5})

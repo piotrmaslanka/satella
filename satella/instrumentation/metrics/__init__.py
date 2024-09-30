@@ -31,6 +31,33 @@ def adjust_metric_level_for_root(metric_level: tp.Optional[MetricLevel],
 ALLOWED_CHARACTERS = string.ascii_uppercase + string.digits + ':' + '_' + '.'
 
 
+def _process_metric(name, name_index, metric_level, metric_level_to_set_for_children, name_part, root_metric,
+                    metric_name, metric_type, kwargs):
+    tentative_name = '.'.join(name[:name_index])
+    if tentative_name not in metrics:
+        if tentative_name == '':
+            metric = Metric('',
+                            None,
+                            adjust_metric_level_for_root(metric_level,
+                                                         metric_level_to_set_for_children),
+                            **kwargs)
+            metric.level = MetricLevel.RUNTIME
+            root_metric = metric
+        elif metric_name == tentative_name:
+            metric = METRIC_NAMES_TO_CLASSES[metric_type](name_part, root_metric,
+                                                          metric_level, **kwargs)
+        else:
+            metric = Metric(name_part, root_metric, metric_level_to_set_for_children,
+                            **kwargs)
+        metrics[tentative_name] = metric
+        if metric != root_metric:  # prevent infinite recursion errors
+            root_metric.append_child(metric)
+    else:
+        metric = metrics[tentative_name]
+    root_metric = metric
+    return metric, root_metric
+
+
 # noinspection PyPep8Naming
 def getMetric(metric_name: str = '',
               metric_type: str = 'base',
@@ -65,28 +92,8 @@ def getMetric(metric_name: str = '',
                                           existing_type=metrics[metric_name].CLASS_NAME)
 
         for name_index, name_part in itertools.chain(((0, ''),), enumerate(name, start=1)):
-            tentative_name = '.'.join(name[:name_index])
-            if tentative_name not in metrics:
-                if tentative_name == '':
-                    metric = Metric('',
-                                    None,
-                                    adjust_metric_level_for_root(metric_level,
-                                                                 metric_level_to_set_for_children),
-                                    **kwargs)
-                    metric.level = MetricLevel.RUNTIME
-                    root_metric = metric
-                elif metric_name == tentative_name:
-                    metric = METRIC_NAMES_TO_CLASSES[metric_type](name_part, root_metric,
-                                                                  metric_level, **kwargs)
-                else:
-                    metric = Metric(name_part, root_metric, metric_level_to_set_for_children,
-                                    **kwargs)
-                metrics[tentative_name] = metric
-                if metric != root_metric:  # prevent infinite recursion errors
-                    root_metric.append_child(metric)
-            else:
-                metric = metrics[tentative_name]
-            root_metric = metric
+            metric, root_metric = _process_metric(name, name_index, metric_level, metric_level_to_set_for_children,
+                                                  name_part, root_metric, metric_name, metric_type, kwargs)
 
         if metric_level is not None:
             metric.level = metric_level

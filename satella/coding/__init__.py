@@ -4,7 +4,7 @@ Just useful objects to make your coding nicer every day
 
 from .algos import merge_dicts
 from .concurrent import Monitor, RMonitor
-from .ctxt_managers import EmptyContextManager
+from .ctxt_managers import EmptyContextManager, wrap_callable_in_context_manager
 from .decorators import precondition, short_none, has_keys, \
     wraps, chain_functions, postcondition, queue_get, auto_adapt_to_methods, \
     attach_arguments, for_argument
@@ -26,7 +26,7 @@ from .recast_exceptions import rethrow_as, silence_excs, catch_exception, log_ex
 
 __all__ = [
     'EmptyContextManager', 'Context', 'length',
-    'assert_equal', 'InequalityReason', 'Inequal',
+    'assert_equal', 'InequalityReason', 'Inequal', 'wrap_callable_in_context_manager',
     'Closeable', 'contains', 'enum_value',
     'expect_exception',
     'overload', 'class_or_instancemethod', 'TypeSignature',

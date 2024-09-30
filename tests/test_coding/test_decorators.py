@@ -5,7 +5,7 @@ from socket import socket
 
 import time
 from satella.coding import wraps, chain_functions, postcondition, \
-    log_exceptions, queue_get, precondition, short_none
+    log_exceptions, queue_get, precondition, short_none, wrap_callable_in_context_manager
 from satella.coding.decorators import auto_adapt_to_methods, attach_arguments, \
     execute_before, loop_while, memoize, copy_arguments, replace_argument_if, \
     retry, return_as_list, default_return, transform_result, transform_arguments, \
@@ -18,6 +18,23 @@ logger = logging.getLogger(__name__)
 
 
 class TestDecorators(unittest.TestCase):
+    def test_wrap_ctxt_mgr(self):
+        a = None
+        class CtxtMgr:
+            def __init__(self, value):
+                nonlocal a
+                a = value
+
+            def __enter__(self):
+                return self
+
+            def __exit__(self, exc_type, exc_val, exc_tb):
+                return False
+
+        clbl = lambda y: y
+        clbl = wrap_callable_in_context_manager(clbl, CtxtMgr, 5)
+        clbl(3)
+        self.assertEqual(a, 5)
 
     def test_cached_property(self):
         class Example:
