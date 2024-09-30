@@ -1,6 +1,6 @@
 # v2.25.8
 
-* _TBA_
+* fixed the modules page
 
 # v2.25.7
 

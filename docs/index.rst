@@ -16,9 +16,9 @@ Satella uses semantic_ versioning 2.0 for your convenience.
 
 .. _semantic: https://semver.org/spec/v2.0.0.html
 
-I believe you've already covered project's primary README at GitHub_. If not, please indulge.
+I believe you've already covered project's primary README at GitLab_. If not, please indulge.
 
-.. _GitHub: https://github.com/piotrmaslanka/satella
+.. _GitHub: https://git.dms-serwis.com.pl/smokserwis/satella
 
 .. toctree::
            :maxdepth: 2

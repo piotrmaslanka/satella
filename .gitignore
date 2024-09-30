@@ -8,6 +8,8 @@ test*.txt
 satella.sublime*
 hs_err_pid*.log
 *.pydevproject
+docs/modules.rst
+docs/satella.*.rst
 .coverage.*
 .project
 venv
@@ -20,6 +22,7 @@ lock
 bin/
 tmp/
 *.tmp
+docs/satella.rst
 *.bak
 *.swp
 *~.nib
