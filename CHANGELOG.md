@@ -1,3 +1,7 @@
+# v2.25.7
+
+* _TBA_
+
 # v2.25.6
 
 * deprecated rethrow_as
