@@ -62,7 +62,7 @@ test_python311:
 build_python:
   stage: build
   before_script:
-    - pip install --break-system-packages --upgrade Cython setuptools pip twine
+    - pip install --break-system-packages --upgrade setuptools pip twine
   script:
     - python setup.py bdist_wheel
     - mv dist/*.whl .
