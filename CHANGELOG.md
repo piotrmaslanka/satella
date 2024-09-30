@@ -1,3 +1,8 @@
+# v2.25.5
+
+* slight optimization for Heap.push_many
+* bugfix for Heap.push and a deprecation
+
 # v2.25.4
 
 * add JSONAbleDataObject

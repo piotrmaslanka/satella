@@ -7,14 +7,6 @@ from satella.coding.decorators.decorators import wraps
 from satella.coding.typing import T, Predicate
 
 
-def _extras_to_one(fun):
-    @wraps(fun)
-    def inner(self, a, *args, **kwargs):
-        return fun(self, ((a,) + args) if len(args) > 0 else a, **kwargs)
-
-    return inner
-
-
 class Heap(collections.UserList, tp.Generic[T]):
     """
     Sane heap as object - not like heapq.
@@ -30,8 +22,17 @@ class Heap(collections.UserList, tp.Generic[T]):
         heapq.heapify(self.data)
 
     def push_many(self, items: tp.Iterable[T]) -> None:
-        for item in items:
-            self.push(item)
+        """
+        Put multiple items on the heap.
+        Faster than
+
+        >>> for item in items:
+        >>>     heap.push(item)
+
+        :param: an iterable with items to put
+        """
+        self.data.extend(items)
+        heapq.heapify(self.data)
 
     def pop_item(self, item: T) -> T:
         """
@@ -43,8 +44,7 @@ class Heap(collections.UserList, tp.Generic[T]):
         heapq.heapify(self.data)
         return item
 
-    @_extras_to_one
-    def push(self, item: T) -> None:
+    def push(self, item: T, *args) -> None:
         """
         Use it like:
 
@@ -53,7 +53,14 @@ class Heap(collections.UserList, tp.Generic[T]):
         or:
 
         >>> heap.push(4, myobject)
+
+        However this syntax is
+
+        .. deprecated:: 2.25.5
+            It's not legible
         """
+        if args:
+            item = (item, *args)
         heapq.heappush(self.data, item)
 
     def __deepcopy__(self, memo={}) -> 'Heap':
@@ -137,6 +144,13 @@ class SetHeap(Heap):
 
     #notthreadsafe
     """
+
+    def push_many(self, items: tp.Iterable[T]) -> None:
+        """
+        Not that much faster than inserting anything by hand
+        """
+        for item in items:
+            self.push(item)
 
     def __init__(self, from_list: tp.Optional[tp.Iterable[T]] = None):
         super().__init__(from_list=from_list)
