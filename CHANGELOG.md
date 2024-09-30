@@ -1,6 +1,6 @@
 # v2.25.8
 
-* fixed the modules page
+* fixed the modules page in documentation
 
 # v2.25.7
 
