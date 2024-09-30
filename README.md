@@ -7,6 +7,31 @@ satella
 [![License](https://img.shields.io/pypi/l/satella)](https://github.com/piotrmaslanka/satella)
 [![linting: pylint](https://img.shields.io/badge/linting-pylint-yellowgreen)](https://github.com/pylint-dev/pylint)
 
+Important!
+----------
+
+Development has been moved to [external PyPI](https://git.dms-serwis.com.pl/smokserwis/satella).
+In order to install latest Satella just type:
+
+```
+pip install --extra-index-url https://git.dms-serwis.com.pl/api/v4/groups/330/-/packages/pypi/simple satella
+```
+
+If you want to put it in requirements.txt just type:
+
+```
+--extra-index-url https://git.dms-serwis.com.pl/api/v4/groups/330/-/packages/pypi/simple
+satella
+nose2
+coverage
+```
+
+It's still free, MIT-licensed and publicly available. No one's taking it from you :)
+I'll try to submit the builds to PyPI as well
+
+What is Satella?
+----------------
+
 Satella is an almost-zero-requirements Python 3.7+ library for writing server applications. It has arisen out of my
 requirements to have some classes or design patterns handy, and kinda wish-they-were-in-the-stdlib ones. especially
 those dealing with mundane but useful things. It also runs on PyPy, and most of it runs on Windows (the part not dealing
@@ -65,4 +90,6 @@ They should pass on Windows too, but some tests requiring POSIX-like functionali
 Automatic release system
 ------------------------
 
-Releases happen to our local PyPI. Just add a tag for it to work.
+Releases happen automatically. Just add a tag with the name of the version.
+
+**NOTE that changes from 2.25 will be numbered as tags without the prefix ```v```**!
