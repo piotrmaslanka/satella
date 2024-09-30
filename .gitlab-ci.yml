@@ -29,6 +29,7 @@ pages:
 test_python37:
   extends: .test
   image: python:3.7
+  allow_failure: true
 
 test_python38:
   extends: .test

@@ -55,6 +55,7 @@ I believe you've already covered project's primary README at GitLab_. If not, pl
            processes
            cassandra
            opentracing
+           modules
 
 
 Indices and tables
