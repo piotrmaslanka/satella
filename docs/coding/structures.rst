@@ -1,4 +1,3 @@
-==========
 Structures
 ==========
 
@@ -8,6 +7,7 @@ Structures
 You can also use the following singleton.
 
 .. code-block:: python
+
     from satella.coding.structures import NOT_EQUAL_TO_ANYTHING
 
     assert NOT_EQUAL_TO_ANYTHING != NOT_EQUAL_TO_ANYTHING

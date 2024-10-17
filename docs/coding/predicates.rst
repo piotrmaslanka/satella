@@ -1,4 +1,3 @@
-==========
 Predicates
 ==========
 
@@ -7,15 +6,15 @@ Satella's API drastically simplifies writing lambda.
 
 Satella lets you express lambdas in a Pythonic way, eg:
 
-    ::
+.. code-block:: python
 
-        p = x == 2
+    p = x == 2
 
-        assert(p(2) and not p(1))
+    assert(p(2) and not p(1))
 
-        p = x > 2
+    p = x > 2
 
-        assert(p(2) and not p(1))
+    assert(p(2) and not p(1))
 
 
 This behaviour extends to operators, item procurement and attr procurement.
