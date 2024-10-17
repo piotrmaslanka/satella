@@ -15,7 +15,7 @@ class TestSequences(unittest.TestCase):
 
     def test_check_with_index(self):
         a = [1,2,3,4,5]
-        elem, i = choose_with_index(lambda a: a == 3)
+        elem, i = choose_with_index(lambda b: b == 3, a)
         self.assertEqual(elem, 3)
         self.assertEqual(i, 2)
 
