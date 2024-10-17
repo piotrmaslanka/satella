@@ -21,7 +21,7 @@ They are as follows:
 
 You may use these generics in your classes, eg.
 
-::
+.. code-block:: python
 
     def enumerate(v: Iteratable[int]) -> int:
         ...
