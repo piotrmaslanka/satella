@@ -1,6 +1,5 @@
-=======================
 Sequences and iterators
-=======================
+#######################
 
 Rolling averages
 ================
@@ -42,22 +41,21 @@ iterate_callable
 
 .. autofunction:: satella.coding.sequences.iterate_callable
 
-choose
-------
+Choosing stuff
+--------------
 
 To return the first single element that returns true on given callable,
 use the following function:
 
 .. autofunction:: satella.coding.sequences.choose
 
-choose_one
-----------
-
-Does the same thing as choose, but exhausts the generator and checks if there are no multiple
-elements matching the callable. If there are, raises ValueError.
+If you need to exhaust the generator, use the following:
 
 .. autofunction:: satella.coding.sequences.choose_one
 
+If you needn an index of the element found, use:
+
+.. autofunction:: satella.coding.sequences.choose_with_index
 
 AlreadySeen
 -----------
@@ -115,7 +113,7 @@ take_n
 
 For the rare moments, when you wish you could just do:
 
-::
+.. code-block:: python
 
     iterator: tp.Iterator[T] = iterator
     n_elements: tp.List[T] = iterator[:n]
@@ -124,7 +122,6 @@ But it doesn't let you do this, because iterator is not subscriptable.
 However, this function comes to the rescue:
 
 .. autofunction:: satella.coding.sequences.take_n
-
 
 infinite_iterator
 -----------------
@@ -139,7 +136,7 @@ A factory for filter functions that check if given object is
 an instance of something (or multiple classes, if passed a tuple
 of classes). Use like that
 
-::
+.. code-block:: python
 
     orders: tp.List[BaseOrder] = ...
     read_orders = filter(is_instance(ReadOrder), orders)
@@ -206,7 +203,7 @@ zip_shifted
 
 .. autofunction:: satella.coding.sequences.zip_shifted
 
-This is deprecated. Use ``zip(shift(...))`` instead.
+This is deprecated. Use :code:`zip(shift(...))`` instead.
 
 
 stop_after

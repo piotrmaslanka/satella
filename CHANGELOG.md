@@ -1,6 +1,7 @@
 # v2.25.8
 
 * fixed the modules page in documentation
+* added choose_with_index
 
 # v2.25.7
 
