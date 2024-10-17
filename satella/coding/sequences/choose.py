@@ -17,6 +17,20 @@ def choose_one(filter_fun: Predicate[T], iterable: Iteratable) -> T:
     return choose(filter_fun, iterable, True)
 
 
+def choose_with_index(filter_fun: Predicate[T], iterable: Iteratable) -> tp.Tuple[T, int]:
+    """
+    Return a first found single value that exists in given iterable and filter_fun called on it returns True
+
+    :param filter_fun: function that returns bool on the single value
+    :param iterable: iterable to examine
+    :returns: a tuple of (element, index)
+    :raises ValueError: element not found
+    """
+    for i, item in enumerate(iterable):
+        if filter_fun(item):
+            return item, i
+    raise ValueError('No elements matching given filter seen')
+
 def choose(filter_fun: Predicate[T], iterable: Iteratable,
            check_multiple: bool = False) -> T:
     """
