@@ -1,3 +1,7 @@
+# v2.25.10
+
+* _TBA_
+
 # v2.25.9
 
 * fixed the modules page in documentation
