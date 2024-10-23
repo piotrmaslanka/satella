@@ -503,6 +503,11 @@ class TestStructures(unittest.TestCase):
         self.assertEqual(cd[2], [])
         self.assertEqual(cd[2], [])
 
+    def test_new_dictobject(self):
+        a = DictObject(a=5, k=3)
+        b = DictObject(a)
+        self.assertIs(a, b)
+
     def test_dictobject_dictobject(self):
         a = DictObject(a=5, k=3)
         b = DictObject(a)
@@ -514,8 +519,6 @@ class TestStructures(unittest.TestCase):
         self.assertEqual(b.c, 4)
         self.assertEqual(b['c'], 4)
 
-        self.assertIn('DictObject', str(b))
-        self.assertIn('DictObject', repr(b))
         self.assertIn('a', b.keys())
         self.assertIn(5, b.values())
         self.assertIn(('a', 5), b.items())

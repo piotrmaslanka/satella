@@ -22,17 +22,18 @@ class DictObject(dict):
     >>> self.assertEqual(a['test'], 5)
     """
 
+    def __new__(cls, *args, **kwargs):
+        if not kwargs and len(args) == 1:
+            arg, = args
+            if isinstance(arg, DictObject):
+                return arg
+        return super().__new__(cls, *args, **kwargs)
+
     def __copy__(self):
         return DictObject(copy.copy(super()))
 
     def __deepcopy__(self, memo=None):
         return DictObject(copy.deepcopy(super(), memo=memo))
-
-    def __str__(self) -> str:
-        return 'DictObject(%s)' % (super().__str__(),)
-
-    def __repr__(self) -> str:
-        return 'DictObject(%s)' % (super().__repr__(),)
 
     @rethrow_as(KeyError, AttributeError)
     def __getattr__(self, item):
