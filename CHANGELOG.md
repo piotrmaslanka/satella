@@ -1,3 +1,7 @@
+# v2.26.1
+
+* _TBA_
+
 # v2.26.0
 
 * **breaking change**: DictObject will no longer announce it's presence via __str__ and __repr__. It will just display
