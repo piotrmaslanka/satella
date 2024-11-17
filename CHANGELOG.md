@@ -1,3 +1,8 @@
+# v2.26.2
+
+* RunActionAfterGeneratorCompletes won't call it's on_done action if closed prematurely
+* more complete support for generators in RunActionAfterGeneratorCompletes
+
 # v2.26.1
 
 * added run_when_generator_completes and RunActionAfterGeneratorCompletes

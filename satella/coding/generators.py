@@ -2,13 +2,17 @@ import typing as tp
 from abc import ABCMeta, abstractmethod
 
 
-class RunActionAfterGeneratorCompletes(metaclass=ABCMeta):
+
+class RunActionAfterGeneratorCompletes(tp.Generator, metaclass=ABCMeta):
     """
     Run an action after a generator completes.
     An abstract class.
+
+    Please note that this routine will be called only when the generator completes. If you abort it prematurely,
+    via close()
     """
 
-    __slots__ = 'generator', 'args', 'kwargs'
+    __slots__ = 'generator', 'args', 'kwargs', 'closed'
 
     def __init__(self, generator: tp.Generator, *args, **kwargs):
         """
@@ -16,22 +20,34 @@ class RunActionAfterGeneratorCompletes(metaclass=ABCMeta):
         :param args: arguments to invoke action_to_run with
         :param kwargs: keyword arguments to invoke action_to_run with
         """
+        self.closed = False
         self.generator = generator
         self.args = args
         self.kwargs = kwargs
 
+    def close(self):
+        self.closed = True
+        self.generator.close()
+
     def send(self, value):
         """Send a value to the generator"""
-        self.generator.send(value)
+        return self.generator.send(value)
+
+    def next(self):
+        return self.generator.__next__()
 
     def __iter__(self):
         return self
 
+    def throw(self, __typ, __val=None, __tb=None):
+        return self.generator.throw(__typ, __val, __tb)
+
     def __next__(self):
         try:
-            return next(self.generator)
+            return self.generator.__next__()
         except StopIteration:
-            self.action_to_run(*self.args, **self.kwargs)
+            if not self.closed:
+                self.action_to_run(*self.args, **self.kwargs)
             raise
 
     @abstractmethod
@@ -40,7 +56,7 @@ class RunActionAfterGeneratorCompletes(metaclass=ABCMeta):
 
 
 def run_when_generator_completes(gen: tp.Generator, call_on_done: tp.Callable[[], None],
-                                 *args, **kwargs) -> tp.Generator:
+                                 *args, **kwargs) -> RunActionAfterGeneratorCompletes:
     """
     Return the generator with call_on_done to be called on when it finishes
 

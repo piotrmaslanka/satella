@@ -1,9 +1,14 @@
+import typing as tp
 import sys
+import logging
 import unittest
 
-from satella.coding import SelfClosingGenerator, hint_with_length, chain, run_when_generator_completes
+from satella.coding import SelfClosingGenerator, hint_with_length, chain, run_when_generator_completes, typing
 from satella.coding.sequences import smart_enumerate, ConstruableIterator, walk, \
     IteratorListAdapter, is_empty, ListWrapperIterator
+
+
+logger = logging.getLogger(__name__)
 
 
 def iterate():
@@ -15,6 +20,35 @@ def iterate():
 
 
 class TestIterators(unittest.TestCase):
+
+    def test_run_when_generator_completes_2(self):
+        called = False
+
+        def generator():
+            print('Starting generator')
+            c = yield 1
+            assert c == 2
+            print('Starting generator')
+            yield 2
+            yield 2
+            yield 3
+
+        def mark_done(f):
+            assert f == 2
+            nonlocal called
+            called = True
+
+        gen = run_when_generator_completes(generator(), mark_done, 2)
+        a = next(gen)
+        self.assertFalse(called)
+        self.assertEqual(a, 1)
+        b = gen.send(2)
+        self.assertEqual(b, 2)
+        self.assertIsInstance(gen, tp.Generator)
+        self.assertFalse(called)
+        for i in gen:
+            pass
+        self.assertTrue(called)
 
     def test_run_when_generator_completes(self):
         called = False
@@ -31,10 +65,32 @@ class TestIterators(unittest.TestCase):
 
         gen = run_when_generator_completes(generator(), mark_done, 2)
         a = next(gen)
+        self.assertIsInstance(gen, tp.Generator)
         self.assertFalse(called)
-        for i in gen:
+        def inner():
+            yield from gen
+        for i in inner():
             pass
         self.assertTrue(called)
+
+    def test_run_when_generator_closed(self):
+        called = False
+
+        def generator():
+            yield 1
+            yield 2
+            yield 3
+
+        def mark_done(f):
+            assert f == 2
+            nonlocal called
+            called = True
+
+        gen = run_when_generator_completes(generator(), mark_done, 2)
+        a = next(gen)
+        gen.close()
+        self.assertRaises(StopIteration, next, gen)
+        self.assertFalse(called)
 
     def test_list_wrapper_iterator_contains(self):
 
