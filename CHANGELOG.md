@@ -1,6 +1,6 @@
 # v2.26.1
 
-* _TBA_
+* added run_when_generator_completes and RunActionAfterGeneratorCompletes
 
 # v2.26.0
 

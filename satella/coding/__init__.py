@@ -23,8 +23,10 @@ from .misc import update_if_not_none, update_key_if_none, update_attr_if_none, q
 from .overloading import overload, class_or_instancemethod, TypeSignature
 from .recast_exceptions import rethrow_as, silence_excs, catch_exception, log_exceptions, \
     raises_exception, reraise_as
+from .generators import RunActionAfterGeneratorCompletes, run_when_generator_completes
 
 __all__ = [
+    'RunActionAfterGeneratorCompletes', 'run_when_generator_completes',
     'EmptyContextManager', 'Context', 'length',
     'assert_equal', 'InequalityReason', 'Inequal', 'wrap_callable_in_context_manager',
     'Closeable', 'contains', 'enum_value',

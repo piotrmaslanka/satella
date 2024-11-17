@@ -151,3 +151,11 @@ texinfo_documents = [
      author, 'satella', 'One line description of project.',
      'Miscellaneous'),
 ]
+
+autoclass_content = 'both'
+
+autodoc_default_options = {
+    'members': True,
+}
+autodoc_typehints = "description"
+autoclass_content = 'both'

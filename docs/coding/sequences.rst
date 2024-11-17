@@ -1,6 +1,14 @@
 Sequences and iterators
 #######################
 
+Generators
+==========
+
+.. autoclass:: satella.coding.RunActionAfterGeneratorCompletes
+    :members:
+
+.. autoclass:: satella.coding.
+
 Rolling averages
 ================
 
