@@ -7,7 +7,9 @@ Generators
 .. autoclass:: satella.coding.RunActionAfterGeneratorCompletes
     :members:
 
-.. autoclass:: satella.coding.
+.. autofunction:: satella.coding.run_when_generator_completes
+
+.. autofunction:: satella.coding.run_when_iterator_completes
 
 Rolling averages
 ================

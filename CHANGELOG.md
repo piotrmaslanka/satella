@@ -1,3 +1,7 @@
+# v2.26.3
+
+* added `run_when_iterator_completes`
+
 # v2.26.2
 
 * RunActionAfterGeneratorCompletes won't call it's on_done action if closed prematurely

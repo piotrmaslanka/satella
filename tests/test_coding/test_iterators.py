@@ -3,7 +3,8 @@ import sys
 import logging
 import unittest
 
-from satella.coding import SelfClosingGenerator, hint_with_length, chain, run_when_generator_completes, typing
+from satella.coding import SelfClosingGenerator, hint_with_length, chain, run_when_generator_completes, typing, \
+    run_when_iterator_completes
 from satella.coding.sequences import smart_enumerate, ConstruableIterator, walk, \
     IteratorListAdapter, is_empty, ListWrapperIterator
 
@@ -70,6 +71,26 @@ class TestIterators(unittest.TestCase):
         def inner():
             yield from gen
         for i in inner():
+            pass
+        self.assertTrue(called)
+
+    def test_run_when_iterator_completes(self):
+        called = False
+
+        def generator():
+            yield 1
+            yield 2
+            yield 3
+
+        def mark_done():
+            nonlocal called
+            called = True
+
+        a = run_when_iterator_completes(generator(), mark_done)
+        self.assertFalse(called)
+        next(a)
+        self.assertFalse(called)
+        for i in a:
             pass
         self.assertTrue(called)
 

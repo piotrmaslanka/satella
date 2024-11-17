@@ -13,7 +13,7 @@ from .deleters import ListDeleter, DictDeleter
 from .environment import Context
 from .expect_exception import expect_exception
 from .fun_static import static_var
-from .iterators import hint_with_length, SelfClosingGenerator, exhaust, chain
+from .iterators import hint_with_length, SelfClosingGenerator, exhaust, chain, run_when_iterator_completes
 from .metaclasses import metaclass_maker, wrap_with, dont_wrap, wrap_property, DocsFromParent, \
     CopyDocsFrom
 from .misc import update_if_not_none, update_key_if_none, update_attr_if_none, queue_iterator, \
@@ -26,7 +26,7 @@ from .recast_exceptions import rethrow_as, silence_excs, catch_exception, log_ex
 from .generators import RunActionAfterGeneratorCompletes, run_when_generator_completes
 
 __all__ = [
-    'RunActionAfterGeneratorCompletes', 'run_when_generator_completes',
+    'RunActionAfterGeneratorCompletes', 'run_when_generator_completes', 'run_when_iterator_completes',
     'EmptyContextManager', 'Context', 'length',
     'assert_equal', 'InequalityReason', 'Inequal', 'wrap_callable_in_context_manager',
     'Closeable', 'contains', 'enum_value',

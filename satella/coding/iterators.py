@@ -136,3 +136,16 @@ class hint_with_length:
             return self.length_factory()
         else:
             return self.length
+
+
+def run_when_iterator_completes(iterator, func_to_run, *args, **kwargs):
+    """
+    Schedule a function to be called when an iterator completes.
+
+    :param iterator: iterator to use
+    :param func_to_run: function to run afterwards
+    :param args: arguments to pass to the function
+    :param kwargs: keyword arguments to pass to the function
+    """
+    yield from iterator
+    func_to_run(*args, **kwargs)
