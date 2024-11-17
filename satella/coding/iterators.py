@@ -138,7 +138,7 @@ class hint_with_length:
             return self.length
 
 
-def run_when_iterator_completes(iterator, func_to_run, *args, **kwargs):
+def run_when_iterator_completes(iterator: tp.Iterator, func_to_run: tp.Callable, *args, **kwargs):
     """
     Schedule a function to be called when an iterator completes.
 
