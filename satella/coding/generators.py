@@ -88,7 +88,7 @@ def run_when_generator_completes(gen: tp.Generator, call_on_done: tp.Callable,
     :returns: generator
     """
     class Inner(RunActionAfterGeneratorCompletes):
-        def action_to_run(self, *args, **kwargs):
-            call_on_done(*args, **kwargs)
+        def action_to_run(self, *t_args, **t_kwargs):
+            call_on_done(*t_args, **t_kwargs)
 
     return Inner(gen, *args, **kwargs)
