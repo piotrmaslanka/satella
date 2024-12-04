@@ -140,7 +140,7 @@ class TestIterators(unittest.TestCase):
         self.assertFalse(called)
 
 
-    def test_run_when_generator_closed_failure(self):
+    def test_run_when_generator_failure(self):
         called = False
 
         def generator():
@@ -161,10 +161,9 @@ class TestIterators(unittest.TestCase):
                 called = True
 
         gen = Inner(generator())
-        a = next(gen)
-        gen.close()
-        self.assertRaises(StopIteration, next, gen)
-        self.assertFalse(called)
+        for i in gen:
+            pass
+        self.assertTrue(called)
 
     def test_list_wrapper_iterator_contains(self):
 

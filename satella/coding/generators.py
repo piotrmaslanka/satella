@@ -76,7 +76,7 @@ class RunActionAfterGeneratorCompletes(tp.Generator, metaclass=ABCMeta):
         """This will run when this generator throws any exception. Override it."""
 
 
-def run_when_generator_completes(gen: tp.Generator, call_on_done: tp.Callable
+def run_when_generator_completes(gen: tp.Generator, call_on_done: tp.Callable,
                                  *args, **kwargs) -> RunActionAfterGeneratorCompletes:
     """
     Return the generator with call_on_done to be called on when it finishes
