@@ -4,7 +4,7 @@ import logging
 import unittest
 
 from satella.coding import SelfClosingGenerator, hint_with_length, chain, run_when_generator_completes, typing, \
-    run_when_iterator_completes
+    run_when_iterator_completes, RunActionAfterGeneratorCompletes
 from satella.coding.sequences import smart_enumerate, ConstruableIterator, walk, \
     IteratorListAdapter, is_empty, ListWrapperIterator
 
@@ -74,6 +74,32 @@ class TestIterators(unittest.TestCase):
             pass
         self.assertTrue(called)
 
+    def test_run_when_iterator_fails(self):
+        called = False
+
+        def generator():
+            yield 1
+            yield 2
+            raise ValueError()
+            yield 3
+
+        def mark_done(e):
+            assert isinstance(e, ValueError)
+            nonlocal called
+            called = True
+
+        def no_op():
+            pass
+
+        a = run_when_iterator_completes(generator(), no_op, mark_done)
+        self.assertFalse(called)
+        next(a)
+        self.assertFalse(called)
+        for i in a:
+            pass
+        self.assertTrue(called)
+
+
     def test_run_when_iterator_completes(self):
         called = False
 
@@ -108,6 +134,33 @@ class TestIterators(unittest.TestCase):
             called = True
 
         gen = run_when_generator_completes(generator(), mark_done, 2)
+        a = next(gen)
+        gen.close()
+        self.assertRaises(StopIteration, next, gen)
+        self.assertFalse(called)
+
+
+    def test_run_when_generator_closed_failure(self):
+        called = False
+
+        def generator():
+            yield 1
+            yield 2
+            raise ValueError()
+            yield 3
+
+        def no_op():
+            pass
+
+        class Inner(RunActionAfterGeneratorCompletes):
+            def action_to_run(self, *args, **kwargs):
+                pass
+
+            def call_on_exception(self, exc: Exception):
+                nonlocal called
+                called = True
+
+        gen = Inner(generator())
         a = next(gen)
         gen.close()
         self.assertRaises(StopIteration, next, gen)

@@ -1,3 +1,7 @@
+# v2.26.4
+
+* `run_when_iterator_completes` and `RunActionAfterGeneratorCompletes` will now support exceptions
+
 # v2.26.3
 
 * added `run_when_iterator_completes`

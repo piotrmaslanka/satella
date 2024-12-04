@@ -138,14 +138,19 @@ class hint_with_length:
             return self.length
 
 
-def run_when_iterator_completes(iterator: tp.Iterator, func_to_run: tp.Callable, *args, **kwargs):
+def run_when_iterator_completes(iterator: tp.Iterator, func_to_run: tp.Callable, do_exception=lambda e: None,
+                                *args, **kwargs):
     """
     Schedule a function to be called when an iterator completes.
 
     :param iterator: iterator to use
     :param func_to_run: function to run afterwards
+    :param do_exception: a callable to call with the exception instance if generator fails at some point
     :param args: arguments to pass to the function
     :param kwargs: keyword arguments to pass to the function
     """
-    yield from iterator
+    try:
+        yield from iterator
+    except Exception as e:
+        do_exception(e)
     func_to_run(*args, **kwargs)
