@@ -1,3 +1,7 @@
+# v2.26.6
+
+* _TBA_
+
 # v2.26.5
 
 * added `get_current_traceback` and fixed `RunActionAfterGeneratorCompletes` and `run_when_iterator_completes` default
