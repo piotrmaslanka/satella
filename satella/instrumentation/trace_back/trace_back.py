@@ -148,3 +148,10 @@ class Traceback(JSONAble):
                 except BaseException as e:
                     output.write(
                         u'*** %s: repr unavailable (due to locally raised %s)\n' % (name, repr(e)))
+
+
+def get_current_traceback() -> str:
+    """
+    A shorthand form for :code:`Traceback().pretty_format()`.
+    """
+    return Traceback().pretty_format()

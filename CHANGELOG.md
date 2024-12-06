@@ -1,3 +1,8 @@
+# v2.26.5
+
+* added `get_current_traceback` and fixed `RunActionAfterGeneratorCompletes` and `run_when_iterator_completes` default
+  exception handling plus better docs
+
 # v2.26.4
 
 * `run_when_iterator_completes` and `RunActionAfterGeneratorCompletes` will now support exceptions

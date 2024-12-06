@@ -20,7 +20,6 @@ class RunActionAfterGeneratorCompletes(tp.Generator, metaclass=ABCMeta):
         :param generator: generator to watch for
         :param args: arguments to invoke action_to_run with
         :param call_despite_closed: :meth:`action_to_run` will be called even if the generator is closed
-        :param call_on_exception: callable/1 with exception instance if generator somehow fails
         :param kwargs: keyword arguments to invoke action_to_run with
         """
         self.closed = False
@@ -73,7 +72,11 @@ class RunActionAfterGeneratorCompletes(tp.Generator, metaclass=ABCMeta):
         """This will run when this generator completes. Override it."""
 
     def call_on_exception(self, exc: Exception):
-        """This will run when this generator throws any exception. Override it."""
+        """
+        This will run when this generator throws any exception inside it's __next__() or send(). You can reraise
+        it (which is the default behavior if you do not override this).
+        """
+        raise exc
 
 
 def run_when_generator_completes(gen: tp.Generator, call_on_done: tp.Callable,

@@ -3,10 +3,17 @@ import pickle
 import sys
 import unittest
 
-from satella.instrumentation import Traceback
+from satella.instrumentation import Traceback, get_current_traceback
 
 
 class TestTraceback(unittest.TestCase):
+    def test_get_current_traceback(self):
+        try:
+            a = 1 / 0
+        except ZeroDivisionError:
+            tb = get_current_traceback()
+            self.assertIn('ZeroDivisionError', tb)
+
     def test_no_exc(self):
         tb = Traceback()
         byte = io.BytesIO()
