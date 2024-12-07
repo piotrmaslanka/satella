@@ -53,7 +53,7 @@ class Traceback(JSONAble):
             out.append(str(frame))
         return ''.join(out)
 
-    def __init__(self, starting_frame: tp.Optional[types.FrameType] = None,
+    def __init__(self, starting_frame: tp.Optional[tp.Union[Exception, types.FrameType]] = None,
                  policy=GenerationPolicy):
         if inspect.isclass(policy):
             value_pickling_policy = policy()
@@ -69,7 +69,10 @@ class Traceback(JSONAble):
             else:
                 f = inspect.currentframe()
         else:
-            f = starting_frame
+            if isinstance(starting_frame, Exception):
+                f = starting_frame.__traceback__.tb_frame
+            else:
+                f = starting_frame
 
         while f:
             self.frames.append(StackFrame(f, value_pickling_policy))

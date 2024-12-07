@@ -7,6 +7,14 @@ from satella.instrumentation import Traceback, get_current_traceback
 
 
 class TestTraceback(unittest.TestCase):
+
+    def test_traceback_from_exception(self):
+        try:
+            a = 1 / 0
+        except ZeroDivisionError as e:
+            tb = Traceback(e)
+            self.assertIn('ZeroDivisionError', tb.pretty_format())
+
     def test_get_current_traceback(self):
         try:
             a = 1 / 0

@@ -1,6 +1,6 @@
 # v2.26.6
 
-* _TBA_
+* Traceback() may accept an Exception instance
 
 # v2.26.5
 
